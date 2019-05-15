@@ -1,0 +1,172 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: TLUG Message Board -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 22 Jan 1997 01:37:24 GMT -->
+<!--X-Message-Id: m0vmrVI&#45;00003nC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199701211145.UAA23549@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00050.html">Date Prev</A>][<A HREF="msg00052.html">Date Next</A>][<A HREF="msg00048.html">Thread Prev</A>][<A HREF="msg00053.html">Thread Next</A>][<A HREF="maillist.html#00051">Date Index</A>][<A HREF="threads.html#00051">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: TLUG Message Board</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: TLUG Message Board </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 22 Jan 1997 10:29:28 +0900</LI>
+<LI>In-reply-to: Your message of "Tue, 21 Jan 1997 20:51:48 +0900."            &lt;<A HREF="msg00048.html">199701211145.UAA23549@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; My problem is that some users pay for only one connection,
+    Jim&gt; but logon more than one port. Does anyone Know of a script
+    Jim&gt; that would prevent them from doing so.
+
+To do this right you need a special login(1) that performs proper
+accounting; Linux's default doesn't do it.  One dodge would be to
+replace all the shells in /etc/shells with scripts like
+
+#! /bin/sh # the _real_ /bin/sh
+#
+# This is the /sbin/login/bash script.
+#
+if [ fgrep $LOGNAME `who` ]; then
+# if you don't supply this message, you're asking for trouble.
+# even under Linux, a pty can hang or something.
+ echo "I'm sorry, but you're only allowed to log in once;"
+ echo 'you are logged in already:'
+ echo
+ echo '% who'
+ who
+ echo
+ echo 'If you feel you have reached this message in error,'
+ echo 'please contact the sysop at (123) 456-7890.'
+ logger -i "Second login by $LOGNAME at `date`."
+ exit(1)
+else
+ /bin/bash
+fi
+
+Should do it;
+note that /etc/shells needs to be changed to point to appropriate
+shells in /sbin/login (this should be on the root partition just in
+case) and regular users only (not root!!) be changed from /bin/*sh to
+/sbin/login/*sh in /etc/passwd.
+
+This will cause a problem if someone logs in via internet; you'd need
+to check tty lines as well.
+
+BTW I haven't tried this so I don't know for sure it will work ;-) but 
+this basic approach should.
+
+HTH
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00048" HREF="msg00048.html">TLUG Message Board</A></STRONG>
+<UL><LI><EM>From:</EM> "Jim Schweizer" &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00050.html">Re: Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00052.html">Re: Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00048.html">TLUG Message Board</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00053.html">Tk/Tcl</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00051"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00051"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

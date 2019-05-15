@@ -1,0 +1,207 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: firewalling behind NAT? -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Tue, 22 May 2001 08:59:02 +0900 -->
+<!--X-Message-Id: 20010522085902.D5613@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 21DEAE09F017D111969700A0C98407520572A4E1@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00499.html">Date Prev</A>][<A HREF="msg00490.html">Date Next</A>][<A HREF="msg00486.html">Thread Prev</A>][<A HREF="msg00491.html">Thread Next</A>][<A HREF="maillist.html#00489">Date Index</A>][<A HREF="threads.html#00489">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: firewalling behind NAT?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: firewalling behind NAT?</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 22 May 2001 08:59:02 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00486.html">21DEAE09F017D111969700A0C98407520572A4E1@example.com</A>&gt;; from SStone@example.com on Mon, May 21, 2001 at 11:07:59AM -0700</LI>
+<LI>References: &lt;<A HREF="msg00486.html">21DEAE09F017D111969700A0C98407520572A4E1@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;g1z3cC.A.IdG.psaC7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.5i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi Scott,
+
+The following is the default RH7.1 ipchain rules that it set up for me
+on install.
+
+:input ACCEPT
+:forward ACCEPT
+:output ACCEPT
+-A input -s 0/0 -d 0/0 -i lo -j ACCEPT
+-A input -p tcp -s 0/0 -d 0/0 0:1023 -y -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 2049 -y -j REJECT
+-A input -p udp -s 0/0 -d 0/0 0:1023 -j REJECT
+-A input -p udp -s 0/0 -d 0/0 2049 -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 6000:6009 -y -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 7100 -y -j REJECT
+
+I've been playing the iptables though and its lots of fun :) If you wouldn't
+mind sending me your iptables script that would be great.
+
+Back to the other question though, is there any reason that I would need
+a firewall behind NAT (apart from the geek factor)? And if so, how does it
+work, ie how do they come through NAT from the outside to attack my machine?
+
+Tom.
+
+On Mon, May 21, 2001 at 11:07:59AM -0700, Scott Stone wrote:
+&gt; 
+&gt; yes, default drop and then add in things to accept is, in my view, the
+&gt; Correct Way to Do Things.  I can send you an iptables script to do that.
+&gt; 
+&gt; If you're running 7.1 and using ipchains, especially if that's the default
+&gt; redhat way of doing things, someone at RH needs to be bonked on the head
+&gt; repeatedly... with 2.4, you use iptables... no real reason not to.
+&gt; 
+&gt; -----------------------------------------------------
+&gt; Scott M. Stone &lt;sstone@example.com&gt;
+&gt; Senior Technical Consultant - UNIX and Networking
+&gt; Taos, the Sysadmin Company - Santa Clara, CA
+&gt; 
+&gt; 
+&gt; -----Original Message-----
+&gt; From: Thomas O'Dowd [<A TARGET="_top" HREF="mailto:tom@example.com">mailto:tom@example.com</A>]
+&gt; Sent: Monday, May 21, 2001 8:17 AM
+&gt; To: tlug group
+&gt; Subject: firewalling behind NAT?
+&gt; 
+&gt; 
+&gt; Hi,
+&gt; 
+&gt; Quick question, do you need to use a firewall if you are behind a NAT
+&gt; router? Ie, my machine has a non-routable ip address and the gateway
+&gt; is a separate box (in this case, an ADSL router) on the LAN. I filter all
+&gt; open ports on the router to only accept incoming connections to the router
+&gt; on the internal interface. Quick port scan from the outside confirmed this.
+&gt; Since I'm not really filtering anything else right now, can a cracker
+&gt; somehow find away through my router to a NAT'd machine on the inside? I
+&gt; don't think so, but I could be wrong?
+&gt; 
+&gt; Also, just installed RH7.1 and think it is kinda wierd that they start
+&gt; with ipchain policies of accept and add explicit things to drop rather
+&gt; than a policy of drop and the other way round, which is probably the
+&gt; way that I would do it.
+&gt; 
+&gt; Cheers,
+&gt; 
+&gt; Tom.
+&gt; -- 
+&gt; Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+&gt; tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30- 
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30- 
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+
+-- 
+Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00491" HREF="msg00491.html">Re: firewalling behind NAT?</A></STRONG>
+<UL><LI><EM>From:</EM> Rod Holmes &lt;rod@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00486" HREF="msg00486.html">RE: firewalling behind NAT?</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;SStone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00499.html">RE: Can't type fast!!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00490.html">Re: firewalling behind NAT?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00486.html">RE: firewalling behind NAT?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00491.html">Re: firewalling behind NAT?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00489"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00489"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

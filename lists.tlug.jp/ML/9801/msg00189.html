@@ -1,0 +1,183 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Java and Linux -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date: Fri, 16 Jan 1998 10:02:28 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.980116234137.1095B&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 34BF3193.4A594B2D@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00188.html">Date Prev</A>][<A HREF="msg00190.html">Date Next</A>][<A HREF="msg00187.html">Thread Prev</A>][<A HREF="msg00190.html">Thread Next</A>][<A HREF="maillist.html#00189">Date Index</A>][<A HREF="threads.html#00189">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Java and Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Java and Linux</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 16 Jan 1998 23:55:50 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00187.html">34BF3193.4A594B2D@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Fri, 16 Jan 1998, Alan B. Stone wrote:
+
+&gt; Okay...I'm going nuts.  I've tried several different setups and
+
+Stay sane.  It is better for your health.  :-)
+
+&gt; installations today, and nothing seems to work.  I first tried
+&gt; JDK-1.1.3, then JDK-1.1.4, both of which continued to give me the error
+&gt; I sent before.  Then I uninstalled jdk and replaced it with kaffe.  Now
+
+Do you have all the libs and goodies that jdk needs?  You'll
+notice that jdk1.1.5 has gone the way of glibc6.  This has
+prompted the great migration for me.  I feel like a bird
+travelling great distances in the winter.   
+
+Anyway, you may have to upgrade some stuff.  To see the
+lay of the land on your Linux plot, look at
+
+  ldconfig -v
+
+or you may want to do a 
+
+  ldconfig -v |tee blains_libs.log.erase.me.after.use
+
+and then peruse the libs you have and compare them to the
+ones that jdk is dependent on.
+
+
+These are the shared libraries that java 1.1.3 is dependent on:
+
+cow:/usr/local/lib/jdk1.1.3/bin/i586/green_threads$ ldd java
+        libjava.so =&gt; not found
+        libm.so.5 =&gt; /lib/libm.so.5 (0x4000c000)
+        libdl.so.1 =&gt; /lib/libdl.so.1 (0x40015000)
+        libawt.so =&gt; not found
+        libXpm.so.4 =&gt; /usr/X11R6/lib/libXpm.so.4 (0x40018000)
+        libXt.so.6 =&gt; /usr/X11R6/lib/libXt.so.6 (0x40026000)
+        libICE.so.6 =&gt; /usr/X11R6/lib/libICE.so.6 (0x40075000)
+        libSM.so.6 =&gt; /usr/X11R6/lib/libSM.so.6 (0x4008a000)
+        libXext.so.6 =&gt; /usr/X11R6/lib/libXext.so.6 (0x40093000)
+        libX11.so.6 =&gt; /usr/X11R6/lib/libX11.so.6 (0x400a0000)
+        libc.so.5 =&gt; /lib/libc.so.5 (0x40152000)
+        libc.so.6 =&gt; /lib/libc.so.6 (0x40210000)
+        ld-linux.so.2 =&gt; /lib/ld-linux.so.2 (0x402b2000)
+
+
+This is what I have for jdk1.1.5
+
+cow:/usr/local/lib/jdk/bin/Linux/green_threads$ ldd java
+        libjava.so =&gt; not found
+        libm.so.6 =&gt; /lib/libm.so.6 (0x40010000)
+        libdl.so.2 =&gt; /lib/libdl.so.2 (0x40029000)
+        libX11.so.6 =&gt; /usr/X11R6/lib/libX11.so.6 (0x4002c000)
+        libc.so.6 =&gt; /lib/libc.so.6 (0x400de000)
+        /lib/ld-linux.so.2 =&gt; /lib/ld-linux.so.2 (0x40000000)
+
+
+
+
+
+------
+craig@example.com    
+PGP Public Key   <A TARGET="_top" HREF="http://www.twics.com/~craig/personal/pgp/">http://www.twics.com/~craig/personal/pgp/</A>
+
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00187" HREF="msg00187.html">tlug: Java and Linux</A></STRONG>
+<UL><LI><EM>From:</EM> "Alan B. Stone" &lt;stoneab@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00188.html">tlug: SCSI Configuration</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00190.html">Re: tlug: Java and Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00187.html">tlug: Java and Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00190.html">Re: tlug: Java and Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00189"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00189"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

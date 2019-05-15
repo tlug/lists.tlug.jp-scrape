@@ -1,0 +1,181 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: disk image distribution -->
+<!--X-From: "Frank Bennett (=?iso&#45;2022&#45;jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Thu, 4 Nov 1999 09:27:33 +0900 -->
+<!--X-Message-Id: 19991103183743.A1691@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14366.44159.139313.241427@example.com&#45;Koeln.DE -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00019.html">Date Prev</A>][<A HREF="msg00021.html">Date Next</A>][<A HREF="msg00017.html">Thread Prev</A>][<A HREF="msg00013.html">Thread Next</A>][<A HREF="maillist.html#00020">Date Index</A>][<A HREF="threads.html#00020">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: disk image distribution</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: disk image distribution</strong></LI>
+<LI><strong>From</strong>: <strong>"Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 3 Nov 1999 18:37:43 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00011.html">14366.44159.139313.241427@example.com</A>&gt;; from Marcus Metzler on Tue, Nov 02, 1999 at 10:25:22AM +0100</LI>
+<LI>References: &lt;<A HREF="msg00011.html">14366.44159.139313.241427@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, Nov 02, 1999 at 10:25:22AM +0100, Marcus Metzler wrote:
+
+&gt; I am looking for a solution that allows me to install a disk image on
+&gt; several computers over the net.
+
+In the computer lab here, we do rotating reinstalls of this kind on our
+Win95 workstations, which otherwise seem to grow progressively more
+unfriendly over time.  Our command for the restore is (quoting from
+memory): 
+
+  rsh 133.6.33.XXX cat /backup/RESTORE.IMAGE.gz | gzip -dc | \
+    dd of=/dev/hda
+
+The backup line looks (something) like this:
+
+  dd if=/dev/hda bs=&lt;blocksize&gt; count=&lt;size&gt; | gzip -c | \
+    rsh 133.6.33.XXX cat - "&gt;" /backup/RESTORE.IMAGE.gz
+
+The idea is that the backup exactly lifts the in-use territory
+of the physical disk, compresses the resulting data stream and
+saves it in a (really very big) file on the server.  Restoring
+is simply a matter of streaming the file across to a workstation,
+uncompressing it, and laying it back down on the physical disk.
+
+A few caveats.  The command is executed after booting the machine to Linux
+from a floppy disk, with the entire disk to be saved or restored left
+unmounted.
+
+You get an EXACT replica of the original by this method.  If you don't use
+bootp or dhcp to acquire IP addresses on your workstations, you'll need to
+fix the IP settings by hand.  If you use Windows of some description, the
+NET-BEUI name for the workstation will have to be fixed by point and click
+and point and click and point and. 
+
+For the same reason, you end up with exactly the same partition sizes on
+the restored machines, no matter what the real disk area is.  We have made
+the older machines the common denominator, so we have gigabytes of disk
+lying around in the lab.  That's okay, though; it still serves to make the
+place more high-tech.
+
+If your lab has a mixture of machines with SCSI and IDE primary drives,
+you can lay the disk image from one type onto a disk of the other type,
+but you will need to do some jiggery-pokery (reinstall MBR?  Reset active
+partitions?  Change root disk flag in Linux kernel?  I forget which of
+these) to get the restored machine to reboot.  But you can use the same
+base image for both, which saves time.
+
+I should also say that you've got the right idea; using this method has
+saved us a HUGE amount of clicking and fiddling time on the Windows
+machines.  I have even begun opening please-help-me sessions with a gentle
+suggestion to whoever it is that they should pay close attention, because
+their troubles are probably down to something that they are getting wrong. 
+Previously, I had too often found myself giving a abject closing apology
+on behalf of Uncle Bill's Bug Farm.
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+
+-------------------------------------------------------------------
+Next Technical Meeting: November 13 (Sat), 13:30 place: Temple Univ.
+* Network Security                               speaker: Steve Baur
+Next Nomikai: December 17 (Fri), 19:00 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00011" HREF="msg00011.html">tlug: disk image distribution</A></STRONG>
+<UL><LI><EM>From:</EM> Marcus Metzler &lt;mocm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00019.html">Re: tlug: kinput2</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00021.html">Re: tlug: kinput2</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00017.html">Re: tlug: disk image distribution</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00013.html">tlug: [report] gnome bof</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00020"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00020"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

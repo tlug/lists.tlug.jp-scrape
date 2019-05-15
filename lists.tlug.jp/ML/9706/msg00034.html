@@ -1,0 +1,229 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs and Kanji detection -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 3 Jun 1997 07:52:15 GMT -->
+<!--X-Message-Id: m0wYoCI&#45;00002KC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0wYW74&#45;000HdcC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00033.html">Date Prev</A>][<A HREF="msg00035.html">Date Next</A>][<A HREF="msg00030.html">Thread Prev</A>][<A HREF="msg00035.html">Thread Next</A>][<A HREF="maillist.html#00034">Date Index</A>][<A HREF="threads.html#00034">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs and Kanji detection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs and Kanji detection </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 03 Jun 1997 16:40:01 +0900</LI>
+<LI>In-reply-to: Your message of "Mon, 02 Jun 1997 21:21:05 +0900."            &lt;<A HREF="msg00030.html">m0wYW74-000HdcC@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; and unfortunately, it didn't work.  However, it made me
+    Craig&gt; think about what else could affect things.  Then, it hit
+    Craig&gt; me.  The "I'm so lame" thought again.  When I went through
+    Craig&gt; the disk wipe, I erased my .bash_profile and my LANG
+    Craig&gt; variable was unset.  I set LANG to Japanese with:
+   
+    Craig&gt;     cow:~$ export LANG=ja_JP.EUC
+
+I've never found locale to be useful for much of anything; kterm
+hardcodes it, and GNU Mule ignores it.  So this didn't occur to me.
+(Who looks lame now?)  Yeah, that seem to do the trick (dammit; it
+means that getting m17n right is going to be really mendoukusai;
+locale-related functions are dispersed all over xemacs, but not in
+Mule source files :-( ), although I'm using an XIM-based XEmacs, not a
+standalone henkan server version.
+
+The locale processing also seems to be inconsistently implemented,
+since "LANG=ja_JP.EUC" results in SJIS being correctly displayed (and
+"LANG=ja_JP.SJIS" produces correct results for EUC).  Furthermore,
+using `(setenv "LANG" "C")' or any other locale does not affect this,
+so the locale of the XEmacs process seems to be fixed at invocation,
+and only used to invoke Mule features.  (I suspected that XEmacs would
+handle ISO-2022-JP when compiled without Mule, because it gets it
+right when EUC and SJIS are mojibake.  But that is not the case.)
+It's really not clear to me what all is going on here.  The Mule
+features of XEmacs seem to be really hacked in.
+
+Re: w3.el.  I'm _not_ getting Japanese on the Mule homepage (the top
+page is OK, since all the Japanese is in GIFs, but
+<A TARGET="_top" HREF="http://www.etl.go.jp/Research/mulepage/MuleJapanese.html">http://www.etl.go.jp/Research/mulepage/MuleJapanese.html</A> bombs).  I
+don't seem to have any problems with the W3 multilingual example page
+(<A TARGET="_top" HREF="http://www.ntt.co.jp/japan/note-on-JP/multi-example.html">http://www.ntt.co.jp/japan/note-on-JP/multi-example.html</A>) except for
+missing fonts.
+
+It seems to choke on the (standard-compliant) MIME content-type
+header.  If that (`Content-type: text/html; charset=iso-2022-jp') is
+present, the non-ASCII characters turn into mojibake :-(.  (I've
+confirmed this by prepending that to the header of multi-example.html
+and getting mojibake, and taking out the charset reference in the
+Content-type of MuleJapanese.html and getting Japanese.)  Sigh.
+
+w3.el doesn't do JPEGs.  Pity, that.
+
+Craig, I have a couple of questions.
+
+Do you get the right charsets when switching from an SJIS server to an
+ISO-2022 server in w3.el?  Do you need to do anything else (in
+particular I'm thinking of the liblocale dodge that works with
+Netscrap)?  Do you get messages about not being able to set locale,
+using C/POSIX instead?  (I do, unless I use LD_PRELOAD=liblocale.so,
+since I have XIM compiled in, and any keyboard input gives instant
+crash.  At least it's for reasons I already understand.  I think; if I 
+do understand, you probably don't get those messages or need to use
+liblocale.so with XEmacs/Mule/Canna.)
+
+For those not using XIM, the following probably does not apply.
+
+For those of you who like to do advanced stuff with your Asian
+languages (I'm thinking in particular of Jim Breen and Dennis
+McMurchy) there are a couple of gotchas in my environment (XFree86
+3.2A) that may or may not apply to yours.  I don't even know if
+they'll cause problems (I don't have the fonts &amp;c installed to test),
+but I thought I'd mention them.
+
+First, if you use the liblocale.so workaround to substitute X locale
+functions for libc locale functions, the locale databases in
+/usr/X11R6/lib/X11/locale/ja* specify the character set as JIS X
+0208-1983, but allow JIS X 0208-1990 fonts to be substituted.  I don't
+think this matters much (2 characters, right?), but that's the first
+thing I noticed.  Second (more important) all of the locale
+information pertaining to JIS X 0212-1990 is commented out.  If you
+have JIS X 0212 fonts, I think you can probably just uncomment that.
+
+I don't know enough about Chinese to make any comments about support
+for it (the multi-example.html page displays the Chinese I have fonts,
+for, namely GB, anyway), but you might find stuff in locale/zh* that
+helps solve any problems.
+
+Lists of all defined locales and aliases are in
+/usr/X11R6/lib/X11/locale/locale.{dir,alias}.
+
+    Craig&gt; and got it working.  Now, I'm happily in XEmacs and using
+    Craig&gt; Japanese.  I just have to spend some time setting my
+    Craig&gt; Xresources to my liking and I'll be all set.  I'm in mew
+    Craig&gt; right now and things look good.
+
+    Craig&gt;   ありがとう瘢雹ございました。
+
+どう瘢雹いたしまして。
+
+"It's getting better all the time....  Better, better, better!"
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Jason Molenda &lt;crash@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00043" HREF="msg00043.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Steve Dunham &lt;dunham@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00030" HREF="msg00030.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00033.html">Re: tlug: Problems with Netscape</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00035.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00030.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00035.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00034"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00034"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

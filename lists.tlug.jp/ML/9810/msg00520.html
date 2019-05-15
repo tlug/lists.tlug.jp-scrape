@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Internet connections from Linux -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 11:03:00 +0900 -->
+<!--X-Message-Id: 19981014110247.A18999@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3622098F.78B08F86@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00519.html">Date Prev</A>][<A HREF="msg00521.html">Date Next</A>][<A HREF="msg00577.html">Thread Prev</A>][<A HREF="msg00527.html">Thread Next</A>][<A HREF="maillist.html#00520">Date Index</A>][<A HREF="threads.html#00520">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Internet connections from Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>tlug &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Internet connections from Linux</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 11:02:47 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00422.html">3622098F.78B08F86@example.com</A>&gt;; from Neil Booth on Mon, Oct 12, 1998 at 10:52:15PM +0900</LI>
+<LI>Mail-Followup-To: tlug &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00422.html">3622098F.78B08F86@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Neil Booth writes:  (on 12 Oct 98)
+
+&gt; However, I'm unable to configure Netscape to send mail, because when I
+&gt; put "mail.iname.com" as my outgoing mail server and press OK, it
+&gt; complains about the host not being found.
+
+Ah.  I see what is going on.  Netscape is asking for the name of a
+*server* that it can send smtp requests to.  The only dns records for
+mail.iname.com are MX records -- no CNAME or A records.  So when
+netscape tries to convert mail.iname.com to an IP address it fails.  Try
+using "mail.globecomm.net" (or one of its IP addresses) instead -- it's
+a valid MX for iname.com.
+
+&gt; I imagine I have to put something in the /etc/hosts file, but what? I
+&gt; have no idea what their IP address is. Why does NS for Linux need to
+&gt; know where this host is, but NS for Windows doesn't?
+
+Maybe NS for windows also looks for MX records?
+
+&gt; Also, I have permission problems when trying to dial my ISP as a
+&gt; non-root user. Could someone tell me how they approach this (in terms of
+&gt; permissioning?) As I'm just a home user, I'd like to configure it so
+&gt; anyone can dial out.
+
+Either an suid program to do the dialing (both RH and Linux provide
+something to do this -- usernetctl or somesuch) or sudo are simple
+solutions to the problem.  For PPP startup, I'd favor the suid approach,
+but in general sudo is the answer.  Sudo is at
+"<A TARGET="_top" HREF="http://www.courtesan.com/sudo/">http://www.courtesan.com/sudo/</A>".
+
+Finally, FWIW:
+
+I actually don't like funnelling all of my mail outgoing mail through my
+ISP's smtp server (I'd rather deliver directly to the closest mail
+exchange to the recipient).
+
+My prejudices are well known, but I'm rather fond of the
+following setup for outgoing mail on my home machine:
+
+    o All mail clients configured to use localhost (127.0.0.1) as their
+      SMTP server.
+
+    o Qmail is configured to spool all outgoing mail in
+      ~alias/Outgoing/.
+
+    o PPP startup scripts are configured to start maildir2smtp (from the
+      serialmail package at <A TARGET="_top" HREF="http://pobox.com/~djb/serialmail.html">http://pobox.com/~djb/serialmail.html</A>)
+      whenever the link is up.  This is particularly easy if you use
+      supervise and svc from daemontools
+      (<A TARGET="_top" HREF="http://pobox.com/~djb/daemontools.html">http://pobox.com/~djb/daemontools.html</A>).
+
+For incoming mail, each user uses fetchmail
+(<A TARGET="_top" HREF="http://earthspace.net/~esr/fetchmail/">http://earthspace.net/~esr/fetchmail/</A>) to pull from that user's ISP
+account via POP or IMAP and hand it off to qmail for delivery via SMTP.
+
+Qmail then delivers to ~/Mailbox (by default).  Most MUAs are smart
+enough to use the MAIL environment variable to look for mail, so as long
+as you've configured the default user environment correctly every user
+on your system should be able to read and send mail with almost any MUA.
+
+I'm rather fond of the wmppp mini-applet for windowmaker (should work
+with any window manager).  Nice two button applet to start/stop PPP,
+with a nice little load graph, modem led status,  and current bps transfer
+stats.  You just tell it the name of your PPP start, stop, and restart
+scripts.  Recommended.  You can see what it looks like and retrieve it at
+<A TARGET="_top" HREF="http://windowmaker.org/projects.html">http://windowmaker.org/projects.html</A> -- look for "Warp's Apps".
+
+This setup works quite well for me.
+
+Regards,
+-- 
+Rex
+
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00527" HREF="msg00527.html">Re: tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00574" HREF="msg00574.html">Re: tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00422" HREF="msg00422.html">tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00519.html">Re: tlug: parallel-port IDE</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00521.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00577.html">Re: tlug: Internet connections from Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00527.html">Re: tlug: Internet connections from Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00520"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00520"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: oh yea, that keyboard question -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 16 Jan 1996 12:37:52 GMT -->
+<!--X-Message-Id: m0tcAWe&#45;0004R2C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199601161140.UAA20981@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00062.html">Date Prev</A>][<A HREF="msg00064.html">Date Next</A>][<A HREF="msg00062.html">Thread Prev</A>][<A HREF="msg00064.html">Thread Next</A>][<A HREF="maillist.html#00063">Date Index</A>][<A HREF="threads.html#00063">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: oh yea, that keyboard question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: oh yea, that keyboard question</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 16 Jan 96 21:30 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00062.html">199601161140.UAA20981@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; I'm still trying to untangle the P's as it were. I think I
+    Jim&gt; have the networking stuff setup ok:
+
+    Jim&gt;  # ping localhost reports all packets transmitted and
+    Jim&gt; received with no loss;
+[snip]
+    Jim&gt; dip: can't find library 'libc.so.4'
+
+    Jim&gt; Did I forget to install or write something? I can't find any
+    Jim&gt; reference to it in the net-2/net-3 howto or Olaf's
+    Jim&gt; Administrator's Guide.
+
+I dunno what happened here, but this is a pretty common problem with
+*all* kinds of software, not just networking (it has nothing to do
+with networking per se).  There are four kinds of subroutine calls in
+Linux:
+
+(1) direct entry into the kernel (eg, sbrk, which manipulates your
+    memory allocation)
+(2) standard C functions (eg, fopen)
+(3) standardized API library functions (eg, from Xlib)
+(4) stuff you wrote yourself :-)
+
+Because *everything* uses the standard C library, it makes a lot of
+sense to have that library pretty much permanently resident in memory.
+Then the programs need to dynamically link into this resident set of
+routines.  Thus we say the library is "dynamically linked" (thus, DLL
+in Windowze) or "shared."  Making this (a) foolproof, (b) efficient,
+and (c) upgradeable is not merely "nontrivial," it's damn near
+impossible.  And MenDouKusai.  Thus it only happens for a few very
+common libraries - like the ANSI C standard functions.
+
+A normal library (category (4) and most category (3) above) is named
+according to the following pattern: libXXX.a.  The shared libraries
+(category (2) and some category (3))come in two parts: the library
+entry tables that get linked into the user's program, libXXX.sa, and
+the actual library object code, libXXX.so.  Aha! you say....
+
+Now, the entry tables (libXXX.sa) will change from version to version
+(I'm not sure why this happens, it apparently only happens on major
+versions like libc.so.4.5.27 -&gt; libc.so.5.0.9, not on minor revisions
+like libc.so.4.5.26 -&gt; libc.4.5.27).  Thus, changes in the shared
+libraries will be *neither* upward *nor* downward compatible.
+
+So probably the program in question, dip, was distributed as a binary
+linked against libc.so.4, and your modern Slackware normally uses
+libc.so.5.  Probably you have a copy of libc.so.4.5.26 or
+libc.so.4.7.2 (I think those are the most recent versions, one is
+COFF, one is ELF) in /lib, and all you need to do is
+
+# (cd /lib; ln -s libc.so.4.5.26 libc.so.4)
+# dip
+
+and life will be wonderful.  If not, you'll have to (a) find a dip
+linked against the library you have, or (b) find the appropriate
+library and install it.  (b) is not necessarily difficult, but be
+*very* careful while you're cd'd to /lib!!
+
+    &gt;&gt; Re: that Japanese keyboard question a while back
+    Jim&gt; snip----snip----snip-----
+    &gt;&gt; The authors for Run Run Linux are Hane Hideya, Yamada Akira,
+    &gt;&gt; and Abe Hironobu.
+
+    Jim&gt; Is there an ISBN # for that, and it it in English or
+    Jim&gt; Japanese?
+
+I just dipped into it today in the computer store, but I didn't note
+the ISBN :-(.  It's in Japanese.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00064" HREF="msg00064.html">Re: oh yea, that keyboard question</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">Re: oh yea, that keyboard question</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00062.html">Re: oh yea, that keyboard question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00064.html">Re: oh yea, that keyboard question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00062.html">Re: oh yea, that keyboard question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00064.html">Re: oh yea, that keyboard question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00063"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00063"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

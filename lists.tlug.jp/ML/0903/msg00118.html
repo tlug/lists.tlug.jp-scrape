@@ -1,0 +1,135 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Strange TCP problem, SACK? -->
+<!--X-From-R13: Oyna Phfol <gurohfolNgurohfol.pbz> -->
+<!--X-Date: Thu, 12 Mar 2009 11:40:37 +0900 -->
+<!--X-Message-Id: a63167770903111940w507237c0h44a55f8009d1d8f7@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00117.html">Date Prev</a>][<a href="msg00119.html">Date Next</a>][<a href="msg00140.html">Thread Prev</a>][<a href="msg00119.html">Thread Next</a>][<a href="maillist.html#00118">Date Index</a>][<a href="threads.html#00118">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Strange TCP problem, SACK?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 12 Mar 2009 11:40:35 +0900</li>
+<li><strong>From</strong>: <strong>Alan Busby &lt;<a href="mailto:thebusby@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Strange%20TCP%20problem%2C%20SACK%3F">thebusby@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Strange TCP problem, SACK?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+A network problem, likely quite simple. is killing me slowly and painfully here. <br><br>Until recently I&#39;ve connected to a remote server through a vpn tunnel (branch office to home office) without any problems. Suddenly this week, after a power failure, I&#39;m getting strange TCP disconnect errors between multiple different servers/protocols/OSes. Based on the fact that the only consistent point seems to be the network, I&#39;ve focused my efforts there and was able to record a failure on both the client and server via tcpdump.<br>
+<br>My network skills are pretty rusty though, and I hoping someone here can help me identify what&#39;s going on here.<br>Could a firewall router be interfering and causing this?<br><br><br>From the client (Linux ubuntu 2.6.22-14-generic):<br>
+18:58:55.803519 IP client.50624 &gt; server.ssh: P 2545:2593(48) ack 2313 win 93 &lt;nop,nop,timestamp 49023574 110651213&gt;<br>18:58:55.926181 IP server.ssh &gt; client.50624: . ack 2593 win 128 &lt;nop,nop,timestamp 110651245 49023574&gt;<br>
+18:58:55.937920 IP server.ssh &gt; client.50624: P 2313:2393(80) ack 2593 win 128 &lt;nop,nop,timestamp 110651248 49023574&gt;<br>18:58:55.938207 IP client.50624 &gt; server.ssh: P 2593:2625(32) ack 2393 win 93 &lt;nop,nop,timestamp 49023587 110651248&gt;<br>
+18:58:55.951162 IP server.ssh &gt; client.50624: P 2393:2441(48) ack 2593 win 128 &lt;nop,nop,timestamp 110651251 49023574&gt;<br>18:58:55.951414 IP server.ssh &gt; client.50624: P 2441:2505(64) ack 2593 win 128 &lt;nop,nop,timestamp 110651251 49023574&gt;<br>
+18:58:55.951435 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023589 110651251&gt;<br>18:58:56.072085 IP server.ssh &gt; client.50624: P 3865:3929(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651281 49023589&gt;<br>
+18:58:56.072096 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023601 110651251,nop,nop,sack 1 {3865:3929}&gt;<br>18:58:56.085826 IP server.ssh &gt; client.50624: P 3929:3993(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651285 49023589&gt;<br>
+18:58:56.085838 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023602 110651251,nop,nop,sack 1 {3865:3993}&gt;<br>18:58:56.093570 IP server.ssh &gt; client.50624: P 3993:4057(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651287 49023589&gt;<br>
+18:58:56.093579 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023603 110651251,nop,nop,sack 1 {3865:4057}&gt;<br>18:58:56.193257 IP server.ssh &gt; client.50624: P 4057:5145(1088) ack 2625 win 128 &lt;nop,nop,timestamp 110651311 49023601&gt;<br>
+18:58:56.193265 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023613 110651251,nop,nop,sack 1 {3865:5145}&gt;<br>18:58:56.312181 IP server.ssh &gt; client.50624: P 5145:5209(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651341 49023613&gt;<br>
+18:58:56.312191 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023625 110651251,nop,nop,sack 1 {3865:5209}&gt;<br><br><br>>From the server (Linux ubuntu 2.6.22-14-server):<br>11:14:10.125386 IP client.50624 &gt; server.ssh: P 2545:2593(48) ack 2313 win 93 &lt;nop,nop,timestamp 49023574 110651213&gt;<br>
+11:14:10.125446 IP server.ssh &gt; client.50624: . ack 2593 win 128 &lt;nop,nop,timestamp 110651245 49023574&gt;<br>11:14:10.137229 IP server.ssh &gt; client.50624: P 2313:2393(80) ack 2593 win 128 &lt;nop,nop,timestamp 110651248 49023574&gt;<br>
+11:14:10.150360 IP server.ssh &gt; client.50624: P 2393:2441(48) ack 2593 win 128 &lt;nop,nop,timestamp 110651251 49023574&gt;<br>11:14:10.150558 IP server.ssh &gt; client.50624: P 2441:2505(64) ack 2593 win 128 &lt;nop,nop,timestamp 110651251 49023574&gt;<br>
+11:14:10.257557 IP client.50624 &gt; server.ssh: P 2593:2625(32) ack 2393 win 93 &lt;nop,nop,timestamp 49023587 110651248&gt;<br>11:14:10.257599 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110651278 49023587&gt;<br>
+11:14:10.269806 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023589 110651251&gt;<br>11:14:10.271178 IP server.ssh &gt; client.50624: P 3865:3929(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651281 49023589&gt;<br>
+11:14:10.285259 IP server.ssh &gt; client.50624: P 3929:3993(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651285 49023589&gt;<br>11:14:10.292828 IP server.ssh &gt; client.50624: P 3993:4057(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651287 49023589&gt;<br>
+11:14:10.390779 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023601 110651251,nop,nop,sack 1 {3865:3929}&gt;<br>11:14:10.390814 IP server.ssh &gt; client.50624: P 4057:5145(1088) ack 2625 win 128 &lt;nop,nop,timestamp 110651311 49023601&gt;<br>
+11:14:10.404700 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023602 110651251,nop,nop,sack 1 {3865:3993}&gt;<br>11:14:10.411536 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023603 110651251,nop,nop,sack 1 {3865:4057}&gt;<br>
+11:14:10.411560 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110651316 49023603&gt;<br>11:14:10.511323 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023613 110651251,nop,nop,sack 1 {3865:5145}&gt;<br>
+11:14:10.511357 IP server.ssh &gt; client.50624: P 5145:5209(64) ack 2625 win 128 &lt;nop,nop,timestamp 110651341 49023613&gt;<br>11:14:10.630372 IP client.50624 &gt; server.ssh: . ack 2505 win 93 &lt;nop,nop,timestamp 49023625 110651251,nop,nop,sack 1 {3865:5209}&gt;<br>
+11:14:10.747154 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110651400 49023625&gt;<br>11:14:11.419178 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110651568 49023625&gt;<br>
+11:14:12.763226 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110651904 49023625&gt;<br>11:14:15.451350 IP server.ssh &gt; client.50624: P 2505:3865(1360) ack 2625 win 128 &lt;nop,nop,timestamp 110652576 49023625&gt;<br>
+...<br><br><br>Thank you,<br>    Alan<br><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00117.html">Re: [tlug] Re: Pretty Japanese font for latex-cjk beamer presentation</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00119.html">[tlug] Flash and Firexfox 2</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00140.html">[tlug] Re: Mysterious LVM issue</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00119.html">[tlug] Flash and Firexfox 2</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00118"><strong>Date</strong></a></li>
+<li><a href="threads.html#00118"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

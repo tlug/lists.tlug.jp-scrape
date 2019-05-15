@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: More about Configuration Files -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 11 Sep 1998 19:55:06 +0900 -->
+<!--X-Message-Id: 13817.368.857479.592465@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199809070559.PAA22753@example.com -->
+<!--X-Reference-Id: 35F3AC15.D9F60243@example.com -->
+<!--X-Reference-Id: 13811.45912.776540.461978@example.com -->
+<!--X-Reference-Id: 35F8F37B.192708B8@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00317.html">Date Prev</A>][<A HREF="msg00319.html">Date Next</A>][<A HREF="msg00316.html">Thread Prev</A>][<A HREF="msg00319.html">Thread Next</A>][<A HREF="maillist.html#00318">Date Index</A>][<A HREF="threads.html#00318">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: More about Configuration Files</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: More about Configuration Files</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 11 Sep 1998 19:54:40 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00316.html">35F8F37B.192708B8@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00142.html">199809070559.PAA22753@example.com</A>&gt;&lt;<A HREF="msg00152.html">35F3AC15.D9F60243@example.com</A>&gt;&lt;<A HREF="msg00156.html">13811.45912.776540.461978@example.com</A>&gt;&lt;<A HREF="msg00316.html">35F8F37B.192708B8@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Dave" == Dave  &lt;dave@example.com&gt; writes:
+
+    Dave&gt; On the advice i got here, i've succesfully configured my
+    Dave&gt; .bashrc file to hold all the aliases that i like to have
+    Dave&gt; around. However, i'm still not getting the computer to start
+    Dave&gt; up certain programs when i log in. At first i put them in my
+    Dave&gt; .bash_profile, but that caused chaos to ensue. THen, on the
+
+Noooo!  "Stop doing that."  :-)
+
+    Dave&gt; advice of a guy from the #Linux channel on IRC, i made a
+    Dave&gt; .xsession file and put the programs in there. This had
+    Dave&gt; absolutely no effect whatsoever, and this is where I am now
+    Dave&gt; stuck. So where DO i put the commands to start programs when
+    Dave&gt; i log in?
+
+All praise RedHat and Pacific High Tech!  All praise MIT!  All praise
+the mysterious and magical X initialization process!  (Debian docs,
+Linux rocks!)
+
+How do you start X?  If it's from the command line, do "less `which
+&lt;command to start X&gt;`" and start tracing through the files mentioned
+in the script.
+
+Otherwise, first try `ln -s ~/.xsession ~/.xinitrc'.  This isn't
+strictly speaking correct, but it might work.  Look for
+`~/.window-manager-rc' (whatever your window manager is).  Most of
+them allow starting programs; this may or may not work right for you.
+But it probably will.
+
+If all else fails, look first to see if /etc/X11 exists and read
+everything readable in that directory and subdirectories; one of them
+will be the real initialization script.  Next try /usr/X11R6/lib/X11
+and its subdirectories.
+
+    Dave&gt; One other semi-related question: I would like to have an
+    Dave&gt; nxterm which starts up when i log in, and automatically goes
+    Dave&gt; into superuser mode, so it's ready and waiting for me when i
+    Dave&gt; (inevitably) need to do something as root. At my current
+
+Leaving an su term lying around isn't a good idea, for the same
+reasons using root as your regular user isn't a good idea.  (I do it
+anyway....)  Do make sure the prompt is visually differentiated and
+tells you where you're logged in.
+
+    Dave&gt; level of understanding, this might not be feasable since i
+    Dave&gt; would have to include the supersuer password in some file,
+    Dave&gt; and that would either be a huge breach of security, or
+    Dave&gt; simply not technically possible. ANy ideas on this?
+
+If you're really concerned about security, I would strongly suggest a
+bit of "gaman" and a lot of reorganizing your life so that things you
+need to do a lot are in user space (eg, non-critical config files
+could be owner you or group you for almost all programs).
+
+As an exercise:
+
+Put a script to do the job in a file on a floppy and wrap the command
+to execute it (in your home directory) in
+
+  if [ -x /mnt/floppy/run-a-su-nxterm ]; then
+    /mnt/floppy/run-a-su-nxterm
+  fi
+
+If your box is physically secure (ie, you always lock the console when
+away from your desk) but on a network, you can use a program like
+super to run the nxterm as root, but only for your user and only when
+logged in on a specific device, like the console or via xdm.
+
+If you have a lot of such things that you might do on several systems,
+you can handle them entering the password only once by using ssh and
+sshagent.  But your box itself had better be physically secure in the
+above sense.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00142" HREF="msg00142.html">tlug: iso-2022-cjk-unix (Was: Solution, etc. etc.)</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+<LI><STRONG><A NAME="00152" HREF="msg00152.html">tlug: Configuration Files</A></STRONG>
+<UL><LI><EM>From:</EM> Dave &lt;dave@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00156" HREF="msg00156.html">tlug: Configuration Files</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00316" HREF="msg00316.html">tlug: More about Configuration Files</A></STRONG>
+<UL><LI><EM>From:</EM> Dave &lt;dave@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00317.html">tlug: e-mail software recomendations</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00319.html">RE: tlug: More about Configuration Files</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00316.html">tlug: More about Configuration Files</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00319.html">RE: tlug: More about Configuration Files</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00318"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00318"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

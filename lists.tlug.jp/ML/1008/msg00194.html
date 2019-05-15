@@ -1,0 +1,206 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Variable scope in Javascript driving me nuts -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Fri, 27 Aug 2010 08:33:19 +0900 -->
+<!--X-Message-Id: 4C76F9B1.8010802@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4C769657.5040705@articlass.org -->
+<!--X-Reference: AANLkTi=MpJfrodyvEZw7urO7yED&#45;vOKfYMaVUJqwMJ2t@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00193.html">Date Prev</a>][<a href="msg00195.html">Date Next</a>][<a href="msg00192.html">Thread Prev</a>][<a href="msg00197.html">Thread Next</a>][<a href="maillist.html#00194">Date Index</a>][<a href="threads.html#00194">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Variable scope in Javascript driving me nuts</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 27 Aug 2010 08:33:05 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Variable%20scope%20in%20Javascript%20driving%20me%20nuts">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Variable scope in Javascript driving me nuts</strong></li>
+<li>References: &lt;<a href="mailto:4C769657.5040705@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Variable%20scope%20in%20Javascript%20driving%20me%20nuts">4C769657.5040705@example.com</a>&gt;	&lt;<a href="mailto:AANLkTi%3DMpJfrodyvEZw7urO7yED-vOKfYMaVUJqwMJ2t@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Variable%20scope%20in%20Javascript%20driving%20me%20nuts">AANLkTi=MpJfrodyvEZw7urO7yED-vOKfYMaVUJqwMJ2t@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.24 (X11/20100317)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt; my function()
+&gt;&gt; {
+&gt;&gt;    var valid = false;
+&gt;&gt;    string = JSON.stringify(data);
+&gt;&gt;    $.post('jsonhandler.php', {JSON: string}, checkResult, &quot;json&quot;);
+&gt;&gt;    function checkResult(jsonDataReceived)
+&gt;&gt;    {
+&gt;&gt;       valid = jsonDataReceived.valid;
+&gt;&gt;       console.log (&quot;jsonDataReceived.valid = &quot; + jsonDataReceived.valid);
+&gt;&gt;       console.log (&quot;valid inside checkResult = &quot; + valid);
+&gt;&gt;    }
+&gt;&gt;    console.log (&quot;valid OUTSIDE checkResult = &quot; + valid);
+&gt;&gt;    return valid;
+&gt;&gt; }
+&gt;&gt;
+&gt;&gt; When I run this, this is what I see in the console log:
+&gt;&gt;
+&gt;&gt; valid OUTSIDE checkResult = false
+&gt;&gt; jsonDataReceived.valid = true
+&gt;&gt; valid inside checkResult = true
+
+That makes sense.
+
+&gt;&gt; Shouldn't what happens inside the checkResult function set &quot;valid&quot; to
+&gt;&gt; true before I get to the &quot;return valid&quot; part?
+
+As Philipp pointed out, checkResult is called asynchronously. So the end
+of my_function() is reached before checkResult() is called.
+
+Yes, $.ajax() supports synchronous, see this thread, which also points
+out the disadvantage - your browser will lock up waiting:
+<a  rel="nofollow" href="http://stackoverflow.com/questions/133310/how-can-i-get-jquery-to-perform-a-synchronous-rather-than-asynchronous-ajax-req">http://stackoverflow.com/questions/133310/how-can-i-get-jquery-to-perform-a-synchronous-rather-than-asynchronous-ajax-req</a>
+
+Async thinking is harder, but do it wherever you can.
+
+
+Romeo wrote:
+&gt; Just a guess but it looks like you're setting 'var valid = false;' inside a
+&gt; function as a local variable. That's what 'var' does in javascript I think.
+
+Yes.
+
+&gt; Then inside your inner checkResult function it looks like you're setting
+&gt; 'valid' as a global function by not having any 'var' in front of it. So the
+&gt; checkResult's 'valid' variable is a global var and the 'my function()',
+&gt; 'valid' var is a local variable. You could try making them both global or
+&gt; probably better yet, just pass the value back out of the function.
+
+No. This is the traditional programming language way of thinking.
+Javascript uses what they call &quot;closures&quot;, which means a function has
+the ability to reference all variables in its scope at the point of
+declaration.
+
+When you reference a variable called &quot;valid&quot; in checkResult it first
+checks the functions local variables it finds none. So it goes up to the
+closure scope and finds &quot;valid&quot; there. If it didn't find it there it
+would look in the global scope. And if it didn't find it there it would
+create a new local (though you might get a warning about not using the
+&quot;var&quot; keyword).
+
+This always confuses me too, so my first choice is to find and copy
+working code and not think about it. My second choice is to explicitly
+pass around the variables I want to use, or use globals. This is less
+efficient than doing it the proper Javascript way, but at least I can
+understand my code :-).
+
+Darren
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/gobet/">http://dcook.org/gobet/</a>  (Shodan Go Bet - who will win?)
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00197" href="msg00197.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00208" href="msg00208.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+<ul><li><em>From:</em> Romeo Theriault</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00189" href="msg00189.html">[tlug] Variable scope in Javascript driving me nuts</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00192" href="msg00192.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+<ul><li><em>From:</em> Romeo Theriault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00193.html">Re: [tlug] Die, &quot;Adobe Bridge Workspace File&quot;! Die!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00195.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00192.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00197.html">Re: [tlug] Variable scope in Javascript driving me nuts</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00194"><strong>Date</strong></a></li>
+<li><a href="threads.html#00194"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

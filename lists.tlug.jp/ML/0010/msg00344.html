@@ -1,0 +1,184 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Help with compiling bonobo please. -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 27 Oct 2000 13:03:32 +0900 (JST) -->
+<!--X-Message-Id: 14840.65172.492311.260458@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 39F8EBEE.B54C9B5E@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00343.html">Date Prev</A>][<A HREF="msg00345.html">Date Next</A>][<A HREF="msg00342.html">Thread Prev</A>][<A HREF="msg00362.html">Thread Next</A>][<A HREF="maillist.html#00344">Date Index</A>][<A HREF="threads.html#00344">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Help with compiling bonobo please.</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Help with compiling bonobo please.</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 27 Oct 2000 13:03:32 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00340.html">39F8EBEE.B54C9B5E@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00340.html">39F8EBEE.B54C9B5E@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;1ZyLnB.A.mXE.zLQ-5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Antony" == Antony Stace &lt;antony@example.com&gt; writes:
+
+    Antony&gt; It seems that the bonobo configure script is looking at
+
+    Antony&gt; /usr/bin/orbit-config
+
+Is this a literal, hard-coded into the bonobo configure?  If so, you
+should complain to the bonobo people.  What should happen is that
+configure picks this up by searching the PATH.
+
+    Antony&gt; Should I
+
+    Antony&gt; 1.  Change the variable ac_default_prefix in both scripts
+    Antony&gt; to /usr/bin or
+
+    Antony&gt; 2.  Change the variable ac_default_prefix in
+    Antony&gt; /tmp/bon/bonobo-0.26/configure or
+
+No.  Never touch the autoconf scripts unless you know what you're
+doing.
+
+    Antony&gt; 3.  Something else since this will break something.
+
+First, use `./configure --help' to find out if there is an option
+specifically to deal with this.  Manipulating PATH may also help.
+
+The obvious thing is to use `./configure --prefix=/usr'.  This will
+create Makefiles to install binaries in /usr/bin, admin binaries in
+/usr/sbin, libraries in /usr/lib, man pages in /usr/man, ... you get
+the idea.  The prefix variable applies only to the install process;
+configure searches for the necessary libraries etc without consulting
+$prefix.
+
+But first, what are you worried about breaking?  If you're not worried
+about your ORBit 0.5.1 installation, and you want to overwrite it,
+just use `./configure --prefix=/usr' when building ORBit.  The problem
+is that this will very possibly confuse your package manager when you
+try to upgrade to ORBit 0.5.5 from the Linux vendor.  (It mostly
+doesn't, but it could.)  If you want to continue using ORBit 0.5.1
+with most of your software, but the new ORBit with bonobo, it will be
+difficult.  It probably doesn't much matter what you do with bonobo if
+you opt to replace your old ORBit with 0.5.4.
+
+If you do not, I would put the new ORBit not in /usr/local, but in
+/usr/local/ORBit-0.5.4 (you just invoke ORBit's configure with
+`./configure --prefix=/usr/local/ORBit-0.5.4').  (/usr/local is a good
+place for stanard stuff not provided by the vendor.  But if you plan
+to run multiple versions of a given package depending on the
+application, use package- and version-specific paths.)  Then if you're
+lucky, invoking bonobo's configure with
+
+	  PATH=/usr/local/ORBit-0.5.4/bin:$PATH ./configure
+
+will win (that's what these $PACKAGE-config scripts are supposed to do
+for you).
+
+If not, you probably need to give bonobo's configure some options like
+--with-local-prefix or more specifically --with-includes and
+--with-libraries, and then you'll probably need to wrap the bonobo
+stuff with a script that sets the environment variables
+LD_LIBRARY_PATH and PATH.
+
+I recommend you just overwrite ORBit and pray.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00340" HREF="msg00340.html">Help with compiling bonobo please.</A></STRONG>
+<UL><LI><EM>From:</EM> Antony Stace &lt;antony@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00343.html">Re: Python discussion, anybody?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00345.html">Re: Python discussion, anybody?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00342.html">Re: Help with compiling bonobo please.</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00362.html">Re: Help with compiling bonobo please.</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00344"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00344"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] how to tune reiser4 for millions of files? -->
+<!--X-From-R13: Tenapbvf Qnegrtavr <spnegrtavrNserr.se> -->
+<!--X-Date: Thu, 28 Jan 2010 23:18:39 +0900 -->
+<!--X-Message-Id: 201001281509.16134.fcartegnie@free.fr -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100128073847.GH13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Reference: 20100128095957.GB24344@analytic.cynic.net -->
+<!--X-Reference: 20100128132701.GI13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00128.html">Date Prev</a>][<a href="msg00130.html">Date Next</a>][<a href="msg00128.html">Thread Prev</a>][<a href="msg00130.html">Thread Next</a>][<a href="maillist.html#00129">Date Index</a>][<a href="threads.html#00129">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] how to tune reiser4 for millions of files?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 28 Jan 2010 15:09:15 +0100</li>
+<li><strong>From</strong>: <strong>Francois Cartegnie &lt;<a href="mailto:fcartegnie@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">fcartegnie@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] how to tune reiser4 for millions of files?</strong></li>
+<li>References: &lt;<a href="mailto:20100128073847.GH13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128073847.GH13095@example.com</a>&gt;	&lt;<a href="mailto:20100128095957.GB24344@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128095957.GB24344@example.com</a>&gt;	&lt;<a href="mailto:20100128132701.GI13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128132701.GI13095@example.com</a>&gt;</li>
+<li>User-agent: KMail/1.12.2 (Linux/2.6.31.5-desktop-1mnb; KDE/4.3.2; x86_64; ; )</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Le jeudi 28 janvier 2010, Michal Hajek a écrit :
+&gt; 
+&gt; My attention is more on the hw or system side of the problem. That is,
+&gt; can I do something with the system (OS, hw..etc.) to speed things up?
+Hi,
+
+As Curt told you, you're looking for inode attributes but the file indexing 
+hash is just based on names.
+Reiser will be fast accessing a file in a large directory assuming you already 
+know that filename (ie the hash). Sequentially browsing all files will always 
+be slow (and slowest with that B-tree than just a list).
+
+If you're looking for a small subset of inodes or want to only retrieve their 
+attributes, give a try to the highly experimental (anyone said as much as 
+reiser4?) Mysqlfs. 
+This is a really slow filesystem but as all inodes properties will be stored 
+in the database it will allow inodes attributes side querying. (and index 
+optimizations as well)
+
+Francois
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00126" href="msg00126.html">[tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00128" href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00130.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00130.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00129"><strong>Date</strong></a></li>
+<li><a href="threads.html#00129"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

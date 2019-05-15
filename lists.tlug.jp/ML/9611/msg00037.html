@@ -1,0 +1,171 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Using KTerm&#45;6.2.0 and Kinput2 -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 7 Nov 1996 09:26:00 GMT -->
+<!--X-Message-Id: m0vLQe2&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00036.html">Date Prev</A>][<A HREF="msg00038.html">Date Next</A>][<A HREF="msg00036.html">Thread Prev</A>][<A HREF="msg00038.html">Thread Next</A>][<A HREF="maillist.html#00037">Date Index</A>][<A HREF="threads.html#00037">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Using KTerm-6.2.0 and Kinput2</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Using KTerm-6.2.0 and Kinput2</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 7 Nov 96 18:21 JST</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+A couple of people had questions and comments about using KTerm with
+Kinput2.  If you're using an X Input Method protocol server, I'd like
+to hear about it; I haven't tried this yet.
+
+I built both of them from source, and had some trouble getting them
+working, I'm not sure why.  The main reason for writing to the list is
+that I haven't looked at KTerm/212 yet, and I expect that if Jim Breen
+is using the stock hard-coded translations and the stock KTerm.ad,
+people who build KTerm/212 will have the same problem I did.
+
+Alberto claimed that adding to Kinput2's translation table did the
+job; but that wasn't good enough; I had to fix KTerm's as well.  I
+think that what happens is that you need to tell KTerm how to convert,
+and then once conversion is started, KTerm simply passes all keyboard
+events to Kinput2, so Kinput2 needs to know when to relinquish the
+keyboard.  Thus you have to tell both programs what the conversion key 
+is.
+
+Unfortunately, the syntax is different for the two programs; Kinput2
+defines a special resource, but you must change the translation table
+for KTerm.
+
+Here's the goodies.  On most Linux systems, the application defaults
+files live in AD = /usr/X11R6/lib/X11/app-defaults/.
+
+In $AD/KTerm, add
+
+*VT100.Translations: #override \
+    Shift&lt;Key&gt;space: begin-conversion(_JAPANESE_CONVERSION)
+
+to get shift-space as the kanji conversion key in KTerm.
+
+In $AD/Kinput2, edit the *ConversionStartKeys resource to include the
+translation you want.  If shift-space is OK with you, the default
+seems to be
+
+*ConversionStartKeys: \
+	Shift&lt;Key&gt;space \n\
+	Ctrl&lt;Key&gt;Kanji
+
+so you can leave it alone. if it's already there.  If you happen to
+*have* a Kanji key, then ctrl-kanji should work without changing
+anything, since that's the hard-coded default in both programs.
+
+Substituting 'Ctrl&lt;Key&gt;backslash' for 'Shift&lt;Key&gt;space' *in both
+files* gets the usual Mule C-\ enter-henkan effect.
+
+For X connoisseurs, you can also add the resource specifications above 
+to your .Xresources or whatever files get read in with xrdb.  I also
+noticed an interesting fact.  If you change the KTerm specification to 
+*Translations, the henkan works, but KTerm starts up with a few
+warnings.
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00036.html">(Fwd) TLUG - site</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00038.html">FreeBSD redux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00036.html">(Fwd) TLUG - site</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00038.html">FreeBSD redux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00037"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00037"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

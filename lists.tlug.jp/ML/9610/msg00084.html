@@ -1,0 +1,281 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Japanese TeX:  if you're really macho... -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 16 Oct 1996 13:46:11 GMT -->
+<!--X-Message-Id: m0vDWEj&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00083.html">Date Prev</A>][<A HREF="msg00085.html">Date Next</A>][<A HREF="msg00082.html">Thread Prev</A>][<A HREF="msg00086.html">Thread Next</A>][<A HREF="maillist.html#00084">Date Index</A>][<A HREF="threads.html#00084">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Japanese TeX:  if you're really macho...</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Japanese TeX:  if you're really macho...</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 16 Oct 96 22:42 JST</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Yow!
+
+OK, for all you folks who wish you had a Japanese TeX you could
+integrate with Ghostscript, here's the short synopsis.  I dunno when
+I'll get around to writing up the whole thing in accurate detail with
+config files.  Sorry, but I left the apartment today at 8:00am and
+tomorrow will start just as early and go just as late....
+
+(1) Get a recent Ghostscript, you want the Aladdin 4.03 version.  Stay 
+    away from Aladdin 4.0[12]?, they have bugs in garbage collection
+    that make kanji (and anything big, for that matter) painful.
+
+	     file://ftp.cs.wisc.edu/ghost/aladdin/*.4.03*
+
+or
+
+   file://turnbull.sk.tsukuba.ac.jp/pub/linux/packages/Ghostscript/
+
+This includes fonts and other stuff you don't need if you've got
+Ghostscript already; there may be closer mirrors, too.
+
+(2) Get the Wadalab fonts.
+
+		 file://ftp.ipl.t.u-tokyo.ac.jp/Fonts/*
+	     file://ftp.ipl.t.u-tokyo.ac.jp/Fonts/tools/*
+
+or
+
+   file://turnbull.sk.tsukuba.ac.jp/pub/linux/packages/Ghostscript/*
+
+    These are *big*, like multiple megabytes per gzipped font.  You
+    *need* the programs in the tools directory, but you can pick and
+    choose the fonts.  You must get the symbol font, though; it's used
+    in combination with all the others.
+
+(3) Build Ghostscript and the Wadalab tools, especially 'wftodm'.
+    Install the fonts in a reasonable place, $KANJI in the sequel.
+    Don't forget the symbol fonts, wadalab-symbol-6.tar.gz.
+
+(4) Get and build NTT-JTeX.
+
+      file://turnbull.sk.tsukuba.ac.jp/pub/linux/packages/Text/
+
+    - web* (there are five of these archives, you need them all)
+    - lib* (there are two of these archives, you need them both)
+    - jl*  (there are five of these archives, you need them all)
+    - base.tar.gz
+    - dvipsk-5.58f.tar.gz
+    - xdvik-18f.tar.gz
+
+    You don't really need either of the last two, but either one has
+    the latest version of Karl Berry's kpathsea library that I've been
+    able to find.  It makes life easier if all your utilities use the
+    same library and config files, I've found; may as well be up to
+    date.  I don't know to what extent xdvik can do Japanese; the 'k'
+    is for "kpathsea," not "kanji."
+
+    Find a nice place to be the root of your source tree.
+
+    First untar the non-'j' versions of web* in the root.  This
+    produces a subdirectory web2c-6.1, containing both the web sources 
+    for TeX and friends, and the web2c converter.  Obviously the
+    "*-add*" versions come later, as far as I can tell it doesn't
+    matter whether you do web or web2c first.
+
+    Next do the 'j' versions.  These produce a subdirectory
+    web2c-6.1j, and it must be a sibling of web2c-6.1 because it's
+    full of symlinks of the form "../web2c-6.1."
+
+    If you are going to build xdvik and dvipsk, or just want the
+    kpathsea library, put them here too.  They untar into nice
+    versionified subdirectories.  All of these subdirectories have
+    kpathsea subdirectories.  I believe it is safe to have only one
+    real copy of the subdirectory which is shared among xdvik, dvipsk, 
+    web2c, and web2c-j.  It is probably safest to have a real
+    subdirectory for each of the programs, and then do
+
+     cd web2c-6.1/kpathsea; ln -s ../../dvipsk-5.58f/kpathsea/* .
+
+    in each one.  It is possible that the various programs autoconfig
+    scripts will step on each other if you symlink the subdirs instead
+    of their leaf files.  On the other hand, you may do fine with only
+    one copy of kpathsea.a.  Haven't tried it yet....
+
+    Before you build, you need to install the TeX library files.
+    Chose a root (from here on, $ROOT) for the libraries, cd there,
+    and untar the lib and jlib archives.  Then you need to cd down to
+    $ROOT/lib/texmf/tex/latex2e, and untar base.tar.gz there.  (I
+    think that's how it worked; you should do a tar tzf to make sure
+    first, and maybe the "base" files needed to be in the source
+    directory, for some reason.)
+
+    Do ./configure --prefix $ROOT; make; make install in each of the
+    source directories.
+
+(5) TeXify the kanji fonts (the example here does mincho, "dm"):
+
+    cd $KANJI; wftodm -FontBase dm min*.ps jis*.ps
+    for $i in *.afm; do afm2tfm ${i%.afm} -v ${i%.afm} r${i%.afm}; done
+    for $i in *.vpl; do vptovf $i ${i%vpl}vf ${i%vpl}tfm; done
+
+    Move the tfms and vfs to an appropriate place (see the docs for
+    dvipsk for this, but in general just about anywhere below
+    $ROOT/lib/texmf/fonts/tfm and $ROOT/lib/texmf/fonts/vf
+    respectively should do).
+
+    The README.english for the Wadalab fonts says that if you do
+    wftodm and then pstopk, the baselines of the kanji are wrong; they
+    are shifted up a bit.  This does not appear to be true for the pfa
+    fonts themselves, fortunately; the bottom of the hiragana are
+    aligned with the baseline of the Helvetica and the kanji descend
+    slightly more.
+
+(6) Teach Ghostscript about the fonts.  It may be possible to do this
+    using Fontpaths, but I don't understand them well.  The tedious
+    way to do it is to edit the Fontmap file.  Basically, for evey
+    single pfa file you need a line in the fontmap.  For the hiragana
+    subfont, you find
+
+    /dmjhira		($KANJI/dmjhira.pfa)	;
+
+    All together you need about 30 of these per font.
+
+(7) Inhibit dvipsk from trying to make the fonts.  For each of these
+    fonts, you need to add a line to $ROOT/lib/dvips/psfonts.map:
+
+    dmjhira dmjhira
+
+(8) I have not yet messed around with jlatex2e styles to see if these
+    automagically get included.  In jtex, the following code produces
+    a few lines of output:
+
+    \font\myroman = phvr8r at 28pt
+    \font\mysmallroman = phvr8r at 14pt
+    \makejfontdata{dm}{dm}{}{1}
+    \jfont\mymincho = dm at 28pt
+
+    \myroman This is Helvetica.\vskip 20pt
+
+    \mysmallroman This is more Helvetica.\vskip 20pt
+
+    \mymincho これはみんちょう瘢雹です\vskip 20pt
+    \bye
+
+    Note that jtex wants New-JIS input, although the DVI output is a
+    sort of munged kuten I believe.
+
+And there you have it....
+
+If you can't afford/don't want to build all those binaries, check back 
+with me in a bit.  It may be possible to use ASCII-JTeX this way; I
+didn't understand dvipsk well enough when I was trying that
+configuration.  The NTT-JTeX has the advantage, however, that only the 
+subfonts you actually use get loaded; this can be done with
+wftopfa-style fonts as well, but I don't trust the code that the
+Wadalab project produced.  Older Ghostscripts (3.33 or later is
+necessary I'm pretty sure) may also work.
+
+And I still have the ambition of putting together a good package of
+TeX with Ghostscript for Japanese processing....  Probably not an RPM, 
+though, it would only be about 50MB in gzip form....  ;-)
+
+Ciao.
+
+Steve
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00086" HREF="msg00086.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00083.html">Re: mule and xjdic &amp; names</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00085.html">Re: kinput2 HOWTO</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00082.html">edict.el and edict</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00086.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00084"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00084"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

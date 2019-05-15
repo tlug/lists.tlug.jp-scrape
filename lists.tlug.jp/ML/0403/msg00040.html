@@ -1,0 +1,218 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Coda -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 01 Mar 2004 20:38:55 +0900 -->
+<!--X-Message-Id: 873c8sn6eo.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20040301071733.GX18439@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00039.html">Date Prev</a>][<a href="msg00041.html">Date Next</a>][<a href="msg00029.html">Thread Prev</a>][<a href="msg00044.html">Thread Next</a>][<a href="maillist.html#00040">Date Index</a>][<a href="threads.html#00040">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Coda</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 01 Mar 2004 20:38:55 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Coda">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Coda</strong></li>
+<li>References: &lt;<a href="msg00029.html">20040301071733.GX18439@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (celeriac, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;jb&quot; == Jonathan Byrne &lt;jq@example.com&gt; writes:
+
+    jb&gt; Steve, your mention of Coda reminded me that Someday Real Soon
+    jb&gt; Now (TM) I want to try something like this with my Thinkpad
+    jb&gt; for keeping it in sync with my desktop machine.  Is that how
+    jb&gt; you're using it?  Is it pretty good?
+
+It's pretty close to perfect for those of my needs it satisfies.
+
+It doesn't keep you &quot;in sync&quot;, it's a caching distributed file system.
+This means that (1) frequently accessed stuff will automatically be in
+the cache (good), but (2) if it's something like your maildir, where
+you might want to back up in a thread, you'll need to tweak cache
+expiration priorities and explicitly hoard files in the cache
+(possibly a PITA).
+
+For true synchronization, something like Unison might be better, or
+even a homebrew rsync script.  There's also Intermezzo, but Coda seems
+to be a lot more mature than Intermezzo, and I don't really know what
+Intermezzo is good at (compared to Coda).  Coda has a good mailing
+list, and there's very little fanboying and lots of good information
+about competing products, since Peter Bram was involved in all of AFS,
+Coda, and Intermezzo, even though he has since moved on from Coda to
+Intermezzo.  Heck, you'll even see the occasional post saying &quot;for
+your needs, Samba is the way to go&quot;.  :-)
+
+What Coda does: when you open a file, it checks for a live server, if
+it finds one, it checks for existence and version of the file in the
+/coda filesystem.  Then it goes to the local cache and checks for a
+local copy.  If found, and versions match, it uses it.  If no match,
+it downloads it first.  If not found on the server, or server not
+connected, it operates locally.  On close, it pushes any changes back
+to the server.  Both are straight copies, and the conflict resolution
+semantics require that the open system call block until the copying is
+complete.  (The close call doesn't block, but it will cause the
+servers to refuse to serve the file to other clients until the copying
+is done.)
+
+What's nice: reliable disconnected operation; reliable conflict
+detection (no false negatives); reliable mirroring and automatic
+failover across servers when you configure replicated volumes.  Works
+and plays well with distributed authentication (Kerberos) (but all net
+traffic is cleartext or trivially XOR-encrypted; adding encryption
+shouldn't be hard, and is being requested a lot, but hasn't been done
+yet).  Universal filesystem namespace organized into &quot;cells&quot; (sorta
+like Internet domains or Kerberos realms), which you access by domain
+name (eg, to look at the anonymous playpen for would-be Coda users,
+you just access /coda/testserver.coda.cs.cmu.edu/, and the volumes
+managed by that cell automagically appears as a Unix filesystem
+mounted on that directory).  You can use DNS SRV records for service
+discovery.
+
+What's not nice: latency proportional to filesize on cache misses.
+Files _must_ be smaller than total cache size.  Coda does not export
+an existing file system, it creates its own---thus even on the server
+you have to run the coda client to access the file system.  Both
+server and client like to use a lot of RAM (not VM, RAM).  Conflict
+resolution is very primitive: basically, you look at two versions of
+the file and choose the one you like.  Not yet very scalable; the
+local cache is more or less limited to about 1GB, the maximum file
+size is 4GB (32-bit size_t), and there are restrictions on the size of
+directories.
+
+There is no Mac client yet (needs a kernel module), but Apple has
+recently shown interest (in the form of saying &quot;if there seems to be
+good press in it for us, we might throw in some programmer hours&quot;).
+
+What this is good for: single-user, multiple machine r/w, strongly or
+intermittently connected.  Multi-user disconnected operation with
+shared read-often/write-rarely files.  Basically, push the probability
+of simultaneous writes really low and Coda is way cool.
+
+Use cases:  personal maildir good, big (&gt; 10MB) mbox bad.  Single user
+dev workspace good, multi-developer &quot;whiteboard&quot; bad.  Actually, for
+files up to about 50kB, Coda over a 19.2 connection provided
+satisfactory performance as long as I could multitask (eg, get coffee
+or change diapers) while &gt;10 kB copies were happening.  (I'm not
+currently doing this because mostly I'm on the Mac at home, q.v.)
+
+In practice, I no longer use NFS or Samba at all, but my use cases
+(maildir MUA, single developer workspaces) fit Coda to a &quot;t&quot;.  My
+former roadwarrior didn't have that much space, so I would hoard 200MB
+of stuff that I might conceivably use, and this hoard evolved
+gracefully over time.  Especially for a personal library executable
+scripts, /coda/&lt;realm&gt;/bin is a good thing to have.  (Binaries can be
+problematic unless your hardware, kernel, and libc versions are quite
+similar and stay that way.)  Ditto devo workspaces.  No more
+forgetting that I tweaked something on one box or the other, etc.
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00029" href="msg00029.html">[tlug] Coda</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00039.html">Re: [tlug] Japanese input in aterm</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00041.html">Re: [tlug] How revolutionary is M2?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00029.html">[tlug] Coda</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00044.html">[tlug] setting up a pci mini300+ print server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00040"><strong>Date</strong></a></li>
+<li><a href="threads.html#00040"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

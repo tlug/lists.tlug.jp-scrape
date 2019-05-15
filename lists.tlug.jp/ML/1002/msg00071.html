@@ -1,0 +1,173 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] distributed file systems -->
+<!--X-From-R13: Enpu Xboo <fnpuN77um.wc> -->
+<!--X-Date: Mon, 15 Feb 2010 17:59:52 +0900 -->
+<!--X-Message-Id: 4d3714b51002150059w6e70ee1cmf93cb9e82655daa4@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4d3714b51002141821r1b903f03j7a567122720e9c15@mail.gmail.com -->
+<!--X-Reference: 20100215035353.GJ24817@poetic.cynic.net -->
+<!--X-Reference: 4d3714b51002142226p338664a8l34a9d918eea2d9bd@mail.gmail.com -->
+<!--X-Reference: abb599561002142340j2786051l8e9731ccf0b5c175@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00070.html">Date Prev</a>][<a href="msg00072.html">Date Next</a>][<a href="msg00068.html">Thread Prev</a>][<a href="msg00078.html">Thread Next</a>][<a href="maillist.html#00071">Date Index</a>][<a href="threads.html#00071">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] distributed file systems</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 15 Feb 2010 17:59:20 +0900</li>
+<li><strong>From</strong>: <strong>Sach Jobb &lt;<a href="mailto:sach@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20distributed%20file%20systems">sach@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] distributed file systems</strong></li>
+<li>References: &lt;<a href="mailto:4d3714b51002141821r1b903f03j7a567122720e9c15@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20distributed%20file%20systems">4d3714b51002141821r1b903f03j7a567122720e9c15@example.com</a>&gt;	&lt;<a href="mailto:20100215035353.GJ24817@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20distributed%20file%20systems">20100215035353.GJ24817@example.com</a>&gt;	&lt;<a href="mailto:4d3714b51002142226p338664a8l34a9d918eea2d9bd@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20distributed%20file%20systems">4d3714b51002142226p338664a8l34a9d918eea2d9bd@example.com</a>&gt;	&lt;<a href="mailto:abb599561002142340j2786051l8e9731ccf0b5c175@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20distributed%20file%20systems">abb599561002142340j2786051l8e9731ccf0b5c175@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; If you can limit all your users to submit new data to one server,
+&gt; and later delete it, yet they'll be able to read from ANY server it
+&gt; will simplify
+&gt; the problem a great deal. You'll have one master RW server and many RO
+&gt; slave servers that sync from the master.
+
+Yes, this is true and was in fact our first thought. The problem is
+that the admin is slow as well and, especially at the beginning, we
+don't want to give anybody any reason what-so-ever not to use it. If
+we can't find any other reasonable solution we will go with the one RW
+many RO approach.
+
+&gt; you can use a rsync script triggered by a inotify (or dnotfy) to replicate
+&gt; the changes. Or you can run cron or endless loop script to do:
+&gt; `rsync -HavP --delete master:/dir1/ /dir1/`, of course with properly setup ssh
+&gt; PKI authentication.
+
+I have something like this running now for backups and if I didn't
+know of any other tools this is what I would do to push out the
+changes from RW to RO.
+
+&gt; BTW, how quickly is &quot;fairly quickly&quot; ? A minute, 5 s, 1 s, less?
+
+Short enough so that it doesn't appear broken to anyone. They refresh
+it a few times, and &quot;oh, yeah, there it is.&quot; Probably anything under
+10 sec is OK.
+
+&gt; I haven't seen exactly the same problem, but I use subversion for tasks like
+&gt; that, almost never looking at the revision history, but utilizing the
+&gt; efficient delta
+&gt; transfer algorithm.
+
+Interesting. OK, since both you and cjs have mentioned it I will try
+it out. Nice thing about this is I don't have to any system or
+application level changes to try it. I would want it running in some
+sort of endless loop if I could.
+
+Cheers,
+Sach
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00078" href="msg00078.html">Re: [tlug] distributed file systems</a></strong>
+<ul><li><em>From:</em> 宇井野　理男</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00063" href="msg00063.html">[tlug] distributed file systems</a></strong>
+<ul><li><em>From:</em> Sach Jobb</li></ul></li>
+<li><strong><a name="00064" href="msg00064.html">Re: [tlug] distributed file systems</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00066" href="msg00066.html">Re: [tlug] distributed file systems</a></strong>
+<ul><li><em>From:</em> Sach Jobb</li></ul></li>
+<li><strong><a name="00068" href="msg00068.html">Re: [tlug] distributed file systems</a></strong>
+<ul><li><em>From:</em> Kalin KOZHUHAROV</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00070.html">Re: [tlug] distributed file systems</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00072.html">Re: [tlug] distributed file systems</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00068.html">Re: [tlug] distributed file systems</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00078.html">Re: [tlug] distributed file systems</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00071"><strong>Date</strong></a></li>
+<li><a href="threads.html#00071"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

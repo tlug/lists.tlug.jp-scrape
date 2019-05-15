@@ -1,0 +1,205 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs and Kanji detection -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 2 Jun 1997 04:14:29 GMT -->
+<!--X-Message-Id: m0wYOJM&#45;00001fC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970601122552.17887A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00024.html">Date Prev</A>][<A HREF="msg00023.html">Date Next</A>][<A HREF="msg00000.html">Thread Prev</A>][<A HREF="msg00030.html">Thread Next</A>][<A HREF="maillist.html#00025">Date Index</A>][<A HREF="threads.html#00025">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs and Kanji detection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs and Kanji detection </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 02 Jun 1997 13:01:35 +0900</LI>
+<LI>In-reply-to: Your message of "Sun, 01 Jun 1997 12:41:27 +0900."            &lt;<A HREF="msg00000.html">Pine.HPP.3.95.970601122552.17887A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Craig" == C Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; during a recent switch from wnn-xemacs to canna-xemacs my
+    Craig&gt; xemacs seems to have lost the ability to detect and display
+    Craig&gt; kanji codes properly.
+
+Or maybe it has regained it, since the problem is with detecting
+Shift-JIS :-)  I admit that being able to detect Shift-JIS is a great
+convenience, of course.  If you do
+
+(setq coding-system-alist '(("" file automatic-conversion)))
+; alist elements are (REGEXP FORMAT ENCODING)
+; REGEXP matches file names, "" matches everything
+; FORMAT is 'file, 'display, or 'keyboard
+; ENCODING is one of automatic-conversion, shift-jis, euc-japan, and
+;     so on
+
+you should get automatic detection of EUC and New-JIS; I don't know if 
+this will catch other JIS variants.  It does not proper handle
+Shift-JIS; check and see if Yahoo properly declares `Content-Type:
+text/html; charset="shit-jis"' on its nihongo HTML.  If so, w3.el
+ought to be able to catch that and declare the content-type to Mule
+somehow.
+
+Why this isn't the default, I don't know; but my version of
+XEmacs/Mule behaves differently after setting that from before.\
+
+There seems to be some sort of interaction going on between Mule and
+XEmacs, because JIS is properly displayed even with
+
+(setq coding-system-alist '(("" file shift-jis)))
+
+but the coding system indicator becomes ISO7, so presumably ISO-2022
+is implemented in XEmacs outside of Mule.  I'm afraid that this means
+that real multilingual support is a some way off in XEmacs.
+
+    Craig&gt; I find this rather puzzling since I was using XEmacs with
+    Craig&gt; Japanese support under w3.el fine a few weeks ago before
+    Craig&gt; the great disk wipe of 1997.
+
+Um, what makes you think that the two versions of XEmacs/Mule have any 
+code in common?  Beta versions of XEmacs have been coming out fast and 
+furious recently.  Since one of the big changes was the integration of 
+Mule, you can suppose that this has changed a lot.  Also, one would
+imagine that since GNU Mule has undergone vast changes recently, and
+the first release of XEmacs/Mule that I saw was clearly based on the
+released code in Mule 2.3, probably some of the new GNU Mule code has
+been integrated.  (This is just a guess, I don't have time to look.
+But I seem to recall that XEmacs 20.0 accepted the old *conv-sys*
+notation but XEmacs 20.2 does not.)
+
+Anyway, it will probably be fixed in the next release.
+
+    Craig&gt; I've also added the following to my .Xresources
+
+    Craig&gt; XEmacs*FontSet-14: [snip]
+    Craig&gt; XEmacs*FontSet-16: [snip]
+    Craig&gt; XEmacs*FontSet-24: [snip]
+
+In GNU Emacs, this causes the X server to read *all* of those fonts at 
+startup, rather than loading them up on demand.  It also loads up the
+default fontset anyway, even if you never use it.  Is XEmacs smarter?
+
+    Craig&gt; Then, I can get the added bonus of accessing EDICT from
+    Craig&gt; within any XEmacs application.  Nirvana awaits me.  I just
+    Craig&gt; have to get it working.  ;-)
+
+Given that this did work and is now broken, I suspect that fixing it
+will require a fair amount of C debugging and maybe some coding :-)
+But we'll all thank you (verbally, not in cash) for your efforts!
+
+Better just to wait for Nirvana, me thinks.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00030" HREF="msg00030.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00000" HREF="msg00000.html">tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00024.html">tlug: Can compile Arena now</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00023.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00000.html">tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00030.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00025"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00025"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

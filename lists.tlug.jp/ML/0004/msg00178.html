@@ -1,0 +1,176 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: NIC data glut -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Tue, 25 Apr 2000 17:52:42 +0900 -->
+<!--X-Message-Id: 20000425175207.A17400@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00177.html">Date Prev</A>][<A HREF="msg00179.html">Date Next</A>][<A HREF="msg00202.html">Thread Prev</A>][<A HREF="msg00181.html">Thread Next</A>][<A HREF="maillist.html#00178">Date Index</A>][<A HREF="threads.html#00178">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: NIC data glut</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: NIC data glut</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 25 Apr 2000 17:52:07 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I've been using an old 75mhz 486DX machine as a masquerading firewall in
+my office for the past few weeks (many thanks to list members for advice
+in getting the network cards set up).  It works, but large transfers crash
+the driver on one card.
+
+The local interface is an old Western Digital card; the side exposed to
+the LAN is an old Allied Telesys 1700.  It is the AT1700 driver that
+crashes.
+
+I have set the machine up with a 2.2.14 kernel compiled with the "slow
+processor" option, that I assume is meant to help cope with overruns on
+the NIC during data transfers from fast machines, but no joy.
+
+In particular, this is a problem with fetchmail; a large message (over
+100k, say) will crash the driver every time I attempt to fetch it.  When
+this happens, I have to log onto the firewall machine through the
+still-active local NIC, take down the LAN interface, de-install the
+driver, re-install the driver and bring up the interface, then read the
+message by other means on the server before I can continue fetching the
+remainder of my mail through the masquerade machine. 
+
+The one thing from the log files that may point at trouble (this may
+solicit a groan or two, so I have my umbrella ready to catch any flying 
+tomatoes) is a complaint about clearing the IRQ.  In /var/log/messages,
+I get a trail like this when the driver goes down and I go through the
+rigamarole mentioned above:
+
+Mar 20 19:32:20 rm-325-1 kernel: eth1: transmit timed out with status 0000, network cable problem?
+Mar 20 19:32:20 rm-325-1 kernel: eth1: timeout registers: 4000 8182 4106 e85a 0000 0000 4800 0001.
+Mar 20 19:32:55 rm-325-1 kernel: eth1: transmit timed out with status 0000, network cable problem?
+Mar 20 19:32:55 rm-325-1 kernel: eth1: timeout registers: 0000 8181 0606 ffff 8888 8181 acac 8383.
+Mar 20 19:33:58 rm-325-1 kernel: Trying to free free IRQ15
+Mar 20 19:34:06 rm-325-1 kernel: eth1: AT1700 found at 0x300, IRQ 15, address 0000f4d2ac93 10baseT interface.
+Mar 20 19:34:06 rm-325-1 kernel: at1700.c:v1.15 4/7/98  Donald Becker (becker@example.com)
+Mar 20 19:34:06 rm-325-1 kernel:   AT1700 at 0x300 is unusable due to a conflict onIRQ 15.
+
+There is no complaint of a conflict when the driver is first installed. 
+Despite the complaint upon reinstallation, the driver does work (until it
+crashes during another large transfer).
+
+While I was setting the machine up in the first place, I couldn't get the
+AT1700 card to work at all until I disconnected the cable to the machine's
+CD-ROM drive, which, it turned out, also used IRQ 15 (oops).  The
+controller is still in the box, although the cable to the drive has been
+disconnected.  Could this be related to the failure of the NIC under
+"heavy" loads? 
+
+For what it's worth, the installation is Debian "frozen" (potato).
+
+Any advice will be received with great joy and general hooplah.
+
+Cheers,
+----
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     ()
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00181" HREF="msg00181.html">Re: tlug: NIC data glut</A></STRONG>
+<UL><LI><EM>From:</EM> Shimpei Yamashita &lt;shimpei@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00186" HREF="msg00186.html">Re: tlug: NIC data glut</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00177.html">Re: tlug: 2.2.14 Vs. TurboLinux</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00179.html">Re: tlug: Linus in Asahi</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00202.html">Re: tlug: 2.2.14 Vs. TurboLinux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00181.html">Re: tlug: NIC data glut</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00178"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00178"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

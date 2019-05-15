@@ -1,0 +1,161 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] WLAN set up [SOLVED] -->
+<!--X-From-R13: Rnir [ U <qnirNnegvpynff.bet> -->
+<!--X-Date: Thu, 20 Sep 2007 10:12:22 +0900 -->
+<!--X-Message-Id: 46F1C14F.5010907@articlass.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46EE04C7.6020409@articlass.org -->
+<!--X-Reference: 46EF7ACF.9070109@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00271.html">Date Prev</a>][<a href="msg00273.html">Date Next</a>][<a href="msg00234.html">Thread Prev</a>][<a href="msg00235.html">Thread Next</a>][<a href="maillist.html#00272">Date Index</a>][<a href="threads.html#00272">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] WLAN set up [SOLVED]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 20 Sep 2007 09:39:43 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:dave@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20WLAN%20set%20up%20%5BSOLVED%5D">dave@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] WLAN set up [SOLVED]</strong></li>
+<li>References: &lt;<a href="msg00220.html">46EE04C7.6020409@articlass.org</a>&gt; &lt;<a href="msg00234.html">46EF7ACF.9070109@articlass.org</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.13 (X11/20070824)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">TLUG,</pre><br>
+<tt>I'm currently coming at you live from my hot spot location at my local 
+Tully's, thanks to having solved the wireless LAN card set up problems.</tt><br>
+<br>
+<tt>I reinstalled just about every package to do with wireless connections, 
+and removed and re-installed my LAN card drivers, hopefully to have a 
+more or less fresh start.</tt><br>
+<br>
+<pre style="margin: 0em;">Then I found this page:
+<a  href="https://bugs.launchpad.net/ubuntu/+source/control-center/+bug/61381">https://bugs.launchpad.net/ubuntu/+source/control-center/+bug/61381</a></pre><br>
+<tt>Turns out, the problem was to do with two files, 
+/etc/network/interfaces, and /etc/hosts.</tt><br>
+<br>
+<pre style="margin: 0em;">In /etc/hosts, there was this one messed up line, that looked like this:
+::1 ip6-localhost ip6-loopback</pre><br>
+<tt>I removed that line, and left the rest of the file as-is, and that took 
+care of the Gnome boot up problem.</tt><br>
+<br>
+<tt>Then, I wiped out everything in my /etc/network/interfaces file, and 
+replaced everything with this:<br>
+iface lo inet loopback<br>
+auto lo<br>
+auto eth0<br>
+iface eth0 inet dhcp</tt><br>
+<br>
+<pre style="margin: 0em;">Then I ran these three commands:
+sudo ifconfig lo 127.0.0.1 up
+sudo /etc/init.d/networking restart
+sudo modprobe ndiswrapper</pre><br>
+<pre style="margin: 0em;">And then I started to see all sorts of activity on my WLAN card. Sweet.</pre><br>
+<tt>Of course, the process was not quite as smooth as described here, but I 
+think that's the summary that should hopefully get things to work if 
+anyone, or myself, has to refer to this to get a LAN card to work.</tt><br>
+<br>
+<pre style="margin: 0em;">Hey... maybe I should make an entry on the TLUG Wiki about this...?</pre><br>
+<pre style="margin: 0em;">--
+Dave M G
+<a  href="http://www.tlug.jp/wiki/User:Dave_M_G">http://www.tlug.jp/wiki/User:Dave_M_G</a></pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00220" href="msg00220.html">[tlug] WLAN set up</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00234" href="msg00234.html">Re: [tlug] WLAN set up</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00271.html">RE: [tlug] Where can I buy Debian CDs in Tokyo?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00273.html">RE: Emacs splash screen [was: Re: [tlug] lynx proxy settings</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00234.html">Re: [tlug] WLAN set up</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00235.html">[tlug] lynx proxy settings</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00272"><strong>Date</strong></a></li>
+<li><a href="threads.html#00272"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

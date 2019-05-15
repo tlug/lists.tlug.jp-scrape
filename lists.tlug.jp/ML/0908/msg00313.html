@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Notes on the Nomikai -->
+<!--X-From-R13: Xbua Terzyva <wbuaNserzyva.bet> -->
+<!--X-Date: Thu, 20 Aug 2009 11:30:32 +0900 -->
+<!--X-Message-Id: 4A8CB1CF.4090008@fremlin.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4A88F7AE.7060804@fremlin.org -->
+<!--X-Reference: 4A8A22D5.9020007@bebear.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00312.html">Date Prev</a>][<a href="msg00314.html">Date Next</a>][<a href="msg00289.html">Thread Prev</a>][<a href="msg00261.html">Thread Next</a>][<a href="maillist.html#00313">Date Index</a>][<a href="threads.html#00313">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Notes on the Nomikai</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 20 Aug 2009 11:15:43 +0900</li>
+<li><strong>From</strong>: <strong>John Fremlin &lt;<a href="mailto:john@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Notes%20on%20the%20Nomikai">john@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Notes on the Nomikai</strong></li>
+<li>References: &lt;<a href="mailto:4A88F7AE.7060804@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Notes%20on%20the%20Nomikai">4A88F7AE.7060804@example.com</a>&gt; &lt;<a href="mailto:4A8A22D5.9020007@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Notes%20on%20the%20Nomikai">4A8A22D5.9020007@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.22 (X11/20090710)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+Edward Middleton wrote:
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+John Fremlin wrote:
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>Two serious exploits so far, I believe. For example, 
+</tt><tt><a  rel="nofollow" href="http://blog.cr0.org/2009/08/linux-null-pointer-dereference-due-to.html">http://blog.cr0.org/2009/08/linux-null-pointer-dereference-due-to.html</a>
+</tt><tt>  
+</tt></blockquote><pre style="margin: 0em;">
+
+Thanks for that.   Just looking at the mitigation methods.
+
+* on IA32 with PaX/GrSecurity &lt;<a  rel="nofollow" href="http://www.grsecurity.net/">http://www.grsecurity.net/</a>&gt;, the KERNEXEC
+feature (x86 only)
+
+</pre><tt>Any idea what the (x86 only) is about.  Is this only effective on x86. 
+</tt><tt>I use KERNEXEC on both x86_64 and x86 systems.
+</tt></blockquote><pre style="margin: 0em;">
+
+</pre><tt>I don't see why it wouldn't be effective on AMD64 if it were effective 
+</tt><tt>on IA32.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>As far as I understand it, using the no-exec PaX patch would mitigate 
+</tt><tt>this particular trick of using a suid binary after setting the strange 
+</tt><tt>personality and using the
+</tt><pre style="margin: 0em;">
+
+if (sock_writeable(sk) ||
+	    (!test_and_set_bit(SOCK_ASYNC_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags) &amp;&amp;
+	     sock_writeable(sk)))
+		mask |= POLLOUT | POLLWRNORM;
+
+</pre><tt>to set the mmap function pointer of file_operations structure to the 
+</tt><tt>address 1 (<a  rel="nofollow" href="http://lwn.net/Articles/342330/">http://lwn.net/Articles/342330/</a>). (If it is NULL then 
+</tt><tt>obviously the file operation will not be called and mmap is forbidden.)
+</tt><pre style="margin: 0em;">
+
+</pre><tt>The address 1 is in the first page (mapped from NULL to 4096) and it 
+</tt><tt>contains the shellcode. The PaX exec protection means that you cannot 
+</tt><tt>execute the shellcode from here.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>It seems to me that the page could be easily remapped to be 
+</tt><tt>read-only/exec before invoking the dodgy mmap file operation, as 
+</tt><tt>pulseaudio has dropped privileges at this point and is running the 
+</tt><tt>attackers (unprivileged) code. This would trivially circumvent the 
+</tt><tt>normal PaX protection as far as I can see. The extra KERNEXEC protection 
+</tt><tt>might mark the page as non-executable from kernel context -- I've no 
+</tt><tt>idea -- what exactly does KERNEXEC do, I've never heard of it before?
+</tt><pre style="margin: 0em;">
+
+</pre><tt>However, it is quite conceivable that there is a better exploit that 
+</tt><tt>uses another undesirable write operation or simply uses the same 
+</tt><tt>test_and_set_bit (note that SOCK_ASYNC_NOSPACE is zero so it affects the 
+</tt><tt>least significant bit) to set another privileged bit somewhere else.
+</tt><pre style="margin: 0em;">
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00260" href="msg00260.html">[tlug] Notes on the Nomikai</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00289" href="msg00289.html">Re: [tlug] Notes on the Nomikai</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00312.html">Re: [tlug] Chumby and other gadgets</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00314.html">Re: [tlug] openssh on Centos 5.2</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00289.html">Re: [tlug] Notes on the Nomikai</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00261.html">[tlug] openssh on Centos 5.2</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00313"><strong>Date</strong></a></li>
+<li><a href="threads.html#00313"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

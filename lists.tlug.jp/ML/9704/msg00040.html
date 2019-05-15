@@ -1,0 +1,194 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: .www_acl -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 14 Apr 1997 08:04:55 GMT -->
+<!--X-Message-Id: m0wGggX&#45;00001MC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199704140731.QAA14182@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00039.html">Date Prev</A>][<A HREF="msg00041.html">Date Next</A>][<A HREF="msg00039.html">Thread Prev</A>][<A HREF="msg00046.html">Thread Next</A>][<A HREF="maillist.html#00040">Date Index</A>][<A HREF="threads.html#00040">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: .www_acl</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: .www_acl </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 14 Apr 1997 17:00:21 +0900</LI>
+<LI>In-reply-to: Your message of "Mon, 14 Apr 1997 16:31:40 +0900."            &lt;<A HREF="msg00039.html">199704140731.QAA14182@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Hua" == Yong-Ming Hua &lt;yhua@example.com&gt; writes:
+
+    Hua&gt;      I tried to set some access control to my WWW server.  I
+    Hua&gt; am using CERN Server. I read through the manual the w3c.org
+
+I haven't heard of anyone using CERN, so even though I don't either, I 
+take a hack at some answers.
+
+    Hua&gt; provided. But the manual doesn't tell us the most important
+    Hua&gt; thing; where to put passwordfile of the next line.
+
+    Hua&gt;        htadm -adduser &lt;passwordfile&gt; &lt;username&gt; &lt;passwd&gt;
+    Hua&gt; &lt;realname&gt;
+
+(1) The server needs to know about it.  So there must be a place in
+    the configuration file for the server to name the password file.
+    In NCSA-derived systems this would probably be
+    $server_root/conf/httpd.conf.  I don't know about CERN.
+
+(2) Evidently you can put it whereever you like.  It should not be in
+    any place where random users can list the directory, let alone
+    read the files.  Probably it should require pretty high privilege
+    to read, like root or the httpd user if there is one.  /etc/passwd 
+    is a very bad idea.  :-)
+
+    Hua&gt; And also the manual is rather mixed up with bits and pieces
+    Hua&gt; of information without any clear logic. It seems it takes me
+    Hua&gt; ages to interpret the manual. Could anyone tell me how to
+
+Bad sign.  Apache HTTPd also has per-user authorization, but I don't
+know if the docs are any better.  It's worth a look.  If you don't
+understand the docs for a security feature, then you don't understand
+your security.  Not good.
+
+    Hua&gt; lock some www homepages to someone, some group, or some IP's.
+    Hua&gt; Also it is not clear how to use this password authentifica-
+    Hua&gt; tion system with .www_acl file. Are they different systems?
+
+If the docs don't make this clear, they're probably different
+systems.  .www_acl is probably like .htaccess under NCSA.  Try reading 
+the NCSA docs.  They're quite good, and they'll help with the
+understanding of concepts although not implementation.
+
+    Hua&gt; It seems locking www homepage hasn't to do with firewall
+    Hua&gt; business at all. Is that so? If someone help me, showing me
+
+True.  Firewalls, in the common meaning, are network-level solutions,
+which make restrictions based on the endpoints of a connection and the 
+service (port) used.  The home page locking is evidently an
+authentication-based scheme.
+
+    Hua&gt; how to do this step by step, I am jolly glad.  Incidentally,
+    Hua&gt; the present circumstance is that I am using two Linux
+    Hua&gt; servers. B is mounted on A where httpd is running.  I put all
+    Hua&gt; httpd_docs files in B. In that case I should use htadm in A
+    Hua&gt; machine I presume(I am not running httpd in B).  Thanks in
+    Hua&gt; advance.
+
+You use htadm whereever the server's password file is accessible.
+Presumably A is easiest.
+
+Hope this helps.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00046" HREF="msg00046.html">tlug: .www_acl</A></STRONG>
+<UL><LI><EM>From:</EM> Yong-Ming Hua &lt;yhua@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">tlug: .www_acl</A></STRONG>
+<UL><LI><EM>From:</EM> Yong-Ming Hua &lt;yhua@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00039.html">tlug: .www_acl</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00041.html">tlug: Mass mailings and promiscuous mailers</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00039.html">tlug: .www_acl</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00046.html">tlug: .www_acl</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00040"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00040"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

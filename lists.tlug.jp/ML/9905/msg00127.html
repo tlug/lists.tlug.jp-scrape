@@ -1,0 +1,221 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Clustering Linux Boxes -->
+<!--X-From: "Manuel M. T. Chakravarty" <chak@example.com> -->
+<!--X-Date:  Tue, 25 May 1999 16:08:55 +0900 -->
+<!--X-Message-Id: 19990525161244S.chak@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19990524133153.14388.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00126.html">Date Prev</A>][<A HREF="msg00128.html">Date Next</A>][<A HREF="msg00120.html">Thread Prev</A>][<A HREF="msg00139.html">Thread Next</A>][<A HREF="maillist.html#00127">Date Index</A>][<A HREF="threads.html#00127">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Clustering Linux Boxes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:a_downunder@example.com">a_downunder@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Clustering Linux Boxes</strong></LI>
+<LI><strong>From</strong>: <strong>"Manuel M. T. Chakravarty" &lt;<A HREF="mailto:chak@example.com">chak@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 25 May 1999 16:12:44 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Mon, 24 May 1999 06:31:53 PDT"&lt;<A HREF="msg00110.html">19990524133153.14388.qmail@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00110.html">19990524133153.14388.qmail@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"Austin Kurahone" &lt;a_downunder@example.com&gt; wrote,
+
+&gt; I was just thinking about what to do with my time now that I finished the 
+&gt; 0.2a relase of GLF[1], and I was thinking about implementing a parallel 
+&gt; processing cluster with all the computers that I have.
+&gt; 
+&gt; Now the question that I have is that will making a cluster(eg: Avalon with 
+&gt; Extreme Linux) give me performace advantages for all my programs, or do they 
+&gt; need to be specially coded to take advantage of the
+&gt; cluster.  
+
+The parallel programming HOWTO
+
+  <A TARGET="_top" HREF="http://metalab.unc.edu/LDP/HOWTO/Parallel-Processing-HOWTO.html">http://metalab.unc.edu/LDP/HOWTO/Parallel-Processing-HOWTO.html</A>
+
+will help you get started.  But be warned, parallel
+programming is still very much a research thing.  There are
+a million approachs, most are tedious and restricted to
+programs/algorithms that exhibit a particular parallel
+behaviour.  The upside of this is that a good idea can still
+make you famous in this area :-)
+
+The most simple approach to programming a cluster is message
+passing with MPI or PVM (as already mentioned by Chris and
+Steve).  IMHO, don't waste your time with PVM, but use MPI.
+I recommend the LAM implementation:
+
+  <A TARGET="_top" HREF="http://www.mpi.nd.edu/lam/">http://www.mpi.nd.edu/lam/</A>
+
+The good thing about MPI is that it is relatively simple;
+the bad thing is that its level of abstraction for
+specifying parallel computations is comparable to what
+assembly language is for sequential computations.
+
+&gt; If they need 
+&gt; to be specially programed, what is the feasibility of coding/implementing a 
+&gt; transarent layer(a module maybe) that will allow the Linux kernel to 
+&gt; automatically distribute the separate threads/tasks to the various nodes in 
+&gt; the cluster???  Or do I have no idea what I'm talking about ;-)
+
+Check out 
+
+  <A TARGET="_top" HREF="http://www.mosix.cs.huji.ac.il">http://www.mosix.cs.huji.ac.il</A>
+
+They are doing exactly this.  The disadvantage of such an
+approach is that it only works for applications that are
+rather coarse grained, i.e., the threads are computation
+intensive and require relative little communication.  For
+other kinds of applications, your machines will have so much 
+load balancing and communication work to do that they do
+little else -- its like having a machine trashing its swap 
+area.  (The good thing is, of course, that for those
+applications for which it works, it is quite painless.)
+
+Steve wrote,
+
+&gt; Also, there are (eg) FORTRAN compilers which will automatically take
+&gt; advantage of a certain amount of parallelism that is inherent in
+&gt; things like do loops.  
+
+This only works for vector computers and clusters with very
+low-latency (= expensive) networks and always requires the
+code to be written such that the compiler can find
+sufficient parallelism (in your average sequential program,
+there is not enough of it).
+
+&gt; I doubt there are C compilers that do this (at
+&gt; all, let alone free code), but you could probably hack an optimization
+&gt; stage into GNU C/C++.
+
+By now, many supercomputer vendors have a language
+independent vectorizer or parallelizer, which you can
+include in Fortran as well as C compiles via the right
+command line switches.  But sometimes you have to use
+special pragmas or language extensions to make full use of
+these compiler stages.
+
+There is even a HPC effort that tries to do to C what HPF (= 
+High Performance Fortran) did to Fortran 90/95, but then it
+seems as if HPF is dying anyway.
+
+&lt;shameless plug&gt;
+  Now, if you have too much time, you could think about
+  having a look at one of the research projects I am
+  involved in.  We are writing a compiler for, so-called,
+  nested data parallelism, which allows to code a wide range
+  of parallel programs in a portable way (more portable and
+  much easier to program than MPI):
+
+    <A TARGET="_top" HREF="http://www.score.is.tsukuba.ac.jp/~chak/nepal/">http://www.score.is.tsukuba.ac.jp/~chak/nepal/</A>
+
+  The problem is that the compiler is still in the
+  development phase, but it also targets clusters (in fact,
+  we will soon put our runtime and communication system up,
+  which also works ontop of MPI-2).  The code is open and
+  GPL, so everybody who wants to tinker is welcome to do so.
+&lt;/shameless plug&gt;
+
+Cheers,
+
+Manuel
+-------------------------------------------------------------------
+Next Nomikai: May 26 (Wed), 19:00 Tengu TokyoEkiMae 03-3275-3691
+*** Special guest: Eric S. Raymond
+Next Technical Meeting: June 19 (Sat), 12:30  place: Temple Univ.
+Topic: Linux SMP and the Intel SC450NX Quad Xeon Server platform
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00110" HREF="msg00110.html">tlug: Clustering Linux Boxes</A></STRONG>
+<UL><LI><EM>From:</EM> "Austin Kurahone" &lt;a_downunder@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00126.html">Re: tlug: Clustering Linux Boxes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00128.html">tlug: Change Runlevel</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00120.html">Re: tlug: Clustering Linux Boxes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00139.html">Re: tlug: Clustering Linux Boxes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00127"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00127"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Serious Help Needed with DHCP -->
+<!--X-From-R13: "Sevp A. Tyberf" <rbsyberfNgurzvf.bpa.ar.wc> -->
+<!--X-Date: 27 Nov 2002 12:47:38 +0900 -->
+<!--X-Message-Id: 1038368858.3323.15.camel@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00219.html">Date Prev</a>][<a href="msg00217.html">Date Next</a>][<a href="msg00212.html">Thread Prev</a>][<a href="msg00215.html">Thread Next</a>][<a href="maillist.html#00214">Date Index</a>][<a href="threads.html#00214">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Serious Help Needed with DHCP</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 27 Nov 2002 12:47:38 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Eric O. Flores&quot; &lt;<A HREF="mailto:eoflores@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Serious%20Help%20Needed%20with%20DHCP">eoflores@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Serious Help Needed with DHCP</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Dear Tlugers,
+
+I am in need of serious help and would appreciated if some one could put
+me on the right track to a free stress networking life.
+
+system:  mandrake linux 8.2
+eth0	tulip irq 11
+eth1	rtl8139 irq 10
+
+I am currently trying to have two w2k workstations integrated with the
+linux server.  The two win2k's are seen in the network and the w2k's can
+see the samba server but no access to the server yet is granted.  I wish
+to have the two w2k's access the Internet dynamically by having the
+mandrake system automatically serve the ip's.  This used to work perfect
+until one un-authorized reboot last weekend by my 8year old one.  huuff
+for that! :( 
+
+I had to get down to read and re-lean and found that I have done all of
+my configurations using the command line what I didn't understand is
+that such configurations where on hold temporarily once the reboot came
+in all was gone.  Now I am having a problem setting up manually and wish
+to only setup manually as the mandrake wizards seem to always put the
+wrong set of ip's.
+
+I am working directly in /etc/sysconfig/network-scripts
+modifying the ifcfg-eth0 such file reads as:
+
+DEVICE=eth0
+BOOTPROTO=static
+IPADDR=192.168.0.1
+NETMASK=255.255.255.0
+NETWORK=192.168.0.0
+BROADCAST=192.168.0.255
+ONBOOT=yes
+
+I am assuming above conf if good use a separation for the network (later
+pppoe works for dsl connection).
+
+while the second ethernet card ifcfg-eth1 reads:
+
+DEVICE=eth1
+BOOTPROTO=static
+IPADDR=192.168.1.2
+NETMASK=255.255.255.0
+NETWORK=192.168.1.0
+BROADCAST=192.168.1.255
+ONBOOT=yes
+
+Because I want dynamic ip addressing, I am using a logic for the above
+card (eth1) to match my my dhcpd.conf1
+
+/etc/dhcpd.conf
+
+# default file for dhcpd
+# replace 192.168.1.1 by the IP adress of the server (same server for
+# all services in this config file)
+server-identifier mybox.a-true-domain-name.com;
+default-lease-time 36000;
+max-lease-time 144000;
+ddns-update-style ad-hoc;
+
+subnet 192.168.1.0 netmask 255.255.255.0{
+        range  192.168.1.65 192.168.1.254;
+        option domain-name              &quot;a-tue-domain-name.com&quot;;
+        option domain-name-servers      192.168.1.1;
+        option nis-servers              192.168.1.1;
+        option lpr-servers              192.168.1.1;
+        option netbios-name-servers     192.168.1.1;
+        option routers                  192.168.1.1;
+        option subnet-mask              255.255.255.0;
+        option time-servers             192.168.1.1;
+                ddns-updates on;
+                ddns-domainname &quot;noacchi.com&quot;;
+                ddns-rev-domainname &quot;in-addr.arpa&quot;;
+
+}
+
+Still I can't achieve dynamic assignment.
+
+Can some one please help me out point out what exactly I am doing
+incorrect!  It would be greatly appreciated.
+
+Thank you in advance.
+
+
+Eric.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00215" href="msg00215.html">Re: [tlug] Serious Help Needed with DHCP</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00216" href="msg00216.html">Re: [tlug] Serious Help Needed with DHCP</a></strong>
+<ul><li><em>From:</em> Jim Tittsler</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00219.html">Re: [tlug] Serious Help Needed with DHCP</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00217.html">Re: [tlug] Serious Help Needed with DHCP</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00212.html">Re: [tlug] Apache mod_auth_pam module</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00215.html">Re: [tlug] Serious Help Needed with DHCP</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00214"><strong>Date</strong></a></li>
+<li><a href="threads.html#00214"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

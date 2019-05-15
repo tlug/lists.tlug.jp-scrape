@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: It works! -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 9 Oct 1998 14:27:19 +0900 -->
+<!--X-Message-Id: 13853.40598.854173.314269@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981009113813.2528B&#45;100000@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981009114358.2090F&#45;100000@example.com jp -->
+<!--X-Reference-Id: 3.0.6.32.19981009123510.0095b3e0@example.com -->
+<!--X-Reference-Id: 19981009134234.B30642@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00316.html">Date Prev</A>][<A HREF="msg00318.html">Date Next</A>][<A HREF="msg00307.html">Thread Prev</A>][<A HREF="msg00295.html">Thread Next</A>][<A HREF="maillist.html#00317">Date Index</A>][<A HREF="threads.html#00317">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: It works!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Jim Tittsler &lt;<A HREF="mailto:jwt-tlug@example.com">jwt-tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: It works!</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 9 Oct 1998 14:26:46 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00305.html">19981009134234.B30642@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00293.html">Pine.LNX.3.96LJ1.1b7.981009113813.2528B-100000@example.com</A>&gt;&lt;Pine.LNX.3.96LJ1.1b7.981009114358.2090F-100000@example.com jp&gt;&lt;<A HREF="msg00299.html">3.0.6.32.19981009123510.0095b3e0@example.com</A>&gt;&lt;<A HREF="msg00305.html">19981009134234.B30642@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Tittsler &lt;jwt-tlug@example.com&gt; writes:
+
+    &gt;&gt; What I'm thinking is that when a web server on the net gets a
+    &gt;&gt; request from 192.168.1.2 how will it know where to send the
+    &gt;&gt; reply to? Or am I misunderstanding something (again :-)?
+
+    Jim&gt; The server will have rewritten the address to its real
+    Jim&gt; address, when the reply comes back, it puts the private
+    Jim&gt; address of the requesting machine back.
+
+To be just a little more detailed than Jim:
+
+Remember that TCP/IP is a multiplexing technology.  There are two
+independent[1] address spaces, one for addressing machines (the "IP
+address"), a 32-bit number (that will be expanded 128 bits in IPv6, go
+to the meeting on Saturday for a full explanation), and one for the
+service (the "port number"), a 16-bit number.  Many (about 1000) of
+those 16 bit numbers have been registered for use as publically known
+"listening" ports where servers wait for connections.  Outgoing ports
+rarely need be prespecified.  In fact, this would make life very
+difficult for servers designed to handle multiple connections at once;
+it is the sending, or "reply-to," port that distinguishes different
+processes on the same machine.
+
+Now, all internet information arrives as packets; on an ethernet,
+packets that do not have your address on them are discarded[2]
+(actually, left in the "ether" for the correct machine to pick up), on
+PPP those packets are preselected by your gateway.  Those that do have
+your address on them are sorted by port number, and processes that
+have been assigned a given "reply-to" port number will have those
+packets placed in their incoming queue.  Packets with port numbers
+assigned to no process are thrown away.
+
+What IP masquerading does, then, is provide services created
+on-the-fly called not "ftp," but "ftp from machine A that I masquerade
+for".  These services are created, dynamically assigned a port, and
+registered in the TCP/IP table of "ports in use".  The remote host
+then sends replies to what it sees as an arbitrary port, but the
+masquerade gateway recognizes it as a special masquerade port, looks
+it up in a table, and relays to the host and port specified there.
+Note that since both the originating host and the masquerade host are
+assigning "reply-to" ports dynamically, the port on the originating
+host will normally differ from that on the masquerade host.
+
+This is similar to what a gateway to a dynamically allocated IP
+address does, except that from the point of view of the Internet that
+address is permanent but the host it addresses changes.  In
+masquerading, the address is constant, but the host (and service)
+varies from the point of view of the Internet.
+
+Note that this means that the masquerading gateway can only provide
+_servers_ on well-known ports from _one_ of the hosts it masquerades
+for, usually itself.  (Ie, you could theoretically remap port 23 to a
+telnet server on a different machine that you masquerade for, so that
+maintenance to the masquerade gateway would have to come from the
+console.  But who'd want to?)  However, if you want to you could
+theoretically provide preassigned ports on the gateway to pass through
+to masqueraded hosts.  Eg, you could assign the 100 ports 8000-8099 to
+http servers.  These would of course be private, but "private HTTP
+servers" used a lot even without masquerading for various reasons.  (I
+think this would require an extension to current masquerading
+technology, though.)
+
+Footnotes: 
+[1]  The exact word is "orthogonal," but TJH has prohibited its use.
+
+[2]  OK, pedants, please note that I carefully did _not_ write "IP
+address."
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00293" HREF="msg00293.html">Re: tlug: It works!</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00299" HREF="msg00299.html">Re: tlug: It works!</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00305" HREF="msg00305.html">Re: tlug: It works!</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt-tlug@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00316.html">Re: tlug: Telnet clients</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00318.html">tlug: Re: every dog has his day (was: Sony Vaio)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00307.html">Re: tlug: It works!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00295.html">Re: tlug: It works!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00317"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00317"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

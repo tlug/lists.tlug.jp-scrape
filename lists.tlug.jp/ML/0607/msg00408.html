@@ -1,0 +1,200 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Portability of Misaligned Data Access . . . . . . . -->
+<!--X-From-R13: Xbr Znenoryy <serq62Nynenoryy.bet> -->
+<!--X-Date: Thu, 27 Jul 2006 15:38:17 +0900 -->
+<!--X-Message-Id: Pine.BSF.4.58.0607270219370.17463@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 87ejw8corz.fsf@example.com -->
+<!--X-Reference: 20060726164125.4959ce4e.jep200404@example.com -->
+<!--X-Reference: Pine.BSF.4.58.0607261946521.68592@example.com -->
+<!--X-Reference: 87r707bv1o.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00407.html">Date Prev</a>][<a href="msg00409.html">Date Next</a>][<a href="msg00402.html">Thread Prev</a>][<a href="msg00413.html">Thread Next</a>][<a href="maillist.html#00408">Date Index</a>][<a href="threads.html#00408">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Portability of Misaligned Data Access . . . . . . .</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Jul 2006 02:38:13 -0400 (EDT)</li>
+<li><strong>From</strong>: <strong>Joe Larabell &lt;<a href="mailto:fred62@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">fred62@???</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Portability of Misaligned Data Access . . . . . . .</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">20060726125907.GH5111@example.com</a>&gt;	&lt;<a href="mailto:87ejw8corz.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">87ejw8corz.fsf@example.com</a>&gt;	&lt;<a href="mailto:20060726164125.4959ce4e.jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">20060726164125.4959ce4e.jep200404@example.com</a>&gt;	&lt;<a href="mailto:Pine.BSF.4.58.0607261946521.68592@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">Pine.BSF.4.58.0607261946521.68592@example.com</a>&gt;	&lt;<a href="mailto:87r707bv1o.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.">87r707bv1o.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt; Yeah, but it's a *lot* uglier than that.  Remember the header!  What
+&gt; you really need is something like:
+&gt;
+&gt; union {
+&gt;   struct {
+&gt;     char pad[6];
+&gt;     char input[10];
+&gt;   } namadata;
+&gt;   struct {
+&gt;     union {
+&gt;       struct {
+&gt;         char pad[6];
+&gt;         char header[2];
+&gt;         } prefix;
+&gt;       double align;
+&gt;     }
+&gt;     double payload;
+&gt;   } yakidata;
+&gt; } do_you_really_expect_to_pull_this_off_interrobang;
+
+Funny... I was going to write something like that but I thought better of
+it. I was assuming he'd rather copy the interesting chars from the 17-byte
+struct into the union manually than tackle the data structure necessary to
+grab the payload from the original string on the fly.
+
+&gt; and even then there's no guarantee you'll get a packed structure, or
+&gt; even that sizeof(char) == 1.
+
+Hmmm... my Stroustrup is is pretty old but it does say (sec. 5.3.2) that:
+
+  &quot;... a byte is undefined by the language except in terms of the value of
+   sizeof: sizeof(char) is 1.&quot;
+
+Of course, if that's no longer the case, you're always free to use:
+
+   sizeof( double ) / sizeof( char )
+
+assuming it divides evenly (oh... the pain ;-)...
+
+I've seen much worse. A huge program saving data in a non-standard binary
+format, written before 32-bit machines even existed, later ported by some
+crazed lunatic to run on a 32-bit machine. Offsets computed by taking a
+pointer to a representative instance of a number (usually zero) and doing
+a combination of casts, shifts, and subtractions. I should have saved some
+examples, as they would make excellent exam material for a course in C ;-).
+
+&gt; The former looks like an exceptionally nasty and pointless form of
+&gt; data torture.
+
+Yeah... if they're going to the trouble of emitting an apparently ASCII
+header, would that not suggest that the whole message is in ASCII?
+
+Maybe it would be possible to get a hex dump of the actual bytes returned
+from this meter -- or to get the model number so someone can try to google
+up a programmer's manual.
+
+---
+Joseph L (Joe) Larabell            Never fight with a dragon
+<a  rel="nofollow" href="http://larabell.org">http://larabell.org</a>                     for thou art crunchy
+                                  and goest well with cheese.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00413" href="msg00413.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . .</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00424" href="msg00424.html">[tlug] Step Aside Kernighan and Ritchie: Bjarne Rules! . . . . . . . . (was Re: Portability of Misaligned Data Access)</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00386" href="msg00386.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00394" href="msg00394.html">[tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00397" href="msg00397.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00402" href="msg00402.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . .</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00407.html">[tlug] [OT] Lunch Place around Ginza Was: TLUG Technical Meeting	2006-07-29</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00409.html">Re: [tlug] I'm a glutton for punishment - Palm Pilot and Ubuntu Dapper LTS connectivity [SOLVED]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00402.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . .</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00413.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . .</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00408"><strong>Date</strong></a></li>
+<li><a href="threads.html#00408"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Code Readability (was: perl?) -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Fri, 19 Aug 2016 22:24:07 +0900 -->
+<!--X-Message-Id: 20160819132402.GC30780@quadratic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 22451.6786.829094.726@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00041.html">Date Prev</a>][<a href="msg00043.html">Date Next</a>][<a href="msg00031.html">Thread Prev</a>][<a href="msg00044.html">Thread Next</a>][<a href="maillist.html#00042">Date Index</a>][<a href="threads.html#00042">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Code Readability (was: perl?)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 19 Aug 2016 22:24:02 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Code%20Readability%20%28was:%20perl%3F%29">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Code Readability (was: perl?)</strong></li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2016-08-15 17:14 +0900 (Mon), Stephen J. Turnbull wrote:
+
+&gt; Josh Glover writes:
+&gt;  &gt; One great way to keep codebases smaller is to use a more expressive
+&gt;  &gt; language, such as Clojure, Haskell, Racket, OCaml, etc.
+&gt; 
+&gt; Or all of them!  (Hi, Curt!)  But that hurts readability, too, not all
+&gt; developers can be that multilingual, and sometimes you do need to read
+&gt; code that others maintain.
+
+Oh, hi!
+
+A lot of people think about readability as a property of a language,
+but that's not right. The language certainly has an influence (mainly
+by its limitations) on potential readability, but what decides whether
+something is readable or not is the other people reading it, and in
+particular the background they have with that code base.
+
+My favourite example to start with for these things is to look at a
+notation that is at once familiar and frightening to people:
+mathematics. Most people hate and fear mathematical notation, but
+let's go back a thousand-odd years and look at an original problem
+from al-Khwārizmī, the inventor of algebra:
+
+    You divide ten into two parts: multiply the one by itself; it will
+    be equal to the other taken eighty-one times.
+
+He was writing this without the benefit of modern mathematical
+notation.  So let's translate this into scary technical notation as
+used by modern mathematicians which al-Khwārizmī wouldn't have
+understood at all:
+
+    (10 - x)² = 81x
+
+Which one is easier to read?
+
+In the programming world, COBOL of course provides wonderful examples
+to modern programmers of how the definition of &quot;easy to read&quot; can
+change. At the statement level you can get a brief taste:
+
+    COBOL:		ADD 1 TO X GIVING Y
+    anything else:	y = x + 1
+
+but a full program really brings out the concept:
+
+    IDENTIFICATION DIVISION.
+    PROGRAM-ID. HELLO.
+
+    DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-NAME PIC X(25).
+
+    PROCEDURE DIVISION.
+       ACCEPT WS-NAME.
+       DISPLAY &quot;Hello, &quot; WS-NAME.
+
+    STOP RUN.
+
+Looking just at modern languages, yes, Haskell for example has
+brilliantly concise syntax that can take a bit of getting used to. But
+even in Ruby alone we have different levels of verbosity that, will
+each be easier or harder to read, depending on where you come from.
+
+In code that might have to be maintained by random people of varying
+talents and skill levels who don't program much, and certainly rarely
+touch your project, you might well be advised to write:
+
+    def double_each_number_in_array(array_of_numbers)
+	array_of_doubles = []
+	for number in array_of_numbers
+	    array_of_doubles.append(number * 2)
+	end
+	return array_of_doubles
+    end
+
+But only if you're not touching it a lot. If you're working with
+&quot;regular&quot; Ruby programmers, you'll certainly find this much better:
+
+    def double_array(numbers)
+	numbers.map do |n|
+	    n * 2
+	end
+    end
+
+Personally, I find even that very tedious, with then (admittedly rather
+mathematical) conventions within which I work, and would write:
+
+    def double(xs); xs.map { |x| x*2 }; end
+
+I read this third example easily two or three times as fast as the
+second example, and I also end up with an extra four lines of other
+code in my terminal letting me scroll less. But most Ruby programmers,
+even the good ones, would disagree with me; they don't accept a few
+of my conventions and ideas used here:
+
+1. If you have just a generic number in a small context, call it `x`.
+2. A list of things is the name of the thing with an `s` on the end.
+3. Put short stuff on a single line.
+4. Don't use extra characters and extra lines for do/end when you
+   can use the shorter braces {} that also let you do paren matching
+
+Points 1 and 2 are conventions you learn, get used to, and they become
+nice concise ways of saying something that everybody understands.
+
+Point 3 lets you see more code on the screen, and live with mere
+80 and 90 line terminals.
+
+Point 4 is usually where I get the strongest pushback amongst Ruby
+programmers (especially Rails ones), and I have no idea why. I expect
+that's the same thing that keeps making people make new and even good
+languages (such as Rust) and then cripple them with an &quot;it must use C
+syntax&quot; principle.
+
+Another example of something you never want to retreat from once
+you get used to it is dropping syntactic &quot;if&quot; for more concise
+boolean expressions. I use shell here as an example, but it applies
+equally to (and I do the same in) Ruby:
+
+    if ! tty -s; then
+	echo 2&gt;&amp;1 &quot;You must be on a terminal.&quot;
+	exit 1
+    fi
+
+versus
+
+    tty -s || { echo 2&gt;&amp;1 &quot;You must be on a terminal.&quot;; exit 1; }
+
+The long and short of it is:
+
+First, write for your audience. Programmers spend most of their time
+reading code, and so you need to optimize your style for the people
+who read it most. This style will change over time as you work
+together.
+
+Second, try to work with your group to optimize your style. A good
+place to start is to read Edwart Tufte's classic book _The Visual
+Display of Quantitative Information_[1]. It's not always obvious how
+to apply his principles to code, but his ideas are absolutely sound.
+
+[1]: <a  rel="nofollow" href="https://www.edwardtufte.com/tufte/books_vdqi">https://www.edwardtufte.com/tufte/books_vdqi</a>
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00044" href="msg00044.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00045" href="msg00045.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+<ul><li><em>From:</em> Benjamin Kowarsch</li></ul></li>
+<li><strong><a name="00049" href="msg00049.html">[tlug]  Code Readability (was: perl?)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00030" href="msg00030.html">Re: [tlug] perl? (was: Employment for &quot;oldies&quot;)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00041.html">Re: [tlug] Moving on from xterm</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00043.html">Re: [tlug] Moving on from xterm</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00031.html">Re: [tlug] perl? (was: Employment for &quot;oldies&quot;)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00044.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00042"><strong>Date</strong></a></li>
+<li><a href="threads.html#00042"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

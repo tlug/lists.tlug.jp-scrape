@@ -1,0 +1,222 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Mozilla printing question. -->
+<!--X-From-R13: [vxr Tnovna <zsnovnaNfhfr.qr> -->
+<!--X-Date: Fri, 7 Jun 2002 18:49:14 +0900 (JST) -->
+<!--X-Message-Id: s3t660vfmeq.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200206070205.g5725Lh11917@example.com -->
+<!--X-Reference: 87sn3z37sx.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00163.html">Date Prev</a>][<a href="msg00165.html">Date Next</a>][<a href="msg00151.html">Thread Prev</a>][<a href="msg00163.html">Thread Next</a>][<a href="maillist.html#00164">Date Index</a>][<a href="threads.html#00164">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Mozilla printing question.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 07 Jun 2002 11:50:05 +0200</li>
+<li><strong>From</strong>: <strong>Mike Fabian &lt;<A HREF="mailto:mfabian@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Mozilla%20printing%20question.">mfabian@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Mozilla printing question.</strong></li>
+<li>References: &lt;<a href="msg00121.html">200206070205.g5725Lh11917@example.com</a>&gt;&lt;<a href="msg00151.html">87sn3z37sx.fsf@example.com</a>&gt;</li>
+<li>User-agent: Gnus/5.090004 (Oort Gnus v0.04) XEmacs/21.4 (Honest Recruiter,i386-suse-linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>"Stephen J. Turnbull" &lt;stephen@example.com&gt; writes:
+
+&gt;&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+&gt;
+&gt;     Jim&gt; A Mozilla question about printing Japanese text. Mozilla
+&gt;     Jim&gt; happily shows the text on screen, displays it right in print
+&gt;     Jim&gt; preview, but seems only to send the code-points and font
+&gt;     Jim&gt; details to the (Postscript) printer. Since few printers in
+&gt;     Jim&gt; this land actually have Japanese fonts installed, the results
+&gt;     Jim&gt; are not very useful.
+&gt;
+&gt; Ghostscript will do PS to PS, but I forget the details.
+&gt;
+&gt; ps2ps may or may not do what you need it to do.  I haven't had a
+&gt; postscript printer for a while, but I seem to recall that you needed
+&gt; to tell Ghostscript to embed the fonts in the output .ps, or you just
+&gt; got "simpler and faster" spew of formatting and codepoints.  ;-)
+
+ps2ps does what Jim wants. It is just a simple shell script 
+
+    mfabian@example.com:~$ cat /usr/bin/ps2ps
+    #!/bin/sh
+    # $RCSfile: ps2ps,v $ $Revision: 1.2.2.1 $
+    # "Distill" PostScript.
+
+    OPTIONS="-dSAFER"
+    while true
+    do
+            case "$1" in
+            -*) OPTIONS="$OPTIONS $1" ;;
+            *)  break ;;
+            esac
+            shift
+    done
+
+    if [ $# -ne 2 ]; then
+            echo "Usage: `basename $0` ...switches... input.ps output.ps" 1&gt;&amp;2
+            exit 1
+    fi
+
+    exec gs -q -sDEVICE=pswrite -sOutputFile=$2 -dNOPAUSE -dBATCH $OPTIONS $1
+    mfabian@example.com:~$
+
+writing to the 'pswrite' device. That seems to be all what is needed,
+for example:
+
+PostScript file using Japanese fonts:
+
+    mfabian@example.com:/tmp$ cat arare-Ryumin-Light-H.ps
+    %% -*- coding: euc-jp -*-
+    /Ryumin-Light-EUC-H findfont 300 scalefont setfont
+    50 200 moveto (霰) show showpage
+
+displaying it directly with gs shows that Japanese fonts are loaded:
+
+    mfabian@example.com:/tmp$ gs arare-Ryumin-Light-H.ps
+    GNU Ghostscript 6.53 (2002-02-13)
+    Copyright (C) 2002 artofcode LLC, Benicia, CA. All rights reserved.
+    This software comes with NO WARRANTY: see the file COPYING for details.
+    Loading min-EUC font from /usr/share/ghostscript/fonts/min.gsf... Can't find (or can't open) font file /Resource/Font/NotDefFont.
+    Can't find (or can't open) font file NotDefFont.
+    Substituting font Courier for NotDefFont.
+    Loading NimbusMonL-Regu font from /usr/share/ghostscript/fonts/n022003l.pfb... 2278032 828937 2526744 850653 0 done.
+    Can't find (or can't open) font file /Resource/Font/NotDefFont.
+    Can't find (or can't open) font file NotDefFont.
+    Substituting font Courier for NotDefFont.
+    2278032 830908 2868376 1031383 0 done.
+    Loading min-70ku font from /usr/share/ghostscript/fonts/min-70ku.gsf... 2338320 893503 2868376 1037603 0 done.
+    &gt;&gt;showpage, press &lt;return&gt; to continue&lt;&lt;
+    quit
+    mfabian@example.com:/tmp$
+
+converting it to pswrite:
+
+   mfabian@example.com:/tmp$ ps2ps arare-Ryumin-Light-H.ps arare-Ryumin-Light-H.pswrite
+
+Now Ghostscript doesn't load any fonts are loaded anymore because they
+are already embedded as outline graphics:
+
+    mfabian@example.com:/tmp$ gs arare-Ryumin-Light-H.pswrite
+    GNU Ghostscript 6.53 (2002-02-13)
+    Copyright (C) 2002 artofcode LLC, Benicia, CA. All rights reserved.
+    This software comes with NO WARRANTY: see the file COPYING for details.
+    &gt;&gt;showpage, press &lt;return&gt; to continue&lt;&lt;
+    quit
+    mfabian@example.com:/tmp$
+
+I.e. this can be printed on any PostScript printer.
+
+I'm using that often because I don't have a PostScript printer with
+Japanese fonts either.
+
+Another possibility is to write the output directly to the a device
+which works for your printer, e.g. ljet4 if you have a Laserjet4
+printer and send the result on a raw (non-PostScript) printer queue.
+
+-- 
+Mike Fabian   &lt;mfabian@example.com&gt;   <A HREF="http://www.suse.de/~mfabian">http://www.suse.de/~mfabian</A>
+睡眠不足はいい仕事の敵だ。
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00121" href="msg00121.html">[tlug] Mozilla printing question.</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+<li><strong><a name="00151" href="msg00151.html">Re: [tlug] Mozilla printing question.</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00163.html">Re: [tlug] Mozilla printing question.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00165.html">Re: [tlug] Secret Cabal TLUG ML?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00151.html">Re: [tlug] Mozilla printing question.</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00163.html">Re: [tlug] Mozilla printing question.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00164"><strong>Date</strong></a></li>
+<li><a href="threads.html#00164"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

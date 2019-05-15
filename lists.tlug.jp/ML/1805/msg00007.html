@@ -1,0 +1,183 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] UEFI Partition for New Debian Install -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Sat, 05 May 2018 11:49:37 +0900 -->
+<!--X-Message-Id: 20180505024936.nekcgplucz7m3bgi@iambic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 0f530bf2&#45;a3ea&#45;9fcc&#45;b2b5&#45;f328194b334c@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00006.html">Date Prev</a>][<a href="msg00008.html">Date Next</a>][<a href="msg00006.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a href="maillist.html#00007">Date Index</a>][<a href="threads.html#00007">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] UEFI Partition for New Debian Install</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 5 May 2018 11:49:36 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20UEFI%20Partition%20for%20New%20Debian%20Install">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] UEFI Partition for New Debian Install</strong></li>
+<li>References: &lt;<a href="msg00006.html">0f530bf2-a3ea-9fcc-b2b5-f328194b334c@gmail.com</a>&gt;</li>
+<li>User-agent: NeoMutt/20170113 (1.7.2)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2018-05-05 07:17 +0900 (Sat), CL wrote:
+
+&gt; New (for me) problem.  My in-box backup HDD went Tango Union....
+
+Just to correct your, uh, &quot;technical&quot; term there, that that should be
+'Tango Uniform' in the NATO standard phonetic alphabet.
+
+&gt; sda1 = EFI System (FAT32), boot and esp flags are set
+&gt; sda2 = ext4
+&gt; 
+&gt; When I attempt to install Debian 9 in the ext4 partition, it fails due 
+&gt; to missing boot space.
+
+I'm not sure if you're trying to install an encrypted root volume (if
+not, you should be!), but when doing that you need a small unencrypted
+ext{2,3,4} partition to store a kernel and initramfs that boots far
+enough for you to enter the passphrase for the encrypted partition,
+then mounts it as root and carries on. (I don't know if it's still
+necessary if you're unencrypted LVM partitions, but it used to be.)
+For example, here's the partition table and mountpoints on one of my
+EFI systems:
+
+    Number  Start   End     Size    File system  Name  Flags
+     1      1049kB  538MB   537MB   fat32              boot, esp
+     2      538MB   794MB   256MB   ext2
+     3      794MB   31.3GB  30.5GB
+
+    Filesystem                      Type Size  Used Use Free Mounted on
+    mmcblk0p1                       vfat 511M  132K  1% 511M /boot/efi
+    mmcblk0p2                       ext2 237M   68M 31% 157M /boot
+    mapper/iambic--vg-root          ext4  25G   19G 83% 4.1G /
+
+256 MB is plenty for the boot partition; I use this size and mine run
+about 30% full after cleaning up old versions of the kernel+initramfs,
+leaving the current and previous one.
+
+In the Debian installer you'll want to choose manual partitioning and
+set things up in the following way. (This is from memory so there may
+be minor errors, but you'll get the general idea.)
+
+1. As well as the EFI boot partition, create two more EFI partitions:
+   {E1} of 256 MB and {E2} with the rest of the space.
+2. Set and format {E1} as ext{2,3,4} and set the mountpoint to `/boot`.
+3. Set {E2} as &quot;volume for crypto&quot;.
+4. Set up the crypto volume {C1} on {E1}. (You should get some message
+   about how you have to write the partition table before you can do
+   that.) This is where you set the passphrase.
+5. After yet another partition table write, set and format {E1} as an
+   LVM physical storage volume (PV). Create a volume group (VG) on it,
+   and in that VG create two logical volumes (LVs), one for swap and
+   one for root.
+6. Heading back to the main partitioning screen after this, set the
+   swap volume for swap, and the root volume as ext4 (or whatever turns
+   your crank) and mountpoint `/`.
+7. Continue with install.
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00006" href="msg00006.html">[tlug] UEFI Partition for New Debian Install</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00006.html">[tlug] UEFI Partition for New Debian Install</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00008.html">Re: [tlug] Japan Phone experts?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00006.html">[tlug] UEFI Partition for New Debian Install</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">Re: [tlug] Japan Phone experts?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00007"><strong>Date</strong></a></li>
+<li><a href="threads.html#00007"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

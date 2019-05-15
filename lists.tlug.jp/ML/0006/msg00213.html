@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: ftape with Trakker parallel port -->
+<!--X-From: Tony Laszlo <laszlo@example.com> -->
+<!--X-Date:  Tue, 13 Jun 2000 15:45:52 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.10.10006131435110.18715&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00212.html">Date Prev</A>][<A HREF="msg00214.html">Date Next</A>][<A HREF="msg00211.html">Thread Prev</A>][<A HREF="msg00214.html">Thread Next</A>][<A HREF="maillist.html#00213">Date Index</A>][<A HREF="threads.html#00213">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: ftape with Trakker parallel port</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: ftape with Trakker parallel port</strong></LI>
+<LI><strong>From</strong>: <strong>Tony Laszlo &lt;<A HREF="mailto:laszlo@example.com">laszlo@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 13 Jun 2000 14:38:47 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+TLuggers, 
+
+I have recompiled the kernel in order to use parport as 
+a module. Now, parport, ftape, zftape and trakker all 
+are modules and all respond to the insmod 
+with no errors. 
+However, trakker still fails to find parport (or parport 
+is not finding its place in life), it seems. 
+Below are the relevant lines from lsmod , /etc/conf.modules
+and the /var/log/messages . 
+
+The machine is an IBM Aptiva 486 running a 2.2.9 kernel . 
+ftape is 4.02 from www.linuxtapecert.org/ . 
+
+Your advice is much appreciated. 
+
+
+
+lsmod :
+
+Module                  Size  Used by
+trakker                15028   0 
+zftape                 89580  -1  (unused)
+ftape                 149016   0  [trakker zftape]
+parport                 7284   0  (unused)
+
+lsmod after insmod-ing parport_pc (trakker still couldn't find parport) : 
+
+Module                  Size  Used by
+trakker                15028   0 
+zftape                 89580  -1  (unused)
+ftape                 149016   0  [trakker zftape]
+parport_pc              5876   0  (unused)
+parport                 7284   0  [parport_pc]
+
+
+/etc/conf.modules : 
+
+alias char-major-27       zftape
+options parport_pc io=0x378 irq=7
+options ftape ft_fdc_driver=trakker,none,none,none
+# options ft_fdc_base=0x180 ft_fdc_irq=9 ft_fdc_dma=3
+# pre-install ftape-internal /sbin/swapout 16
+
+/var/log/messages : 
+
+Jun 13 11:26:35 net kernel: QIC-117 driver for QIC-40/80/3010/3020/Ditto 2GB/MAX
+ floppy tape drives. 
+Jun 13 11:26:35 net kernel: Compiled for Linux version 2.2.9 
+Jun 13 11:26:35 net kernel: installing QIC-117 floppy tape hardware drive ...  
+Jun 13 11:26:35 net kernel: ftape_init @ 0xc481b220. 
+Jun 13 11:26:37 net kernel: zftape for ftape v4.03-pre-4 06/30/99 
+Jun 13 11:26:37 net kernel: (c) 1996, 1997 Claus-Justus Heine (claus@example.com
+wth-aachen.de) 
+Jun 13 11:26:37 net kernel: vfs interface for ftape floppy tape driver. 
+Jun 13 11:26:37 net kernel: Support for QIC-113 compatible volume table. 
+Jun 13 11:26:37 net kernel: Compiled for Linux version 2.2.9 with versioned symb
+ols 
+Jun 13 11:26:37 net kernel: [000]   zftape-init.c (zft_init) - zft_init @ 0xc485
+19b0. 
+Jun 13 11:26:37 net kernel: [001]   zftape-init.c (zft_init) - installing zftape
+ VFS interface for ftape driver .... 
+Jun 13 11:26:42 net kernel: trakker.c: trakker_register @ 0xc485ade0 
+Jun 13 11:26:42 net kernel: [002]    fdc-io.c (fdc_register_R7d7204fe) - Probing
+ for trakker tape drive slot 0. 
+Jun 13 11:26:42 net kernel: [003] 0   fdc-parport.h (ft_parport_probe_one) - bas
+e: 0x0378, irq: -1. 
+Jun 13 11:26:42 net kernel: [004] 0       trakker.c (read_mem_ps2) - checksum er
+ror. 
+Jun 13 11:26:42 net kernel: [005] 0        trakker.c (read_mem_spp) - checksum e
+rror. 
+Jun 13 11:26:42 net kernel: [006] 0        trakker.c (trakker_checksum) - checks
+um error (off by 20). 
+
+[deletia]
+
+Jun 13 11:26:42 net kernel: [158] 3 trakker.c (trakker_detect) - can't find trak
+ker interface for ftape id 3. 
+Jun 13 11:26:42 net kernel: [159] 3 trakker.c (trakker_detect) - ft_parport_prob
+e(fdc, &amp;trakker-&gt;parinfo) failed: -6. 
+Jun 13 11:27:42 net kernel: [160]   zftape-init.c (cleanup_module) - successful.
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------
+Next Meeting (w/ YLUG): June 16 (Fri) 19:00 Mizonoguchi Marui Family 12F
+Next Technical Meeting: July 8 (Sat)  13:30 Topic: TBA
+-----------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00212.html">tlug: Re: [CENSORED: Solaris /bin/clear]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00214.html">tlug: Re: ftape with Trakker parallel port (fwd)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00211.html">tlug: IPchains problem solved</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00214.html">tlug: Re: ftape with Trakker parallel port (fwd)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00213"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00213"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

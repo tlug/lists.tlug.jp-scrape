@@ -1,0 +1,260 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: latex2html with Linux -->
+<!--X-From: Dmytro Kovalev <Dmytro.Kovalev@example.com> -->
+<!--X-Date:  Wed, 31 Mar 1999 12:21:56 +0900 -->
+<!--X-Message-Id: 199903310320.MAA17336@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14026.38908.563124.21880@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00365.html">Date Prev</A>][<A HREF="msg00367.html">Date Next</A>][<A HREF="msg00367.html">Thread Prev</A>][<A HREF="msg00368.html">Thread Next</A>][<A HREF="maillist.html#00366">Date Index</A>][<A HREF="threads.html#00366">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: latex2html with Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: latex2html with Linux </strong></LI>
+<LI><strong>From</strong>: <strong>Dmytro Kovalev &lt;<A HREF="mailto:Dmytro.Kovalev@example.com">Dmytro.Kovalev@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 31 Mar 1999 12:20:53 +0900</LI>
+<LI>In-reply-to: Your message of "Wed, 17 Feb 1999 19:20:44 JST."            &lt;14026.38908.563124.21880@example.com&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Returning to some old discussion:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen J Turnbull &lt;turnbull@example.com&gt; writes:
+
+
+&gt;&gt;&gt;&gt;&gt; "Dmytro" == Dmytro Kovalev &lt;kovald@example.com&gt; writes:
+    Dmytro&gt; That's make no difference. Still the same multiple
+    Dmytro&gt; chapters cut in parts and pieces ;(
+
+    Dmytro&gt; That's making me to believe it's a locking issue. If it is
+    Dmytro&gt; so, is there any way to overcome it or at least are the
+    Dmytro&gt; any information on it? Can I force locking in some way?
+
+    Stephen&gt; OK, you may be right, then.  Locking on Linux is very
+    Stephen&gt; complicated, since no one system is universally used and
+    Stephen&gt; several systems are implemented along with emulations.
+
+So this issue is resolved now -- it was a Linux specific and it was
+about file locking. 
+
+Below there's included a message from latex2html list which helped me
+to fix my problem.
+
+Still, even I understood the problem now, I'm not quite sure I
+understand *all* the staff and am a little bit confused...
+
+1. The same text (koi8-u) parsed well on SunOS, but fails on Linux
+(OK, this is flocking issue, I'm OK with this)
+
+2. Text of the same structure -- English original -- parsed OK on
+Linux, but koi8-u counterpart fails on the same Linux. Is it that
+flocking problem is triggered somehow by codeset, or what?
+
+I'm not looking for answer actually. Just a mere rhetoric...  In case
+anybody meets the same problem - from the post below it doesn't seem
+to be language-specific.
+
+
+- dmytro
+
+
+
+==============================
+
+X-Authentication-Warning: flute.it.uq.edu.au: gregg owned process doing -bs
+Date: Sat, 27 Mar 1999 11:54:55 +1000 (EST)
+From: Greg Gamble &lt;gregg@example.com&gt;
+X-Sender: gregg@example.com
+To: Torsten Wellner &lt;wellner@example.com&gt;
+cc: latex2html@example.com
+Subject: Re: [l2h] Problems with segmentation of a document
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-latex2html@example.com
+Precedence: bulk
+Reply-To: Greg Gamble &lt;gregg@example.com&gt;
+
+On Fri, 26 Mar 1999, Torsten Wellner wrote:
+&gt; Hallo,
+&gt; 
+&gt; I have a document in book style and I have defined several levels of
+&gt; segmentation. My latex document starts with a "\chapter" command and it
+&gt; follow some "\section" commands. If I translate the latex document with
+&gt; the latex2html parser ("Version 98.1p1 release (March 2nd, 1998) ") I
+&gt; get twice the first section. And I suppose this is the reason for some
+&gt; errors and warnings displayed by the debug option.
+&gt; 
+&gt; What can I do to avoid this behaviour?
+
+Do you have RedHat 5.? Linux? If so, the following may fix your problem
+... it did for me ... I forget who suggested it originally ...
+
+in the Perl file `latex2html' of the 98.1p1 distribution 
+in `sub write_string_out' add the line 
+
+        close SINPUT;
+
+after
+
+    unless ($pid = fork) {
+
+(which is line 1563, for me).
+
+  Regards,
+  Greg Gamble
+___________________________________________________________________
+Greg Gamble   __________________        <A TARGET="_top" HREF="mailto:gregg@example.com">mailto:gregg@example.com</A>
+Centre for Discrete Mathematics &amp; Computing    Tel: +61-7 336 52425
+Department of Computer Science                 Fax: +61-7 336 54999
+      &amp; Electrical Engineering     <A TARGET="_top" HREF="http://www.csee.uq.edu.au/~gregg">http://www.csee.uq.edu.au/~gregg</A>
+The University of Queensland, Queensland 4072 AUSTRALIA
+___________________________________________________________________
+
+
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen J Turnbull &lt;turnbull@example.com&gt; writes:
+
+
+&gt;&gt;&gt;&gt;&gt; "Dmytro" == Dmytro Kovalev &lt;kovald@example.com&gt; writes:
+    Dmytro&gt; That's make no difference. Still the same multiple
+    Dmytro&gt; chapters cut in parts and pieces ;(
+
+    Dmytro&gt; That's making me to believe it's a locking issue. If it is
+    Dmytro&gt; so, is there any way to overcome it or at least are the
+    Dmytro&gt; any information on it? Can I force locking in some way?
+
+    Stephen&gt; OK, you may be right, then.  Locking on Linux is very
+    Stephen&gt; complicated, since no one system is universally used and
+    Stephen&gt; several systems are implemented along with emulations.
+
+    Stephen&gt; You'd have to look through the latex2html code to get any
+    Stephen&gt; idea of what might be wrong.  I have no idea what forcing
+    Stephen&gt; locking would mean for latex2html.
+
+    Dmytro&gt; As I wrote before - same latex2html works on SunOS with
+    Dmytro&gt; the same text. That's suspicious...
+
+    Stephen&gt; Perl is a very complicated piece of software, and the IPC
+    Stephen&gt; parts are often buggy, not necessarily due to Perl's
+    Stephen&gt; fault.  I would suggest upgrading Perl in any case.  Sun
+    Stephen&gt; may very well have better locale support than Linux, too,
+    Stephen&gt; or more robust lack of it ....
+
+    Stephen&gt; -- University of Tsukuba Tennodai 1-1-1 Tsukuba 305-8573
+    Stephen&gt; JAPAN Institute of Policy and Planning Sciences Tel/fax:
+    Stephen&gt; +81 (298) 53-5091
+    Stephen&gt; __________________________________________________________________________
+    Stephen&gt; __________________________________________________________________________
+    Stephen&gt; What are those two straight lines for?  "Free software
+    Stephen&gt; rules."
+    Stephen&gt; -------------------------------------------------------------------
+    Stephen&gt; Next Nomikai: March 19 (Fri), 19:30 Tengu TokyoEkiMae
+    Stephen&gt; 03-3275-3691 Next Technical Meeting: April 10 (Sat),
+    Stephen&gt; 12:30 place: Temple Univ.
+    Stephen&gt; -------------------------------------------------------------------
+    Stephen&gt; more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsor: PHT
+-------------------------------------------------------------
+Dmytro Kovalev
+Tokyo FI UNIX SA, Consultant	
+E-mail: dmytro.kovalev@example.com	
+--------------------------------------------------------------
+-------------------------------------------------------------------
+Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+*** featuring: LabView and UDB/DB2 for Linux
+Next Nomikai: May 21 (Fri), 19:30    Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00368" HREF="msg00368.html">Re: tlug: latex2html with Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;chris@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00372" HREF="msg00372.html">Re: tlug: latex2html with Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00365.html">RE: tlug: help with Diamond Viper 330 card</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00367.html">RE: tlug: differences between japanese input methods?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00367.html">RE: tlug: differences between japanese input methods?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00368.html">Re: tlug: latex2html with Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00366"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00366"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

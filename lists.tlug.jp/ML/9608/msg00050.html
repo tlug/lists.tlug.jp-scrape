@@ -1,0 +1,246 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Neat Bug .... -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 14 Aug 1996 03:26:11 GMT -->
+<!--X-Message-Id: m0uqWYg&#45;00002CC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 960814.110239@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00049.html">Date Prev</A>][<A HREF="msg00051.html">Date Next</A>][<A HREF="msg00049.html">Thread Prev</A>][<A HREF="msg00051.html">Thread Next</A>][<A HREF="maillist.html#00050">Date Index</A>][<A HREF="threads.html#00050">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Neat Bug ....</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Neat Bug ....</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 14 Aug 96 12:23 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00048.html">960814.110239@example.com</A>&gt; (message from Joe Marchak on 14 Aug 96 11:02:39 +0900)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Joe" == Joe Marchak &lt;j_marcha@example.com&gt; writes:
+
+    Joe&gt; I had some 500Mb and 750 Mb drives left over, so I decided to
+    Joe&gt; hook them up as spare space in /usr as /usr, /usr/local,
+    Joe&gt; /usr/local2.  What I found was a reproducible problem where
+    Joe&gt; if the drive that was defined for /usr/local (or any other
+    Joe&gt; subdirectory of /usr) was written ahead of the one for /usr
+    Joe&gt; in fstab, the /usr/local wouldn't be mounted properly.  It
+    Joe&gt; got confused with /usr.
+
+    Joe&gt; Just switching the order in fstab fixed the problem.  This
+    Joe&gt; was independent of which drives I used, and also was
+    Joe&gt; consistent with 1.2.13 and 2.0.
+
+    Joe&gt; Anyone else seen this problem?
+
+This isn't a "bug", it's a "feature"!  :-)  Presumably you have a /usr
+directory on your root drive, and a /usr/local directory in that file
+system, as well as a /local directory on the sdc1 device.  Otherwise,
+you shouldn't be able to mount to /usr/local at all at that stage of
+the boot process.
+
+&gt;&gt;&gt;&gt;&gt; "glynn" == glynn  &lt;glynn@example.com&gt; writes:
+
+    glynn&gt; IMHO If You`re mounting /usr/local and then /usr , you`ll
+    glynn&gt; not be able to see /usr/local
+
+This is because at boot time (let's not worry about how root got
+mounted) your file system looks like this (':' indicates a mountable
+object):
+
++------------------ visible ------------------+
+| /:sdb1/                                     |
+|       +- usr/                               |
+|       |     +- local/                       |
+|       +- var/                               |
+|       etc...                                |
++----------------- invisible -----------------+
+| :sdc1/                                      |
+|      +- local/                              |
+|      |       +- bin/                        |
+|      +- var/                                |
+|      etc...                                 |
+| :sdd1/                                      |
+|      +- bin/                                |
+|      |     +- X11/                          |
+|      +- lib/                                |
+|      etc...                                 |
+| :sde1/                                      |
+|      etc...                                 |
++---------------------------------------------+
+
+After mounting sdd1 on /usr/local, it looks like
+
++------------------ visible ------------------+
+| /:sdb1/                                     |
+|       +- usr/                               |
+|       |     +- local/sdd1:/                 |
+|       |                   +- bin/           |
+|       |                   |     +- X11/     |
+|       |                   +- lib/           |
+|       |                   etc...            |
+|       +- var/                               |
+|       etc...                                |
++----------------- invisible -----------------+
+| :sdc1/                                      |
+|      +- local/                              |
+|      |       +- bin/                        |
+|      +- var/                                |
+|      etc...                                 |
+| sde1:/                                      |
+|      etc...                                 |
++---------------------------------------------+
+
+After mounting sdc1 on /usr, it looks like
+
++------------------ visible ------------------+
+| /:sdb1/                                     |
+|       +- usr/:sdc1/                         |
+|       |           +- local/ *** visible *** |
+|       |           +- bin/                   |
+|       |           +- var/                   |
+|       |           etc...                    |
+|       |     +- local/sdd1:/  *** ORPHAN *** |
+|       |                   +- bin/           |
+|       |                   |     +- X11/     |
+|       |                   +- lib/           |
+|       |                   etc...            |
+|       +- var/                               |
+|       etc...                                |
++----------------- invisible -----------------+
+| sde1:/                                      |
+|      etc...                                 |
++---------------------------------------------+
+
+Note that there are *two* potential /usr/local objects.  You can't
+have both unless you're using an IFS, and I don't see how you could
+(efficiently) have both using your scheme (IFS does multiple mounts to
+a given point on one FS, but you have to keep track of the nominal
+mount point, rather than simply following single links).
+
+This means that you can have an arbitrarily large number of objects
+which can be used as the directory /usr/local, and they can be changed 
+on the fly.
+
+Note that the notation dir/:dev/ means that the entry at dir/ is
+a pointer to the root directory on dev.
+
+    glynn&gt; This is how mounting works and bootup process of mounting
+    glynn&gt; is in fstab sequence ... (read the bootup messages)
+
+    glynn&gt; For example if you mount a CDROM on a existing
+    glynn&gt; dir. hierarchy you`ll not see the dir. hierarchy again
+    glynn&gt; until you unmount the CDROM
+
+Well, um.  Seems to me that unless you're using the Inherited File
+System (which allows you to inherit files not existing in the object
+currently mounted on a given point from previously mounted objects
+which have not been dismounted from that point) mount(1) ought to warn 
+you that the directory you're mounting to is not empty.
+
+So maybe it's a bug after all.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00048" HREF="msg00048.html">Neat Bug ....</A></STRONG>
+<UL><LI><EM>From:</EM> Joe Marchak &lt;j_marcha@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00049.html">Re: Neat Bug ....</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00051.html">Re: QMAIL and a WARNING on Smail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00049.html">Re: Neat Bug ....</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00051.html">Re: QMAIL and a WARNING on Smail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00050"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00050"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

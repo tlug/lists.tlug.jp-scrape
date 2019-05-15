@@ -1,0 +1,188 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Notebook Question -->
+<!--X-From-R13: Fbovnf Rvrqevpu <gqNfvz.hav&#45;unaabire.qr> -->
+<!--X-Date: Tue, 17 Sep 2002 00:18:02 +0900 (JST) -->
+<!--X-Message-Id: 20020916151743.GA1934@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 200209160131.g8G1VDh21670@example.com -->
+<!--X-Derived: pgp00128.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00304.html">Date Prev</a>][<a href="msg00306.html">Date Next</a>][<a href="msg00301.html">Thread Prev</a>][<a href="msg00219.html">Thread Next</a>][<a href="maillist.html#00305">Date Index</a>][<a href="threads.html#00305">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Notebook Question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Sep 2002 17:17:43 +0200</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:td@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Notebook%20Question">td@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Notebook Question</strong></li>
+<li>References: &lt;<a href="msg00297.html">200209160131.g8G1VDh21670@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jim Breen wrote:
+
+&gt; One further question, then comments following on my previous questions.
+&gt; 
+&gt; &quot;dmesg&quot; is full of lines saying:
+&gt; 
+&gt; 	mtrr: no more MTRRs available
+&gt; 
+&gt; /var/log/messages says it was repeated 229 times.
+
+This is not that bad, it probably means the BIOS sets up the MTRRs
+(Memory Type Range Registers) in a funny way. I've seen this on our
+Siemens-Nixdorf machines.
+You can see your MTRR-Setup in /proc/mtrr:
+Normally you should have one for your main memory (the first one)
+and one or two for your GPU (Set up by the X server).
+In your case it probably already uses all available for main memory.
+The size normally has to be a power of two value, so if you have 768MB
+RAM you need two entries, one with 512MB size and one with 256MB size,
+alternatively it _should_ be possible to use one with 1024MB size, at
+least if no expansion cards are mapped in that region.
+
+On the SNI-machines it did some stupid mapping:
+The machines have 256MB main memory and /proc/mtrr looked like this:
+td@example.com[101]~&gt; cat /proc/mtrr
+reg00: base=0x00000000 (   0MB), size= 128MB: write-back, count=1
+reg01: base=0x08000000 ( 128MB), size=  64MB: write-back, count=1
+reg02: base=0x0c000000 ( 192MB), size=  32MB: write-back, count=1
+reg03: base=0x0e000000 ( 224MB), size=  16MB: write-back, count=1
+reg04: base=0x0f000000 ( 240MB), size=   8MB: write-back, count=1
+reg05: base=0x0f800000 ( 248MB), size=   4MB: write-back, count=1
+reg06: base=0x0fc00000 ( 252MB), size=   2MB: write-back, count=1
+reg07: base=0x0fe00000 ( 254MB), size=   1MB: write-back, count=1
+
+(8 entries are maximum)
+
+So I added this to /etc/init.d/boot.local:
+echo &quot;Setting up mtrr&quot;
+echo &quot;disable=7&quot; &gt; /proc/mtrr
+echo &quot;disable=6&quot; &gt; /proc/mtrr
+echo &quot;disable=5&quot; &gt; /proc/mtrr
+echo &quot;disable=4&quot; &gt; /proc/mtrr
+echo &quot;disable=3&quot; &gt; /proc/mtrr
+echo &quot;disable=2&quot; &gt; /proc/mtrr
+echo &quot;disable=1&quot; &gt; /proc/mtrr
+echo &quot;disable=0&quot; &gt; /proc/mtrr
+echo &quot;base=0x00000000 size=0x08000000 type=write-back&quot; &gt; /proc/mtrr
+echo &quot;base=0x08000000 size=0x08000000 type=write-back&quot; &gt; /proc/mtrr
+
+After that it looks like this:
+td@example.com[105]~&gt; cat /proc/mtrr
+reg00: base=0x00000000 (   0MB), size= 128MB: write-back, count=1
+reg01: base=0x08000000 ( 128MB), size= 128MB: write-back, count=1
+reg02: base=0xf8000000 (3968MB), size=  64MB: write-combining, count=1
+
+The third entry is from the X-Server which previously complained about
+&quot;no more MTRRs available&quot; :-)
+That only means your graphics subsystem is running slower than it could.
+
+-- 
+Tobias								PGP: 0x9AC7E0BC
+This mail is made of 100% recycled bits
+</pre>
+<p><strong>Attachment:
+<a href="pgp00128.pgp" ><tt>pgp00128.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00297" href="msg00297.html">Re: [tlug] Notebook Question</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00304.html">[tlug] i-mode i18n</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00306.html">[tlug] Hardisk not playing along</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00301.html">Re: [tlug] Notebook Question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00219.html">[tlug] M$ browser error page</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00305"><strong>Date</strong></a></li>
+<li><a href="threads.html#00305"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

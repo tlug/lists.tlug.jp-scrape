@@ -1,0 +1,165 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Swapping over Ethernet? -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Fri, 30 Aug 1996 05:33:58 GMT -->
+<!--X-Message-Id: m0uwMAy&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: ofkJyUr0BArR088yn@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00122.html">Date Prev</A>][<A HREF="msg00124.html">Date Next</A>][<A HREF="msg00121.html">Thread Prev</A>][<A HREF="msg00124.html">Thread Next</A>][<A HREF="maillist.html#00123">Date Index</A>][<A HREF="threads.html#00123">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Swapping over Ethernet?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Swapping over Ethernet?</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Fri, 30 Aug 96 14:31 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00121.html">ofkJyUr0BArR088yn@example.com</A>&gt; (jwt@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Tittsler &lt;jwt@example.com&gt; writes:
+
+    Jim&gt; The only real problem I'm having is not being able to swap.
+    Jim&gt; Since I'm still diskless, as a temporary measure I was trying
+    Jim&gt; to swap over the ethernet... but swapon keeps telling me that
+    Jim&gt; my "mkswap"ped swapfile I'm pointing it at is an "invalid
+    Jim&gt; device."  Any hints?
+
+Put as much of the resources as possible on other machines.  You know,
+xdm, fvwm, and so on should all be running elsewhere.  Maybe you
+should run the kernel somewhere else, it's a CPU hog ;-)  As for
+somehow making diskless swapping work, inasmuch as
+
+    * the man page for makeswap(8) says that a swapfile must be a
+      contiguous area of disk,
+    * the man page for swapon(2) says that if the argument is not a
+      "block device or a REGULAR path," EINVAL is returned (I doubt
+      they count an NFS mount as a regular path---your network
+      interface is not a block special file; I assume they mean a path
+      which can be resolved to a region of storage on a block device
+      owned by the kernel, rather than a generalized byte
+      source/sink), and
+    * nobody I know has reported serious performance hits from using
+      swapfiles rather than swap partitions,
+
+I suspect that the kernel accesses swap thingies directly through the
+block special files using DMA on page boundaries.  I'll bet a large
+sum of money (I'll buy lunch for the next TLUG meeting I attend) that
+the kernel's swapping functions *don't* use fseek(3) for random access
+to swapfiles.  (That's a sucker bet, by the way, since fseek(3) is a
+libc function.)  I'll bet a small sum of money (I'll buy Jim T.'s
+lunch) that it doesn't use lseek(2).
+
+I'm amazed that mkswap permitted you to make a swapfile across the
+ethernet.
+
+I think on this one you're SOL, buckaroo.  But if you want to wade
+into the kernel source and prove I'm wrong....  In any case, if you
+could do it, it would only be proof-of-concept; I can't imagine how
+slow that's going to be (DMA on even the ISA bus is much faster than
+10BaseT, and not much slower than 100BaseT).
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00121" HREF="msg00121.html">Swapping over Ethernet?</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00122.html">Sun4c Floppy Booting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00124.html">Re: Swapping over Ethernet?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00121.html">Swapping over Ethernet?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00124.html">Re: Swapping over Ethernet?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00123"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00123"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

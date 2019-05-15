@@ -1,0 +1,177 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: LaTeX: CJK package: 0212 support -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 27 Jan 2000 11:36:17 +0900 -->
+<!--X-Message-Id: 14479.44805.293625.747179@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.10001191402260.23447&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00176.html">Date Prev</A>][<A HREF="msg00178.html">Date Next</A>][<A HREF="msg00173.html">Thread Prev</A>][<A HREF="msg00178.html">Thread Next</A>][<A HREF="maillist.html#00177">Date Index</A>][<A HREF="threads.html#00177">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: LaTeX: CJK package: 0212 support</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: LaTeX: CJK package: 0212 support</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 27 Jan 2000 11:35:49 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00173.html">Pine.LNX.4.10.10001191402260.23447-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00173.html">Pine.LNX.4.10.10001191402260.23447-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Martin" == Martin Minich &lt;minich5@example.com&gt; writes:
+
+    Martin&gt; weird enough, with the ordinary JIS X 0208 characters; one
+    Martin&gt; has to start the environment like \begin{CJK}{JIS}{song}
+    Martin&gt; (i believe JIS stands for encoding, 'cos other
+    Martin&gt; posibilities are SJIS, or something else for Big5 etc, as
+    Martin&gt; i could read in the documentation), but what actually has
+    Martin&gt; to follow, is a japanese text in the __EUC__ (!!!) 
+    Martin&gt; encoding!!
+
+Technically, according to ISO 2022, EUC uses the JIS encoding (a 7-bit
+encoding), but loads it into the "GR register".  Whether the
+"register" is "GL" (the default) or "GR" is indicated by whether the
+high bit of the byte is set or not.  Shift JIS, although based on JIS,
+actually uses byte values that could _never_ appear in a JIS or EUC
+file (or any ISO-2022-conformant file), and thus is not really
+JIS-encoded.  (The reason for ku-ten being 1--94 is precisely so that
+JIS can be ISO-2022-conformant.)  Similarly, ISO-8859-2 can be
+interpreted as not an 8-bit encoding, but two 7-bit encodings with
+ASCII in GL and Latin-2 in GR.
+
+If that gives you a headache, then just be thankful that within a
+couple of years Unicode will remove the need to worry about it in
+multilingual applications.
+
+What CJK does is to redefine those EUC characters as "active", which
+means that the first of a pair can invoke a macro to read the second
+of the pair and generate the `\CJKchar[JIS2]{80}{38}' commands.
+
+The reason for using EUC and not 7-bit JIS is that TeX would get very
+confused if you redefined the ASCII characters, since they are used
+for encoding TeX commands (eg, the reason that `\' can start a TeX
+macro is because it is an active character whose definition is "read
+the following letters and invoke the corresponding macro", and `$' is
+an active character which invokes the command "toggle-math-mode"---if
+you want to use hiragana in 7-bit JIS, you need that `$' to mean
+"hiragana", not math mode)!  But TeX never uses the high-bit-set
+characters internally, only as text data.  So they are safe to define
+as "active" characters.
+
+    Martin&gt; but alas, when i try it out and compare to the tables from
+    Martin&gt; the Ken Lunde's book, it seems to me, that &lt;byte1&gt; = ku +
+    Martin&gt; 31, &lt;byte2&gt; = ten + 32 are the correct formulae; but does
+    Martin&gt; it give any sense?
+
+This doesn't make sense to me and is probably a bug in the definition
+of the JIS2 encoding for CJK.
+
+But if it works, use it that way (but remember that if it's a bug it
+could get fixed at any time).  I would write to the CJK people if I
+were you.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00173" HREF="msg00173.html">tlug: LaTeX: CJK package: 0212 support</A></STRONG>
+<UL><LI><EM>From:</EM> Martin Minich &lt;minich5@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00176.html">Re: tlug: Gateway P3-500 is freaking me out (install)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00178.html">RE: tlug: LaTeX: CJK package: 0212 support</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00173.html">tlug: LaTeX: CJK package: 0212 support</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00178.html">RE: tlug: LaTeX: CJK package: 0212 support</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00177"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00177"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

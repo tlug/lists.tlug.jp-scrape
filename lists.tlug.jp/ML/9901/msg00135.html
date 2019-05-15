@@ -1,0 +1,184 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Y2K -->
+<!--X-From: Fredric Fredricson <Fredric.Fredriksson@example.com> -->
+<!--X-Date:  Thu, 14 Jan 1999 02:38:07 +0900 -->
+<!--X-Message-Id: 369CDA84.2451167A@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.990113104924.688B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00134.html">Date Prev</A>][<A HREF="msg00136.html">Date Next</A>][<A HREF="msg00161.html">Thread Prev</A>][<A HREF="msg00119.html">Thread Next</A>][<A HREF="maillist.html#00135">Date Index</A>][<A HREF="threads.html#00135">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Y2K</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Y2K</strong></LI>
+<LI><strong>From</strong>: <strong>Fredric Fredricson &lt;<A HREF="mailto:Fredric.Fredriksson@example.com">Fredric.Fredriksson@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 13 Jan 1999 18:40:20 +0100</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: MYDATA automation AB</LI>
+<LI>References: &lt;<A HREF="msg00112.html">Pine.LNX.3.96.990113104924.688B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+"Eric S. Standlee" wrote:
+&gt; 
+&gt; Hi gang, hows'it?
+&gt; 
+&gt; I need to get my hands on some good information about the Y2K problem and
+&gt; of course how it relates to Linux, but also on a personal basis I would
+&gt; also like to know if you have seen anything mentioned anywhere about how
+&gt; it will affect those of us living in Japan when it becomes 2000.
+&gt; 
+You can find several newsgroups and mailing lists on the net (search for
+Y2k or "year 2000"). You will also find a lot of home pages for consultant
+companies that specialize in the Y2k-problem. (Serious Hype Warning!).
+
+This is RedHat Y2k statement:
+<A TARGET="_top" HREF="http://www.redhat.com/legal_statement.phtml#y2k">http://www.redhat.com/legal_statement.phtml#y2k</A>
+
+A good page is Linux Online's page:
+<A TARGET="_top" HREF="http://www.linux.org/help/beginner/year2000.html">http://www.linux.org/help/beginner/year2000.html</A>
+(lots of technical info, not a lot of mumbo jumbo like _most_ other Y2k
+sites)
+
+I spent some time a year ago or so to investigate this and have some
+hints:
+
+* 1:
+_The_ major source of errors in a UNIX/C system is the tm struct returned
+by, for example, localtime(3). The tm struct contains a field tm_year that
+contains the number of years since 1900. This means that:
+   printf( "%d" , tm.tm_year ) ;
+will behave well for 1900 -&gt; 1999 but print: "100" for year 200. 
+Another programmer might write:
+   printf( "19%d" , tm.tm_year ) ; 
+that will print 1999 for 1999 but 19100 for year 2000. 
+The correct solution is, of course: 
+   printf( "%d" , 1900 + tm.tm_year ) ;
+We had one application that had the "printf("%d",tm.year)"-bug. It was very 
+easy to find using find and grep.
+You should be able to check all your open-source software you use in 
+a few minutes.
+
+* 2:
+/sbin/clock in RedHat 4.1 (and maybe RH 4.2) is buggy and will not set the
+year byte in the CMOS-ram correctly. This may or may not work anyway depending 
+on your BIOS. 
+The interesting part about this bug is that it does not show until you try to
+set and year equal to or greater than 2001. After reboot the year will be
+set to 2000 (or maybe something else on some systems).
+
+* 3:
+There are some floppies out there that claim to test if your PC hardware and
+BIOS is Y2k compliant.
+They don't. They all test if the BIOS updates the memory cell in the CMOS-ram
+that is supposed to contain the century information. Big deal, Linux does not
+care about the century byte. If the year byte is less than 70 Linux assumes
+the 21:st century and if year byte is equal to or greater than 70 the 20:th 
+century is assumed.
+
+/Fredric
+
+PS. Just in case you did not know, Linux use a 4 byte counter that
+counts the number of seconds since 1/1 1970 00:00 GMT for current time, 
+time stamps for files etc. The type of the counter is time_t.
+
+===== 1999 - The Year Of The Millennium Hype =====
+-------------------------------------------------------------------
+Next Nomikai: 14 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+*** it will will be Jan 14 (Thu), as Jan 15 (Fri) is a natl holiday
+Next Technical Meeting: Feb 13 (Sat), 12:30    ace: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00112" HREF="msg00112.html">tlug: Y2K</A></STRONG>
+<UL><LI><EM>From:</EM> "Eric S. Standlee" &lt;fwiw3980@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00134.html">tlug: linux multi BRI ISDN router - can it be built</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00136.html">tlug: can't make it</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00161.html">Re: tlug: Y2K</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00119.html">tlug: gtk-config</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00135"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00135"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

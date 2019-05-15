@@ -1,0 +1,224 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs and Kanji detection -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 3 Jun 1997 11:05:55 GMT -->
+<!--X-Message-Id: m0wYrJr&#45;00002KC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199706030839.RAA27155@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00037.html">Date Prev</A>][<A HREF="msg00039.html">Date Next</A>][<A HREF="msg00035.html">Thread Prev</A>][<A HREF="msg00040.html">Thread Next</A>][<A HREF="maillist.html#00038">Date Index</A>][<A HREF="threads.html#00038">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs and Kanji detection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs and Kanji detection </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 03 Jun 1997 20:00:03 +0900</LI>
+<LI>In-reply-to: Your message of "Tue, 03 Jun 1997 17:39:44 +0900."            &lt;<A HREF="msg00035.html">199706030839.RAA27155@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jason" == Jason Molenda &lt;crash@example.com&gt; writes:
+
+    Jason&gt; I've really not wanted to wade in to this discussion
+    Jason&gt; because I don't know the first thing about emacs, BUT I
+    Jason&gt; think this is all being made a lot harder than it should
+    Jason&gt; be.
+
+Depends.  If you just want to display Japanese, or if you're satisfied
+with SKK/Quail for input, I'm pretty sure you're right (now that I've
+gone around the block a few times.  None of it's documented as far as
+I could find, though); nothing in Info, the Mule docs in etc are
+ancient, and so on).  If you want external henkan servers, and
+especially if XIM-based, it's harder.
+
+    Jason&gt; I built XEmacs 20.2 with these options:
+
+    Jason&gt; configure --with-gnu-make --with-jpeg --with-png
+    Jason&gt; --with-sound=native --with-xpm --with-xface --with-mule
+    Jason&gt; --prefix=/usr/local/net
+
+Oops, I missed the --with-&lt;images&gt;.  Thanks.
+
+    Jason&gt; I configured it to default to Japanese by clicking on
+    Jason&gt; Options...Language Environment...Japanese and then
+    Jason&gt; Options...Save Options.  Now when I start up XEmacs, it
+    Jason&gt; says "EUC/Ja" in the lower left hand corner of the window.
+
+First, I think that this should probably work for anybody with
+compiled-in Canna or Wnn, but I can't check it out at the moment.
+
+But, unfortunately, with XIM you don't get that far if you haven't set
+the LANG or LC_ALL variables (I guess you could if you already knew it
+was there, but most Emacs people are keyboard-oriented and the XIM
+version of XEmacs core dumps on any keyboard input if there's no
+henkan server.  Gotcha!  Got me, anyway :-)
+
+And you get the core dump (in --with-xim configurations) in any case
+when you touch the keyboard....  Saving options doesn't fix that
+because the options get set when .emacs is loaded, _after_ the attempt
+to open an input method.
+
+    Jason&gt; I just started up w3 (Apps...Browse The Web) and brought up
+    Jason&gt; <A TARGET="_top" HREF="http://www.cygnus.co.jp">http://www.cygnus.co.jp</A> which is a content-type
+    Jason&gt; iso-2022-jp.
+
+Did you try ETL (<A TARGET="_top" HREF="http://www.etl.go.jp/Research/mulepage/MuleJapanese.html">http://www.etl.go.jp/Research/mulepage/MuleJapanese.html</A>),
+or did you just try the local page?  I suspect that the Cygnus page is
+ISO-2022-JP, but that it does _not_ advertise the fact with a MIME
+Content-Type: text/html; charset=iso-2022-jp header.  I can't check
+that since Cygnus is completely offline at the moment.
+
+I don't know for sure that this is the problem, but I have checked it
+by trying both a file that works (without a charset in the
+Content-Type header) and a broken one (with charset in the
+Content-Type header), and then sed'ing charset options in and out of
+the prefixed MIME headers with the result that brokenness got swapped.
+
+    Jason&gt; I like SKK, and it doesn't look like SKK likes XEmacs 20.2,
+    Jason&gt; so I'm still keeping my mule binary around for when I write
+    Jason&gt; Japanese.  But SKK users are in the minority, so I'm not
+    Jason&gt; surprised that it didn't work straightaway.
+
+What do you mean by "SKK doesn't like XEmacs?"  Have you tried Quail?
+It evolved out of SKK and as far as I can remember uses the same
+interface.  I don't use it, so I can't help with configuration.  But
+it should be pretty trivial.
+
+    Jason&gt; I don't have any LANG or LANGUAGE or anything set.
+
+This one I was partly confused on.  Mule does have internal support
+for swapping language environments (although not locales), and you can
+access it conveniently enough through the Options/Languages menu.
+However, I would like a solution for that that allows multiple
+external henkan servers.  There doesn't seem to be another interface
+for handling XIM, and as far as I know even --with-wnn doesn't permit
+both Japanese and Korean (kWnn) to be used with the same Emacs
+process.  (No, I'm not multilingual in Japanese and Korean, but a lot
+of my students are.)
+
+    &gt;&gt; Re: w3.el.  I'm _not_ getting Japanese on the Mule homepage
+    &gt;&gt; (the top page is OK, since all the Japanese is in GIFs, but
+    &gt;&gt; <A TARGET="_top" HREF="http://www.etl.go.jp/Research/mulepage/MuleJapanese.html">http://www.etl.go.jp/Research/mulepage/MuleJapanese.html</A>
+    &gt;&gt; bombs).  I
+
+    Jason&gt; It doesn't bomb for me, but I only get mojibake.
+
+Sorry, that's what I meant.
+
+    Jason&gt; I don't use w3.el (don't like emacs :-), so I don't know
+    Jason&gt; how useful it is in general.
+
+It's not Netscape, but it does have a complete emulation of Lynx :-)
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00040" HREF="msg00040.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Jason Molenda &lt;crash@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00037.html">tlug: Linux on Pentium2</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00039.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00035.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00040.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00038"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00038"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

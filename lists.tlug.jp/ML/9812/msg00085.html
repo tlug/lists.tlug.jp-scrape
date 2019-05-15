@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: perl daemons keeping me up past my bed time.... -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Sat, 5 Dec 1998 03:53:04 +0900 -->
+<!--X-Message-Id: 19981205032437P.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00084.html">Date Prev</A>][<A HREF="msg00086.html">Date Next</A>][<A HREF="msg00083.html">Thread Prev</A>][<A HREF="msg00121.html">Thread Next</A>][<A HREF="maillist.html#00085">Date Index</A>][<A HREF="threads.html#00085">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: perl daemons keeping me up past my bed time....</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: perl daemons keeping me up past my bed time....</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 05 Dec 1998 03:24:37 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Hello,
+
+	This is another one of those "a simple 5 minute perl hack"
+many hours later.
+
+I have a bunch of server programs that normally read in some data over
+a serial port, tcp connection etc. For testing purposes, we can write
+all this info to a file and play it back later. However, these files
+can be 20-50MB, so they are normally gzipped. As it turns out, I often
+run out of disk space when I need to gunzip them. In the best of all
+worlds, the server processes would just read from stdin. No such luck.
+
+So... as I was thumbing through the Perl Cookbook, I happened to
+notice an entry "Making a Process look like a file with Named
+Pipes". Bingo, thats what I need to do:
+
+unCanIt: uncompresses a file and sends it through a named pipe
+
+Usage: unCanIt [-h] -f file
+
+Options:
+        -h    This help
+        -f    file to uncompress. Should be .Z, .gz or .bz2
+
+This makes a named pipe in $TMPDIR and uncompresses a file through it.
+It prints the name of the pipe to stdout.
+
+Example:
+        myProg `unCanIt -f somefile.gz`
+
+This creates a name pipe, and writes the decompressed file to
+it. Since it prints the name of the named pipe to stdout, myProg can 
+just take that as an argument.
+
+
+Simple. No problem. I can get it work if I just run it like:
+
+unCanIt -f ~/arc/sysinfo2.1.tar.gz &amp;
+/tmp/unCanIt.16497 &lt;--- this is from stdout of unCanIt
+tar tvf /tmp/unCanIt.16497
+
+If I have it in back ticks though, the whole thing hangs. I tried
+forking, but no luck:
+
+	make named pipe
+	if(fork)
+		print namedPipe
+		exit
+	else
+		system("gzip -cd file.gz &gt;&gt; $namedPipe")
+		unlink namedPipe
+
+Doing:
+
+	tar tvf `unCanIt -f ~/arc/sysinfo2.1.tar.gz` &amp;
+
+If I look with ps
+
+    andy 16534 16533  0 02:56:22 ?        0:00 sh -c /usr/local/bin/gzip -cd /h/andy/arc/sysinfo2.1.tar.gz &gt;&gt; /tmp/unCanIt.165
+    andy 16541 16011  0 02:59:04 pts/4    0:00 grep tar
+    andy 16532     1  0 02:56:21 ?        0:00 /usr/local/bin/perl /h/andy/script/unCanIt -f /h/andy/arc/sysinfo2.1.tar.gz
+    andy 16533 16532  0 02:56:21 ?        0:00 sh -c /usr/local/bin/gzip -cd /h/andy/arc/sysinfo2.1.tar.gz &gt;&gt; /tmp/unCanIt.165
+
+A couple things I can't figure out here. Why do I have two process,
+16533 and 16534, that seem the same? It looks like I have:
+
+	16532 -&gt; 16533 -&gt; 16534
+
+Where is my tar? When I kill the above, I suddenly have:
+
+    andy 16551 16011  0 03:05:39 pts/4    0:00 tar tvf /tmp/unCanIt.16552
+
+Confused....
+
+Thanks,
+
+	Andy
+------------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 at Temple Univ. Japan
+*NEW LOCATION* a map is available at <A TARGET="_top" HREF="http://www.tuj.ac.jp/maps.html">http://www.tuj.ac.jp/maps.html</A>
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00084.html">Re: tlug: sed help</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00086.html">Re: tlug: sed help</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00083.html">Re: tlug: Meeting??</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00121.html">Re: tlug: perl daemons keeping me up past my bed time....</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00085"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00085"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

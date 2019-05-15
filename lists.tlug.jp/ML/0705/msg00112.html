@@ -1,0 +1,168 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] sed / shell / redirection question -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyyNfx.gfhxhon.np.wc> -->
+<!--X-Date: Mon, 07 May 2007 00:09:23 +0900 -->
+<!--X-Message-Id: 87abwic740.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 463DE078.2090005@pitchpipe.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00111.html">Date Prev</a>][<a href="msg00113.html">Date Next</a>][<a href="msg00111.html">Thread Prev</a>][<a href="msg00114.html">Thread Next</a>][<a href="maillist.html#00112">Date Index</a>][<a href="threads.html#00112">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] sed / shell / redirection question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 07 May 2007 00:19:27 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20sed%20%2F%20shell%20%2F%20redirection%20question">turnbull@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] sed / shell / redirection question</strong></li>
+<li>References: &lt;<a href="msg00110.html">463DE078.2090005@pitchpipe.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Mark Makdad writes:
+
+ &gt; Which seemed to work?  I'm not sure, I tried many things, and when I 
+ &gt; executed sed by itself on the shell I got the desired results.
+
+Are you sure you executed &quot;sed ... $X &gt; $X&quot;?
+
+ &gt; Why did this take all of my input files and truncate them at zero bytes?
+ &gt; 
+ &gt; Am I screwing up a basic redirection thing there?
+
+Yes.  Redirections are done by the shell, and happen *before* the
+program (here, sed) gets control.  You can't win this one.  You could
+set NOCLOBBER=OhMuhGawdNo and run it, in which case you get a &quot;can't
+open, file exists&quot; error.  You could use &quot;&gt;&gt;&quot; instead of &quot;&gt;&quot;, but that
+would probably give you an infinite loop (depends on how big the files
+are and how big stdin's buffer is, I think).  (If you were very lucky,
+you'd get the desired output appended to the original file.)  Or you
+do what you did, in which case the shell truncates the file before
+redirecting output to it.
+
+I think that &quot;truncate&quot; is the right word here, but if you're in the
+mood to experiment, you could try &quot;sed ... &lt; $X &gt; $X&quot;.  If rather than
+truncate it unlinks the file, then you'll get input from the open (but
+now anonymous) original file, and output will go to the newly linked
+empty file that gets created.
+
+I always use a temporary file (&quot;sed ... $X &gt; tmp$$$ &amp;&amp; mv tmp$$$ $X&quot;)
+rather than trying to edit in place.
+
+An alternative would be to use Big Brother Perl (ie, &quot;perl -ani&quot;) or
+some variant (the crucial thing is the -i &quot;inplace&quot; option).  I'm not
+a big fan of Perl, but that is definitely tr
+
+  And also, does anyone 
+ &gt; have a stiff drink?   I just overwrote 20 files and just lost about an 
+ &gt; hour of work (yay backups).  My mistake, though, for playing with fire 
+ &gt; without backing up.
+ &gt; 
+ &gt; Cheers,
+ &gt; 
+ &gt; Mark
+ &gt; 
+ &gt; -- 
+ &gt; To unsubscribe from this mailing list, 
+ &gt; please see the instructions at <a  href="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</a>
+ &gt; 
+ &gt; Please visit our sponsor at <a  href="http://www.primustel.co.jp/tlug/">http://www.primustel.co.jp/tlug/</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00110" href="msg00110.html">[tlug] sed / shell / redirection question</a></strong>
+<ul><li><em>From:</em> Mark Makdad</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00111.html">Re: [tlug] sed / shell / redirection question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00113.html">[tlug] Ubuntu / EPIA / Media Player</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00111.html">Re: [tlug] sed / shell / redirection question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00114.html">Re: [tlug] sed / shell / redirection question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00112"><strong>Date</strong></a></li>
+<li><a href="threads.html#00112"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

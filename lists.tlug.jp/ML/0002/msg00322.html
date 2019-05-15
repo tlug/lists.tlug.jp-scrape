@@ -1,0 +1,240 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: networking woes -->
+<!--X-From: John Seebach <jseebach@example.com> -->
+<!--X-Date:  Tue, 29 Feb 2000 22:05:13 +0900 -->
+<!--X-Message-Id: E12PmNd&#45;0000KX&#45;00@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00321.html">Date Prev</A>][<A HREF="msg00323.html">Date Next</A>][<A HREF="msg00321.html">Thread Prev</A>][<A HREF="msg00323.html">Thread Next</A>][<A HREF="maillist.html#00322">Date Index</A>][<A HREF="threads.html#00322">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: networking woes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>tlug &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: networking woes</strong></LI>
+<LI><strong>From</strong>: <strong>John Seebach &lt;<A HREF="mailto:jseebach@example.com">jseebach@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 29 Feb 2000 22:08:01 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Mail-Followup-To: tlug &lt;tlug@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi everyone
+
+So, I insert my pc network card for the first time since I upgraded
+my kernel (2.2.14) and various other parts of the OS, and lo and
+behold, looks like my own network needs to be reconfigured. This is
+kind of a stumper, though, since I don't recall having changed any
+settings, and everything *used* to work.
+
+Here's the situation:
+
+1) John inserts pc card.  
+
+2) John pings, telnets into and opens an ftp session to the other
+machines (er, "machine." i don't plug my old laptop in very often...)
+on my network with nary a problem.
+
+3) John tries to connect to his local isp using ppp to send an email
+message to tlug. Only, oops....John can't use ppp anymore. (Well,
+actually, I can establish a connection just fine. It's just that
+routing through my isp's nameserver no longer works) Removing the
+card doesn't help at all.
+
+4) John reboots out of laziness (faster than trying to diagnose the
+problem, and besides, I want to send my email) and everything works
+fine again.
+
+----------------------------------------------------------------------------
+/sbin/ifconfig and /sbin/route before inserting the card:
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:3924  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+
+
+----------------------------------------------------------------------------
+/sbin/ifconfig and /sbin/route after inserting the card:
+
+eth0      Link encap:Ethernet  HWaddr 00:90:99:0A:EA:DE  
+          inet addr:192.168.1.1  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:98 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:100 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100 
+          Interrupt:9 Base address:0x300 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:3924  Metric:1
+          RX packets:7538 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:7538 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+localnet        *               255.255.255.0   U     0      0        0 eth0
+default         localhost       0.0.0.0         UG    1      0        0 lo
+
+----------------------------------------------------------------------------
+...and again, after starting my ppp daemon
+
+
+eth0      Link encap:Ethernet  HWaddr 00:90:99:0A:EA:DE  
+          inet addr:192.168.1.1  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:98 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:100 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100 
+          Interrupt:9 Base address:0x300 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:3924  Metric:1
+          RX packets:7540 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:7540 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+
+ppp0      Link encap:Point-to-Point Protocol  
+          inet addr:210.175.27.69  P-t-P:210.175.27.15  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1524  Metric:1
+          RX packets:11 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:11 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:10 
+
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+210.175.27.15   *               255.255.255.255 UH    0      0        0 ppp0
+localnet        *               255.255.255.0   U     0      0        0 eth0
+default         localhost       0.0.0.0         UG    1      0        0 lo
+
+----------------------------------------------------------------------------
+
+I suspect that what's happening here is some script somewhere (likely
+/etc/pcmcia/network.opts) is setting my defaultroute to be localhost
+after I insert the card. There's a variable in the script
+
+GATEWAY="127.0.0.1"
+
+that appears to be responsible this behavior. If I comment it out, I
+can use ppp, but I can't use my local network. But, if it's there,
+when i establish a ppp connection, my isp's nameserver is not the
+default route. Arrgh.
+
+Can anybody tell me what I'm doing wrong?
+
+john
+
+
+-- 
+jseebach@example.com
+--
+      Ah! Ancient forest!
+Afternoon breeze shifts slightly:
+       Idling tour buses
+--------------------------------------------------------------------
+Next Technical Meeting: March 11 (Sat) 13:00 Temple University Japan
+* Topic: "What's new in Perl 5.6"
+Guest speaker: Simon Cozens (TLUG Perl guru)
+Next Nomikai Meeting:   April 21 (Fri) 19:00 Tengu TokyoEkiMae
+--------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00323" HREF="msg00323.html">Re: tlug: networking woes -- never mind</A></STRONG>
+<UL><LI><EM>From:</EM> John Seebach &lt;jseebach@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00324" HREF="msg00324.html">Re: tlug: networking woes</A></STRONG>
+<UL><LI><EM>From:</EM> Selva Nair &lt;selva@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00321.html">Re: tlug: pcmcia card</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00323.html">Re: tlug: networking woes -- never mind</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00321.html">Re: tlug: pcmcia card</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00323.html">Re: tlug: networking woes -- never mind</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00322"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00322"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: RE: [tlug] Why is Shift_JIS bad? -->
+<!--X-From-R13: Xvz PZOQYEA@ <oynpxfbaNbagenpx&#45;wncna.pbz> -->
+<!--X-Date: Fri, 30 Aug 2002 13:23:00 +0900 (JST) -->
+<!--X-Message-Id: AD619442E69BDE43A91704CC81B6330C0CFBEA@example.com&#45;japan.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00441.html">Date Prev</a>][<a href="msg00443.html">Date Next</a>][<a href="msg00438.html">Thread Prev</a>][<a href="msg00448.html">Thread Next</a>][<a href="maillist.html#00442">Date Index</a>][<a href="threads.html#00442">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>RE: [tlug] Why is Shift_JIS bad?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 30 Aug 2002 13:24:30 +0900</li>
+<li><strong>From</strong>: <strong>Jim BLACKSON &lt;<A HREF="mailto:blackson@DOMAIN.HIDDEN?SUBJECT=RE%3A%20%5Btlug%5D%20Why%20is%20Shift_JIS%20bad%3F">blackson@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>RE: [tlug] Why is Shift_JIS bad?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Two other (in)famous Shift-JIS problems are:
+
+1. C compiler: char as signed byte.
+
+The char type is often a single byte signed integer.  The sign often gets
+extended into the most significant byte when converting to a word integer on
+Intel machines.  That is, byte 0x82 becomes word 0xFF82.  When doing
+bit-wise logical operations (and, or), you must careful to type cast or mask
+the char to get rid of the sign extension.
+
+&lt;untested code fragment&gt;
+char *string = "※";     /* 0x81 0xa6 */
+unsigned short int	sjis_char;
+sjis_char = (string[0] &lt;&lt; 8) | (string[1] &amp; 0xff);
+printf( "%02x, %02x, %04x, %04x, %04x\n", \
+	string[0], string[1], ((string[0] &lt;&lt; 8) | string[1]), (string[0] &lt;&lt;
+8) | (string[1] &amp; 0xff), sjis_char \
+	);
+/* 2-byte int outputs: ff81, ffa6, ffa6, 81a6, 81a6 */
+/* 4-byte int outputs: ffffff81, ffffffa6, ffffffa6, ffff81a6, 81a6 */
+&lt;/untested code fragment&gt;
+
+Programs that have dealt only with 7-bit ASCII sometimes get caught by this
+sign extension; I have seen this in DOS programs in the past.
+
+
+2. 0x5C problem in file names
+
+Some operating systems use the backslash as a delimiter in path names.  The
+backslash is encoded as 0x5C.  But 0x5C is also used in the second byte of
+Shift_JIS encoding.  Software that does a simple strtok looking for 0x5C
+characters when parsing file names will incorrectly hit the 0x5C second byte
+in zenkaku katakana So 0x83 0x5C, or kanji Hyou (table) 0x95 0x5C.
+
+This happens to be when I try to use English language software to process
+Japanese filenames in FAT file systems.
+
+Best regards,
+jimb.
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00441.html">Re: [tlug] LaTeXing</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00443.html">[tlug] Using japanese keyboard.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00438.html">Re: [tlug] Why is Shift_JIS bad?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00448.html">[tlug] Why is Shift_JIS bad?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00442"><strong>Date</strong></a></li>
+<li><a href="threads.html#00442"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

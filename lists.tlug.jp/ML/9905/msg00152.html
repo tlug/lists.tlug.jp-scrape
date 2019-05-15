@@ -1,0 +1,191 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: problems compiling kinput2 -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 31 May 1999 17:04:05 +0900 -->
+<!--X-Message-Id: 14162.16983.14818.475518@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 374BFBAD.669839D7@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00151.html">Date Prev</A>][Date Next][<A HREF="msg00138.html">Thread Prev</A>][<A HREF="msg00140.html">Thread Next</A>][<A HREF="maillist.html#00152">Date Index</A>][<A HREF="threads.html#00152">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: problems compiling kinput2</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: problems compiling kinput2</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 31 May 1999 17:03:35 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00138.html">374BFBAD.669839D7@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00138.html">374BFBAD.669839D7@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "John" == John Seebach &lt;jseebach@example.com&gt; writes:
+
+    John&gt; I'm trying to compile kinput2 with canna support
+
+Brave, aren't you ;-)  But you have to be a lot braver to mess with
+the original sources for Wnn.
+
+    John&gt; Not entirely sure if this is even a worthwhile exercise, but
+    John&gt; at the very least it's a learning experience.
+
+It is _very_ useful to have a debug version of kinput2 around, because 
+XFree86's Xlib's support for XIM has historically been quite buggy.
+
+    John&gt; Unfortunately, it won't compile, and I can't figure out
+    John&gt; why. If anyone would be willing to take a look at the
+    John&gt; following files (makelog is the output from make, yappari):
+
+    John&gt; <A TARGET="_top" HREF="http://www.inh.co.jp/~jseebach/Kinput2.conf">http://www.inh.co.jp/~jseebach/Kinput2.conf</A>
+
+I'd worry about these lines:
+
+/*
+ * If you have already installed Canna header files and libraries..
+ */
+XCOMM use installed headers/libraries
+XCOMM CANNAINSTDIR = /usr
+XCOMM CANNASRC = $(CANNAINSTDIR)/include
+XCOMM CANNALIB = -lcanna16
+
+You should probably consider removing the last three "XCOMM"s and making 
+the directories point to the right places.  The fact that you don't
+seem to have compile errors due to missing Canna headers suggests I
+may be wrong, though.
+
+    John&gt; <A TARGET="_top" HREF="http://www.inh.co.jp/~jseebach/makelog">http://www.inh.co.jp/~jseebach/makelog</A>
+
+gcc -o kinput2 -O2 -fno-strength-reduce      -L/usr/X11R6/lib kinput2.o ../lib/libKi2.a ../lib/imlib/libim.a    -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11      
+../lib/libKi2.a(Canna.o): In function `InputEvent':
+Canna.o(.text+0x131): undefined reference to `wcKanjiString'
+
+My best guess is that these "wcKanji..." symbols are part of
+libcanna16 (I seem to recall seeing them there).  That's why I think
+you're having problems with the canna stuff itself.  And I don't see a 
+-lcanna... in that link line there.
+
+However with glibc's less than 2.1, you do not have libc support for
+wctombs stuff without libwctombs, a separate glibc add-on.  That's
+another possibility.  Try doing `nm | fgrep wcKanjiString' on all the
+.a's you have lying around and on your Canna libs.
+
+    John&gt; I'm also beginning to suspect that part of the problem here
+    John&gt; is the enormous gaping hole in my knowledge base where X,
+    John&gt; especially X resources, ought to be. I have yet to find any
+    John&gt; useful documentation in this area, although it's probably
+    John&gt; because I don't know where to look.  Any suggestions?
+
+General X stuff, I strongly recommend the O'Reilly "X Window System
+Programmers Guide" series (ok, Wiley?).
+
+Unfortunately, programming Imakefiles is a black art.  Some of the
+worst code I have ever seen is in the Imakefiles for various X
+programs supporting Japanese functionality.  (I should remark that I
+don't know all that much about Imakefiles; it's just that the ones for
+Wnn in particular were so broken I had to fix them, in different ways
+on different platforms.)  Working on Imakefiles, you're pretty much on 
+your own.  Preprocessor magic is just something you have to wrap
+around your head until it soaks in and spontaneously combusts.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: May 26 (Wed), 19:00 Tengu TokyoEkiMae 03-3275-3691
+*** Special guest: Eric S. Raymond
+Next Technical Meeting: June 19 (Sat), 18:30  place: Temple Univ.
+Topic: Linux SMP and the Intel SC450NX Quad Xeon Server platform
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00138" HREF="msg00138.html">tlug: problems compiling kinput2</A></STRONG>
+<UL><LI><EM>From:</EM> John Seebach &lt;jseebach@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00151.html">Re: tlug: Memory Snatchers</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00138.html">tlug: problems compiling kinput2</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00140.html">tlug: TLUG 2jikai trouble :-(</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00152"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00152"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

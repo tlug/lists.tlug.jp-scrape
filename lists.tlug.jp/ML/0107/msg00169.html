@@ -1,0 +1,223 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Re: RH 6.2 install causes screen to explode -->
+<!--X-From-R13: Xbfu Uybire <wztybiNjz.rqh> -->
+<!--X-Date: Wed, 11 Jul 2001 05:03:31 &#45;0400 (EDT) -->
+<!--X-Message-Id: 994842211.3b4c16630c3c5@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20010711150435.7D41.PETER@example.com -->
+<!--X-Reference: 15179.65201.89463.666206@example.com -->
+<!--X-Reference: 20010711165538.7D56.PETER@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00168.html">Date Prev</a>][<a href="msg00170.html">Date Next</a>][<a href="msg00151.html">Thread Prev</a>][<a href="msg00150.html">Thread Next</a>][<a href="maillist.html#00169">Date Index</a>][<a href="threads.html#00169">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: RH 6.2 install causes screen to explode</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: RH 6.2 install causes screen to explode</strong></li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@example.com">jmglov@example.com</A>&gt;</strong></li>
+<li>Date: Wed, 11 Jul 2001 05:03:31 -0400 (EDT)</li>
+<li>Content-Transfer-Encoding: 8bit</li>
+<li>Content-Type: text/plain; charset=ISO-8859-1</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00148.html">20010711165538.7D56.PETER@example.com</a>&gt;</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;jmglov@example.com&gt;</li>
+<li>References: &lt;<a href="msg00137.html">20010711150435.7D41.PETER@example.com</a>&gt; &lt;<a href="msg00142.html">15179.65201.89463.666206@example.com</a>&gt; &lt;<a href="msg00148.html">20010711165538.7D56.PETER@example.com</a>&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;DD3gaD.A.MrD.-YBT7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+<li>User-Agent: IMP/PHP IMAP webmail program 2.2.4</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Quoting Peter Evans &lt;peter@example.com&gt;:
+
+&gt; Ooh, &quot;rpm -q --whatprovides&quot; sounds neat.  Thank
+&gt; you, Stephen! So I type
+&gt; 
+&gt; rpm -q --whatprovides libgdk-1.2.so.0
+&gt; 
+&gt; (one of the things I'm told I need), and thereupon
+&gt; read:
+&gt; 
+&gt; no package provides libgdk-1.2.so.0
+
+Yep, that's where they get you. You see, rpm -q
+--whatprovides foo queries only *installed* packages for
+foo, and you usually have provide foo as a fully qualified
+pathname. Some &quot;virtual&quot; tags work, for instance:
+
+:jmglov@example.com; rpm -q --whatprovides XFree86
+XFree86-4.0.1-1
+:jmglov@example.com; rpm -q --whatprovides perl
+perl-5.6.0-10a
+perl-5.6.0-10a
+
+(Some, it would seem, work twice!) But some, however, do not:
+
+:jmglov@example.com; rpm -q --whatprovides php 
+no package provides php
+:jmglov@example.com; rpm -q --whatprovides c++
+no package provides c++
+
+So, what one usually finds oneself doing is:
+
+:jmglov@example.com; rpm -q --whatprovides /usr/bin/c++
+gcc-c++-2.96-85
+
+If you want to query *uninstalled* packages, use the -qp
+switches. You can:
+
+:jmglov@example.com; rpm -qpi mozilla-0.9.2-0.i386.rpm 
+Name        : mozilla             Relocations: /usr 
+Version     : 0.9.2               Vendor: Red Hat, Inc.
+[...]
+Description :
+Mozilla is an open-source web browser, designed for
+standards compliance, performance and portability.
+
+So, naturally, you try:
+
+:jmglov@example.com; rpm -qp *.rpm --whatprovides foo
+rpm: one type of query/verify may be performed at a time
+
+Shit. There are a coupla problems with rpm... But do not
+despair. You can do it this way:
+
+:jmglov@example.com; rpm -qp *.rpm --provides | grep mozilla
+mozilla = 23:0.9.2-0
+mozilla-devel = 23:0.9.2-0
+mozilla-mail = 23:0.9.2-0
+mozilla-psm = 23:0.9.2-0
+
+Just make sure that *.rpm points to a repository of .rpm
+packages. (Like your Redhat install disc, for instance.)
+
+However, I find that the best tool for the job is
+rpmfind.net. You can enter a file or virtual tag into the
+search box, and rpmfind figures out which rpm provides it,
+and gives you a buncha links to download said rpm. Cool!
+
+Good luck.
+
+Now, to address the other (evolving) thread at work here, I
+would have to agree that no one distro is &quot;better&quot; than
+another. Some distros are good for newbies, some for
+hardcore kernel hackers, others for multi-lingual support.
+One of the strengths of RH is that it is (usually) pretty
+damned easy to installed (compared to, say, Dweebian or
+*BSD). I feel reasonably confident in my *nix skillz, but I
+am apparently too dumb to make FreeBSD install. And Dweebian
+users, don't even pretend that apt-get and dselect are
+problem-free! I would have to say that, in my experience,
+the BSD ports system is the best way to manage what is
+installed on your system, but both rpm and apt-get/dselect
+are very useable and have some strong points.
+
+In short, if a distro works for you, said distro is fine by me.
+
+
+---------------------------------------------------
+&quot;No segfault, no problem.&quot;
+
+Josh Glover
+jmglov@example.com
+---------------------------------------------------
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00137" href="msg00137.html">Re: RH 6.2 install causes screen to explode</a></strong>
+<ul><li><em>From:</em> Peter Evans &lt;peter@example.com&gt;</li></ul></li>
+<li><strong><a name="00142" href="msg00142.html">Re: RH 6.2 install causes screen to explode</a></strong>
+<ul><li><em>From:</em> &quot;Stephen J. Turnbull&quot; &lt;turnbull@example.com&gt;</li></ul></li>
+<li><strong><a name="00148" href="msg00148.html">Re: RH 6.2 install causes screen to explode</a></strong>
+<ul><li><em>From:</em> Peter Evans &lt;peter@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00168.html">Re: RH 6.2 install causes screen to explode</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00170.html">Re: RH 6.2 install causes screen to explode</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00151.html">Re: RH 6.2 install causes screen to explode</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00150.html">Re: RH 6.2 install causes screen to explode</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00169"><strong>Date</strong></a></li>
+<li><a href="threads.html#00169"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

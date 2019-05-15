@@ -1,0 +1,218 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Re: RAID questions -->
+<!--X-From-R13: Xnxr [beevfba <wnxr_zbeevfbaNlnubb.pbz> -->
+<!--X-Date: Mon, 9 Jul 2001 04:21:33 &#45;0700 (PDT) -->
+<!--X-Message-Id: 20010709112133.21153.qmail@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3B4977CA.6A57B14D@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00085.html">Date Prev</a>][<a href="msg00087.html">Date Next</a>][<a href="msg00082.html">Thread Prev</a>][<a href="msg00089.html">Thread Next</a>][<a href="maillist.html#00086">Date Index</a>][<a href="threads.html#00086">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: RAID questions</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: RAID questions</strong></li>
+<li><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@example.com">jake_morrison@example.com</A>&gt;</strong></li>
+<li>Date: Mon, 9 Jul 2001 04:21:33 -0700 (PDT)</li>
+<li>Content-Type: text/plain; charset=us-ascii</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00082.html">3B4977CA.6A57B14D@example.com</a>&gt;</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;jake_morrison@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:Jacob.Morrison@example.com">Jacob.Morrison@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;er5j0D.A.KkH.2OZS7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Jc,
+
+One thing to keep in mind is peformance. RAID 5 can be 
+significantly worse in write performance than RAID 1 (or no RAID),
+though read performance is potentially better. With RAID 5, 
+when you write anything to disk, it is necessary to read from 
+all the other disks in the set to get the parity information, 
+then write to the target disk and the parity disk. 
+
+In your case, it probably doesn't make that much difference,
+but large mail servers are usually disk IO bound, so they can't
+use RAID 5. Mail servers (and database servers) are usually set
+up with RAID 1+0 (mirroring, then striping).
+
+Regards,
+Jake
+
+
+--- &quot;A.Sajjad Zaidi&quot; &lt;sajjad@example.com&gt; wrote:
+&gt; Jean-Christian Imbeault wrote:
+&gt; 
+&gt; &gt; Ok, I've been doing some reading on RAID. I think I have the basics
+&gt; &gt; down but a few questions came up. Could some one clarify 
+&gt; the following for me?
+&gt; &gt;
+&gt; &gt; 1- What's the advantage of RAID level 1 versus level 5? They 
+&gt; &gt; both seem to offer redundancy.
+&gt; 
+&gt; RAID level 1(mirroring) only offers redundancy. That is, with 2
+&gt; drives using RAID level 1, you only get the capacity of one drive.
+&gt; 
+&gt; RAID 5 offers this as well as striping (concatinating 2 or more
+&gt; drives to form 1 large drive). So with 3 drives, you can have 
+&gt; the space of 2 as well as redundancy.
+&gt; 
+&gt; With both, you can set the system up so if one disk fails, another
+&gt; can take over.
+&gt; 
+&gt; &gt; 2- Is it still the case that you have the whole system under RAID.
+&gt; This
+&gt; &gt; because having system files and a bootable RAID system is
+&gt; contra-indicated.
+&gt; &gt; (Or at least causes so much sysadmin pain it's not worth it)
+&gt; 
+&gt; Not sure what you mean, but there is no problem with having the whole
+&gt; system on
+&gt; RAID. Your boot loader and kernel should support booting off of RAID
+&gt; though.
+&gt; 
+&gt; &gt; 3- How do you know when a disk has failed?
+&gt; 
+&gt; I run a script every minute to check /proc/mdstat for any error
+&gt; messages.
+&gt; 
+&gt; &gt; 4- How easy is it to replace a failed disk and have the system back
+&gt; up?
+&gt; 
+&gt; If the system support hot-swapping, all you need to do is pull out
+&gt; the bad
+&gt; drive and replace it with a good one. Assuming your system is
+&gt; configured
+&gt; correctly, you wont have any downtime.
+&gt; 
+&gt; If it doesnt support hot-swapping, youll need to power off and do the
+&gt; replacement.
+&gt; 
+&gt; &gt; I'm thinking of setting up a mail server at out office and I was
+&gt; thinking
+&gt; &gt; that since it is somewhat of a mission critical system installing
+&gt; RAID would
+&gt; &gt; be a good idea. To protect against disk failure I tought RAID would
+&gt; be a
+&gt; &gt; good idea. But maybe there are better ways than RAID?
+&gt; 
+&gt; The more redundancy the better. You can have RAID and do regular
+&gt; offsite
+&gt; backups.
+&gt; 
+&gt; Regards,
+&gt; 
+&gt; 41 53 5A
+&gt; 
+&gt;
+-----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, July 14 13:30- 
+&gt; Next Nomikai Meeting:    Fri, Aug  10 19:30-  Tengu Tokyo Eki-Mae
+&gt;
+-----------------------------------------------------------------------
+&gt; more info: <A  HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online
+&gt; Japan
+&gt; 
+
+
+__________________________________________________
+Do You Yahoo!?
+Get personalized email addresses from Yahoo! Mail
+<A  HREF="http://personal.mail.yahoo.com/">http://personal.mail.yahoo.com/</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00082" href="msg00082.html">Re: RAID questions</a></strong>
+<ul><li><em>From:</em> &quot;A.Sajjad Zaidi&quot; &lt;sajjad@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00085.html">Re: RH 6.2 install causes screen to explode</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00087.html">Re: Localhost connection refused</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00082.html">Re: RAID questions</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00089.html">Re: RAID questions</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00086"><strong>Date</strong></a></li>
+<li><a href="threads.html#00086"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

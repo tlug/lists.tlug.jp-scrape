@@ -1,0 +1,222 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Limits on file numbers in sort &#45;m -->
+<!--X-From-R13: =?GFT&#45;8?P?6ohE6KzS56ht?= <nxven.xhebtnarNtznvy.pbz> -->
+<!--X-Date: Wed, 28 May 2014 14:59:42 +0900 -->
+<!--X-Message-Id: CAJMSLH6SdSUmvHsjmZBZP&#45;g1graNuPV51vdwLzpPf7ipmz7+zA@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: CABHGxq7jYkDDLkF8uzzNK8WeU+37t1wgpVhk6VD2HQKyEi7wBw@mail.gmail.com -->
+<!--X-Reference: CAJMSLH618MfmhL9ufAOfLXxw52i4STpF8dsc_+xe&#45;2GRB3JM8g@mail.gmail.com -->
+<!--X-Reference: 87bnui8sky.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Reference: CABHGxq4NEBMVR8jndiEvcgsGkc_B0f&#45;qcrs2sFjqaAdWH3n9sw@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00273.html">Date Prev</a>][<a href="msg00275.html">Date Next</a>][<a href="msg00273.html">Thread Prev</a>][<a href="msg00275.html">Thread Next</a>][<a href="maillist.html#00274">Date Index</a>][<a href="threads.html#00274">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Limits on file numbers in sort -m</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 28 May 2014 14:59:21 +0900</li>
+<li><strong>From</strong>: <strong>黒鉄章 &lt;<a href="mailto:akira.kurogane@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Limits%20on%20file%20numbers%20in%20sort%20-m">akira.kurogane@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Limits on file numbers in sort -m</strong></li>
+<li>References: &lt;<a href="msg00267.html">CABHGxq7jYkDDLkF8uzzNK8WeU+37t1wgpVhk6VD2HQKyEi7wBw@mail.gmail.com</a>&gt;	&lt;<a href="msg00268.html">CAJMSLH618MfmhL9ufAOfLXxw52i4STpF8dsc_+xe-2GRB3JM8g@mail.gmail.com</a>&gt;	&lt;<a href="msg00272.html">87bnui8sky.fsf@uwakimon.sk.tsukuba.ac.jp</a>&gt;	&lt;<a href="msg00273.html">CABHGxq4NEBMVR8jndiEvcgsGkc_B0f-qcrs2sFjqaAdWH3n9sw@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr">For each input file the sort process has open the OS will buffer a memory page or two for each one (at least). 4k is usual mem page size I believe.<div><br></div><div>4k * 10k = 40M doesn&#39;t sound bad at all. But if read-ahead buffering is putting a lot more than a couple of pages per file in memory that will be that many times larger. Actually I would expect this to be happening but would have faith in the OS to limit itself to avoid using swap.</div>
+
+<div><br></div><div>Regarding the count of occurrences you could pipe the &quot;sort -m ....&quot; into &quot;uniq -c&quot;. I&#39;ve always been annoyed by the format of uniq (a space-padded, fixed-width count as the first column) but if you can live with that you&#39;ll be getting to what you want quicker. The pipe to uniq will consume it&#39;s input buffer very quickly so it&#39;s not going to be the case that all of the output of sort must stay in memory as long as the process is running. Also if duplicates are common, your final output file saved to disk will be usefully smaller.</div>
+
+<div><br></div><div>Cheers,</div><div><br></div><div>Akira</div></div><div class="gmail_extra"><br><br><div class="gmail_quote">On Wed, May 28, 2014 at 2:21 PM, Jim Breen <span dir="ltr">&lt;<a rel="nofollow" href="mailto:jimbreen@example.com" target="_blank">jimbreen@example.com</a>&gt;</span> wrote:<br>
+
+<blockquote class="gmail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div class="">On 28 May 2014 13:55, Stephen J. Turnbull &lt;<a rel="nofollow" href="mailto:stephen@example.com">stephen@example.com</a>&gt; wrote:<br>
+
+
+&gt; 黒鉄章 writes:<br>
+&gt;<br>
+&gt;  &gt;     A small precursor to consider is if the filename expansion<br>
+&gt;  &gt;     (i.e. from *.interim to all the separate files) will exceed the<br>
+&gt;  &gt;     size of ARG_MAX. On my system you&#39;d be OK (it&#39;s ~2M, i.e. more<br>
+&gt;  &gt;     than ~10k * 20 chars = ~200k)<br>
+&gt;<br>
+&gt; There are shell limits as well, even if ARG_MAX is huge Jim probably<br>
+&gt; wants to use xargs.<br>
+<br>
+</div>I can&#39;t see where xargs would assist with &quot;sort -m ....&quot;, as by definition<br>
+it wants all the files at once.<br>
+<div class=""><br>
+&gt;  &gt; &gt; I&#39;m gearing up for a merging of a very large number of<br>
+&gt;  &gt; &gt; sorted text files(*). Does anyone know if there is an upper<br>
+&gt;  &gt; &gt; limit on how many sorted files can be merged using something<br>
+&gt;  &gt; &gt; like: &quot;sort -m *.interim &gt; final&quot;.<br>
+&gt;<br>
+&gt; I don&#39;t know about upper limits, but you might consider whether you<br>
+&gt; wouldn&#39;t get much better performance from a multipass approach.<br>
+&gt;<br>
+&gt;  &gt; &gt; Also, is it worth fiddling with the &quot;--batch-size=NMERGE&quot; option?<br>
+&gt;<br>
+&gt; Pretty much what I had in mind.  Specifically, assuming 100-byte<br>
+&gt; lines, merging 10 files at a time means 4GB in the first pass,<br>
+&gt; comfortably fitting in your memory and allowing very efficient I/O.<br>
+&gt; I&#39;ll bet that this is a big win (on the first pass only).  On later<br>
+&gt; passes, the performance analysis is non-trivial, but the I/O<br>
+&gt; efficiency of having a big buffer for each file in the batch may<br>
+&gt; outweigh the additional passes.<br>
+<br>
+</div>But does &quot;sort -m ...&quot; pull everything into RAM? If I were<br>
+implementing it I&#39;d have a heap of open input files and pop<br>
+the individual files as needed. Last night I did a test with<br>
+~150 files. I don&#39;t know how it went about it, but it only used<br>
+a moderate amount of RAM, so I expect it&#39;s doing a classical<br>
+file merge.<br>
+<div class=""><br>
+&gt; Do you expect the output file to be ~= 40x10^9 lines!?  Or is some<br>
+&gt; uniquification going to be applied?  If so, I suspect that<br>
+&gt; interleaving merge and uniquification passes will be a lot faster.<br>
+<br>
+</div>Yes, I&#39;ll be uniquificationするing, in which identical lines are counted<br>
+and tagged with their frequency.<br>
+<br>
+this<br>
+this<br>
+<br>
+will become<br>
+<br>
+this\t2<br>
+<br>
+I can&#39;t get sort to do that, and rather than worry about adding a<br>
+multi-file merge to my uniquification utility, I&#39;ll do it in a separate<br>
+pass.<br>
+<div class=""><br>
+&gt; For quad core, see the --parallel option.  This is better documented<br>
+&gt; in the Info manual for coreutils than in the man page.<br>
+<br>
+</div>I can&#39;t see that option in either the man page or the info/coreutils<br>
+manual. I see when I run sort (but not sort -m) that it goes<br>
+parallel by default. &quot;top&quot; shows the processor load going to 300+%.<br>
+<br>
+Cheers<br>
+<span class="HOEnZb"><font color="#888888"><br>
+Jim<br>
+</font></span><div class="HOEnZb"><div class="h5"><br>
+--<br>
+Jim Breen<br>
+Adjunct Snr Research Fellow, Japanese Studies Centre, Monash University<br>
+<br>
+</div></div><br>--<br>
+To unsubscribe from this mailing list,<br>
+please see the instructions at <a rel="nofollow" href="http://lists.tlug.jp/list.html" target="_blank">http://lists.tlug.jp/list.html</a><br>
+<br>
+The TLUG mailing list is hosted by ASAHI Net, provider of mobile and<br>
+fixed broadband Internet services to individuals and corporations.<br>
+Visit ASAHI Net&#39;s English-language Web page: <a rel="nofollow" href="http://asahi-net.jp/en/" target="_blank">http://asahi-net.jp/en/</a><br></blockquote></div><br></div>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00275" href="msg00275.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Kalin KOZHUHAROV</li></ul></li>
+<li><strong><a name="00276" href="msg00276.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00267" href="msg00267.html">[tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+<li><strong><a name="00268" href="msg00268.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> 黒鉄章</li></ul></li>
+<li><strong><a name="00272" href="msg00272.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00273" href="msg00273.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00273.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00275.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00273.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00275.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00274"><strong>Date</strong></a></li>
+<li><a href="threads.html#00274"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

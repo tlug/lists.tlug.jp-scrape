@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Blocking bad sshd bruteforce attempt -->
+<!--X-From-R13: Xbr Znenoryy <serq62Nynenoryy.bet> -->
+<!--X-Date: Wed, 12 Jul 2006 02:04:42 +0900 -->
+<!--X-Message-Id: Pine.BSF.4.58.0607111251050.10356@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 78d7dd350607102243j32a8b5f1od4f1ff847e096de0@example.com -->
+<!--X-Reference: Pine.BSF.4.58.0607110240440.88730@example.com -->
+<!--X-Reference: 78d7dd350607110945h59b5856eo7babfcee90c93480@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00193.html">Date Prev</a>][<a href="msg00195.html">Date Next</a>][<a href="msg00193.html">Thread Prev</a>][<a href="msg00186.html">Thread Next</a>][<a href="maillist.html#00194">Date Index</a>][<a href="threads.html#00194">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Blocking bad sshd bruteforce attempt</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 11 Jul 2006 13:04:38 -0400 (EDT)</li>
+<li><strong>From</strong>: <strong>Joe Larabell &lt;<a href="mailto:fred62@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Blocking%20bad%20sshd%20bruteforce%20attempt">fred62@???</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Blocking bad sshd bruteforce attempt</strong></li>
+<li>References: &lt;<a href="mailto:78d7dd350607102243j32a8b5f1od4f1ff847e096de0@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Blocking%20bad%20sshd%20bruteforce%20attempt">78d7dd350607102243j32a8b5f1od4f1ff847e096de0@example.com</a>&gt;	&lt;<a href="mailto:Pine.BSF.4.58.0607110240440.88730@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Blocking%20bad%20sshd%20bruteforce%20attempt">Pine.BSF.4.58.0607110240440.88730@example.com</a>&gt;	&lt;<a href="mailto:78d7dd350607110945h59b5856eo7babfcee90c93480@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Blocking%20bad%20sshd%20bruteforce%20attempt">78d7dd350607110945h59b5856eo7babfcee90c93480@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt; All I had to changed is
+&gt;
+&gt; log { source(a_src); filter(f_anticrack); destination(d_anticrack); };
+
+I have completely re-written my syslog-ng.conf so I may have changed the
+name of the source. As you probably figured out (but just for the archive),
+you want to set it to the name assigned to the source of your messages.
+
+&gt; It just works. Because it sits in /root i.e, only root can read the
+&gt; script, do you think we have another reasons other than &quot;paranoid&quot; to
+&gt; make an C version for your script?
+
+It *should* be safe. But if there is any way for someone to manipulate the
+log message in such a way as to pass something tainted to the script, it
+could cause trouble. I only know it's generally not recommended to process
+user-controllable information with a script running as root.
+
+Like, for example, some security bug where someone could do this:
+
+  login: '`exit: rm /`'
+
+and have it end up passed to the script via the syslog. I dunno... you're
+probably safe. It might be more of a problem if local users could get to
+the system.
+
+&gt; I am working remote now so it is not the right time to restart the
+&gt; firewall.
+
+Oops... Been there, done that. When it works, it works. But if you goof
+the script, you're hosed. At first I was also worried about locking myself
+out by mistyping my user name or something like that. But, so far, I
+haven't had a problem. After the first slip-up I'm extra careful.
+
+&gt; My website get 15000 hit per day. Robot like Yahoo or Google knock my
+&gt; web server every 1 second but I never seen any hit from webshot. Maybe
+&gt; I am so lucky :D.
+
+Holy smokes... I've never seen that much activity here, hacking or
+otherwise. Then again, the web sites on my personal machine are not
+really public. I keep my public stuff on a professionally-maintained
+server ;-)...
+
+The webshots.com thing is odd. I can't imagine the IP to which the domain
+resolves would be dynamic. And there would be little point trying to port
+scan and/or hack into the system with a forged IP, as the packets would
+never come back (maybe DDOS?). So it's possible some server used by the
+webshots.com site has been hacked and they don't know it. All I know is
+that several times, at intervals months apart, the webshots.com IP shows
+up in my SHITLIST. Interesting...
+
+---
+Joseph L (Joe) Larabell            Never fight with a dragon
+<a  rel="nofollow" href="http://larabell.org">http://larabell.org</a>                     for thou art crunchy
+                                  and goest well with cheese.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00176" href="msg00176.html">[tlug] Blocking bad sshd bruteforce attempt</a></strong>
+<ul><li><em>From:</em> Hung Vu Nguyen</li></ul></li>
+<li><strong><a name="00180" href="msg00180.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00193" href="msg00193.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+<ul><li><em>From:</em> Hung Vu Nguyen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00193.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00195.html">Re: [tlug] Hi from new server and a couple of questions</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00193.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00186.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00194"><strong>Date</strong></a></li>
+<li><a href="threads.html#00194"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

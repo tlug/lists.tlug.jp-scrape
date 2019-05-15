@@ -1,0 +1,173 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: jserver socket permissions -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 14 Jan 1997 05:29:44 GMT -->
+<!--X-Message-Id: m0vk1Ju&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970114100535.6049B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00035.html">Date Prev</A>][<A HREF="msg00037.html">Date Next</A>][<A HREF="msg00035.html">Thread Prev</A>][<A HREF="msg00037.html">Thread Next</A>][<A HREF="maillist.html#00036">Date Index</A>][<A HREF="threads.html#00036">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: jserver socket permissions</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: jserver socket permissions </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 14 Jan 1997 14:21:58 +0900</LI>
+<LI>In-reply-to: Your message of "Tue, 14 Jan 1997 10:08:10 +0900."            &lt;<A HREF="msg00035.html">Pine.HPP.3.95.970114100535.6049B-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Paul" == Paul Gampe &lt;paulg@example.com&gt; writes:
+
+    Paul&gt; On Mon, 13 Jan 1997, Craig Oda wrote:
+    craig&gt; Jserver then automatically creates a socket in /tmp.
+    craig&gt; 
+    craig&gt; srwxr-xr-x 1 root root 0 Jan 13 22:32 jd_sockV4=
+    craig&gt; 
+    craig&gt; As can be seen from the permissions above, only root can
+    craig&gt; write to the socket.  I can solve this by changing the
+    craig&gt; permissions to 1777.  However, I was wondering if this was
+    craig&gt; a security problem or not.
+
+I assume that the operational problem is that nobody but root can talk 
+to the jserver?
+
+    Paul&gt; Yes it could be a security problem, depending on what the
+    Paul&gt; uid of the jserver process is.
+
+Well, jserver should be running as a non-privileged user named 'wnn',
+group 'bin', if I understand it correctly.  I run Canna myself; Canna
+in the default configuration runs as user 'bin', group 'bin'.  Canna
+_does_ set its Unix-domain socket's mode to 0777.  (Where did the
+sticky bit come from?)  The port is 5680, in contrast to Wnn which
+likes to use a privileged port, I think: it's 601 on the University's
+Sun system.  I think Wnn is generally more security conscious than
+Canna, though.
+
+The purpose of this is to protect the dictionary files, as I
+understand it.  I don't really see what the "security problem" is,
+since to take advantage of the security problem you need to subvert
+jserver in any case (the socket only talks to jserver), and if you can
+do that....
+
+You can of course sabotage the server by deleting the socket or
+something like that, but I assume that's not what you have in mind.
+
+    craig&gt; I'm planning If the permissions are automatically set to
+    craig&gt; 1755, it must be a problem for other people too, right?
+
+JE has been replete with permission problems in my experience.
+However, this has been on library files (eg, the font installation
+procedures for kon), where I suspect the proper switches to tar to
+preserve permissions weren't used.  This looks to me like a problem
+with the umask.  Whether it's an Wnn bug or a configuration problem I
+don't know (I'm a bit hazy on how umasks get set for daemon
+processes), but it's probably a bug.  (Canna explicitly sets the umask
+to 0 (temporarily) before creating the Unix-domain socket.)
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: jserver socket permissions</A></STRONG>
+<UL><LI><EM>From:</EM> Paul Gampe &lt;paulg@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00035.html">Re: jserver socket permissions</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00037.html">Re: Applixware</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00035.html">Re: jserver socket permissions</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00037.html">Re: Applixware</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00036"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00036"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

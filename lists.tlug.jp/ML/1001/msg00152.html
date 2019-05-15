@@ -1,0 +1,205 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] how to tune reiser4 for millions of files? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Sun, 31 Jan 2010 16:06:18 +0900 -->
+<!--X-Message-Id: 20100131070618.GD13956@poetic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100128073847.GH13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Reference: 20100128095957.GB24344@analytic.cynic.net -->
+<!--X-Reference: 20100128132701.GI13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00151.html">Date Prev</a>][<a href="msg00153.html">Date Next</a>][<a href="msg00145.html">Thread Prev</a>][<a href="msg00155.html">Thread Next</a>][<a href="maillist.html#00152">Date Index</a>][<a href="threads.html#00152">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] how to tune reiser4 for millions of files?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 31 Jan 2010 16:06:18 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] how to tune reiser4 for millions of files?</strong></li>
+<li>References: &lt;<a href="mailto:20100128073847.GH13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128073847.GH13095@example.com</a>&gt;	&lt;<a href="mailto:20100128095957.GB24344@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128095957.GB24344@example.com</a>&gt;	&lt;<a href="mailto:20100128132701.GI13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128132701.GI13095@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2010-01-28 14:27 +0100 (Thu), Michal Hajek wrote:
+
+&gt; the analysis itself is not a problem at the moment. I believe that
+&gt; by rewriting the program one can compute the whole thing in an hour or
+&gt; so.  Especially I believe one could employ cuda and nvidia card to get
+&gt; even better result, since the thing is easily paralelizable (? not sure
+&gt; about the correct English word). 
+
+You're correct; the word is &quot;parallelizable.&quot; That said, if it takes an
+hour to run, unless you're running it many times a day it would probably
+be a complete waste of time to do the extra work to use your NVidea card
+for it. But that's another topic.
+
+&gt; My attention is more on the hw or system side of the problem. That is, 
+&gt; can I do something with the system (OS, hw..etc.) to speed things up?
+
+Yes. First step: forget about what filesystems you're using: you're
+attacking the difficult rather than the easy side of the problem.
+
+Your best option is to fix whatever's writing the data to use a single
+file, or a small number of files. 
+
+By the way, you so far neglected to give us one of the most critical
+pieces of information here, which is the size of your data set, but
+knowing that it's 7-million-odd &quot;small text files,&quot; I'll guess that
+they're say they're 1 KB each and you've got 7 GB of data. Things don't
+change that much if they're 10 KB each and you have 70 GB, and I'm
+guessing if you can process the whole data set &quot;in an hour,&quot; it's not
+700 GB, which would take more than twice that just to read from a disk
+in a straight serial read.
+
+(That 7 GB size, by the way, is what we classify in the database world
+as either &quot;small&quot; or &quot;trivial,&quot;; it's fits into well under half of the
+main memory in a modern $3000 low-end server.)
+
+Actually, I lied, that's not the most critical: it's really your access
+patterns (how you write and read the data that's the issue). For the
+smaller size (7GB) it's probably about how fast you can load it into
+main memory, and for the larger size (70GB) you'll be getting into disk
+access speed.
+
+The single best thing you can do is change the program generating these
+data to write everything to a single file, or a relatively small number
+of files.
+
+The second best thing is to change either your analyzer to read the
+files in directory order (as I said before, readdir()) if it reads the
+files only once and the you newfs that filesystem after, or to write
+an intermediate program that reads the files in directory order and
+rewrites them (to a separate drive) as one or a few large files in a
+more optimized format.
+
+If you're going to continue to play around with having lots of small
+files, and you're in the 70 GB range rather than the 700 GB range, don't
+bother mucking about with filesystems until you've put the whole thing
+on an SSD.
+
+Fourth, if you're going to persist in playing with filesystems here,
+keep in mind it no longer has anything to do with the performance of
+your application and you're just doing it for personal pleasure. You're
+in the position of the guy who wrote that wonderful 672-byte chess
+program that would run on a 1K Timex Sinclair[1]. People trying to
+improve that these days are not doing so because they just want a better
+chess program.
+
+[1]: <a  rel="nofollow" href="http://users.ox.ac.uk/~uzdm0006/scans/1kchess/">http://users.ox.ac.uk/~uzdm0006/scans/1kchess/</a>
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+             <a  rel="nofollow" href="http://www.starling-software.com">http://www.starling-software.com</a>
+The power of accurate observation is commonly called cynicism
+by those who have not got it.    --George Bernard Shaw
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00155" href="msg00155.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00126" href="msg00126.html">[tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00128" href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00151.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00153.html">Re: [tlug] [announcement] nomikai Feb 12 (Fri)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00145.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00155.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00152"><strong>Date</strong></a></li>
+<li><a href="threads.html#00152"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

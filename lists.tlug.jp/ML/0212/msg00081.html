@@ -1,0 +1,174 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Postfix/SASL/RH 8.0 -->
+<!--X-From-R13: Zneel Egnaorel <fgnaorelNyneejner.pbz> -->
+<!--X-Date: Sat, 07 Dec 2002 00:40:13 +0900 -->
+<!--X-Message-Id: 3DF0C4DD.9080508@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00080.html">Date Prev</a>][<a href="msg00082.html">Date Next</a>][<a href="msg00080.html">Thread Prev</a>][<a href="msg00084.html">Thread Next</a>][<a href="maillist.html#00081">Date Index</a>][<a href="threads.html#00081">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Postfix/SASL/RH 8.0</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 07 Dec 2002 00:40:13 +0900</li>
+<li><strong>From</strong>: <strong>Larry Stanbery &lt;<A HREF="mailto:stanbery@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Postfix%2FSASL%2FRH%208.0">stanbery@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Postfix/SASL/RH 8.0</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.0.1) Gecko/20021003</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Greetings...
+I'm de-lurking (from a new domain) once more with a problem.  (I'd offer
+my comments on current topics, but I'm afraid I feel, well, not
+sufficiently wise. =)
+
+Synopsis: RH 8.0, Postfix, and trying to get SASL to work for
+authentication for relaying.  I've no joy for the wonderful message &quot;no
+SASL authentication mechanisms&quot;.  Might someone have a clue they can
+lend to me?
+
+Details:
+Of course, I performed the requisite searches of Google (redhat sasl
+authentication etc.), and found 1 exact match for the string above, on a
+Japanese web page (alas, my time is spent at the computer, not learning
+Japanese), and I didn't see any hints of a solution there.  I searched
+through several other pages, slowly building my knowledge of the
+situation...
+
+1) Vanilla RedHat 8.0 system.  I decided to try Postfix, since I've had
+enough of the joys of &quot;sendmail.cf&quot; (and .m4).  I've read through the
+docs available, as well as the web site (the relevant bits).
+2) Installed RPMs (yeah, I know -- but I got tired of playing with
+Gentoo, because I've got a room full of Linuxen at work) for postfix and
+cyrus-sasl.  No brainer.
+3) Played with &quot;main.cf&quot; config file.  Added the following:
+smtpd_sasl_auth_enable = yes
+smtpd_recipient_restrictions = permit_mynetworks,
+permit_sasl_authenticated, reject_unath_destination
+smtpd_sasl_security_options = noplaintext noanonymous
+(this based on information in the &quot;*RedHat*.txt&quot; file found in 
+/usr/share/doc/postfix-1.1.11)
+4) Started getting above message - no SASL authentication mechanisms.
+5) Read up - realized I needed to configure and check a few things:
+/usr/lib/sasl/smtpd.conf: has pwcheck_method: saslauthd
+/usr/lib/sasl2/smtpd.conf: has pwcheck_method: saslauthd
+6) Changed the invocation method of saslauthd in 
+/etc/rc.d/init.d/saslauthd to &quot;pam&quot; .
+7) Not knowing what &quot;service&quot; saslauthd and/or smtpd would require for 
+PAM authentication, created PAM configuration files for both (nominal 
+auth/account/password checks based on system-auth).
+8) After the above steps, more reading, lots of testing, lots of 
+irritation, realized that, since PLAIN would be the mapping for the PAM 
+service (my guess, bases on the Cyrus man page info), I should remove 
+the &quot;noplaintext&quot; option from smtpd_sasl_security_options.
+
+So, right now, I can SMTP into the machine, but cannot AUTH PLAIN per 
+the SASL readme for Postfix -- and now, instead of &quot;no SASL 
+authentication mechanisms&quot;, it simply says &quot;SASL PLAIN authentication 
+failed&quot;.  Of note, also, is the fact that it _only_ lists PLAIN and 
+LOGIN as authentication mechanisms when I send the EHLO command via SMTP 
+-- and not CRAM, etc., as shown in the &quot;sample&quot;.
+
+At this point, I believe it's got to be something between Postfix and 
+SASL, but I'm unsure what.  Any info that might point me in the right 
+direction would be greatly appreciated.
+
+Larry Stanbery
+stanbery@example.com
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00080.html">RE: [tlug] w00t; it works</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00082.html">Re: [tlug] SSH.com question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00080.html">RE: [tlug] w00t; it works</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00084.html">[tlug] pppd weirdness</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00081"><strong>Date</strong></a></li>
+<li><a href="threads.html#00081"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

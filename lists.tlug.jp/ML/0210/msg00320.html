@@ -1,0 +1,224 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] longest uptime boxes -->
+<!--X-From-R13: Fbq [pChvyyva <qrivaNfcnzpbc.arg> -->
+<!--X-Date: Mon, 28 Oct 2002 17:03:10 +0900 (JST) -->
+<!--X-Message-Id: 20021028163500.C83954&#45;100000@example.com&#45;pun.prv -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20021028055816.GA3417@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00319.html">Date Prev</a>][<a href="msg00321.html">Date Next</a>][<a href="msg00317.html">Thread Prev</a>][<a href="msg00321.html">Thread Next</a>][<a href="maillist.html#00320">Date Index</a>][<a href="threads.html#00320">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] longest uptime boxes</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 28 Oct 2002 17:02:49 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Tod McQuillin &lt;<A HREF="mailto:devin@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20longest%20uptime%20boxes">devin@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] longest uptime boxes</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Mon, 28 Oct 2002, Scott Robbins wrote:
+
+&gt; If you upgrade FreeBSD with make world, it's considered good practice to
+&gt; update the kernel as well (actually, before installing the new world)
+&gt; and this too requires a reboot.
+
+This is the most significant difference between Linux and BSD unix.
+
+Linux is a kernel -- to make a complete OS it must be packaged together
+with programs which run under the linux kernel; GNU utilities like ls, mv,
+cp, tar, and other linux-specific utilities like mount, ps, ifconfig, and
+fsck.
+
+Development of the linux kernel and of other software that does with it to
+make an OS is largely decoupled.  So it is very common to upgrade the
+linux kernel on a system without touching any of the other installed
+software.  Sometimes this is fine, and other times things break because
+new kernel functionality was added (or removed) and the programs which use
+it (or don't) aren't changed to match.
+
+In the BSD world, the entire OS is developed and maintained as a single
+unit.  So when the kernel is changed, necessary changes to the programs
+which use the changed part of the kernel are also made.
+
+As with linux, it is possible to upgrade just the kernel without touching
+the rest of the OS, but just as with linux, it can lead to problems if you
+do.  The difference with BSD is that upgrading the rest of your system to
+match the running kernel is easy to do and is standard practise when
+upgrading.
+
+&gt; Actually, the make build world part is best done in single user mode,
+&gt; which although it doesn't require a reboot would make the machine
+&gt; inaccessible to outsiders during the time of building world, which can
+&gt; take over an hour (on slow machines, a LOT longer.)
+
+It's not necessary to recompile your FreeBSD system or kernel in single
+user mode.  The procedure goes like this:
+
+1) upgrade your system sources to the latest versions from whichever
+branch you are running (FreeBSD-STABLE, aka RELENG_4, FreeBSD-CURRENT, or
+one of the security branches tied to a particular release (4.6, 4.7, etc))
+
+2) 'make buildworld' -- this recompiles everything except the kernel and
+stores the compiled binaries under /usr/obj
+
+3) 'make buildkernel KERNCONF=YOURCONF' -- this recompiles the kernel
+using your kernel configuration file and stores the compiled binaries
+under /usr/obj
+
+4) 'make installkernel KERNCONF=YOURCONF' -- this moves your current
+kernel and modules to a backup directory and installs the new kernel you
+built in step 3 into the root directory.
+
+5) reboot into single user mode.  This accomplishes two things -- first,
+it verifies that the new kernel installed in step 4 boots and runs
+correctly (if it doesn't, you can revert to the old version and figure out
+what went wrong).  Second, it makes sure the minimum number of processes
+are running, so that running programs won't get confused when things
+change underneath them in step 6.
+
+6) 'make installworld' -- this installs all the programs you built in step
+2 into their proper places.
+
+7) 'mergemaster' -- this allows you to merge in changes to configuration
+files in /etc without losing your existing configuration.  If new options
+or defaults have been added, mergemaster allows you to make the same edits
+to your installed files in /etc, without losing your own customisations.
+
+8) finally, reboot again normally back to multiuser mode.  This lets all
+the new programs you installed in step 6 be started in the normal way.
+
+Everything up to step 4 can be done without rebooting or stopping normal
+processing in any way.  The downtime is limited to how long it takes to
+complete steps 5-7 (for me, usually about 15 minutes).
+
+&gt; A quote from FreeBSD Unleashed (which, as it's not an &quot;official&quot; FreeBSD
+&gt; publication is not respected by some, but still probably has merit)
+&gt; &quot;Remember, a system with 350 day uptime either means a system that has
+&gt; been sitting unused in a closet for a year or a system that has not been
+&gt; conscientiously upgraded to keep up with security bulletins&quot;
+
+This is probably true.
+
+&gt; (hrrm, actually, that doesn't necessarily make sense--one would think
+&gt; that security patches can be successfully installed without kernel
+&gt; upgrades)
+
+It depends on the patch.  Sometimes the security hole is in the kernel
+itself, like maybe a bug in a system call that can allow any user to crash
+the system, or a number of other possibilities.  See
+<A  HREF="http://www.freebsd.org/releases/4.6R/errata.html">http://www.freebsd.org/releases/4.6R/errata.html</A> for an example of what
+kinds of things can go wrong.  (4.6 was an unusually bad release for
+FreeBSD -- all kinds of security problems and other bugs, both in BSD and
+in third party code, were discovered at just about exactly the wrong time
+in the release schedule.)
+
+Back to your original question -- which is faster, FreeBSD or Linux --
+there is no correct answer.  There are significant differences in the guts
+of each -- VM system, scheduler, network stack, etc., that make each
+perform better on some loads, worse on others.
+-- 
+Tod McQuillin
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00317" href="msg00317.html">Re: [tlug] longest uptime boxes</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00319.html">Re: [tlug] longest uptime boxes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00321.html">Re: [tlug] longest uptime boxes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00317.html">Re: [tlug] longest uptime boxes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00321.html">Re: [tlug] longest uptime boxes</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00320"><strong>Date</strong></a></li>
+<li><a href="threads.html#00320"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

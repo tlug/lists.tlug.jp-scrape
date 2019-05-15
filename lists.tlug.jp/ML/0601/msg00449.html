@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file -->
+<!--X-From-R13: Sina [baebvt <rina.zbaebvtNtznvy.pbz> -->
+<!--X-Date: Thu, 19 Jan 2006 11:36:46 +0900 -->
+<!--X-Message-Id: 20060119023646.GA31658@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20060118112426.GA21723@example.com -->
+<!--X-Reference: 20060118125820.2ff84c26@example.com -->
+<!--X-Derived: pgp00046.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00448.html">Date Prev</a>][<a href="msg00450.html">Date Next</a>][<a href="msg00420.html">Thread Prev</a>][<a href="msg00476.html">Thread Next</a>][<a href="maillist.html#00449">Date Index</a>][<a href="threads.html#00449">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 19 Jan 2006 11:36:46 +0900</li>
+<li><strong>From</strong>: <strong>Evan Monroig &lt;<A HREF="mailto:evan.monroig@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20CJK%20Latex%3A%20embed%20Type1%20fonts%20in%20my%20pdf%20file">evan.monroig@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</strong></li>
+<li>References: &lt;<a href="msg00418.html">20060118112426.GA21723@example.com</a>&gt; &lt;<a href="msg00420.html">20060118125820.2ff84c26@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.9i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Jan.18 12h58, Botond Botyanszki wrote :
+&gt; Attached is a script that installs ttf files for latex (pdflatex).
+&gt; This might give you a clue.
+&gt; I used the pdflatex command instead of converting from dvi.
+
+Thanks for your help !
+
+As I understand the script, it does the following things on the .ttf 
+font files
+
+1) convert to .afm
+
+ttf2afm -e /usr/share/texmf/ttf2tfm/T1-WGL4.enc -o font.afm font.ttf
+
+2) convert to tfm and add the font description to $MAPFILE
+
+afm2tfm font.afm -T /usr/share/texmf/ttf2tfm/T1-WGL4.enc font.tfm | sed 
+s/\&quot;T1-WGL4.enc\&quot;/\&quot;&lt;font.ttf T1-WGL4.enc\&quot;/ &gt;&gt; $MAPFILE
+
+3) create font description for latex
+
+(...)
+
+4) modify some config files
+
+But the encoding file that is used, 'T1-WGL4.enc', is for converting 
+windows TrueType fonts. The one I have is unicode, so I would need 
+a Unicode .enc file.
+
+What I was trying to do was:
+
+1) generate .tfm (tex format metrics) and .enc files - there are 
+   hundreds of them
+
+ttf2tfm cyberbit.ttf -w cyberbit@example.com@
+
+2) generate a postscript Type1 font
+
+ttf2pfb cyberbit.ttf -o cyberbit.pfb
+
+3) modify config files (to enable and define the maps)
+
+When I use pdflatex it embeds the TrueType fonts (like the script you 
+sent for alphabet character fonts), but when I use latex and dvips, it 
+does not.
+
+I would like to use latex/dvips/ps2pdf to use 'epsfig' and 'pslatex' 
+packages.
+
+So my problem is that I cannot get dvips to understand the ttf fonts.
+
+Evan
+</pre>
+<p><strong>Attachment:
+<a href="pgp00046.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> Digital signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00476" href="msg00476.html">Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00418" href="msg00418.html">[tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+<li><strong><a name="00420" href="msg00420.html">Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00448.html">Re: [tlug] Editing Soud Files (WAV &amp; MP3)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00450.html">Re: [tlug] Editing Soud Files (WAV &amp; MP3)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00420.html">Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00476.html">Re: [tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00449"><strong>Date</strong></a></li>
+<li><a href="threads.html#00449"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs & XIM, redux -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 16 May 1997 06:12:11 GMT -->
+<!--X-Message-Id: m0wSGAR&#45;00005YC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m2yb9gv88y.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00153.html">Date Prev</A>][<A HREF="msg00155.html">Date Next</A>][<A HREF="msg00149.html">Thread Prev</A>][<A HREF="msg00138.html">Thread Next</A>][<A HREF="maillist.html#00154">Date Index</A>][<A HREF="threads.html#00154">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs &amp; XIM, redux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs &amp; XIM, redux </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 16 May 1997 15:07:02 +0900</LI>
+<LI>In-reply-to: Your message of "15 May 1997 15:35:25 -0400."            &lt;<A HREF="msg00142.html">m2yb9gv88y.fsf@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+Executive summary:
+
+(1) Using XIM with XEmacs requires libc locale support.  Cheat with the
+    liblocale package for Netscape (URLs below).
+(2) You need to set some environment variables for XEmacs and invoke
+    kinput2 with switches (see below).
+(3) XEmacs seems to handle locale OK, and tries to open the IM
+    (kinput2), but fails.
+(4) This looks like a program bug, but which one is unclear.  (See
+    below for details.)
+
+I'd like to hear from somebody who's got Wnn installed if Xwnmo works
+with this configuration.
+
+Details:
+
+&gt;&gt;&gt;&gt;&gt; "Steve" == Steve Dunham &lt;dunham@example.com&gt; writes:
+
+    Steve&gt; Craig Oda &lt;craig@example.com&gt; writes:
+
+    &gt;&gt; Thanks for the tip on --with-xim.  Where did you find this?
+    &gt;&gt; Was there something like --with-kinput2 or something?  I
+    &gt;&gt; wouldn't have known about --with-mule if Steve Dunham hadn't
+    &gt;&gt; told me about it.
+
+    Steve&gt;   configure --help
+
+That's the "right" answer, and it's reliable with GNU software.  (It's
+a standard of sorts for GNU software.)  My answer was `fgrep -i xim
+configure'.  For binaries, `strings binary | fgrep xim' might work if
+`--help' doesn't.
+
+However, the INSTALL document should explain this, and point to Info
+docs on how to use the new feature.  I suspect this feature should
+still be considered alpha since it is not visibly documented.  :-(
+
+    Steve&gt; I'm currently compiling 20.2 (which is released) with XIM
+    Steve&gt; and wnn enabled.  I'll let you know how it turns out.
+
+Are there Info docs for Mule yet, or just the stuff in ./mule-doc?  I
+don't have the release version I suspect, must be a prerelease version
+(it doesn't have a 'beta' on it, though) but it's substantially bigger
+than b6 or whatever the last one was, but no Mule docs.  (The stuff in
+./mule-doc pointedly ignores XIM.)
+
+    Steve&gt; It should compile ok. AFAIK, --with-wnn just links in
+    Steve&gt; libwnn and defines some new lisp functions.  --with-xim
+    Steve&gt; should be completely independent.
+
+I'm currently getting `unknown signal' faults "--with-mule --with-xim"
+but I think this is a `simple' bug.  Before the fault I get a
+complaint about unknown locale, using C, then an immediate fault in
+one of the X text routines.  I need to tell XEmacs where to find the
+locale database.  (But XEmacs shouldn't fault on this error, it should 
+barf an error message and exit gracefully.)  (* This is wrong; in fact 
+you need to supply a correct locale routine.  See below. *)
+
+    Steve&gt; I got kinput2 compiled (although I'm using it with wnn, and
+    Steve&gt; it isn't very comfortable in conjunction with wnn - I much
+    Steve&gt; prefer egg-wnn.el) and tried it out with kterm.  It works
+    Steve&gt; on Linux (I'm having problems on my Ultrasparc at work -
+
+Are you using "kinput2 +kinput -xim"?  If not, kinput2 defaults to
+kinput2 protocol, and you don't have any problems.  Using kinput2
+compiled with "-O2 -mi486 -DDEBUG" and Canna as "kinput2 +kinput +ximp
+- xim -canna -trace" then opening the input method in a kterm results
+in a trace of XIM protocol errors from kinput2 and the kterm freezing;
+destroying the kterm window segfaults the kinput2 process.  As far as
+I can tell, kterm does not have command-line options to select which
+IM to use although there are probably resources.  The normal procedure
+is to set "LANG=ja_JP" and "XMODIFIERS='@example.com=kinput2'" in the environment
+before running kterm.
+
+BUT this procedure is inappropriate for Mule which is explicitly
+multilingual; you ought to be able to switch among native cWnn
+Chinese, XIM Canna Japanese, Quail Thai, x-compose.el French, and
+direct ASCII input on the fly using Mule menus or keyboard shortcuts.
+
+This doesn't seem to be documented anywhere.  It shouldn't be too hard 
+to implement by using Lisp facilities to manipulate the environment
+and I hope to open and close input methods and input contexts
+(although current GNU code does this when a frame is created; I
+haven't found the corresponding parts of XEmacs code but I suspect
+it's the same from the code I have found).
+
+    Steve&gt; kterm segfaults in OpenIM()).
+
+Verrrry interesting.  I think kterm is probably buggy.  It doesn't
+work with Xwnmo, either.  (The Xwnmo code is pretty ugly though.)
+
+I still don't have working XIM.  Here's what I've got to this point.
+
+(1) XEmacs depends on libc locale support.  I don't know if this has
+    been added to recent libc releases; my current is 5.3.12.  If your 
+    libc doesn't have locale (XEmacs complains about missing locale,
+    sets it to C/POSIX, and immediately dumps core), you can "cheat"
+    with liblocale.so, available from the Japanese localization of
+    Netscape kit (see
+
+    <A TARGET="_top" HREF="http://www.twics.com/~craig/linux-nihongo/web/index.html">http://www.twics.com/~craig/linux-nihongo/web/index.html</A> or
+    <A TARGET="_top" HREF="http://www.bpel.tutics.tut.ac.jp/~take/Netscape/Linux.html">http://www.bpel.tutics.tut.ac.jp/~take/Netscape/Linux.html</A>).
+
+(2) Start kinput2:
+
+    kinput2 +kinput -xim [-trace | &amp;]
+
+    (use -trace if you've compiled in debugging, otherwise you may as
+    well run it in the background).
+
+(3) If you haven't already set the environment, invoke XEmacs as
+
+    LD_PRELOAD=/lib/liblocale.so \
+    XMODIFIERS='@example.com=kinput2' \
+    LANG=ja_JP \
+    /var/tmp/xemacs-20.2/src/xemacs &amp;
+
+and watch XEmacs complain
+
+    Warning: Missing charsets in String to FontSet conversion
+    Warning: XCreateIC failed
+
+and watch weird stuff happen in kinput2's trace (stuff I think should
+probably not happen is flagged with `-&gt;' in the left margin):
+
+    imlib:mainDispatcher(#2)
+    checkRequest(): length=28, buflen=40
+    ** processing ENCODING-NEGOTIATION request...
+    ximEncodingNegotiationProc(#2)
+            selected encoding index: 1
+    IMSchedule(#2, 1)
+    insert into the queue
+    imlib:mainDispatcher(#2)
+    IMProcessQueue()
+    IMFlush(#2)
+    imlib:xinput()
+    IMDispatch(#2)
+    imlib:mainDispatcher(#2)
+    checkRequest(): length=8, buflen=20
+    ** processing GET-IM-VALUES request...
+    ximGetIMValuesProc(#2)
+    IMGetIMValues()
+    imlib:getQueryInputStyle()
+    IMSchedule(#2, 1)
+    insert into the queue
+    imlib:mainDispatcher(#2)
+    IMProcessQueue()
+    IMFlush(#2)
+    imlib:xinput()
+    IMDispatch(#1)
+    imlib:mainDispatcher(#1)
+    checkRequest(): length=356, buflen=360
+    ** processing CREATE-IC request...
+    ximCreateICProc(#1)
+    IMSetICValues()
+    imlib:setICValues()
+    imlib:setInputStyle()
+            input style: 260
+    imlib:setClientWindow()
+            client window: 03c00034
+    imlib:setFocusWindow()
+            focus window: 03c00034
+    imlib:setPreeditAttributes()
+    imlib:setICValues()
+    imlib:setArea()
+-&gt;          area: 0, 0, 0, 0
+    imlib:setSpotLocation()
+            spot location: 0, 0
+    imlib:setForeground()
+            foreground: 1
+    imlib:setBackground()
+            background: 0
+    imlib:setFontSet()
+-&gt;          fontset: -misc-fixed-bold-r-normal--13-120-75-75-c-70-iso8859-1,-sony-fixed-medium-r-normal--16-120-100-100-c-80-jisx0201.1976-0,
+    imlib:setStatusAttributes()
+    imlib:setICValues()
+    imlib:setArea()
+            area: 0, 0, 0, 0
+    imlib:setForeground()
+            foreground: 1
+    imlib:setBackground()
+            background: 0
+    imlib:setFontSet()
+            fontset: -misc-fixed-bold-r-normal--13-120-75-75-c-70-iso8859-1,-sony-fixed-medium-r-normal--16-120-100-100-c-80-jisx0201.1976-0,
+    IMValidateICAttributes()
+    imlib:validateCommonAttr()
+    IMValidateWindow(win: 03c00034)
+    imlib:validatePSAttr()
+    zero area width/height
+    IMSchedule(#1, 1)
+    insert into the queue
+    imlib:validatePSAttr()
+    zero area width/height
+    IMSchedule(#1, 1)
+-&gt;  IMFreeICAttributes()
+    imlib:mainDispatcher(#1)
+    IMProcessQueue()
+    IMFlush(#1)
+    imlib:xinput()
+    IMDispatch(#1)
+    imlib:mainDispatcher(#1)
+    checkRequest(): length=12, buflen=20
+-&gt;  ** processing ERROR request...
+-&gt;  ximErrorProc(#1)
+-&gt;  ** XIM_ERROR message received:
+-&gt;           input-method ID: 1
+-&gt;          input-context ID: N/A
+-&gt;                error code: BadProtocol
+-&gt;             error message: 
+    imlib:mainDispatcher(#1)
+
+The setArea calls may be OK since I think mule tries for on-the-spot
+interactions.  In that case the preedit and status areas might legally 
+be null.  The fontLists are ugly, ending in commas and containing no
+kanji.  I think that protocol messages are getting truncated there.
+The IMFreeICAttributes means (I think) that it gave up and refused to
+create an input context (the approximate equivalent of X refusing to
+create a graphics context - you're in deep trouble).  And ERRORs
+shouldn't happen (not BadProtocol, anyway...).
+
+I don't know which is wrong, kinput2 or XEmacs.  But this is
+definitely not a working system at this point.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00142" HREF="msg00142.html">Re: tlug: XEmacs &amp; XIM, redux</A></STRONG>
+<UL><LI><EM>From:</EM> Steve Dunham &lt;dunham@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00153.html">Re: tlug: ISDN routers</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00155.html">Re: tlug: ISDN routers</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00149.html">tlug: kinput2 and XEmacs</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00138.html">Re: tlug: XEmacs &amp; XIM, redux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00154"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00154"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

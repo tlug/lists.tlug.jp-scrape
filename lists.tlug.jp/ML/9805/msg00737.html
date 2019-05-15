@@ -1,0 +1,238 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: mouse fixed; now what about email -->
+<!--X-From: Kei Furuuchi <kfur@example.com> -->
+<!--X-Date:  Sun, 31 May 1998 02:03:44 +0900 -->
+<!--X-Message-Id: 13680.11194.724434.110372@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199805300822.RAA17337@example.com -->
+<!--X-Reference-Id: 13679.51751.705121.753612@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00736.html">Date Prev</A>][<A HREF="msg00738.html">Date Next</A>][<A HREF="msg00732.html">Thread Prev</A>][<A HREF="msg00731.html">Thread Next</A>][<A HREF="maillist.html#00737">Date Index</A>][<A HREF="threads.html#00737">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: mouse fixed; now what about email</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: mouse fixed; now what about email</strong></LI>
+<LI><strong>From</strong>: <strong>Kei Furuuchi &lt;<A HREF="mailto:kfur@example.com">kfur@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 30 May 1998 09:42:39 -0700 (PDT)</LI>
+<LI>Cc: "Eric Standlee and Family" &lt;<A HREF="mailto:e-w.standlee@example.com">e-w.standlee@example.com</A>&gt;,       "Tokyo Linux Users Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00732.html">13679.51751.705121.753612@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00730.html">199805300822.RAA17337@example.com</A>&gt;&lt;<A HREF="msg00732.html">13679.51751.705121.753612@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull writes:
+
+ &gt; If you're talking about a phone connection via ppp, this should be set
+ &gt; up by installing the relevant package from `dselect'.  (Although I
+ &gt; believe that's already installed in the base system.)  If that doesn't
+ &gt; set up automatically, then you need to edit /etc/ppp.chatscript and
+ &gt; maybe /etc/ppp.options.
+ &gt; 
+ &gt; I will admit that TurboLinux set up diald very nicely; it's a damn
+ &gt; shame that the last thing I need is diald coming up automatically at
+ &gt; boot, stealing the phone line, and stomping on the ethernet gateway I
+ &gt; want configured ;-) But that's my fault for not being a typical luser,
+ &gt; right, Scott?
+
+If you are going to use diald, you have to reconfig kernel to set slip 
+too. After that, diald uses a script called /etc/diald/diald.options,
+which reads like this:
+    fifo /var/run/diald/diald.fifo
+    mode ppp
+    connect "sh /etc/diald/connect"
+    device /dev/ttyS1
+    speed 115200
+    modem
+    two-way
+    impulse 600,20
+    mru 552
+    mtu 552
+    lock
+    crtscts
+    local 192.168.1.1
+    remote 192.168.1.2
+    dynamic
+    defaultroute
+    pppd-options asyncmap 0
+    redial-timeout 0
+    include /etc/diald/standard.filter
+
+Then, it is /etc/diald/connect script that makes dial out and log in.
+In the script, chat is used. So I recommend placing "-v" argument
+after chat to monitor what chat is doing at /var/log/messages. This
+gives you enough idea to change connect script accordingly. Also you
+can set "debug" and "kdebug" options in /etc/ppp/options to monitor
+what pppd is doing at /var/log/messages too. If there is no log in
+sequence in connect script, there have to be pap or chap authorization 
+sequence in pppd. So you have to set "name" option in /etc/ppp/options 
+and set your password in pap-secrets or chap-secrets file.
+those files read like this:
+in /etc/ppp/options:
+        name myusername
+
+in /etc/ppp/pap-secrets:
+        myusername * mypassword
+
+Then set nameserver in /etc/resolv.conf.
+/etc/resolv.conf reads like this:
+
+     nameserver 206.165.5.10
+     nameserver 206.165.50.10
+     
+temporarily you  use ISP's nameservers. 
+Then start diald. ping nameserver to see if diald starts calling.
+To monitor, "tail -f /var/log/messages" read like this:
+      
+     May 30 09:27:57 conner connect: Initializing Modem
+     May 30 09:27:58 conner connect: Dialing system
+     May 30 09:28:20 conner connect: Connected
+     May 30 09:28:20 conner connect: Loggin in
+     May 30 09:28:22 conner connect: Protocol started
+     May 30 09:28:22 conner diald[108]: Running pppd (pid = 350).
+     May 30 09:28:22 conner pppd[350]: pppd 2.2.0 started by root, uid 0
+     May 30 09:28:22 conner pppd[350]: Using interface ppp0
+     May 30 09:28:22 conner pppd[350]: Connect: ppp0 &lt;--&gt; /dev/ttyS1
+     May 30 09:28:26 conner pppd[350]: local  IP address 207.218.63.157
+     May 30 09:28:26 conner pppd[350]: remote IP address 207.218.32.42
+     May 30 09:28:26 conner diald[108]: New addresses: local 207.218.63.157, remote 207.218.32.42.
+
+This changes how you set debug options.
+Then ifconfig read like this:
+     lo        Link encap:Local Loopback  
+               inet addr:127.0.0.1  Bcast:127.255.255.255  Mask:255.0.0.0
+               UP BROADCAST LOOPBACK RUNNING  MTU:3584  Metric:1
+               RX packets:83 errors:0 dropped:0 overruns:0
+               TX packets:83 errors:0 dropped:0 overruns:0
+     
+     eth0      Link encap:10Mbps Ethernet  HWaddr 00:40:33:23:F3:38
+               inet addr:192.168.0.7  Bcast:192.168.0.255  Mask:255.255.255.0
+               UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+               RX packets:0 errors:0 dropped:0 overruns:0
+               TX packets:0 errors:0 dropped:0 overruns:0
+               Interrupt:10 Base address:0x300 
+     
+     sl0       Link encap:Serial Line IP  
+               inet addr:192.168.1.1  P-t-P:192.168.1.2  Mask:255.255.255.0
+               UP POINTOPOINT RUNNING  MTU:552  Metric:1
+               RX packets:0 errors:0 dropped:0 overruns:0
+               TX packets:15 errors:0 dropped:0 overruns:0
+     
+     ppp0      Link encap:Point-Point Protocol  
+               inet addr:207.218.63.157  P-t-P:207.218.32.42  Mask:255.255.255.0
+               UP POINTOPOINT RUNNING  MTU:552  Metric:1
+               RX packets:74 errors:0 dropped:0 overruns:0
+               TX packets:76 errors:0 dropped:0 overruns:0
+
+Then you can use netscape at least to read and write mails.
+
+In conclusion, I found this is easy. All I have to know is how to read 
+scripts and how to monitor what programs do. It is easy to the point I 
+can post the question nobody seems to know the answer about.
+This is one of things I like about Linux.
+
+Regards,
+Kei.
+
+
+
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: (?) July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00730" HREF="msg00730.html">tlug: mouse fixed; now what about email</A></STRONG>
+<UL><LI><EM>From:</EM> "Eric Standlee and Family" &lt;e-w.standlee@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00732" HREF="msg00732.html">tlug: mouse fixed; now what about email</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00736.html">Re: tlug: June Meeting Announcement</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00738.html">Re: Linux Port to limited environment (was: RE: tlug: FW: Windows 95)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00732.html">tlug: mouse fixed; now what about email</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00731.html">tlug: Sparclinux 2.1.xxx kernels?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00737"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00737"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] [Javascript] Shouldn't there be a sort option on objects -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Tue, 08 Feb 2011 13:33:00 +0900 -->
+<!--X-Message-Id: 4D50C5EB.9050305@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4D4E75AB.5060703@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00058.html">Date Prev</a>][<a href="msg00060.html">Date Next</a>][<a href="msg00138.html">Thread Prev</a>][<a href="msg00050.html">Thread Next</a>][<a href="maillist.html#00059">Date Index</a>][<a href="threads.html#00059">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 08 Feb 2011 13:26:19 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</strong></li>
+<li>References: &lt;<a href="mailto:4D4E75AB.5060703@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">4D4E75AB.5060703@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.13) Gecko/20101208 Thunderbird/3.1.7</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; toplevel.midlevel.dataIWantToSortBy
+&gt; 
+&gt; &quot;midlevel&quot; is just a number that I use to order the data when I display
+&gt; it. &quot;dataIWantToSortBy&quot; contains... uh... stuff. For now let's just say
+&gt; it contains letters for alphabetical sorting.
+&gt; 
+&gt; So What I want to do is turn this:
+&gt; 
+&gt; toplevel.1.dataIWantToSortBy.value = C
+&gt; toplevel.2.dataIWantToSortBy.value = A
+&gt; toplevel.3.dataIWantToSortBy.value = B
+&gt; 
+&gt; Into:
+&gt; 
+&gt; toplevel.1.dataIWantToSortBy.value = A
+&gt; toplevel.2.dataIWantToSortBy.value = B
+&gt; toplevel.3.dataIWantToSortBy.value = C
+
+As you've realized you need to turn it into an array. As you've
+described the second level in the hierarchy as &quot;just a number&quot;, I assume
+it can just as well be an array index. So, use this code to convert it
+into an array:
+
+ var d=[];
+ for(var ix in toplevel)d.push(toplevel[ix]);
+
+
+Then to sort it, you have to specify a function to describe how to do
+the sorting:
+
+ d.sort(function(x,y){
+   var a=x.data.value;
+   var b=y.data.value;
+   if(a&lt;b)return -1;
+   if(a&gt;b)return +1;
+   return 0;
+   });
+
+
+[1] below shows my full test code, which uses the objectToString()
+utility function from [2]. No need for that if you are using firebug or
+similar.
+
+Darren
+
+[1]:
+toplevel={
+    1:{
+        data:{
+            value:'C'
+            }
+        },
+    2:{
+        data:{
+            value:'A'
+            }
+        },
+    3:{
+        data:{
+            value:'B'
+            }
+        },
+    }
+
+alert(objectToString(toplevel));
+
+var d=[];
+for(var ix in toplevel)d.push(toplevel[ix]);
+
+alert(objectToString(d));
+
+d.sort(function(x,y){
+  var a=x.data.value;
+  var b=y.data.value;
+  if(a&lt;b)return -1;
+  if(a&gt;b)return +1;
+  return 0;
+  });
+
+alert(objectToString(d));
+
+
+
+[2]:
+ <a  rel="nofollow" href="http://www.davidpirek.com/blog/object-to-string-how-to-deserialize-json">http://www.davidpirek.com/blog/object-to-string-how-to-deserialize-json</a>
+
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00032" href="msg00032.html">[tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00058.html">Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00060.html">Re: [tlug] Great Git resources</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00138.html">Re: [tlug] Are ordered hashes useful?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00050.html">[tlug] Importing WiFi equipment</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00059"><strong>Date</strong></a></li>
+<li><a href="threads.html#00059"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

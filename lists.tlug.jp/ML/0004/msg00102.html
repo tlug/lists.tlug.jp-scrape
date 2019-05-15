@@ -1,0 +1,182 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Debian installation &#45; scsi problem -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Mon, 17 Apr 2000 22:57:18 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000417211133.17672A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000417102534.BF7394070@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00101.html">Date Prev</A>][<A HREF="msg00103.html">Date Next</A>][<A HREF="msg00100.html">Thread Prev</A>][<A HREF="msg00126.html">Thread Next</A>][<A HREF="maillist.html#00102">Date Index</A>][<A HREF="threads.html#00102">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Debian installation - scsi problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Debian installation - scsi problem</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 17 Apr 2000 22:20:50 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00100.html">20000417102534.BF7394070@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Mon, 17 Apr 2000 ulrike@example.com wrote:
+
+&gt;  
+&gt;  I guess I am not 100% sure what "termination" means or how to check this ... 
+&gt;  
+
+It will be some jumper setting on the drive -- need the manual to find
+out which, or if you are lucky you can find it by examining the disk
+with the jumper positions for enabling and disabling the
+termination marked. But you will have to open the case...
+
+&gt;  &gt; Even after booting you can probe for a scsi device. For example if your
+&gt;  &gt; cdrom has SCSI id = 5, issue the command
+&gt;  &gt; 
+&gt;  &gt; echo "scsi add-single-device  0 0 5 0" &gt; /proc/proc/scsi
+&gt;  
+&gt;  I am also not quite sure how to find out about the id, but I remember having 
+&gt;  seen "7" in some menu, so I tried the thing with 7 (and 
+&gt;  with /proc/scsi/scsi, /proc/proc/scsi did not work). It replied with:
+
+Sorry for the misprint, it should be /proc/scsi/scsi 7 is the id of your
+host adapter so that's not the one to try.  The scsi id is probably set
+by some jumper on the disk, so need to open the case to know the id.
+Wait a minute, that reminds me, you should get all that info 
+at the boot time. After the bios messages and before the lilo
+prompt you will get scsi messages listing the adapter and connected
+devices. You can also probe the bus using the adaptec scsiselect
+utility by pressing ctrl-A at boot time. There is a menu item named
+disk utility or some thing like that to scan the bus and show all
+connected devices (make/vendor) and their ids. 
+
+&gt;  
+&gt;  'cat /proc/scsi/scsi'  says:
+&gt;  
+&gt;  	Attached devices: none
+&gt;  
+&gt;  'dmesg' says in the last two lines:
+&gt;  
+&gt;  	scsi singledevice 0 0 7 0
+
+That doesn't means success, it's just the kernel echoing the command.
+I think you will get the drive model, SCSI id etc listed in
+/proc/scsi/scsi. For example, I have this scanner on id 5 and
+cat /proc/scsi/scsi gives
+
+Host: scsi0 Channel: 00 Id: 05 Lun: 00
+  Vendor: EPSON SC Model: ANNER GT-9000    Rev: 1.11
+  Type:   Processor                        ANSI SCSI revision: 01 
+
+&gt;  	VFS: Disk change detected on device 02:00
+
+Dont know why disk change detected?
+
+&gt;  
+&gt;  That made me optimistic, but when I tried to check this cdrom mounting thing 
+&gt;  again I was reminded that I still don't know which command to use 
+&gt;  since /dev/cdrom does not exist and I am just blindly copying commands ...
+
+As Stephen wrote the other day, look for /dev/scd0. 
+
+
+Selva
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00100" HREF="msg00100.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00101.html">Re: tlug: latex trouble</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00103.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00100.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00126.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00102"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00102"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

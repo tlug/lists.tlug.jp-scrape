@@ -1,0 +1,257 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: SBAWE32 vs. soundfiles -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date:  Sat, 28 Jun 1997 06:19:01 GMT -->
+<!--X-Message-Id: Pine.HPP.3.95.970628150810.26123A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: v03102804afd931da113c@[133.98.20.169] -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00169.html">Date Prev</A>][<A HREF="msg00171.html">Date Next</A>][<A HREF="msg00166.html">Thread Prev</A>][<A HREF="msg00195.html">Thread Next</A>][<A HREF="maillist.html#00170">Date Index</A>][<A HREF="threads.html#00170">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: SBAWE32 vs. soundfiles</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: SBAWE32 vs. soundfiles</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 28 Jun 1997 15:18:54 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00166.html">v03102804afd931da113c@[133.98.20.169]</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Craig Oda &lt;craig@example.com&gt;
+--------------------------------------------------------
+On Fri, 27 Jun 1997, Totoro wrote:
+
+riley&gt;I run a "cat" to the /dev/audio it takes a couple of seconds for the
+riley&gt;process and then returns to the prompt. Just like all is well but no
+riley&gt;sound comes out.
+
+When you do:
+
+ # cat /dev/sndstat
+
+do you get something like:
+
+cow:/home/craig# cat /dev/sndstat |more
+Sound Driver:3.5.4-960630 (Sun Jun 8 13:30:23 JST 1997 root,
+Linux cow 2.0.30 #4 Sun Jun 8 12:56:05 JST 1997 i586 unknown)
+Kernel: Linux cow 2.0.30 #4 Sun Jun 8 12:56:05 JST 1997 i586
+Config options: 282000
+
+Installed drivers: 
+Type 21: CS4232
+Type 22: CS4232 MIDI
+
+Card config: 
+(CS4232 MIDI at 0x330 irq 5 drq 0)
+CS4232 at 0x530 irq 9 drq 0,1
+
+Audio devices:
+0: CS4232 (CS4232) (DUPLEX)
+
+Synth devices:
+
+Midi devices:
+0: MPU-401 1.5A Midi interface #1
+
+Timers:
+0: System clock
+1: CS4232 (CS4232)
+2: MPU-401 Timer
+
+Mixers:
+0: CS4232 (CS4232)
+
+  -----------
+
+Since I load my sound as a module, I get
+
+cow:/home/craig# lsmod
+Module         Pages    Used by
+sound             23            0
+lp                 2            0
+vfat               3            0
+fat                6    [vfat]  0
+
+
+Note, that the sound module is loaded.
+
+
+In /proc/interrupts, does it show your sound?
+
+cow:/proc# cat interrupts 
+ 0:      48958   timer
+ 1:       1428   keyboard
+ 2:          0   cascade
+ 3:       2307 + serial
+ 5:          1   mpu401
+ 9:          1   SoundPort
+10:       1750   PCnet/ISA 79C960
+11:          1 + Mitsumi CD
+13:          1   math error
+14:      16022 + ide0
+
+Try to record some sound as a test:
+
+ # dd bs=8k count=4 &lt; /dev/audio &gt; helloworld.au
+
+Press return and say, "Hello, World," into your microphone a few
+times.
+
+Then do a 
+
+ # cat helloworld.au &gt; /dev/audio
+
+
+In your /proc/devices, is your sound listed?
+
+cow:/proc# cat devices 
+Character devices:
+ 1 mem
+ 2 pty
+ 3 ttyp
+ 4 ttyp
+ 5 cua
+ 6 lp
+ 7 vcs
+14 sound
+
+Block devices:
+ 3 ide0
+23 mcd
+
+
+
+What are the protections on your /dev/audio?
+
+Here are mine:
+
+cow:/proc# ls -l /dev/audio
+crw-rw----   1 root     audio     14,   4 Apr  4 21:54 /dev/audio
+cow:/proc# 
+
+
+Also, if you are manipulating the audio device from anything other
+than root, make sure that the user is in group audio (in my case.  your
+group may be different).
+
+cow:~$ id
+uid=1000(craig) gid=1000(craig)
+groups=1000(craig),1(daemon),7(lp),29(audio),33(www-data)
+cow:~$ 
+
+
+-------------
+"Knowledge is the air and light of civilization.  Transform it and you
+transform all else."
+Craig Oda 	craig@example.com	
+TWICS - Japan's First Public-Access Internet System, 
+   TWICS - IEC Building, 1-21 Yotsuya, Shinjuku-ku, Tokyo 160 JAPAN
+Main Reception: 03-3351-5977	Fax: +81-3-3353-6096
+Customer Service: 3351-5481   Corporate Sales/Support: 3351-8452
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00195" HREF="msg00195.html">Re: tlug: SBAWE32 vs. soundfiles</A></STRONG>
+<UL><LI><EM>From:</EM> Totoro &lt;riley@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00166" HREF="msg00166.html">Re: tlug: SBAWE32 vs. soundfiles</A></STRONG>
+<UL><LI><EM>From:</EM> Totoro &lt;riley@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00169.html">Re: tlug: Digital Nursery</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00171.html">tlug: 2nd Thursday, Every 2nd month meeting?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00166.html">Re: tlug: SBAWE32 vs. soundfiles</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00195.html">Re: tlug: SBAWE32 vs. soundfiles</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00170"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00170"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

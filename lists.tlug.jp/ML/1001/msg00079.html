@@ -1,0 +1,292 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Did Apache change everything? (Setting up virtual hosts) -->
+<!--X-From-R13: Ebgneb Ybonlnfuv <fbgnebxboNfhzgrp.ovm> -->
+<!--X-Date: Wed, 20 Jan 2010 12:53:20 +0900 -->
+<!--X-Message-Id: 4B567C7F.4030302@sumtec.biz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4B566ABC.5000504@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00078.html">Date Prev</a>][<a href="msg00090.html">Date Next</a>][<a href="msg00078.html">Thread Prev</a>][<a href="msg00090.html">Thread Next</a>][<a href="maillist.html#00079">Date Index</a>][<a href="threads.html#00079">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Jan 2010 12:46:07 +0900</li>
+<li><strong>From</strong>: <strong>Sotaro Kobayashi &lt;<a href="mailto:sotarokob@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Did%20Apache%20change%20everything%3F%20%28Setting%20up%20virtual%20hosts%29">sotarokob@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</strong></li>
+<li>References: &lt;<a href="mailto:4B566ABC.5000504@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Did%20Apache%20change%20everything%3F%20%28Setting%20up%20virtual%20hosts%29">4B566ABC.5000504@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.23 (Macintosh/20090812)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+TLUG,
+
+Recently I needed to set up a virtual named host on my laptop. It's a
+clean install of Ubuntu Karmic 9.10.
+
+I've set up LAMP servers on Ubuntu many times now, so I've got it down
+to a science.
+
+Or so I thought.
+
+When it comes to naming virtual hosts, what I used to do was simply open
+up /etc/apache2/httpd.conf and edit it.
+
+This time, though, when I opened /etc/apache2/httpd.conf, it was
+suspiciously empty. I tried adding my usual configurations, but when I
+restarted Apache, my site was nowhere to be found.
+
+So I looked on line, and now it seems everything is handled in a
+directory called /etc/apache2/sites-available and basically all the
+configurations are now done in a different way.
+
+F**k.
+
+I made an effort to figure out how to do this, and went through many
+variants of new settings that did not work.
+
+Here's my current situation. I created a file for my site, called
+local_site.com in /etc/apache2/sites-available and put in the following
+configuration (taken off the web)
+
+- - - - -
+
+&lt;VirtualHost *&gt;
+        ServerName www.local_site.com
+        ServerAlias local_site.com
+        ServerAdmin webmaster@example.com
+
+        DocumentRoot /var/www/local_site.com
+        &lt;Directory /var/www/local_site.com/&gt;
+                Options Indexes FollowSymLinks MultiViews
+                # pcw AllowOverride None
+                AllowOverride All
+                Order allow,deny
+                allow from all
+                # This directive allows us to have apache2's default
+start page
+                # in /apache2-default/, but still have / go to the right
+place
+                # Commented out for Ubuntu
+                #RedirectMatch ^/$ /apache2-default/
+        &lt;/Directory&gt;
+
+        ErrorLog /var/log/apache2/local_site.com/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog /var/log/apache2/local_site.com/access.log combined
+        ServerSignature On
+
+&lt;/VirtualHost&gt;
+
+- - - - -
+
+Then I ran &quot;sudo a2ensite local_site.com&quot;, and it said &quot;enabled&quot;.
+
+So far so good.
+
+Then I reloaded and restarted Apache, and it said:
+
+[fail]
+
+No error output, no nothing. Just [fail].
+
+I went to <a  rel="nofollow" href="http://local_site.com">http://local_site.com</a> and sometimes when I do, I get the
+default &quot;It works!&quot; page. Which I also get if I go to <a  rel="nofollow" href="http://localhost">http://localhost</a>.
+
+But sometimes if I reload it, I then get an &quot;unable to connect&quot; warning.
+
+I went online and found instructions for editing ports.conf and
+apache2.conf, but basically any and all edits I made to those files
+resulted in errors coming out when I restarted Apache. So for now I've
+put them back to their original.
+
+And, lastly, I checked the error logs in /var/log/apache2, but they just
+have a long string of instances of saying &quot;error log at
+/var/www/local_site.com/error.log not found&quot;.
+
+I'm going to skip past the bitching about having to learn new crap to
+accomplish the same tasks...
+
+What am I supposed to do to get my virtual host working?
+
+Thanks for any advice.
+
+</pre><tt>  
+</tt></blockquote><pre style="margin: 0em;">
+
+Hi,
+
+</pre><tt>As long as I am keeping the following order of apache configuration 
+</tt><tt>directives in httpd.conf
+</tt><tt>whose examples are appropriately instructed in 'Apache - The Definitive 
+</tt><tt>Guide' (O'REILLY),
+</tt><pre style="margin: 0em;">
+my named virtual host is working fine.
+
+# The IP address of your Ubuntu named virtual host laptop
+NameVirtualHost xxx.xxx.xxx.xxx
+.
+.
+.
+&lt;Directory /var/www/local_site.com/&gt;
+       Options Indexes FollowSymLinks MultiViews
+       # pcw AllowOverride None
+       AllowOverride All
+       Order allow,deny
+       allow from all
+       # This directive allows us to have apache2's default
+start page
+       # in /apache2-default/, but still have / go to the right place
+       # Commented out for Ubuntu
+       #RedirectMatch ^/$ /apache2-default/
+&lt;/Directory&gt;
+.
+.
+.
+&lt;VirtualHost www.local_site.com&gt;
+       ServerName www.local_site.com
+       ServerAlias local_site.com
+       ServerAdmin webmaster@example.com
+       DocumentRoot /var/www/local_site.com
+       ErrorLog /var/log/apache2/local_site.com/error.log
+       CustomLog /var/log/apache2/local_site.com/access.log combined
+       ServerSignature On
+&lt;/VirtualHost&gt;
+
+It seems to me that your error log is not appropriately created
+</pre><tt>because the &lt;Directory&gt; directive is nested inside the  &lt;VirtualHost&gt; 
+</tt><tt>directive.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Also, you can check if the httpd.conf is correctly configured or not by 
+</tt><tt>the following command.
+</tt><pre style="margin: 0em;">
+
+[root@example.com sumtec]# apachectl configtest
+Syntax OK
+
+<a  rel="nofollow" href="http://oreilly.com/catalog/9780596002039">http://oreilly.com/catalog/9780596002039</a>
+and
+<a  rel="nofollow" href="http://oreilly.com/catalog/9780596001919">http://oreilly.com/catalog/9780596001919</a>
+
+are great refernces for me.
+
+Hope this could be of help.
+
+Sotaro
+
+
+
+
+
+
+
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00077" href="msg00077.html">[tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00078.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00090.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00078.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00090.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00079"><strong>Date</strong></a></li>
+<li><a href="threads.html#00079"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

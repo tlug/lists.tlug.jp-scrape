@@ -1,0 +1,170 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] backing up zaurus filesystem architecture? (warning,	lots of data) -->
+<!--X-From-R13: fpbgg <fpbggNfynpxvfynaq.bet> -->
+<!--X-Date: Thu, 21 Dec 2006 13:16:17 +0900 -->
+<!--X-Message-Id: 1166675149.494.47.camel@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00364.html">Date Prev</a>][<a href="msg00366.html">Date Next</a>][<a href="msg00370.html">Thread Prev</a>][<a href="msg00372.html">Thread Next</a>][<a href="maillist.html#00365">Date Index</a>][<a href="threads.html#00365">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] backing up zaurus filesystem architecture? (warning,	lots of data)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 21 Dec 2006 13:25:49 +0900</li>
+<li><strong>From</strong>: <strong>scott &lt;<a href="mailto:scott@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20backing%20up%20zaurus%20filesystem%20architecture%3F%20%28warning%2C%9lots%20of%20data%29">scott@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] backing up zaurus filesystem architecture? (warning,	lots of data)</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi everyone -or those who have a zaurus ;^)
+
+I've been using the cacko rom on my 3200 for a few months now, love it.
+However I think I'm going to try openzaurus now, just because running
+2.6 kernel on Zaurus looks so neat. I've started taking backups, but I'm
+curious about the filesystem- from what I understand the /etc/fstab
+and /etc/mtab files tell the kernel the structure of the filesystem. But
+the Zaurus filesystem looks strange to me so I thought I would ask you
+all about it:
+
+# cat /etc/fstab
+/dev/mtdblock2  /               jffs2   ro,noatime      1  1
+/dev/mtdblock3  /home           jffs2   defaults,noatime        1  2
+none            /dev/shm        tmpfs   size=1m,noauto  0  0
+/dev/mmcda1     /mnt/card       auto    noauto,owner    0  0
+none            /dev/pts        devpts  gid=5,mode=620  0  0
+
+# cat /etc/mtab
+rootfs / rootfs rw 0 0
+/dev/root / jffs2 ro 0 0
+/proc /proc proc rw 0 0
+/dev/mtdblock3 /home jffs2 rw,noatime 0 0
+/dev/ram1 /dev minix rw 0 0
+none /dev/shm tmpfs rw 0 0
+/dev/hda1 /usr/mnt.rom/cf vfat rw,noatime 0 0
+/dev/hdc1 /hdd1 ext3 ro,noatime 0 0
+/dev/hdc2 /hdd2 ext3 rw,noatime 0 0
+/dev/hdc3 /hdd3 vfat rw,noatime 0 0
+none /dev/pts devpts rw 0 0
+/dev/mmcda1 /usr/mnt.rom/card vfat rw,noatime 0 0
+
+It appears that /dev/mtdblock2 and /dev/root are identical- /dev/root
+says -&gt; mtdblock2. But what confuses me is where mtdblock2 actually
+*exists*. The internal hard drive is /dev/hdc, with three partitions
+only, so I thought that those /dev/mtdblocks are somewhere on hdc, but
+doing a full backup of /dev/hdc1 /dev/hdc2 and /dev/hdc3 shows it has
+not backed up the files from /home and / (tried doing a recursive find),
+therefore /home and / have got to be somewhere else.
+
+The total size of the mtdblock directories are only 121 megs, so I'm
+thinking is these mtdblock filesystems are part of the flash ROM. What
+I'm wondering is how can I back up /? I thought this would work OK:
+
+tar clvf /mnt/cd/root.tar /
+
+but zaurus tar is quite limited and doesn't include the 'l' (stay on one
+filesystem), also no rsync, cp is limited, etc. Any advice for backing
+up /? Does the backup/restore program that comes with Zaurus do just
+this? I'm just worried if I don't like openzaurus after formatting my HD
+if it's going to be tough to restore.
+
+BTW I tried to find an answer to this on <a  href="http://www.oesf.org/">http://www.oesf.org/</a> but this
+site has been down for a few days unfortunately.
+
+Cheers,
+Scott VanDusen
+Tokyo
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00364.html">[tlug] rsync / ssh error after Debian reinstall</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00366.html">[tlug] Switch the VT?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00370.html">[tlug] rsync / ssh error after Debian reinstall</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00372.html">[tlug] bootable CD Japanese distro</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00365"><strong>Date</strong></a></li>
+<li><a href="threads.html#00365"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

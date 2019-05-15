@@ -1,0 +1,282 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Building a new kernel -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Fri, 23 Aug 1996 03:30:34 GMT -->
+<!--X-Message-Id: m0utmv5&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199608221226.VAA25276@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00055.html">Date Prev</A>][<A HREF="msg00057.html">Date Next</A>][<A HREF="msg00055.html">Thread Prev</A>][<A HREF="msg00062.html">Thread Next</A>][<A HREF="maillist.html#00056">Date Index</A>][<A HREF="threads.html#00056">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Building a new kernel</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Building a new kernel</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Fri, 23 Aug 96 12:28 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00054.html">199608221226.VAA25276@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi y'all, It's been awful quiet lately - it must be time for
+    Jim&gt; another newbie question:-) When is this group going to
+    Jim&gt; attract someone who knows less than me about Linux???
+
+Wow!  Now THAT is a newbie question!
+
+    Jim&gt; Before Steve T. gets his dander up, I've read all the HOWTOs 
+
+You said you're a newbie, so I'm going to take you at your word.  So
+that means that the HOWTOs and books don't necessarily address what
+you don't know.
+
+    Jim&gt; and even a couple of books about building a kernel. So after
+    Jim&gt; all of this studying I finally get up the nerve to try it and
+    Jim&gt; guess what happened - you're right, nothing!
+
+That happens....
+
+    Jim&gt; All the docs say the same thing: after you set up the
+    Jim&gt; symbolic links cd /usr/src/linux (in my case linux is sym
+    Jim&gt; linked to linux-1.2.13: I don't know why the Slackware 3.0
+    Jim&gt; setup routine did this, but it did when I installed the
+
+This is so that you can use multiple kernels.  Programs that use
+operating system stuff directly look in /usr/src/linux/include/* for
+the interface definitions (look in /usr/include; you'll see a bunch of
+symlinks to /usr/src/linux/include/*).  So suppose you're using
+v1.2.13 most of the time, but you'd really like to use your Whizbang
+Periph-o-matic by Acme.  Unfortunately, the driver requires features
+that aren't supported until version 1.3.23; but those versions are
+really unstable and you don't want to use them everyday.
+
+So, for development, you "ln -s linux-1.3.23 /usr/src/linux", and for
+production programs, you "ln -s linux-1.2.13 /usr/src/linux".  This
+doesn't affect most things, since they go through the libraries which
+use the public kernel interface (which changes rarely since it's
+mostly defined by POSIX), but really affects things like device
+drivers and kernel modules which directly access kernel functions.
+
+    Jim&gt; source) and type 'make config' then start answering a lot of
+    Jim&gt; questions.
+
+What version are you compiling?  1.2.13?  I assume that's the same
+kernel you selected for daily use in Slackware's setup script?
+Starting by building the same kernel version that you normally use is
+a good idea.  NB: Besides "cd /usr/src/linux," you need to be root.
+(Not being root shouldn't get make upset, though, you just won't be
+able to rm, mv, and chmod the relevant files, not to mention being
+unable to open objects for writing to ;-)
+
+    Jim&gt; When I type 'make config' I get dissed with:
+
+    Jim&gt; make: *** No rule to make target 'config'. Stop.
+
+Question 1:  Can you read the Makefile?
+Question 2:  Can you read the Makefile?
+
+These are really two different questions.  :-)
+
+Make does not tell you it can't find a Makefile if you specifiy a
+target.  I'm not exactly sure why that is; I don't know anybody who
+uses make without the Makefile.  What it does tell you is that there
+is "*** No rule....  Stop."  So: can you read the Makefile in
+/usr/src/linux, by "less Makefile" or something like that?  If not,
+you need to find it (probably in linux-1.2.13.tar.gz :-) and/or make
+it available to make ("chmod u+rw Makefile").  While you're at it, you 
+should check to see that there seem to be a reasonable complement of
+files and directories (COPYING, ..., Makefile, README, arch/, drivers/, fs/,
+..., scripts/, and maybe vmlinux).
+
+Question 2 is "do you understand the Makefile?"  Makefiles come with
+three basic kinds of components:
+
+Comments - to tell you what the Makefile's author wants you to think
+Definitions - to make the Makefile more intelligible or more easily
+    configurable (there are also preprocessor-like commands
+Rules - what to actually do, and when to do it
+
+You already know what Comments and Definitions are, I'm sure (but GNU
+make supports some pretty arcane sorts of Definition, see "info
+make"), despite being a self-proclaimed Newbie.  What's a Rule?  A
+Rule looks like
+
+&lt;target&gt;:[&lt;dependency&gt;...]
+[&lt;TAB&gt;&lt;action&gt;...]
+
+In GNU make, if an action is present, it MUST be preceded by "\n\t".
+I'm not sure why this syntax was chosen, most makes accept any
+whitespace after the newline.  If there is no &lt;TAB&gt;, GNU make will
+tell you there's a "missing separator in line nnnn".  This often
+happens with poorly configured imakes (comes with X Windows---since
+some of the macros don't get expanded), with makefiles ported from
+other makes, and with some editors that don't like literal tabs.  I
+forget exactly the rules about other whitespace, GNU make is very
+particular about that &lt;TAB&gt; and somewhat picky about &lt;NEWLINE&gt;s, but
+otherwise pretty forgiving about whitespace, I think.
+
+So, if you've got a Makefile, the next step is to look for the "target
+'config'": "grep 'config.*:' Makefile" (the kernel makefiles use
+multiple targets, so you can't be sure that "config" can be tied to
+either the beginning of the line or to the colon---searching for
+"config" only will probably give lots of false positives, though).  Or
+you can use the search function in 'less'.  If you don't find
+"config:" then you've probably got a munged Makefile and should
+reuntar the kernel.  (Unfortunately, it is possible to use variables
+for targets, and that would be very confusing....)
+
+A dependency is a task that must be done before the current rule can
+be executed (eg, compiling an object file before linking it into an
+executable).  Dependencies come in two flavors:  files (which if
+present and younger than the current target are satisfied) and other
+targets in the makefile (which simply must be completed).  Actions are 
+any executable programs, like compilers and so on (and a few internal
+make commands, like looping constructs).
+
+There are some common rules that are built into make (like if you need 
+an executable named 'foo', look for an object named 'foo.o' and link
+it with the standard libraries:
+
+foo: foo.o
+	gcc -o foo foo.o
+
+or compiling the C program:
+
+foo.o: foo.c
+	gcc -o foo.o -c foo.c
+
+and so on).  These default rules can make figuring out what the
+makefile does a little difficult at times, but most makefiles are
+pretty explicit.  (I guess default rules also answers my question
+about targets without Makefiles:  if you have a file "love.c", you
+could do "make love" without a Makefile or even a partner. :-)
+
+A common trick in these very complicated programs with large
+development teams is to put each major module in a subdirectory and
+invoke make recursively:
+
+SUBDIRS=memory process drivers
+kernel:
+	for i in $(SUBDIRS); do (cd $i; make); cp $i/*.o .; done
+	gcc -o linux *.o
+	rm -f *.o
+
+(This naive approach probably won't work since linking is order
+dependent.)
+
+Obviously, since configuration and dependencies need to be set up
+before anything else is done, it makes sense to have rules to ensure
+this.  Typically, files which should be generated by the make process
+either have a "This file was automatically generated; do not edit.  Do 
+'make config' instead." comment or are hidden files (.config and
+.depend are very common; sometimes a Makefile template will be hidden
+as .Makefile).  It's even possible to have a Makefile target
+(Ghostscript does this, for example.)
+
+Many of the actions in the Makefile are likely to be either recursive
+makes (as above) or shell scripts (especially for configuration).
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">Re: Building a new kernel</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00054" HREF="msg00054.html">Building a new kernel</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00055.html">Fax/Voice Software</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00057.html">Re: Building a new kernel</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00055.html">Fax/Voice Software</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00062.html">Re: Building a new kernel</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00056"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00056"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

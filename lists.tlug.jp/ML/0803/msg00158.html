@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Apache MPM performance -->
+<!--X-From-R13: "@thlra Hh Vhat" <ihuhat16cyhf+funcrNtznvy.pbz> -->
+<!--X-Date: Wed, 12 Mar 2008 18:52:26 +0900 -->
+<!--X-Message-Id: 78d7dd350803120152x5773095fk1204bef3823c69e1@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 8534d2c10803110557w540012d9g7a048089be43c285@mail.gmail.com -->
+<!--X-Reference: 20080311225044.GC15275@pragmatic.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00157.html">Date Prev</a>][<a href="msg00159.html">Date Next</a>][<a href="msg00135.html">Thread Prev</a>][<a href="msg00172.html">Thread Next</a>][<a href="maillist.html#00158">Date Index</a>][<a href="threads.html#00158">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Apache MPM performance</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 12 Mar 2008 17:52:56 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Nguyen Vu Hung&quot; &lt;<a href="mailto:vuhung16plus%2Bshape@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Apache%20MPM%20performance">vuhung16plus+shape@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Apache MPM performance</strong></li>
+<li>References: &lt;<a href="msg00133.html">8534d2c10803110557w540012d9g7a048089be43c285@mail.gmail.com</a>&gt;	&lt;<a href="msg00135.html">20080311225044.GC15275@pragmatic.cynic.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>2008/3/12, Curt Sampson &lt;cjs@example.com&gt;:
+&gt; On 2008-03-11 21:57 +0900 (Tue), Dimitar Dimitrov wrote:
+&gt;
+&gt;  &gt; In your case, as you are using ab, which is a single-threaded
+&gt;  &gt; benchmark you are not testing any of the advantages of the MDM module
+&gt;  &gt; or the machine you bought.
+
+&gt; Nguyen, you're using ab? There's your problem right there; It sends a
+&gt;  single request, waits for a response, and loops. It's fine for showing
+&gt;  the minimum speed of your web server, but not useful for determining a
+&gt;  reasonable maximum, or seeing if your server will fall down under load.
+&gt;
+Yes, I am using ab, which can be use for DoS. What is wrong??? :)
+
+My system is quite unique. At first I have an .so file which is
+written in C/C++,
+then a PHP extension built with it.Each time I call my php extension's API,
+the C/C++ code is excuted. By the nature of the .so and the extension, time
+for a PHP call is 1.0 - 4.0 seconds.
+
+So if I run
+
+./ab -n n -c c
+
+or
+
+httperf --num-conns=c --num-calls=n
+
+PHP module has enough time spawning httpd proccesses ( prefork or worker ).
+
+I've run both ./ab and httperf against 2 servers, and they gave the same result.
+
+I don't know if is there anything with my test scenario, but the
+results look good.
+
+&gt;  What you want is httperf, which will send a fixed number of requests per
+&gt;  second and tell you how many actually get a response and give you some
+&gt;  stats on response times. Basically, you just keep running it with a higher
+&gt;  and higher number of requests per second until your web server collapses
+&gt;  and dies, and then you have a better idea of what load you can handle.
+&gt;
+See above. But I start with a large number of connections ( 2000 ).
+
+&gt;  You probably want it running on a separate machine from the web server
+&gt;  for serious benchmarking. However, it's fortunately single-threaded
+&gt;  (event-driven), so while it will eat up all the CPU it can, it won't use
+&gt;  more than one core, so on a multi-core machine it ought still to be a
+&gt;  reasonable benchmark.
+I run the rest from a Xeon 3.2GHz, 2 CPUS, 8 cores, 8GB of RAM, 1000MB
+ethernet against Solaris T5220.
+Is there something wrong with it?
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00172" href="msg00172.html">Re: [tlug] Apache MPM performance</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00133" href="msg00133.html">Re: [tlug] Apache MPM performance</a></strong>
+<ul><li><em>From:</em> Dimitar Dimitrov</li></ul></li>
+<li><strong><a name="00135" href="msg00135.html">Re: [tlug] Apache MPM performance</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00157.html">[tlug] Bashing away at Unix</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00159.html">Re: [tlug] Freely distributable Japanese capable utf8 font?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00135.html">Re: [tlug] Apache MPM performance</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00172.html">Re: [tlug] Apache MPM performance</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00158"><strong>Date</strong></a></li>
+<li><a href="threads.html#00158"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

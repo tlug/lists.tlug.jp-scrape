@@ -1,0 +1,161 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Installing from source -->
+<!--X-From-R13: Xraf Xbua <yvfgfN2vba.qr> -->
+<!--X-Date: Tue, 02 Oct 2018 07:56:44 +0900 -->
+<!--X-Message-Id: 20181001224935.GA31971@wismut -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 0c20f190&#45;816a&#45;bea6&#45;d6c4&#45;6301ee87bd5a@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00002.html">Date Prev</a>][<a href="msg00004.html">Date Next</a>][<a href="msg00002.html">Thread Prev</a>][<a href="msg00013.html">Thread Next</a>][<a href="maillist.html#00003">Date Index</a>][<a href="threads.html#00003">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Installing from source</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 2 Oct 2018 00:49:35 +0200</li>
+<li><strong>From</strong>: <strong>Jens John &lt;<a href="mailto:lists@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Installing%20from%20source">lists@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Installing from source</strong></li>
+<li>References: &lt;0c20f190-816a-bea6-d6c4-6301ee87bd5a@gmail.com&gt;</li>
+<li>User-agent: Mutt/1.10.1 (2018-07-13)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+From what you've written I gather
+</pre></blockquote><pre style="margin: 0em;">
+
+ * You are running Debian 9
+</pre><tt> * You want Claws 3.17.1 from stretch-backports but need to tweak a 
+</tt><tt>   compile-time option because the package does not suit your needs
+</tt><pre style="margin: 0em;">
+ * You don't know the canonical way how to go about this.
+
+</pre><tt>Chapter 15 of the Debian administrator's handbook deals with that task 
+</tt><tt>[1]. The package maintainer's guide provides details on the respective steps [2].
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Here, the start of the project could look like this (not tested, typing 
+</tt><tt>from memory and using packages.debian.org info). When done this way, 
+</tt><tt>this avoids having to deal with gathering complex dependencies by hand:
+</tt><pre style="margin: 0em;">
+
+ * Ensure the stretch-backports deb-src sources config is active:
+
+</pre><tt>   deb <a  rel="nofollow" href="http://ftp.debian.org/debian">http://ftp.debian.org/debian</a> stretch-backports main                                                                                           
+</tt><tt>   deb-src <a  rel="nofollow" href="http://ftp.debian.org/debian">http://ftp.debian.org/debian</a> stretch-backports main
+</tt><pre style="margin: 0em;">
+
+ * Get some essential tools and Debian scaffolding
+
+   apt-get install dpkg-dev build-essential debhelper
+
+ * Get and extract the Debian sources, as well as build dependencies:
+</pre><tt> 
+</tt><tt>   apt-get build-dep -t stretch-backports claws-mail=3.17.1-1~bpo9+1
+</tt><pre style="margin: 0em;">
+   apt-get source claws-mail=3.17.1-1~bpo9+1
+   cd claws-mail-3.17.1
+
+</pre><tt> * Now you can change the source as required. You may need to install 
+</tt><tt>   extra packages when you enable extra compile-time options etc.
+</tt><pre style="margin: 0em;">
+
+ * Build the changed source into a package as described in [1].
+
+---
+[1] <a  rel="nofollow" href="https://l.github.io/debian-handbook/html/en-US/debian-packaging.html#sect.rebuilding-package">https://l.github.io/debian-handbook/html/en-US/debian-packaging.html#sect.rebuilding-package</a>
+[2] <a  rel="nofollow" href="https://www.debian.org/doc/manuals/maint-guide/">https://www.debian.org/doc/manuals/maint-guide/</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00002.html">Re: [tlug] Installing from source</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00004.html">Re: [tlug] Journals, Authors and 'Free Peer Review'</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00002.html">Re: [tlug] Installing from source</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00013.html">[tlug] [announcement] October 12th, 2018 Nomikai</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00003"><strong>Date</strong></a></li>
+<li><a href="threads.html#00003"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

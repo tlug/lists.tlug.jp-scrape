@@ -1,0 +1,190 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Ubuntu 14.04 bind9 local resolver problems -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Mon, 16 Nov 2015 14:30:45 +0900 -->
+<!--X-Message-Id: 20151116053043.GR9310@monotonic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00015.html">Date Prev</a>][<a href="msg00017.html">Date Next</a>][<a href="msg00014.html">Thread Prev</a>][<a href="msg00020.html">Thread Next</a>][<a href="maillist.html#00016">Date Index</a>][<a href="threads.html#00016">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Ubuntu 14.04 bind9 local resolver problems</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Nov 2015 14:30:44 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Ubuntu%2014.04%20bind9%20local%20resolver%20problems">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Ubuntu 14.04 bind9 local resolver problems</strong></li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>My Linux boxes at home mostly are (or were) configured to use a local
+bind9 instance for DNS resolution. Unfortunately, sometime in the last
+few months, this has been failing badly.
+
+The symptom is that a lot of web sites stop working. For example, I can
+get as far as entering my Google authentication information when trying
+to log in to trello.com, but then the web browser (Chrome, usually) just
+sits and spins forever, or on Firefox I appear to be logged in but don't
+see any of my boards.
+
+I could provide a pile of other examples, but the key thing here is that
+as soon as I change the &quot;nameserver 127.0.0.1&quot; in my /etc/resolv.conf to
+&quot;nameserver 192.168.187.1&quot; (which is an Almond router, though I think
+I've seen this issue with other routers as well), everything starts
+working fine.
+
+Looking at my logs, I get a lot of &quot;network unreachable,&quot; messages,
+such as:
+
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 198.41.0.4#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.228.79.201#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.33.4.12#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 199.7.91.13#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.203.230.10#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.5.5.241#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.112.36.4#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 128.63.2.53#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.36.148.17#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 192.58.128.30#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 193.0.14.129#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 199.7.83.42#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 202.12.27.33#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:503:ba3e::2:30#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:500:2d::d#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:500:2f::f#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:500:1::803f:235#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:7fe::53#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:503:c27::2:30#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:7fd::1#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:500:3::42#53
+  Nov 16 14:05:30 monotonic named[1365]: error (network unreachable) resolving 'mtalk.google.com.lan/A/IN': 2001:dc3::35#53
+
+Now, not being able to reach those IPv6 addresses is no surprise, given
+that I don't have IPv6 Internet connectivity. But the claim of not being
+able to reach these IPv4 addresses is both disturbing and implausible,
+given who they are:
+
+  4.0.41.198.in-addr.arpa domain name pointer a.root-servers.net.
+  201.79.228.192.in-addr.arpa domain name pointer b.root-servers.net.
+  12.4.33.192.in-addr.arpa domain name pointer c.root-servers.net.
+  13.91.7.199.in-addr.arpa domain name pointer d.root-servers.net.
+  10.230.203.192.in-addr.arpa domain name pointer e.root-servers.net.
+  241.5.5.192.in-addr.arpa domain name pointer f.root-servers.net.
+  4.36.112.192.in-addr.arpa domain name pointer G.ROOT-SERVERS.NET.
+  53.2.63.128.in-addr.arpa domain name pointer h.root-servers.net.
+  17.148.36.192.in-addr.arpa domain name pointer i.root-servers.net.
+  30.128.58.192.in-addr.arpa domain name pointer j.root-servers.net.
+  129.14.0.193.in-addr.arpa domain name pointer k.root-servers.net.
+  42.83.7.199.in-addr.arpa domain name pointer l.root-servers.net.
+  33.27.12.202.in-addr.arpa domain name pointer M.ROOT-SERVERS.NET.
+
+Before I start diving more deeply into this using network traces and
+other inconvenient things, anybody have any clues about what might
+be going on?
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00020" href="msg00020.html">[tlug]  Ubuntu 14.04 bind9 local resolver problems</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00015.html">Re: [tlug] [OT] Specialized insects and Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00017.html">Re: [tlug] [OT] Specialized insects and Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00014.html">Re: [tlug] Software license change (off-topic news)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00020.html">[tlug]  Ubuntu 14.04 bind9 local resolver problems</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00016"><strong>Date</strong></a></li>
+<li><a href="threads.html#00016"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

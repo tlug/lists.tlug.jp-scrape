@@ -1,0 +1,189 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] A Swap Question -->
+<!--X-From-R13: "Rnavry O. Dnznyrl" <qnavry.enznyrlNRDOYS.SRG> -->
+<!--X-Date: Tue, 06 Nov 2007 07:10:45 +0900 -->
+<!--X-Message-Id: 200711051242.33956.daniel.ramaley@drake.edu -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 14178ED3A898524FB036966D696494FB014FDD9D@messenger.cv63.navy.mil -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00065.html">Date Prev</a>][<a href="msg00067.html">Date Next</a>][<a href="msg00065.html">Thread Prev</a>][<a href="msg00071.html">Thread Next</a>][<a href="maillist.html#00066">Date Index</a>][<a href="threads.html#00066">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] A Swap Question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 05 Nov 2007 12:42:33 -0600</li>
+<li><strong>From</strong>: <strong>&quot;Daniel A. Ramaley&quot; &lt;<a href="mailto:daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20A%20Swap%20Question">daniel.ramaley@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] A Swap Question</strong></li>
+<li>References: &lt;<a href="msg00064.html">14178ED3A898524FB036966D696494FB014FDD9D@messenger.cv63.navy.mil</a>&gt;</li>
+<li>User-agent: KMail/1.9.5</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Monday 05 November 2007 10:47, burlingk@example.com wrote:
+&gt;I have seen some places that suggest using a swap partition equal
+&gt; to the size of your physical memory, and other places that
+&gt;say to use a swap partition equal to about twice the size of physical
+&gt;memory.
+&gt;
+&gt;Is there any reason that it would be bad, or less efficient to use a
+&gt;larger partition for swap?
+
+How much swap is appropriate really depends on how much RAM a machine 
+has and what it is used for. I think the recommendation for swap to be 
+2x RAM is somewhat outdated for most applications on new hardware.
+
+For new installs on new hardware (with 1GB or more RAM), i usually 
+allocate 1/2 GB swap. My rationale is that on a server if the swap is 
+being hit even that much than the battle is already lost; the machine 
+will be so busy swapping (rather than serving) that it is effectively 
+offline. Same for desktop machines; if massive amounts of swap are 
+being used then the machine will be so slow that it will be difficult 
+to even start killing off some processes to free up resources. If 
+something has run away to the point that the machine is chewing through 
+RAM and swap, i'd rather hit the hard limit of no more RAM+swap sooner 
+rather than later.
+
+So why not just get rid of swap entirely? The answer i have seen 
+repeated most often is to allow the system to free up RAM by swapping 
+out unused daemons. The RAM that is freed can then be used for more 
+cache, which will often result in faster performance. My machine right 
+now has 1 GB RAM of which roughly 40% is in use by actual programs, 100 
+MB is free, and the other half is cache. And i'm using 50 MB of swap, 
+even though some RAM is free. I haven't looked into Linux' swapping 
+algorithms in great detail recently, but my guess is that Linux does 
+preemptive swapping; it can write pages of memory to the swap file that 
+haven't been used recently but doesn't actually dump them from memory. 
+However, since they are already in the swap file, if the system 
+suddenly needs more RAM it can use those pages without spending time to 
+write them first. The result is better performance in situations where 
+an application requests a lot of memory on short notice.
+
+For machines with 512 MB RAM or less, i usually allocate swap equal to 
+RAM for a desktop machine. For a server, it depends. I have a DHCP and 
+DNS server at home with little memory and no swap at all. But if all it 
+is doing is DHCP and DNS (and the occasional SSH session for 
+maintenance) it doesn't really need to swap.
+
+I guess that really doesn't answer your direct question though. Using a 
+large swap partition shouldn't hurt anything (other than wasting disk 
+space, but disk is cheap). It would not surprise me if some (old) 
+versions of the kernel do not take advantage of all of the swap if you 
+allocate more than a 2^x boundary, where x is some number. I think at 
+one time there was a 128 MB limit per swap file (but that time was a 
+rather long time ago). On new kernels the limit is probably so high 
+that it would require a very specialized situation to justify hitting 
+that limit.
+
+------------------------------------------------------------------------
+Dan Ramaley                            Dial Center 118, Drake University
+Network Programmer/Analyst             2407 Carpenter Ave
++1 515 271-4540                        Des Moines IA 50311 USA
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00071" href="msg00071.html">Re: [tlug] A Swap Question</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00074" href="msg00074.html">Re: [tlug] A Swap Question</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00095" href="msg00095.html">Re: [tlug] A Swap Question</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00064" href="msg00064.html">[tlug] A Swap Question</a></strong>
+<ul><li><em>From:</em> burlingk</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00065.html">[tlug] A Swap Question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00067.html">Re: [tlug] A Swap Question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00065.html">[tlug] A Swap Question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00071.html">Re: [tlug] A Swap Question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00066"><strong>Date</strong></a></li>
+<li><a href="threads.html#00066"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

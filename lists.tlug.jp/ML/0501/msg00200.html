@@ -1,0 +1,371 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] cron and lftp problems -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Wed, 26 Jan 2005 21:41:30 &#45;0500 -->
+<!--X-Message-Id: d8fcc08005012618411e6ec206@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: d8fcc080050126043261bcfe73@example.com -->
+<!--X-Reference: 20050126150722.52779.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00199.html">Date Prev</a>][<a href="msg00201.html">Date Next</a>][<a href="msg00199.html">Thread Prev</a>][<a href="msg00202.html">Thread Next</a>][<a href="maillist.html#00200">Date Index</a>][<a href="threads.html#00200">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] cron and lftp problems</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 26 Jan 2005 21:41:30 -0500</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20cron%20and%20lftp%20problems">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] cron and lftp problems</strong></li>
+<li>References: &lt;<a href="msg00198.html">d8fcc080050126043261bcfe73@example.com</a>&gt; &lt;<a href="msg00199.html">20050126150722.52779.qmail@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, 26 Jan 2005 07:07:21 -0800 (PST), Jake Morrison
+&lt;jake_morrison@example.com&gt; wrote:
+ 
+&gt; --- Josh Glover &lt;jmglov@example.com&gt; wrote:
+&gt;
+&gt; &gt; I put a bunch of &quot;constants&quot; at the top of my scripts:
+&gt; &gt;
+&gt; &gt; AWK=/bin/awk
+&gt; &gt; CAT=/bin/cat
+&gt; &gt; GREP=/bin/grep
+&gt; &gt; SCP=/usr/bin/scp
+&gt; &gt; SED=/bin/sed
+&gt; &gt; SSH=/usr/bin/ssh
+&gt; &gt;
+&gt; &gt; And then, my commands look like this:
+&gt; &gt;
+&gt; &gt; servers=`${CAT} ${file} | ${SED} -e 's/\t/  /g' | ${AWK} '{ print $1
+&gt; &gt; }'`
+&gt; &gt; for i in ${servers}; do
+&gt; &gt;   ${SSH} $i ${GREP} foo ${foofile}
+&gt; &gt;   if [ $? -ne 0 ]; then
+&gt; &gt;     ${SCP} ${foofile} $i:${foofile}
+&gt; &gt;   fi
+&gt; &gt; done
+&gt; 
+&gt; Josh, don't scare the guy :-)
+
+That is like telling a dog not to bark (or wan-wan, depending on the
+culture): he *can* stop, but he doesn't really want to! ;)
+
+&gt; Actually, variables are a great idea. But I don't end up using
+&gt; them that much for commands in shell scripts. I find that if
+&gt; the script gets complicated enough that I need some specific
+&gt; feature of grep or tar that only exists in the GNU version
+&gt; (installed in /usr/local or /opt or ...), it is probably better
+&gt; just to rewrite it in perl or python.
+
+When I was working as a sysadmin, I assembled a small army of
+automatons to do my work for me. Most of these were simple, Bourne
+shell scripts that would run on any machine, with the crappiest of the
+crappy versions of the Unix binutils. The only portability problem
+that I would run into is that on Solaris, things like rsync were
+likely to be found in /usr/local/bin or /opt/sfw/bin, whereas on Linux
+systems, they tended to be in /usr/bin.
+
+So my trivial variable-ising of command names proved the most powerful
+portability design tool that I had! (Except for my C macros that would
+detect the endian-ness of a host, and flip bytes as needed, of course!
+;)
+
+&gt; Makefiles, on the other hand....
+
+Speaking of which, I feel that this is a good time to reveal to the
+world my Magnum Opus (or is that &quot;Magnificent Octopus&quot;?[1]): OSDT, the
+Open Source Distribution (or Development, if you'd rather) Toolkit.
+
+It includes a tool, osdt-new-project, that can create a new skeleton
+directory for a project and optionally import it into a CVS or Subversion
+repository:
+
+osdt-new-project foo ~/ opensource --svnroot ~/svnroot
+
+This would create a project skeleton for a project named &quot;foo&quot;, in your
+home directory, using project skeleton &quot;opensource&quot;, and import it into a
+Subversion repository rooted at ~/svnroot. (The repository is created if
+it does not exist, if possible.) The contents of the new project directory
+will be:
+
+trunk
+trunk/AUTHORS
+trunk/TODO
+trunk/VERSION
+trunk/ChangeLog
+trunk/COPYING
+trunk/README
+trunk/Makefile
+branches
+tags
+
+(This is the standard Subversion layout, which can be suppressed with
+the --svnflat option to osdt-new-project, which would result in a &quot;flat&quot;
+CVS-style import, just containing the files in the top-level directory.)
+
+The files are created from templates to provide a reasonable starting
+point for a new project.
+
+Which brings us to the other useful tool included in the OSDT distribution,
+osdt-new-file, which creates a file from a template. This can be very useful
+when you are working on a project and realise that you need a new source
+file. You can just run osdt-new-file, like so:
+
+osdt-new-file c-program foo.c
+
+This creates a file named foo.c with the following contents:
+
+
+/* =========================================================================
+ * File: foo.c
+ *
+ * Copyright (c) 2005 and onwards, Josh Glover &lt;jmglov@example.com&gt;
+ *
+ * LICENCE:
+ *
+ *   This file is distributed under the terms of the BSD-2 License.
+ *   See the COPYING file, which should have been distributed with
+ *   this file, for details. If you did not receive the COPYING file,
+ *   see:
+ *
+ *   <A  HREF="http://www.jmglov.net/opensource/licenses/bsd.txt">http://www.jmglov.net/opensource/licenses/bsd.txt</A>
+ *
+ * DESCRIPTION:
+ *
+ *   __DESCRIPTION__
+ *
+ * USAGE:
+ *
+ *   foo --help
+ *
+ * EXAMPLES:
+ *
+ *   __EXAMPLES__
+ *
+ * TODO:
+ *
+ *   - Nothing, this code is perfect
+ *
+ * DEPENDENCIES:
+ *
+ *   __DEPENDENCIES__
+ *
+ * MODIFICATIONS:
+ *
+ *   Josh Glover &lt;jmglov@example.com&gt; (2005/01/26): Initial revision
+ * =========================================================================
+ */
+
+// Standard library includes
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+
+// Function prototypes
+// ---------------------------------------------------------------------------
+
+
+static int usage( const int retval );
+
+
+// ---------------------------------------------------------------------------
+
+
+// Main program
+// ---------------------------------------------------------------------------
+
+
+/** Function: main()
+ *
+ * Main program.
+ *
+ * Parameters:
+ *
+ *   argc - number of command-line arguments (including the full pathname of
+ *          the executable)
+ *   argv - command-line arguments (including the full pathname of the
+ *          executable)
+ *
+ * Returns:
+ *
+ *   0 on success, UNIX return value on failure
+ */
+
+int main( const int argc, const char *argv[] ) {
+
+  int i; // counter
+
+  // Parse arguments
+  for (i = 0; i &lt; argc; i++) {
+
+    // -? / --help
+    if (strcmp( argv[i], &quot;-?&quot; ) == 0 || strcmp( argv[i], &quot;--help&quot; ) == 0)
+      return usage( 0 );
+
+  } // for (parsing arguments)
+
+  return 0;
+
+} // main()
+
+
+// ---------------------------------------------------------------------------
+
+
+// Functions
+// ---------------------------------------------------------------------------
+
+
+/** Function: usage()
+ *
+ * Prints a usage message.
+ *
+ * Parameters:
+ *
+ *   retval - if non-zero, the usage message will be printed to standard
+ *            error; otherwise, it will be printed to standard out
+ *
+ * Returns:
+ *
+ *   The retval parameter
+ */
+
+static int usage( const int retval ) {
+
+  fprintf( retval ? stderr : stdout, &quot;Usage: foo __USAGE__&quot; );
+
+  return retval;
+
+} // usage()
+
+
+// ---------------------------------------------------------------------------
+
+
+You can also set macros on the command-line:
+
+osdt-new-file USAGE='--help' DESCRIPTION='Test program for libfoo' \
+ EXAMPLES='foo --help' DEPENDENCIES='GNU GCC' c-program foo.c
+
+This will replace &quot;__USAGE__&quot; in the resulting file with &quot;--help&quot;,
+&quot;__DESCRIPTION__&quot; with &quot;Test program for libfoo&quot;, etc.
+
+The OSDT tools read two XML config files when they start up, a
+side-wide one and a user-specific one, so you can set permanent
+macros. Once you have OSDT installed, the following command will
+create a user-specific config file for you with common macros set:
+
+osdt-new-file \
+  AUTHOR='Your Name' \
+  AUTHOR_EMAIL='your.email@example.com' \
+  osdt-config ~/.osdt/config.xml
+
+You can grab the latest release of OSDT from:
+<A  HREF="http://sourceforge.net/project/showfiles.php?group_id=113934">http://sourceforge.net/project/showfiles.php?group_id=113934</A>
+
+--Josh &quot;dear God this email got long!&quot; Glover
+
+[1] <A  HREF="http://hem.passagen.se/dunsel/ba3-2.htm">http://hem.passagen.se/dunsel/ba3-2.htm</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00198" href="msg00198.html">Re: [tlug] cron and lftp problems</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00199" href="msg00199.html">Re: [tlug] cron and lftp problems</a></strong>
+<ul><li><em>From:</em> Jake Morrison</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00199.html">Re: [tlug] cron and lftp problems</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00201.html">Re: [tlug] Color Codes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00199.html">Re: [tlug] cron and lftp problems</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00202.html">[tlug] Fedora Core 3 questions</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00200"><strong>Date</strong></a></li>
+<li><a href="threads.html#00200"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

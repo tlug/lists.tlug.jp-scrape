@@ -1,0 +1,244 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: X&#45;Mailer: USANET web&#45;mailer (34FM1.4.02C) -->
+<!--X-From: Chris Sekiya <sekiya@example.com> -->
+<!--X-Date:  Fri, 12 May 2000 15:31:49 +0900 -->
+<!--X-Message-Id: 20000512153236.R13942@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000512062334.19017.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00134.html">Date Prev</A>][<A HREF="msg00136.html">Date Next</A>][<A HREF="msg00134.html">Thread Prev</A>][<A HREF="msg00136.html">Thread Next</A>][<A HREF="maillist.html#00135">Date Index</A>][<A HREF="threads.html#00135">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</strong></LI>
+<LI><strong>From</strong>: <strong>Chris Sekiya &lt;<A HREF="mailto:sekiya@example.com">sekiya@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 12 May 2000 15:32:36 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00134.html">20000512062334.19017.qmail@example.com</A>&gt;; from DmytroKovalov@example.com on Fri, May 12, 2000 at 03:23:34PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00134.html">20000512062334.19017.qmail@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On a bit of a tangent ...
+
+... I have to take issue with distributions that rig X to use xfs by default.
+
+xfs is a very bad idea from a security perspective.
+
+I attach a message from the xfree86 developers list.  The response was along
+the lines of "yeah, well, we know that an audit would be a good idea but
+we don't really have the resources right now".
+
+-- Chris
+
+
+To: devel@example.com
+Subject: xfs security issues (fwd)
+Date: Wed, 19 Apr 2000 15:29:53 +0800
+
+Hi,
+
+I notice xfs (the X font server) recently hit the news. It seems I never
+sent the below message on to Bugtraq (at least a search doesn't show up
+much). I'm guessing it's still relevant.
+
+This message illustrates that the xfs problem recently mentioned by Michal
+is but one of many minor carelessnesses in the xfs source. xfs probably
+cannot be considered secure until a full and time-consuming audit is
+performed. In particular run xfs as a listening TCP network service at
+your own extreme risk.
+
+xfs's prime problem, like quite a few X protocols, is that a large amount
+of code paths are available for exploration by remote users, _before_ any
+sort of authentication is attempted.
+
+Note that the message I'm forwarding is almost a year old. Since no-one's
+seen fit to do something about it, I guess it's time to raise the profile
+again.
+
+Cheers
+Chris
+
+
+---------- Forwarded message ----------
+Date: Mon, 31 May 1999 18:09:47 +0100 (GMT)
+From: Chris Evans &lt;chris@example.com&gt;
+To: &lt;removed&gt;
+Subject: xfs security issues
+
+
+Hi,
+
+I can't remember if I ever sent you these. Fixing "xfs" security has been
+on my TODO list for a while but I just haven't had the time :-( Hopefully
+if I give you an overview of the issues, you can get someone to sort it
+out. I regard the issues as serious.
+
+Essentially, xfs is very easy for a remote user to segfault. This is
+obviously bad because all dependent X servers will go down- very nasty
+DoS. The problem attracted my attention because RedHat now use "xfs" to
+serve fonts to the local X server. Fortunately, I persuaded them to
+disable xfs listening via TCP!
+
+The problems could well be worse than DoS - if you can get the process to
+trample on random memory, this can often be leveraged in some way...
+
+Generally, most of xfs's problems are blind trust of lengths supplied in
+data arriving over the network. This means it is always jumping off the
+end of buffers and crashing.
+
+Here is a practical example of the above:
+
+telnet localhost 7100
+Connected etc.
+BBBBBB&lt;press return&gt;
+
+xfs has crashed at this point.
+
+Unfortunately, this flaw occurs in multiple places rather than just once.
+The font protocol looks into network packets for lengths, multiple times.
+
+As another practical example,
+
+dispatch.c (from xfs), function ProcEstablishConnection(). There is the
+line of code
+ad += client_auth[i].datalen;
+
+Which again picks an unsigned short out of the network packet, and
+trusts it not to take us over the end of the input buffer.
+
+Related to the above, there is a very very subtle bug related to
+signed/unsigned conversions. We get an unsigned short from the network,
+and then store it in the following structure
+
+typedef struct _auth {
+    short       namelen;
+    short       datalen;
+    char       *name;
+    char       *data;
+}           AuthRec;
+
+i.e. we stuff an unsigned short into a signed short, so we can get a -ve
+value. This -ve value then gets passed to a memcpy() and becomes positive
+and very large, smashing various internal buffers.
+
+There is one other crash issue I noticed by inspection. In dispatch.c from
+xfs, ~line 932, there is an assert() statement. This assert is fired in
+response to network data the program doesn't understand! This is clearly a
+bug - assert() is for use when a program bug has been hit, rather than
+corrupt data arriving over the network.
+
+
+Let me know what you think about the above. In particular, let me know if
+it is going to take a while to fix. I might be able to persuade someone on
+the security-audit list to look into it if you and your developers are too
+busy.
+
+Cheers
+Chris
+
+--------------------------------------------------------------------
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: Crypto and Security	Speaker: Chris Sekiya
+Next Nomikai Meeting: June 16 (Fri), Tengu TokyoEkiMae.
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00136" HREF="msg00136.html">Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00144" HREF="msg00144.html">Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00134" HREF="msg00134.html">tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+<UL><LI><EM>From:</EM> Dmytro Kovalov &lt;DmytroKovalov@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00134.html">tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00136.html">Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00134.html">tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00136.html">Re: tlug: X-Mailer: USANET web-mailer (34FM1.4.02C)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00135"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00135"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Some hardware questions... -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Wed, 23 Sep 1998 03:57:27 +0900 -->
+<!--X-Message-Id: 199809221901.TAA00128@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36036A20.57EEAA61@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00652.html">Date Prev</A>][<A HREF="msg00657.html">Date Next</A>][<A HREF="msg00496.html">Thread Prev</A>][<A HREF="msg00660.html">Thread Next</A>][<A HREF="maillist.html#00653">Date Index</A>][<A HREF="threads.html#00653">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Some hardware questions...</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Some hardware questions...</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 22 Sep 1998 19:01:00 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00496.html">36036A20.57EEAA61@example.com</A>&gt; from "Neil Booth" at Sep 19, 98 05:24:00 pm</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; ... from someone who knows very little about hardware. Lots of
+&gt; questions, please bear with me.
+
+OK. But some of the questions will require a somewhat complex
+answer. So it might be that I supposed you to have some
+knowledge you actually don't and that some stuff consequently is
+over your head :-(. Simply ask then.....
+
+&gt; SCSI
+&gt; ----
+&gt; 
+&gt; What is SCSI exactly and how does it work?
+
+SCSI = Small Computer System Interface. Much redesigned
+offspring of SASI ( Shugart Associates System Interface ).
+
+SCSI is a peripheral bus system. It allows the connection of at
+most 7 peripheral devices. This is due to the rather primitive
+addressing scheme which provides a dedicated address line for
+each device. A device is contacted in the following way: The
+controller raises line 7 and sends a request to one of the
+peripherals. This peripheral acknowledges by raising its line.
+By doing so it sends a reply ( with the requested data ) to the
+controller. The controller itself may also send back some data.
+When the communication is ended both lines are dropped.
+
+The SCSI standard specifies a number of commands and signals 
+( in total about 30 of them ). The original SCSI had a bus width
+of 16 bits and a top speed of 10 MByte / s.
+
+SCSI II had a few improvements and a higher speed ( 20 MByte / s ).
+
+&gt; Why is it considered better than IDE?
+
+To answer that question we first have to answer the question
+what IDE actually is. IDE means Integrated Drive Electronics.
+Actually it is the same as the old ST506 standard, just that the
+HDD controller is integrated into the disk. The whole drive
+behaves like an ordinary peripheral device, e.g. a 16550 serial
+controller. The only thing you need is an address decoder to
+connect it to a stadard ISA bus. Ever wondered what you find on
+those "IDE adapter cards" ? Normally a few latches ( '373 or
+brethren ) and one or two GAL's for address decoding. The bigger
+chip on there mostly is a 37C65 or similar floppy controller ( with
+another GAL for its address decoding ). If you want, you can
+easily roll your own. It is pretty simple.
+
+The IDE bus has a maximum clock frequency of 6 MHz or so and is
+16 Bit wide. This translates into a maximum data transfer rate
+of 12 MBytes / s. Pretty close to SCSI II.
+
+One IDE adapter can drive at most two IDE drives. There is the
+peculiarity that they populate the same address space - the
+selection is done when establishing contact by simply sending a
+command telling the drives which one is going to be active -
+Master or Slave.
+
+There are two address spaces for IDE drives, thus allowing a
+total of two IDE adapters with four devices in total. 
+
+The problem with IDE is that it is a somewhat haphazard standard
+with many things not being clearly specified. Theoretically
+there is no reason why SCSI should be better - in fact SCSI adds
+a lot of complexity because it translates from one bus system to
+another. However, many SCSI controllers have a lot of advanced
+functionality built in which the IDE manufacturers then scramble
+up to implement, too. Actually there are real IDE adapter
+controllers now that implement a lot of the functionality good
+SCSI adapters have. However, this is in its infantility still.
+
+With IDE you just can hook up at most 4 devices, with SCSI its
+seven. As we have seen in the above, IDE is always playing
+catchup with SCSI. So, if you want the most advanced features,
+SCSI is the way to go. If that is not so important for you, IDE
+is good enough. In the end you will end up with a mixed IDE /
+SCSI system because some devices only exist in SCSI ( DAT
+streamers, scanners etc. ).
+
+BTW, some SCSI devices implement more than one functionality
+( in other words, they are combi devices ) and to tell them
+apart, there are the LUNs ( Logical Unit Numbers ). There are at
+most 8 LUNs.
+
+&gt; What's the difference between SCSI II, Wide and UltraWide?
+
+One beautiful day they found out that 16 data lines aren't
+enough and beefed that up to 32 lines and called the result Wide
+SCSI. AFAIK UltraWide is the next step and has 64 lines.
+Beautiful side effect: they are - obviously - mutually
+incompatible. They forgot to implement a variable bus width.
+Megabummer.
+
+&gt; If you can point me to somewhere where this is covered in detail, please
+&gt; do.
+
+The official ANSI SCSI specs cover that in more detail than you
+probably like......
+
+&gt; Zip Drive
+&gt; ---------
+&gt; 
+&gt; I have an Ultrawide-SCSI Adaptec card. I almost bought an Iomega Zip
+&gt; Drive today, before noticing it said it was SCSI II.
+
+Good thinking, yeah !
+
+&gt; Do I need some kind of adpater to slot it in?
+
+You nedd an additional SCSI II card.
+
+&gt; Does a zip drive use an internal or external power source?
+
+Depends. Those designed for building it into your computer take
+the usual power plug also used for HDD's and the like. The
+external ones come with a wall transformer providing the
+required 5 V, 1 A.
+
+&gt; Are drivers necessary? If so, is there one with Redhat Linux 5.1? If
+
+No.
+
+&gt; not, how can a Zip drive work without a driver (or even a hard drive,
+&gt; for that matter)?
+
+The ZIP drive behaves like an ordinary SCSI HDD. You treat it
+exactly like one.
+
+&gt; Modems
+&gt; ------
+&gt; 
+&gt; I want to buy a 64K modem, but the RedHat compatibility list is not very
+
+Analog or ISDN ? That is the big question.....
+
+&gt; helpful, mainly listing those that don't work, and things like "modems
+&gt; that require software drivers for compression, error detection etc",
+&gt; "PCI memory mapped modems" are not supported. I have no idea whether a
+
+Oh yes, those infamous Winmodems that abuse your machine for
+signal processing. Avoid them like the plague !!!! They will
+NEVER been supported under Linux - for obvious reasons.
+
+&gt; given modem suffers from these problems by looking at the box.
+
+When selecting an analog modem, take an external one. Internal
+ones have a tendency of being plagued by all sorts of problems -
+one of the most common cheesy 16550 emulation.
+
+&gt; I saw an Aiwa CHP 9500 today (or something like that) that looked OK. Is
+&gt; this OK? Can anyone tell me any modems that positively work under Linux? 
+
+Practically anything that accepts the standard Hayes AT
+protocol. Look into the manual for more info.
+
+About modem manuals: The printed ones don't contain a lot of
+info. However, there come diskettes with them things. They do
+not only contain drivers, but most often also text files with
+the detailed technical manual. So have a look at them before
+complaining about lack of a technical manual. Most no name
+Taiwan made modems are quite satisfactory ( actually, those
+things running under names like Ratoc, Aiwa etc. are actually
+Taiwan made ).
+
+If possible, take a modem savvy person with you when shopping.
+Don't forget the used ones at different shops like Sofmap.
+Sometimes they give them cheaply away because there is no Win 95
+driver for them.....
+
+Hopethat helps.
+
+================================================================
+"It was hell. They knew it.          Karl-Max Wagner
+  But they called it                 karlmax@example.com
+    W-I-N-D-O-Z-E"
+================================================================
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00660" HREF="msg00660.html">Re: tlug: Some hardware questions...</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00661" HREF="msg00661.html">Re: tlug: Some hardware questions...</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00672" HREF="msg00672.html">Re: tlug: Some hardware questions...</A></STRONG>
+<UL><LI><EM>From:</EM> Howard Abbey &lt;habbey@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00496" HREF="msg00496.html">tlug: Some hardware questions...</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00652.html">Re: tlug: Recommend Japanese KB?? (was: Re: US student moving to Tokyo)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00657.html">Re: tlug: Eth problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00496.html">tlug: Some hardware questions...</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00660.html">Re: tlug: Some hardware questions...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00653"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00653"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

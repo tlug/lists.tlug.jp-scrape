@@ -1,0 +1,182 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Connecting 2 networks -->
+<!--X-From-R13: Pngnen Yrfhzn <oxrfhznNtrbetr24.pbz> -->
+<!--X-Date: Sat, 29 Mar 2003 23:41:32 +0900 -->
+<!--X-Message-Id: 20030329234132.16af1be7.bkesuma@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00130.html">Date Prev</a>][<a href="msg00132.html">Date Next</a>][<a href="msg00129.html">Thread Prev</a>][<a href="msg00132.html">Thread Next</a>][<a href="maillist.html#00131">Date Index</a>][<a href="threads.html#00131">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Connecting 2 networks</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 29 Mar 2003 23:41:32 +0900</li>
+<li><strong>From</strong>: <strong>Batara Kesuma &lt;<A HREF="mailto:bkesuma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Connecting%202%20networks">bkesuma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Connecting 2 networks</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hi,
+
+I have 2 web servers and 1 database server. I want to hide the database
+server behind local network. The diagram is like this:
+
+INTERNET --- Router ---+- Web Server A                     Database Server
+         [ 219.1.1.1 ] |     |                             [ 192.168.1.3 ]
+                       |     +--- eth0 [ 219.1.1.2 ]              |
+                       |     |                                    |
+                       |     +--- eht1 [ 192.168.1.1 ] -----------+
+                       |                                          |
+                       +- Web Server B                            |
+                             |                                    |
+                             +--- eth0 [ 219.1.1.3 ]              |
+                             |                                    |
+                             +--- eth1 [ 192.168.1.2 ] -----------+
+
+Network 1 (Global IP) = 219.1.1.0
+Network 2 (Local IP) = 192.168.1.0
+
+I can only access database server through Web Server A or Web Server B.
+The problem is, when I try to ssh to Database Server from Web Server A &amp;
+B, it takes very long to connect. So I wonder maybe this is not the right
+way to connect 2 networks? Maybe I need a router for Network 2 too? 
+
+I use Red Hat 8.0. The routing table on Web Server A is like this:
+
+[bk@example.com bk]$ netstat -r
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt
+Iface
+219.1.1.0       *               255.255.255.0   U        40 0          0
+eth0
+192.168.1.0     *               255.255.255.0   U        40 0          0
+eth1
+127.0.0.0       *               255.0.0.0       U        40 0          0
+lo
+default         kddi-rt.netage. 0.0.0.0         UG       40 0          0
+eth0
+
+[bk@example.com sysconfig]$ cat network
+NETWORKING=yes
+HOSTNAME=jawa
+GATEWAY=211.1.1.1
+
+[bk@example.com network-scripts]$ cat ifcfg-eth0
+DEVICE=eth0
+BOOTPROTO=static
+ONBOOT=yes
+NETMASK=255.255.255.0
+IPADDR=219.1.1.2
+
+[bk@example.com network-scripts]$ cat ifcfg-eth1
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NETMASK=255.255.255.0
+IPADDR=192.168.1.1
+
+Please help. Thank you very much.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00132" href="msg00132.html">Re: [tlug] Connecting 2 networks</a></strong>
+<ul><li><em>From:</em> Tim Hurman</li></ul></li>
+<li><strong><a name="00134" href="msg00134.html">Re: [tlug] Connecting 2 networks</a></strong>
+<ul><li><em>From:</em> A. Sajjad Zaidi</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00130.html">[OFF TOPIC] [tlug] Re: Server Racks</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00132.html">Re: [tlug] Connecting 2 networks</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00129.html">Re: [tlug] autoconf / automake</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00132.html">Re: [tlug] Connecting 2 networks</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00131"><strong>Date</strong></a></li>
+<li><a href="threads.html#00131"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

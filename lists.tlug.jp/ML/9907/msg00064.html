@@ -1,0 +1,180 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: pine&#45;jp compile problems -->
+<!--X-From: John Seebach <jseebach@example.com> -->
+<!--X-Date:  Thu, 15 Jul 1999 18:27:44 +0900 -->
+<!--X-Message-Id: 378D4456.C63A2657@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.9907150935030.16546&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00063.html">Date Prev</A>][<A HREF="msg00065.html">Date Next</A>][<A HREF="msg00063.html">Thread Prev</A>][<A HREF="msg00066.html">Thread Next</A>][<A HREF="maillist.html#00064">Date Index</A>][<A HREF="threads.html#00064">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: pine-jp compile problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: pine-jp compile problems</strong></LI>
+<LI><strong>From</strong>: <strong>John Seebach &lt;<A HREF="mailto:jseebach@example.com">jseebach@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 15 Jul 1999 11:15:50 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: barely</LI>
+<LI>References: &lt;<A HREF="msg00063.html">Pine.LNX.4.10.9907150935030.16546-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Thanks for the tips, Scott and Chris. I'm still not having any success
+yet, however.
+
+Christopher Sekiya wrote:
+
+&gt; 
+&gt; Precisely where one adds the -lcrypt depends on which rev of linux you're
+&gt; building for -- lnx (not recommended) or slx (better).
+&gt; 
+&gt; Add -lcrypt to the imap makefile (imap/c-client/osdep/Makefile, I think)
+&gt; under the section that corresponds to the build -- either lnx or slx.
+&gt; 
+&gt; If you're building for slx, change all occurrences of pw_encrypt() to
+&gt; crypt() in log_lnx.c, same directory.
+&gt; 
+&gt; Add -lcrypt to pine/makefile.lnx.  The same makefile is used for both lnx
+&gt; and slx.
+&gt; 
+&gt; You do not need to do a 'make clean; make' -- in fact, you can't, because
+&gt; pine builds are done via the build script.  Run './build lnx' or './build
+&gt; slx' from the main source directory.
+
+Hmmm. I wonder if maybe I don't have an outdated or broken
+distribution of the pine and pine-jp sources? I can't find any
+makefiles for slx, the links in the imap directory that point to osdep
+are all broken, there were a couple of other things that looked
+different from what you described. I looked around for files that
+appeared to be doing the same thing, and changed them -- now I can get
+imap to compile building for lnx but it still dies a horrible death
+when attempting to compile pico and pine.
+
+What files did I change and how?
+
+/imap/ANSI/c-client/Makefile
+( added a line LDFLAGS="-lcrypt" )
+/pine/makefile.lnx
+( added -lcrypt to the STDLIBES= line)
+/pico/makefile.lnx
+( added -lcrypt to the LIBS= line)
+/imap/ANSI/c-client/log_lnx.c
+( :g/pw_encrypt/s//crypt/g )
+
+What am I missing? The version of the source I'm using came straight
+from tlug's ftp site, downloaded yesterday afternoon, I think.
+
+Oh, a final, and somewhat un-related question:
+
+How does one replace the japanese man pages and online help with the
+original English ones? Am I safe overwriting the japanese files with
+the original corresponding files? And do I need to do this BEFORE I
+apply the patch? Or do both somehow get installed with pine-jp? (I
+don't know, I can't get it to compile yet so I can't find out for
+myself...)
+
+thanks much for your help,
+john
+jseebach@example.com
+-------------------------------------------------------------------
+Next Technical Meeting: August 14 (Sat), 13:00  place: Temple Univ.
+*** Special guest: Marc Christensen (Salt Lake Linux Users Group)
+Next Nomikai: September 20 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">Re: tlug: pine-jp compile problems</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00063" HREF="msg00063.html">Re: tlug: pine-jp compile problems</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00063.html">Re: tlug: pine-jp compile problems</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00065.html">Re: tlug: pine-jp compile problems</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00063.html">Re: tlug: pine-jp compile problems</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00066.html">Re: tlug: pine-jp compile problems</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00064"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00064"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

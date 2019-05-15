@@ -1,0 +1,219 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: RedHat head&#45;banging -->
+<!--X-From: Scott Stone <sstone@example.com> -->
+<!--X-Date:  Sat, 20 Mar 1999 02:05:20 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.990319100124.866Z&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3.0.6.32.19990319122856.009bd100@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00240.html">Date Prev</A>][<A HREF="msg00242.html">Date Next</A>][<A HREF="msg00265.html">Thread Prev</A>][<A HREF="msg00234.html">Thread Next</A>][<A HREF="maillist.html#00241">Date Index</A>][<A HREF="threads.html#00241">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: RedHat head-banging</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: RedHat head-banging</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 19 Mar 1999 10:02:55 -0700 (MST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00226.html">3.0.6.32.19990319122856.009bd100@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Fri, 19 Mar 1999, Darren Cook wrote:
+
+&gt; After banging my head against this problem (getting both network cards
+&gt; recognized after upgrading to kernel 2.2.3) for a while, I've finally
+&gt; broken through. But I'm not sure what I've done.
+&gt; 
+&gt; The first network card was compiled in to the kernel. To get the module for
+&gt; the second network card to load properly I had to make two changes to
+&gt; rc.sysinit - relevent extract shown below. The redhat versions were much
+&gt; more complex and rather opaque. What are they doing? Can I delete them?
+&gt; 
+&gt; I've decided RedHat is a very non-standard distribution, because every time
+&gt; I read in a how-to that "most installations will have/do ..." the file or
+&gt; directory is never like that. Two examples that may be relevent here:
+&gt; 
+&gt;   1.Lilo boot files are in /boot/vmlinuz-X.Y.Z instead of /vmlinuz. So I
+&gt; decided to be standard and put the new kernel in /vmlinuz. It works but
+&gt; rc.sysinit mentions "/boot/vmlinuz" - did that cause a problem?
+&gt; 
+&gt;   2.It had a "/lib/modules/preferred" symbolic link to
+&gt; "/lib/modules/2.0.34-0.6". For some reason it deletes and recreates this
+&gt; each time you boot, but once I had /lib/modules/2.2.3 there it failed to
+&gt; create the link each time. That was my first change. But it still wasn't
+&gt; enough as the modules.dep file had "preferred" in all the path names, so
+&gt; the kernel was failing to find the module (why?). That was the reason for
+&gt; my second change.
+
+yeah, that only works if you use redhat's kernel RPMs.
+
+I got rid of that preferred **** in TL, and the rpm automatically links
+/lib/modules/2.2.3 -&gt; /lib/modules/2.2.3-1 or whatever.
+
+You can probably use my 2.2.3 RPMs with Redhat, too, if your kernel is
+acting up.  
+
+PS - As of 3/29/99 I'm not officially an employee of PHT anymore.  I still
+like TL, though, so I'll probably continue to recommend it to people with
+problems, as is my prerogative.  I'm fireproof by now :)
+
+&gt; 
+&gt; Well, it works and I suppose that is all that matters :-).
+&gt; 
+&gt; Darren
+&gt; 
+&gt; 
+&gt; ---------
+&gt; # Get the modules ready to go -- we use awk here as cut is in /usr/bin
+&gt; rm -f /lib/modules/preferred
+&gt; if [ -n $USEMODULES ]; then
+&gt;     set `cat /proc/cmdline`
+&gt;     while [ $# -gt 0 ]; do
+&gt; 	if echo $1 | grep '^BOOT_IMAGE=' &gt; /dev/null ; then
+&gt; 	    image=`echo $1 | awk -F= '{ print $2 }'`
+&gt; 	    kernelfile=`/sbin/lilo -I $image`
+&gt; 	    if [ -n "$kernelfile" ]; then
+&gt; 		kernelname=`echo $kernelfile | awk -F- '{ print $1 }'`
+&gt; 		versioninfo=`echo $kernelfile | sed "s|${kernelname}-||"`
+&gt; 		if [ "$kernelname" = "/boot/vmlinuz" -a \
+&gt; 		     -d /lib/modules/$versioninfo -a \
+&gt; 		     $versioninfo != `uname -r` ]; then
+&gt; 		     ln -sf $versioninfo /lib/modules/preferred
+&gt; 		fi
+&gt; 	    fi
+&gt; 	fi
+&gt; 	shift
+&gt;     done
+&gt; fi
+&gt; 
+&gt; #### Added by Darren, as the above isn't working
+&gt; rm -f /lib/modules/preferred
+&gt; ln -sf `uname -r` /lib/modules/preferred
+&gt; 
+&gt; 
+&gt; if [ -x /sbin/depmod -a -n "$USEMODULES" ]; then
+&gt;     # Get ready for kerneld if module support in the kernel
+&gt;     echo -n "Finding module dependencies... "
+&gt;     if [ -f /lib/modules/preferred ]; then
+&gt; 	depmod -a preferred
+&gt;     else
+&gt; 	depmod -a preferred
+&gt;     fi
+&gt;     echo "done"
+&gt; fi
+&gt; 
+&gt; #### Added by Darren, in case the above is a problem
+&gt; depmod -a 2.2.3
+&gt; #Change 2.2.3 to `uname -r' if it works.
+&gt; 
+&gt; -------------
+&gt; 
+&gt; -------------------------------------------------------------------
+&gt; Next Nomikai: March 19 (Fri), 19:30  Tengu TokyoEkiMae 03-3275-3691
+&gt; Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+&gt; -------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+&gt; 
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com&gt;
+Head of TurboLinux English / Systems Administrator
+Pacific HiTech, Inc. (<A TARGET="_top" HREF="http://www.turbolinux.com">http://www.turbolinux.com</A>)
+
+
+-------------------------------------------------------------------
+Next Nomikai: March 19 (Fri), 19:30  Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00226" HREF="msg00226.html">tlug: RedHat head-banging</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00240.html">Re: tlug: One for the JIS experts?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00242.html">tlug: The tlug unsubcription HOWTO. A friendly reminder.</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00265.html">Re: tlug: RedHat head-banging</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00234.html">Re: tlug: RedHat head-banging</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00241"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00241"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] logic error with code hosted on your servers -->
+<!--X-From-R13: [vpunry <zbueNgrzrevgl.arg> -->
+<!--X-Date: Sun, 14 Mar 2004 11:32:42 &#45;0800 (PST) -->
+<!--X-Message-Id: Pine.LNX.4.58.0403141125100.5700@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: Pine.LNX.4.58.0403140148020.5297@example.com -->
+<!--X-Reference: 20040314111944.5e5e7e45.tlug@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00280.html">Date Prev</a>][<a href="msg00282.html">Date Next</a>][<a href="msg00280.html">Thread Prev</a>][<a href="msg00282.html">Thread Next</a>][<a href="maillist.html#00281">Date Index</a>][<a href="threads.html#00281">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] logic error with code hosted on your servers</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 14 Mar 2004 11:32:42 -0800 (PST)</li>
+<li><strong>From</strong>: <strong>Michael &lt;<A HREF="mailto:mohr@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20logic%20error%20with%20code%20hosted%20on%20your%20servers">mohr@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] logic error with code hosted on your servers</strong></li>
+<li>References: &lt;<a href="msg00277.html">Pine.LNX.4.58.0403140148020.5297@example.com</a>&gt;&lt;<a href="msg00280.html">20040314111944.5e5e7e45.tlug@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Okay, thanks for your corrections. I retried compiling the original code
+and it seems to work now.  Strangely enough, the exact same code yesterday
+completely failed to work.  It gave a nondescript error saying
+&quot;Initialization failed&quot; and refused to start up.  I searched until I found
+this error status (there were 2 places) and after disabling the check the
+program would start.  Strange that it works today.
+
+I'll replace the binary on my system, since I was quite obviously mistaken
+:)
+
+-Mike
+
+On Sun, 14 Mar 2004, Botond Botyanszki wrote:
+
+&gt; On Sun, 14 Mar 2004 02:00:54 -0800 (PST)
+&gt; mohr@example.com wrote:
+&gt;
+&gt; &gt; if ((context = RkwInitialize( (char *)ddname )) &lt; 0)
+&gt; &gt;
+&gt; &gt; As you can see, this comparison will always fail,
+&gt; That's not true, you should review the C grammar.
+&gt;
+&gt; &gt; causing the program to
+&gt; &gt; exit prematurely (giving an extremely nondescript error).  This line
+&gt; &gt; should read:
+&gt; &gt;
+&gt; &gt; if ((context == RkwInitialize( (char *)ddname )) &lt; 0)
+&gt; While the RkInitialize function returns either 0 or -1 according to the
+&gt; manage, RkwInitialize might return something more complex, otherwise using
+&gt; a comparison against context wouldn't make much sense. And the above == is
+&gt; a boolean comparison that is either TRUE or FALSE and there is no reason
+&gt; you would want to use '&lt;' to compare that value.
+&gt;
+&gt; Here is an example that will help you understand the scenario:
+&gt;
+&gt; int returns_zero() {
+&gt;   return 0;
+&gt; }
+&gt; int returns_one() {
+&gt;   return 1;
+&gt; }
+&gt;
+&gt; int main (int argc, char **argv) {
+&gt;     int retval;
+&gt;     if ((retval = returns_zero()) == 0) printf(&quot;OK\n&quot;);
+&gt;     if ((retval = returns_one()) == 1) printf(&quot;OK\n&quot;);
+&gt;     if ((retval = returns_zero()) == 1) printf(&quot;NG\n&quot;);
+&gt;     if ((retval = returns_one()) == 0) printf(&quot;NG\n&quot;);
+&gt; }
+&gt;
+&gt;
+&gt; &gt; Which will perform the comparison correctly and allow the server to run.
+&gt; I'm not the author but I think the error is somewhere else.
+&gt;
+&gt; --
+&gt; TLUG server is hosted by Open Source Development Lab Japan
+&gt; <A  HREF="http://www.osdl.jp/">http://www.osdl.jp/</A>
+&gt;
+&gt; To unsubscribe from this mailing list,
+&gt; please see the instructions at &lt;<A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>&gt;
+&gt;
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00282" href="msg00282.html">[tlug] Top-Posting (was: logic error with code hosted on your servers)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00277" href="msg00277.html">[tlug] logic error with code hosted on your servers</a></strong>
+<ul><li><em>From:</em> mohr</li></ul></li>
+<li><strong><a name="00280" href="msg00280.html">Re: [tlug] logic error with code hosted on your servers</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00280.html">Re: [tlug] logic error with code hosted on your servers</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00282.html">[tlug] Top-Posting (was: logic error with code hosted on your servers)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00280.html">Re: [tlug] logic error with code hosted on your servers</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00282.html">[tlug] Top-Posting (was: logic error with code hosted on your servers)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00281"><strong>Date</strong></a></li>
+<li><a href="threads.html#00281"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

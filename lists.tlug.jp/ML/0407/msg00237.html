@@ -1,0 +1,214 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Linux init 0 by powerbutton -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Thu, 22 Jul 2004 10:31:43 +0200 -->
+<!--X-Message-Id: 20040722103143.427f81e0.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 87514FF5916BD511A0E60008C709457C04CDE8@example.com -->
+<!--X-Derived: pgp00053.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00236.html">Date Prev</a>][<a href="msg00238.html">Date Next</a>][<a href="msg00245.html">Thread Prev</a>][<a href="msg00267.html">Thread Next</a>][<a href="maillist.html#00237">Date Index</a>][<a href="threads.html#00237">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Linux init 0 by powerbutton</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 22 Jul 2004 10:31:43 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Linux%20init%200%20by%20powerbutton">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Linux init 0 by powerbutton</strong></li>
+<li>References: &lt;<a href="msg00230.html">87514FF5916BD511A0E60008C709457C04CDE8@example.com</a>&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 22 Jul 2004 06:34:08 +0200, patrick.niessen@example.com wrote:
+
+&gt; I am looking to create a Home Server which is easy to use: press power
+&gt; button to provide network share and ftp, press again to orderly shutdown
+&gt; the server (=init 0 + powerdown).  I already have a Windy box type pc,
+&gt; which should be runnning ideally headless without keyboard and mouse.
+
+The BIOS will probably require that you have a graphics card even if you
+don't attach a screen to it. I had a cheap old PCI card doing nothing in
+particular so I used that.
+
+You might find a keyboard handy even if you don't use it. It has got me out
+of a fix more than once here.
+
+Having a keyboard and at least a graphics adaptor makes it relatively
+painless to troubleshoot the sucker if the network doesn't work for some
+reason.
+
+&gt; What kind of requirements are there to consider - which kernel options
+&gt; should be compiled in and is there a shutdown daemon that needs to be
+&gt; running?
+
+You'll want a machine which is recent enough to have a not too buggy
+implementation of ACPI. About 1999 vintage or later will do the trick. If
+the machine is closer to that vintage than to present day technology you
+might need to add &quot;acpi=force&quot; to the kernel command line. Make sure your
+BIOS is set with ACPI support and so that the machine doesn't power off
+immediately when you hit the power button (usually it takes 4 seconds
+pressing on it).
+
+You'll then need to add ACPI support to the kernel (but not APM, they're
+mutually exclusive), with support for the power button. This will generate
+an ACPI event whenever the power button is pressed, in turn generating a
+line in the pseudo file /proc/acpi/event.
+
+Finally, you'll need acpid (supplied with most distros) which reads events
+turning up in /proc/acpi/event and which runs commands based on the type of
+event which happened and on a configuration file in /etc/acpi/events.
+
+I have this setup here:
+
+/etc/acpi/events/default:
+# This is the ACPID default configuration, it takes all
+# events and passes them to /etc/acpi/default.sh for further
+# processing.
+
+# event keeps a regular expression matching the event. To get
+# power events only, just use something like &quot;event=button power.*&quot;
+# to catch it.
+# action keeps the command to be executed after an event occurs
+# In case of the power event above, your entry may look this way:
+#event=button power.*
+#action=/sbin/init 0
+
+# Optionally you can specify the placeholder %e. It will pass
+# through the whole kernel event message to the program you've
+# specified.
+
+event=.*
+action=/etc/acpi/acpi_handler.sh %e
+
+
+/etc/acpi/acpi_handler.sh:
+#!/bin/sh
+# Default acpi script that takes an entry for all actions
+
+set $*
+
+case &quot;$1&quot; in
+	button/power)
+		case &quot;$2&quot; in
+			PWRF)	/sbin/poweroff
+				;;
+			*)	logger &quot;ACPI group $1 / action $2 is not defined&quot;
+				;;
+		esac
+		;;
+
+	*)
+		logger &quot;ACPI group $1 / action $2 is not defined&quot;
+		;;
+esac
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.7-em8300)
+--------------------------------------------------------------
+A grammarian's life is always intense.
+</pre>
+<p><strong>Attachment:
+<a href="pgp00053.pgp" ><tt>pgp00053.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00230" href="msg00230.html">[tlug] Linux init 0 by powerbutton</a></strong>
+<ul><li><em>From:</em> patrick.niessen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00236.html">RE: [tlug] OT Printer recommendation</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00238.html">Re: [tlug] Trend Micro Anti-Virus Beta for LINUX servers</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00245.html">Re: [tlug] Linux init 0 by powerbutton</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00267.html">RE: [tlug] Linux init 0 by powerbutton</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00237"><strong>Date</strong></a></li>
+<li><a href="threads.html#00237"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

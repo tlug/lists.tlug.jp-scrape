@@ -1,0 +1,225 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: ppa -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 24 Jan 2000 14:14:06 +0900 -->
+<!--X-Message-Id: 14475.57216.106921.20567@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200001231251.e0NCpgV18284@example.com -->
+<!--X-Reference-Id: 388B0E21.B37B005B@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00132.html">Date Prev</A>][<A HREF="msg00134.html">Date Next</A>][<A HREF="msg00132.html">Thread Prev</A>][<A HREF="msg00157.html">Thread Next</A>][<A HREF="maillist.html#00133">Date Index</A>][<A HREF="threads.html#00133">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: ppa</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: ppa</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 24 Jan 2000 14:13:36 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00132.html">388B0E21.B37B005B@example.com</A>&gt;</LI>
+<LI>References: &lt;200001231251.e0NCpgV18284@example.com&gt;&lt;<A HREF="msg00132.html">388B0E21.B37B005B@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "BOTi" == BOTi  &lt;9915104t@example.com&gt; writes:
+
+    &gt;&gt; From: Ulrike Schmidt &lt;798a5047@example.com&gt;
+
+    &gt;&gt; I did not knowingly upgrade the kernel, but when we installed a
+    &gt;&gt; second harddisc we had some problems with installing RedHat 6.1
+
+    BOTi&gt; But anyway RH6.1 has a nicely compiled kernel with all the
+    BOTi&gt; modules.
+
+Right.  And apparently there's a mismatch.  What Ulrike needs to do is
+get the kernel and the modules to agree.
+
+So she should simultaneously "upgrade" the kernel and the modules with
+the same version.  (The reason for the quotes is that it doesn't
+really matter if it's an upgrade or even a downgrade, you have to get
+the kernel and modules in sync.)
+
+One reason for getting the most recent kernel is that it is more like
+to have a full suite of modules, including the PPA stuff...
+
+    BOTi&gt; So if you didn't upgrade the kernel, then why not use this
+    BOTi&gt; original one?
+
+...because my bet is that she got those modules from somewhere else
+and they're not part of the kernel distribution.  So the original one
+_cannot_ work.
+
+    &gt;&gt; &gt;So go to the kernel src dir and "make clean; make bzImage;
+    &gt;&gt; &gt;make modules; make modules_install; " Then install the newly
+    &gt;&gt; &gt;compiled kernel, run lilo, and reboot.  This should fix it.
+
+Assuming the configuration includes the necessary modules for the Zip
+drive.
+
+    &gt;&gt; I tried this, and when I entered "make bzImage" I was asked a
+    &gt;&gt; lot of questions I was not sure how to answer, so I guessed
+    &gt;&gt; that I need to
+
+    BOTi&gt; Can you quote things like this message next time? So I and
+    BOTi&gt; others who could possibly help would know what this is
+    BOTi&gt; about.
+
+She's talking about the `make config' script; we don't need to see
+that.
+
+    &gt;&gt; configure the kernel first, killed this questionnaire and did
+    &gt;&gt; "make oldconfig".
+
+    BOTi&gt; If you have a working X, you might do make xconfig as well.
+    BOTi&gt; Or make menuconfig if you have ncurses. The oldconfig method
+    BOTi&gt; is not very convenient.
+
+Of course it is.  This is precisely what oldconfig is for!  If she
+gets new questions, then the kernel and the config don't match.  This
+is the easiest way to tell.  Of course, if in the old .config the PPA
+modules were specifically disabled, this method is guaranteed to
+fail.  (But that's a lot worse than "inconvenient.")
+
+    &gt;&gt; Or is the problem not related to the config at all?
+
+Apparently you are not getting the PPA modules built.  The old ones
+are still there under /lib/modules so you get error messages.  So my
+guess is that they are disabled or unavailable in the current .config.
+
+    &gt;&gt; Why does the error message of "modprobe ppa" say that the
+    &gt;&gt; resource or device is busy?
+
+Probably it's just a bad message; the logic for figuring out exactly
+why a modprobe fails is complicated because modprobe does a lot of
+different things.  insmod is a much simpler operation, so its error
+messages are more likely to make sense.
+
+Use `make menuconfig' or `make xconfig'.  Go to SCSI support, then to
+SCSI low-level drivers, then look to see whether the "IOMEGA parallel
+port" is enabled.  You probably want PPA, but you might also make the
+IMM modules (for newer IOMEGA peripherals) at the same time.
+
+You can also check this quickly with
+"egrep 'SCSI_(PPA|IMM)' /usr/src/linux/.config".  You will probably
+see that neither is set in your current configuration.
+
+    &gt;&gt; Was also wondering whether it is possible to revive RedHat 5.2
+    &gt;&gt; on the first harddrive as an option, it is mounted at the
+    &gt;&gt; moment under /mnt/oldlinux.  But its /boot directory looks a
+    &gt;&gt; bit different from the currently booting /boot directory, there
+    &gt;&gt; seems to be no kernel for putting into the lilo.config as an
+    &gt;&gt; option.
+
+This is probably not going to work terribly well even if you do find
+the kernel because of glibc upgrades and so on.  There's a very good
+chance that something else will break even if the Zip drive gets
+fixed.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00157" HREF="msg00157.html">Re: tlug: ppa</A></STRONG>
+<UL><LI><EM>From:</EM> Ulrike Schmidt &lt;798a5047@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00132" HREF="msg00132.html">Re: tlug: ppa</A></STRONG>
+<UL><LI><EM>From:</EM> BOTi &lt;9915104t@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00132.html">Re: tlug: ppa</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00134.html">Re: tlug: ppa</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00132.html">Re: tlug: ppa</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00157.html">Re: tlug: ppa</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00133"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00133"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

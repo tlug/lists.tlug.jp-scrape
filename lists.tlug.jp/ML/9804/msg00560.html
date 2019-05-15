@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Broken HELO [was: tlug: Naive VM question] -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 28 Apr 1998 23:29:53 &#45;0400 (EDT) -->
+<!--X-Message-Id: 13638.40482.511732.448901@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13638.32469.625844.897998@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980429105551.2122E&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00559.html">Date Prev</A>][<A HREF="msg00561.html">Date Next</A>][<A HREF="msg00559.html">Thread Prev</A>][<A HREF="msg00561.html">Thread Next</A>][<A HREF="maillist.html#00560">Date Index</A>][<A HREF="threads.html#00560">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Broken HELO [was: tlug: Naive VM question]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Broken HELO [was: tlug: Naive VM question]</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 29 Apr 1998 12:27:30 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00559.html">Pine.LNX.3.96LJ1.1b7.980429105551.2122E-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00554.html">13638.32469.625844.897998@example.com</A>&gt;&lt;<A HREF="msg00559.html">Pine.LNX.3.96LJ1.1b7.980429105551.2122E-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+It's not my place to comment publically on policy decisions (RFC
+violations are a public matter, that's different and you need to
+defend the violation, not tell me to defend the fact that I noticed
+it ;-), so this goes directly to you.
+
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craigoda@example.com&gt; writes:
+
+    Craig&gt; On Wed, 29 Apr 1998, Stephen J. Turnbull wrote:
+
+    &gt;&gt; Many MTA implementers think this is a stupid restriction, and
+    &gt;&gt; that refusing to accept mail from a host with a broken HELO is
+    &gt;&gt; a smart anti-spam device.  IMHO they're wrong on both counts,
+    &gt;&gt; but I don't implement MTAs....
+
+    Craig&gt; There are several anti-spam measures taken on the TWICS
+    Craig&gt; mail system due to the high visibility of an ISP and the
+
+That is of course your right and duty.  I disagree with this
+particular measure for the following reasons:
+
+(1) I have not received spam directly from a broken mailer _ever_
+    (well, in the last 1432 messages in my abuse file).  All spam
+    received directly comes from professional spamming domains.
+    Typically a host lookup on those addresses works while they're
+    spamming, and fails shortly thereafter.
+
+(2) Spam which gets laundered through a compliant but insecure MTA
+    cannot get caught this way, even if the spammer's HELO is broken.
+
+(3) I don't know what TWICS does if the PTR lookup of TCP connection
+    IP address doesn't match the HELO address; I know that many ISPs
+    forward those with "may be forged" tags on them.  This is clearly
+    inconsistent with refusing purely on the basis of a broken HELO,
+    though.  It's far more likely that a broken HELO is due to poor
+    configuration (often of the DNS) or a change in the DNS than to
+    intent to launder a spam.  A HELO address with a MX or A record
+    that doesn't match the PTR of the TCP connection is far more
+    likely to be spam, but even there the majority of mismatches occur 
+    because of multihomed domain names.
+
+(4) I have had mail to TWICS refused because my local DNS was broken,
+    resulting in delays of hours, and in one case more than a day.
+
+This particular measure is just more trouble than it's worth.  It's
+not that hard to parse the received headers so that you can eventually
+catch the forgeries, and though it may be expensive, you can short
+circuit that (in the long run, anyway) by keeping a cache of
+trustworthy domains that don't forge headers and check for them in the 
+HELO command and TCP connection.
+
+Of course, I don't know of any MTAs that do that, and I don't know of
+any that are modular enough to make it easy to implement.
+
+Steve
+
+---------------------------------------------------------------
+Next Nomikai: 15 May Fri, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00561" HREF="msg00561.html">Broken HELO [was: tlug: Naive VM question]</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00569" HREF="msg00569.html">Re: Broken HELO [was: tlug: Naive VM question]</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt-tlug@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00554" HREF="msg00554.html">Re: tlug: Naive VM question</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00559" HREF="msg00559.html">Re: tlug: Naive VM question</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craigoda@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00559.html">Re: tlug: Naive VM question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00561.html">Broken HELO [was: tlug: Naive VM question]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00559.html">Re: tlug: Naive VM question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00561.html">Broken HELO [was: tlug: Naive VM question]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00560"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00560"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: tlug: WINE -->
+<!--X-From: "Matthew J. Francis" <asbel@example.com> -->
+<!--X-Date:  Sat, 15 Aug 1998 02:47:11 +0900 -->
+<!--X-Message-Id: XFMail.980814182733.asbel@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980814153709.1652F&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00302.html">Date Prev</A>][<A HREF="msg00304.html">Date Next</A>][<A HREF="msg00284.html">Thread Prev</A>][<A HREF="msg00285.html">Thread Next</A>][<A HREF="maillist.html#00303">Date Index</A>][<A HREF="threads.html#00303">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: tlug: WINE</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: tlug: WINE</strong></LI>
+<LI><strong>From</strong>: <strong>"Matthew J. Francis" &lt;<A HREF="mailto:asbel@example.com">asbel@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 14 Aug 1998 18:27:33 +0100 (BST)</LI>
+<LI>Content-Transfer-Encoding: 8bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00284.html">Pine.LNX.3.96LJ1.1b7.980814153709.1652F-100000@example.com</A>&gt;</LI>
+<LI>Organization: Nerv debugging division</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Hi,
+
+On 14-Aug-98 Jonathan Byrne - 3Web wrote:
+&gt;  Is anybody getting any better results than this on Wine with Win32
+&gt;  apps?  I got the latest one, and Paintshop Pro 5 changed its death
+&gt;  note, but still doesn't work:
+&gt;  
+&gt;  [jq@example.com Paint Shop Pro 5]$ wine -winver win95 Psp.exe
+&gt;  Unexpected Windows program segfault - opcode = a5
+&gt;  Page fault in 32-bit code (0x080d362a).
+&gt;  Fault address is 0x00000000
+&gt;  Loading symbols: wine
+&gt;  
+&gt;  (It freezes there until I hit ctrl-c)
+
+Loading symbols can take a *long* time sometimes, as you might expect
+from a 10-meg executable :). If it appears frozen with cpu busy, then
+that's probably what's happening; if it freezes idle, then I suppose
+that is a Wine bug.
+  I can get Psp5 to continue until it's drawn the initial loading flash
+and some of the initial window, after which it dies somewhere in Psp's
+code. If you can get a complete debug trace out of it (the whole
+death message plus the last 50 lines of "wine -debugmsg +relay
+someprog.exe" is usually good), someone on comp.emulators.ms-windows.wine
+may have more to say...
+
+&gt;  There's a fairly decent Japanese text editor for Windows95/NT called
+&gt;  Vivi, and it gets this:
+
+[...]
+  
+&gt;  I like that 0xdeadbeef address :-)
+
+They used to be set to NULL, but 0xDEADBEEF is now used I think because
+it's easier to pick out from the other million causes of null pointers
+in a debug trace.
+
+
+&gt;  Are those messages indicative of something I have messed up in my
+&gt;  wine.conf, or is just normal for something that dies?  PSP 5 used to
+&gt;  do the same thing, except it didn't say 0xdeadeef.  I'm totally new
+&gt;  to Wine, so I don't know what should be considered a normal failure.
+
+KERNEL, USER, and KEYBOARD are all Windows builtin modules that can't
+be used directly by Wine; what you're seeing are functions that aren't
+implemented in the respective emulated versions, and furthermore (as
+they're only given by ordinal) functions that nobody involved with
+Wine has yet found names for.
+  Regrettably, there are a fair number of such undocumented ordinal-
+onlys, but most of the significant ones from those three modules
+should have been found a long time ago. If they're mostly functions
+relating only to Japanese Windows then perhaps I can understand
+though.
+
+Japanese support in Wine is unfortunately unlikely to improve unless
+more Japanese developers work on it. A quick scan on the AUTHORS file
+shows me no obvious Japanese names...
+
+
+Cheers,
+-Matt.
+
+"The results of this intrusion into your life will be used 'responsibly'
+in ways you cannot even begin to imagine. Of course, the innocent have
+nothing to fear from the rapidly expanding data industry."
+ - Radiohead, Airbag/How Am I Driving?
+
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00284" HREF="msg00284.html">tlug: WINE</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00302.html">Re: tlug: Linux as Trade Mark?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00304.html">Re: tlug: Linux as Trade Mark?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00284.html">tlug: WINE</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00285.html">tlug: Linux as Trade Mark?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00303"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00303"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

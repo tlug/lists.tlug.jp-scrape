@@ -1,0 +1,234 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: A couple of questions about Unicode -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Sun, 11 Jan 1998 22:33:53 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xraPu&#45;00012bC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199801091753.CAA04104@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.980110054231.305A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00093.html">Date Prev</A>][<A HREF="msg00095.html">Date Next</A>][<A HREF="msg00062.html">Thread Prev</A>][<A HREF="msg00061.html">Thread Next</A>][<A HREF="maillist.html#00094">Date Index</A>][<A HREF="threads.html#00094">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: A couple of questions about Unicode</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: A couple of questions about Unicode</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 12 Jan 1998 12:19:58 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00062.html">Pine.LNX.3.96.980110054231.305A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00060.html">199801091753.CAA04104@example.com</A>&gt;&lt;<A HREF="msg00062.html">Pine.LNX.3.96.980110054231.305A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "David" == J David Beutel &lt;jdb@example.com&gt; writes:
+
+    David&gt; Wow!  Everything I've read so far has said that Unicode is
+
+That's because you haven't read the Unicode standard or ISO-10646, and 
+probably 90% of the authors you've read haven't either, and the
+remainder are keeping silent because it would just confuse you and
+weaken the technical case for Unicode.
+
+    David&gt; fixed-width.  Where have you read that those Spanish chars
+
+These aren't chars, "char" is an integral C datatype of indeterminate
+length and signedness.  :-)
+
+    David&gt; are 32-bits?  How could, e.g., "ch" be distinguished from
+    David&gt; "c" "h"?  What does it mean to be a single char?  (That it
+
+To be a `char' is to be an element of a fixed width integral C data
+type, with implementation defined signedness of size not greater than
+`short'.  The only reason I'm writing this wise-ass definition is that
+as far as I know it's the only definition of character that has
+universal acceptance (ANSI, POSIX, ISO).
+
+A bit of "ijime" aside, this is just plain _hard_.
+
+"What does it mean to be a single character?" is not a question that
+has a single answer, as far as I know.  "Character-ness" is a
+combination of a number of properties.  I don't know how to define
+`character'.  None of the (few) standards I am familiar with define
+that concept; they assume it as a primitive.  Some common
+characteristics (but all have exceptions to my knowledge): printed
+representation as a single glyph drawn from a set of glyphs (eg, the
+various ways to draw an "a", or TeX's \phi and \varphi), the encoded
+representation is a single constant of a data type, specific position
+in a collation order, a certain collection is sufficient to represent
+a given language in written form.
+
+An `encoded-character' is a sequence of octets (bytes) defined to
+represent a character by an encoding standard.
+
+A `glyph' is a pictorial representation of a character.
+
+A `code point' is a specific position in a character standard; it may
+or may not define a useful encoding (Japanese ku-ten comes to mind) or
+collation order (Unicode comes to mind).  It simply asserts the
+uniqueness of the character (although Han Unification casts serious
+doubt on this, and due to the method used to collect the Chinese
+National Standard character sets it is certain that the complete CNS
+contains duplicates).
+
+    David&gt; should be displayed with a single glyph?  That two separate
+    David&gt; glyphs should not be split across lines?  Or is it a char
+    David&gt; in the sense that "qu" could be a char in English, since
+    David&gt; "q" is always followed by "u"?)
+
+As for Spanish, it is a rule of Spanish orthography and its collation
+order that 'ch' is to be treated as a single character.  In Spanish,
+the sequence of characters `c' `h' doesn't exist, only the character
+`ch'.  What this means is that there is no circumstance in Spanish
+usage in which it would be useful to treat that sequence of bytes
+separately.  Thus in Spanish, the lexicographic order would be:
+
+		    Canada, Czech Republic, Chile
+
+because 'ch' is treated as a single character of two glyphs (two bytes) in
+Spanish.  Under normal circumstances, "cz" is impossible in Spanish,
+but in a borrowed or nonsense word it will be treated as two
+characters.  It is not the same as "qu" in English.  The order is
+
+		       Qaddafy, quartz, qwerty
+
+because the 'q' and the 'u' are separate characters.  Furthermore, as
+far as I know the Spanish _do not_ represent `ch' as a single code
+point; this is certainly true in ISO-8859-1.
+
+    David&gt; I cannot accept that Unicode is multibyte, rather than
+    David&gt; fixed-width.  I know that there are multibyte encodings,
+    David&gt; e.g., UTF-8, but a major feature of Unicode is that it's
+    David&gt; fixed-width.  Can you quote a reference?
+
+If UCS-2 level 3 is equivalent to Unicode, then ISO-10646 makes this
+quite clear.  There is a list of "combining characters" (although the
+Spanish "ch" is not one of them as I recall---can't check, my copy of
+10646 was defective and Maruzen demanded that I return that copy
+before they would procure a corrected one for me; God do I hate the
+University purchasing department for forcing me to deal with sloths).
+It is an option of 10646-conformant "devices" to specify a lower level
+of compliance, however, and the lower level of compliance makes it
+fixed width (I'm pretty sure; I forget what UTF-16 requires in
+this respect, and I guess that's not part of Unicode anyway).
+
+Natural languages are bloody complicated beasts; whatever you do,
+there are going to be exceptions in practice.  The Unicode _standard_
+can do one of two things: (1) make exceptions illegal or (2) provide
+code extension techniques.  I'm sure the Original Intent of the
+Founding Fathers was (1), which would quite possibly be the death of
+Unicode rather than of exceptions, Murphy's Law being exceeded only by
+the Three Laws of Thermodynamics in terms of unbreakableness.  So they
+backtracked and went for (2).
+
+For practical purposes in normal programming usage in 99% of the
+world, Unicode is fixed width.
+
+HTH
+
+Steve
+
+---------------------------------------------------------------
+Next TLUG Nomikai: 14 January 1998 19:15  Tokyo station
+Yaesu Chuo ticket gate.  Or go directly to Tengu TokyoEkiMae 19:30
+Chuo-ku, Kyobashi 1-1-6, EchiZenYa Bld. B1/B2 03-3275-3691
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00060" HREF="msg00060.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> kls@example.com (Ken Schwarz)</LI></UL></LI>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> "J. David Beutel" &lt;jdb@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00093.html">Re: tlug: various stuff</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00095.html">Re: tlug: X FTP Client software</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00062.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00061.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00094"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00094"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

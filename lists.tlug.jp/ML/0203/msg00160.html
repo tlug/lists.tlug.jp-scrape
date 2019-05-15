@@ -1,0 +1,172 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] random in bash [Kmail Notification] -->
+<!--X-From-R13: Fbq [pChvyyva <qrivaNfcnzpbc.arg> -->
+<!--X-Date: Thu, 7 Mar 2002 23:47:54 +0900 (JST) -->
+<!--X-Message-Id: Pine.GSO.4.44.0203070744150.793&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020307134235.GA2424@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00159.html">Date Prev</a>][<a href="msg00161.html">Date Next</a>][<a href="msg00159.html">Thread Prev</a>][<a href="msg00161.html">Thread Next</a>][<a href="maillist.html#00160">Date Index</a>][<a href="threads.html#00160">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] random in bash [Kmail Notification]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] random in bash [Kmail Notification]</strong></li>
+<li><strong>From</strong>: <strong>Tod McQuillin &lt;<A HREF="mailto:devin@DOMAIN.HIDDEN">devin@example.com</A>&gt;</strong></li>
+<li>Date: Thu, 7 Mar 2002 08:47:30 -0600 (CST)</li>
+<li>Content-type: TEXT/PLAIN; charset=US-ASCII</li>
+<li>In-reply-to: &lt;<a href="msg00159.html">20020307134235.GA2424@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 7 Mar 2002, Shimpei Yamashita wrote:
+
+&gt; On Thu, Mar 07, 2002 at 07:15:33PM +0900,
+&gt; Antony Stace wrote:
+&gt;
+&gt; &gt; &gt; Do anyone know how to do a &quot;random&quot; in bash ? I guess that would be the
+&gt; &gt; &gt; simpliest way to do that.
+
+&gt; Well, if you're going to be platform dependent, you might as well use
+&gt; the kernel random number generator.
+&gt;
+&gt; function rand
+&gt; {
+&gt; perl -e 'open IN,&quot;/dev/random&quot; or die $!;sysread(IN,$r,4);print unpack(&quot;L&quot;,$r)'
+&gt; }
+
+Hey, no fair pulling out perl -- the rules were you had to use bash :-)
+
+Here are some bash functions to produce (admittedly not very random)
+pseudo-random numbers:
+
+----------------8&lt;----------------8&lt;----------------8&lt;----------------
+#!/usr/local/bin/bash
+
+maxrand=2147483647
+rand=`LANG=C date | tr -d &quot;:-z&quot; | tr -s &quot; &quot; | tr &quot; &quot; '\012' | head -3 | tr -d '\012'`
+
+rand()
+{
+    cmd=&quot;rand=\`expr \( $rand \* 1103515245 + 12345 \) \% 2147483648\`&quot;
+    eval $cmd
+    echo $rand
+}
+
+random()
+{
+    max=${1:-100}
+    cmd=&quot;rand=\`expr \( $rand \* 1103515245 + 12345 \) \% 2147483648\`&quot;
+    eval $cmd
+    random=`expr $max \* $rand / $maxrand`
+    echo $random
+}
+----------------8&lt;----------------8&lt;----------------8&lt;----------------
+
+The magic numbers (and the algorithm) are taken from FreeBSD's
+/usr/src/lib/libc/stdlib/rand.c.  The automagical seeding i came up with
+on my own.
+
+Examples of use:
+
+rand		# gives a &quot;random&quot; integer between 0 and 2147483647
+random 30	# gives a &quot;random&quot; integer i, where 0 &lt;= i &lt; 30
+random		# gives random i, 0 &lt;= i &lt; 100  (random defaults to 100)
+-- 
+Tod McQuillin
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00161" href="msg00161.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00159" href="msg00159.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+<ul><li><em>From:</em> Shimpei Yamashita</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00159.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00161.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00159.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00161.html">Re: [tlug] random in bash [Kmail Notification]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00160"><strong>Date</strong></a></li>
+<li><a href="threads.html#00160"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

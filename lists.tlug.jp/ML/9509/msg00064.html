@@ -1,0 +1,218 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: New User setup &#45; need advice -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 28 Sep 1995 07:22:04 GMT -->
+<!--X-Message-Id: m0syD8O&#45;0004NXC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199509280627.PAA21151@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00063.html">Date Prev</A>][<A HREF="msg00065.html">Date Next</A>][<A HREF="msg00063.html">Thread Prev</A>][<A HREF="msg00066.html">Thread Next</A>][<A HREF="maillist.html#00064">Date Index</A>][<A HREF="threads.html#00064">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: New User setup - need advice</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: New User setup - need advice</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 28 Sep 95 16:11 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00063.html">199509280627.PAA21151@example.com</A>&gt; (rory@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Rory" == Rory Lysaght &lt;rory@example.com&gt; writes:
+
+    Rory&gt; Just got the version of Linux (1.2.x) included in a CD with
+    Rory&gt; Linux Universe.  The installation instructions seem to want
+
+There are several "distributions" of Linux available.  The kernel
+(what in MS-DOS would be msdos.com and bios.com, or whatever they call
+them) is the same (except for version, and all can be upgraded to more
+recent kernels).  The differences are (1) what additional packages
+(applications and system extensions) and package management tool they
+provide (you don't care about this yet) and (2) the setup program
+(this is very important).
+
+To give reasonable advice, we need to know which distribution it is.
+
+    Rory&gt; to install it so that it boots from my hard drive, but while
+    Rory&gt; I learn my way around I'd prefer to use a boot floppy.  I'm
+    Rory&gt; still working on getting Win95 set up, so I don't want any
+    Rory&gt; more complications.
+
+The most popular distribution is called "Slackware".  It asks if you
+want to make a boot floppy--you do (even if you are going to boot from 
+the HD, for all the usual reasons).  If your distribution doesn't have 
+you make a boot floppy first, trash it and get one built by someone
+with sense.  IMHO.
+
+Somewhere in the installation it asks where to install.  Tell it the
+hard drive.  Slackware (I can't speak about other distributions) will
+install the files there.  It will *not* install the bootloader to your 
+hard disk until later.
+
+The ubiquitous bootloader is called "LILO".  The LILO configuration
+utility is called by most setup programs, in particular by
+Slackware's, and you can quit from it without installing the
+bootloader or the OS itself to the MBR; DOS or Win95 (eek!) will still
+be there.  I doubt that your distribution would buck the crowd in this 
+and try to automatically install without using liloconfig.
+
+    Rory&gt; Here's what I want to do: I want to run mainly from the CD
+    Rory&gt; right now, until I get a larger hard drive.  I can spare
+    Rory&gt; about 75Megs on my *SECOND* hard drive (drive D).  I guess I
+    Rory&gt; need to create a partition this size on drive D.  But then I
+    Rory&gt; would like to just boot from a floppy (Drive A) whenever I
+    Rory&gt; want to experiment with Linux.
+
+Whatever you do, you'll have to find a place to mount the CD-ROM.
+Probably /usr is the right place.  Don't mount it on root; root MUST
+be read/write, a physical impossibility for a CD-ROM.  However, no
+matter what you do you are likely to have to adjust your path.  Do
+some exploring of the CD-ROM's file system to find out where the
+important programs are located.  (Hint: on Unix all really important
+programs have unintelligible two letter names: ls, ln, rm, cp, ...)
+Figure out where /bin, /usr/bin, and /usr/local/bin, and /sbin,
+/usr/sbin, and /usr/local/sbin are relative to the top of the CD.
+Then you will need to put the mount directory for the CD-ROM in front
+of each of those, and put all that contain programs you will use in
+the path.  Remember that Unix paths are separated by ':', not ';'.
+
+Probably you shouldn't partition at all if you are just experimenting.
+Use UMSDOS, and a swapfile instead of a swap partition (see below).  I 
+have know at least two people who have installed exactly the kind of
+setup you are talking about for similar reasons, and they are quite
+happy with it.  (One used the Slackware distribution, the other
+Yggdrasil.  I know nothing about Ygg.)
+
+It's possible but risky for Linux to share swapfiles with Windowze and
+Windowze NoT, if you're really that hard up for HD space.  I don't
+know about Windows 95.  Windows 95 is rumored to very jealous, and
+greatly dislike having other operating systems hanging around.  I
+don't use UMSDOS and I don't clean MSy Windows (although I'll probably
+be forced to in the near future---sigh); you'll have to get advice on
+that elsewhere.
+
+If you really want to use separate partitions, I would suggest the
+following arrangement.  If you are going to experiment with X Windows
+and use Emacs, you need 32MB of virtual RAM.  To be reasonably
+comfortable.  Otherwise 16MB should be plenty.  Subtract your actual
+RAM from 32 (or 16), and make one partition that size.  This will be
+your "swap partition".
+
+Make another partition of at least 10MB, and mount /tmp on that
+partition (do "man mount" to find out how).  Many programs will die
+very ungracefully if they cannot find temporary space.  You will be
+able to fill that 75MB very quickly.  Setting aside 10MB in a separate 
+partition will probably make it possible to avoid a system crash when
+you run out of HD space on the root partition.  The remainder will be
+your root partition.  It may be possible to partition directly from
+the setup program, but this can wipe out your whole disk.  Be very
+careful.
+
+    Rory&gt; My configuration: 486 DX2/66, Adaptec AHA1540 SCSI card,
+    Rory&gt; Mitsumi internal CD .  Logitec 128M MO drive.  Matrox
+    Rory&gt; Impression 1024 video card.
+
+Is your MO a SCSI?  Let me know if Linux finds it.  Linux can't ever
+seem to find my Fujitsu 230MB MO on the AMI Fast SCSI-2 host.  :-(
+Unless I configure the MO as a hard drive.  :-(
+
+Best bet is to find /usr/doc/faq/howto/ and read the stuff there.
+Installation-HOWTO first (betcha you figured that out yourself).
+
+Good luck!  Let us know how you do.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00063" HREF="msg00063.html">New User setup - need advice</A></STRONG>
+<UL><LI><EM>From:</EM> rory@example.com (Rory Lysaght)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00063.html">New User setup - need advice</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00065.html">Video Corruption in 1.3.28/1.3.29</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00063.html">New User setup - need advice</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00066.html">Re: New User setup - need advice</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00064"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00064"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

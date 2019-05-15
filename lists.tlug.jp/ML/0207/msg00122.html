@@ -1,0 +1,167 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 5 Jul 2002 14:11:36 +0900 (JST) -->
+<!--X-Message-Id: 877kkadahm.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F175p0HuVUHrGoBx4Pv00007b39@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00121.html">Date Prev</a>][<a href="msg00123.html">Date Next</a>][<a href="msg00117.html">Thread Prev</a>][<a href="msg00127.html">Thread Next</a>][<a href="maillist.html#00122">Date Index</a>][<a href="threads.html#00122">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 05 Jul 2002 14:12:05 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%5BOT%5D%3A%20PHP%2FMySQL%3A%20Japanese%20input%2Fouput%20prgramming%20advice%20docs%20sought">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</strong></li>
+<li>References: &lt;<a href="msg00115.html">F175p0HuVUHrGoBx4Pv00007b39@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.0808 (Gnus v5.8.8) XEmacs/21.4 (Informed Management (RC2))</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Jean-Christian&quot; == Jean-Christian Imbeault &lt;jean_christian@example.com&gt; writes:
+
+    &gt;&gt; Unless your app returns lots of data via cursors, it's
+    &gt;&gt; preferable to sort client-side anyway.
+
+    Jean-Christian&gt; Is this comment specifically for Postgress? I
+    Jean-Christian&gt; always tought it was more efficient to get a DB to
+    Jean-Christian&gt; sort results than doing it programmatically.
+
+First, I'm not talking about efficiency.  I'm thinking locale-specific
+issues; normally you will not be able to request a locale-specific
+sort from the DB, it will have a global locale.  In particular this is
+true of Postgres as of the 7.0 betas (I haven't paid attention since).
+Maybe you don't need that today, but are you sure you won't tomorrow?
+
+Even for efficiency, it's the other way around, except for the
+important special case that the DB may be keeping things in order,
+already.  (This happens as a side effect of indexing techniques such
+as binary search.)  True, the DB will use a highly optimized general
+purpose sort routine, but you can probably do nearly as well, even in
+a scripting language (they all have efficient general sort routines in
+their libraries).  However, you may have information that makes
+sorting a lot faster (eg, transform a large array of postal code
+strings to 7-place integers, then sort, then translate back---much
+faster than doing string comparisons).  Furthermore, there are sorting
+jobs that the DB simply won't be able to do, such as 50-on-jun from
+kanji (of course, you can keep the yomi in the database, but what if
+you didn't?)
+
+Finally, there's an issue of cost.  Clients are cheap, and typically
+spend most of their cycles on screen savers.  Sort there if possible,
+especially if owned by someone else ;-).  Webservers are moderately
+expensive, but costs scale linearly because web service distributes
+well over a farm of identical boxen.  Database servers are even more
+expensive, and costs scale badly because to get 10x the power you need
+10x the machine---general relational databases do not distribute well
+(although LDAP does).
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+ My nostalgia for Icon makes me forget about any of the bad things.  I don't
+have much nostalgia for Perl, so its faults I remember.  Scott Gilbert c.l.py
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00115" href="msg00115.html">Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00121.html">Re: [tlug] cheap, reliable co-location?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00123.html">Re: [tlug] cheap, reliable co-location?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00117.html">RE: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00127.html">Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00122"><strong>Date</strong></a></li>
+<li><a href="threads.html#00122"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

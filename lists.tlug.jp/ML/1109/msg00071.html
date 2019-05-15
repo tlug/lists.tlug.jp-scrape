@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] firefox SSL certs -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Mon, 12 Sep 2011 10:18:10 +0900 -->
+<!--X-Message-Id: 4E6D5C1C.8050904@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4E6D3A61.6020409@dcook.org -->
+<!--X-Reference: 87sjo2pr6d.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00070.html">Date Prev</a>][<a href="msg00072.html">Date Next</a>][<a href="msg00070.html">Thread Prev</a>][<a href="msg00072.html">Thread Next</a>][<a href="maillist.html#00071">Date Index</a>][<a href="threads.html#00071">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] firefox SSL certs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 12 Sep 2011 10:10:52 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] firefox SSL certs</strong></li>
+<li>References: &lt;<a href="mailto:4E6D3A61.6020409@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">4E6D3A61.6020409@example.com</a>&gt;	&lt;<a href="mailto:87sjo2pr6d.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">87sjo2pr6d.fsf@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.21) Gecko/20110831 Thunderbird/3.1.13</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;  &gt; However under ssl/certs/ there is one modified file, one deleted file
+&gt;  &gt; and two new (untracked) files. Is there a way to take the 8 hex-digit
+&gt;  &gt; certificate filename and learn about it?
+&gt; 
+&gt; git commit (however you do that), then git checkout HEAD^ ABCD1234 (or
+&gt; so), followed by openssl x509 ABCD1234 or something like that.  Then
+&gt; git checkout HEAD.
+
+Thanks Stephen. The full openssl command is:
+    openssl x509 -in ABCD1234.0  -text
+
+But it turns out the .0 files (that are new) are just symbolic links to
+.pem files (that are not), and the linked filename tells me as much as I
+need to know. (BTW, the deleted .o file seems to correspond with the
+deleted DigiNotar_Root_CA.pem.)
+
+Now I'm wondering:
+ 1. Why two symbol links got created, and one got moved, when the actual
+certificates already existed. Is that normal behaviour after a minor
+firefox update?
+
+ 2. Why none of these files seem to belong to any package (at least
+according to apt-file). Neither the *.o files or the *.pem files.
+
+For the second question I'm wondering if it was just coincidence that I
+got new certificates (for the first time in 5 weeks, i.e. since putting
+/etc under git control) from normal browsing, on the same day that
+firefox has an update that alters ssl certificates. Sounds unlikely
+doesn't it. But, then why are those files not owned by the firefox package?
+
+My third question is what would happen if I delete these new symlinks?
+What would happen if I deleted the *.pem files they point to? Would it
+just mean an extra behind-the-scenes certificate download next time I
+visit a site that needs it? (In other words is /etc/ssl/certs just a
+cache directory?) Or would valid sites start complaining when I browse them?
+
+(This is just intellectual curiosity/paranoia; I'm sure at the end of
+the day I'll just check the new files in and assume someone cleverer
+than me knows what they are doing...)
+
+Darren
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00072" href="msg00072.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+<li><strong><a name="00073" href="msg00073.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00069" href="msg00069.html">[tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00070" href="msg00070.html">[tlug]  firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00070.html">[tlug]  firefox SSL certs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00072.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00070.html">[tlug]  firefox SSL certs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00072.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00071"><strong>Date</strong></a></li>
+<li><a href="threads.html#00071"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

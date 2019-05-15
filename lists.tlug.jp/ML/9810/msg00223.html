@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: root mirror (was: LILO Vs. 1024??) -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 7 Oct 1998 17:05:22 +0900 -->
+<!--X-Message-Id: 19981007170516.C12097@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810062007.UAA00264@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981007092838.635C&#45;100000@example.com -->
+<!--X-Reference-Id: 13850.57974.611501.31116@example.com -->
+<!--X-Reference-Id: 19981007133247.A11940@example.com -->
+<!--X-Reference-Id: 13851.5639.316636.883671@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00222.html">Date Prev</A>][<A HREF="msg00224.html">Date Next</A>][<A HREF="msg00226.html">Thread Prev</A>][<A HREF="msg00186.html">Thread Next</A>][<A HREF="maillist.html#00223">Date Index</A>][<A HREF="threads.html#00223">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: root mirror (was: LILO Vs. 1024??)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: root mirror (was: LILO Vs. 1024??)</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Oct 1998 17:05:16 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00215.html">13851.5639.316636.883671@example.com</A>&gt;; from Stephen J. Turnbull on Wed, Oct 07, 1998 at 04:19:35PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00184.html">199810062007.UAA00264@example.com</A>&gt; &lt;<A HREF="msg00188.html">Pine.LNX.3.96LJ1.1b7.981007092838.635C-100000@example.com</A>&gt; &lt;<A HREF="msg00199.html">13850.57974.611501.31116@example.com</A>&gt; &lt;<A HREF="msg00204.html">19981007133247.A11940@example.com</A>&gt; &lt;<A HREF="msg00215.html">13851.5639.316636.883671@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Oct 07, 1998 at 04:19:35PM +0900, Stephen J. Turnbull wrote:
+&gt; 
+&gt;     Rex&gt; The only thing that's missing to be able to accomplish the
+&gt;     Rex&gt; same thing with a Linux system is the ability to "clone" an
+&gt;     Rex&gt; ext2 filesystem reliably.  On an Auspex, ax_clonefs will
+&gt;     Rex&gt; ensure that any modifications that occur while the copy is
+&gt;     Rex&gt; running are handled correctly (there is actually a brief
+&gt;     Rex&gt; lockout at the very end to ensure that all metadata is
+&gt;     Rex&gt; synched on both sides correctly).
+&gt; 
+&gt; That sounds like a very hard problem without designing the fs around
+&gt; that requirement from the ground up.
+
+The difficulty depends at what level of abstraction you attack the
+problem.  
+
+If block-level snapshots are available it's trivial.  With
+"inode-hierarchy" snapshots (for lack of a better term) something
+similar could be accomplished with a simple directory walk (tar/cpio).
+There are interesting goings on in these areas on the linux-kernel list
+(reiserfs, LFS, md, devfs, etc).
+
+Without either, it's very, very tricky to do right.  One approach would
+be to create a device driver to sit between the backup/dd process and
+the raw disk device.  The device driver would operate similar to
+PDC/Intelliguard's "BudTurbo" product if you're familiar with it.
+
+A backup operation would go something like this:
+
+    1) Tell the driver you want to maintain a consistent image of
+       /dev/hda1 (say).  You also give it the name of a scratch
+       partition that it can use as a cache area.
+
+    2) The driver somehow puts itself before the kernel and /dev/hda1 so
+       it can monitor all blocks written to that device.  (Hard bit #1)
+
+    3) If a request arrives to write block n to /dev/hda1, the current
+       block n contents are first copied away to the cache partition
+       before the write is completed.  (Hard bit #2)
+
+    4) Any process reading or writing /dev/hda1 sees everything the way
+       it always was (except that writes are a bit slower).
+
+    5) Any process reading a block from the "consistent image" device (a
+       read-only device) will get either a block from the cache (if it's
+       there) or the actual block from the hda1 device if no updates
+       have occurred since the backup began.
+
+    6) After the backup completes, the driver must be notified so that
+       it knows to stop trying to cache all writes.  (If the cache fills
+       up you can't maintain a consistent image).
+
+In practice BudTurbo does a pretty good job of this for a variety of
+Unix platforms.  I'd love to see something similar for Linux.  If I had
+the expertise, time, and motivation I'd try to make something like it
+myself (I think it could mostly be done in user space, but you'd need a
+kernel module to help with 3 &amp; 4 above).
+
+Just a thought.
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00184" HREF="msg00184.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> karlmax@example.com (Karl-Max Wagner)</LI></UL></LI>
+<LI><STRONG><A NAME="00188" HREF="msg00188.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00199" HREF="msg00199.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00204" HREF="msg00204.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00215" HREF="msg00215.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00222.html">tlug: NetWinder Demonstration at Saturday's TLUG Meeting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00224.html">Re: tlug: Mailing List Response Time</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00226.html">Re: tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00186.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00223"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00223"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

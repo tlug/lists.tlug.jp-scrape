@@ -1,0 +1,140 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] [tlug&#45;digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode. -->
+<!--X-From-R13: Wna Iryyf <vwjNzrgnuhfxl.arg> -->
+<!--X-Date: Sun, 15 Jan 2006 08:44:53 +0900 -->
+<!--X-Message-Id: 30ce84360601141544y40a0ce05g28ba58c29be99e64@example.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: 200601130511.k0D5BxWg015897@example.com -->
+<!--X-Reference: 43C84B5A.7000703@example.com -->
+<!--X-Reference: d8fcc0800601131819p4c76af1ek@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00141.html">Date Prev</a>][<a href="msg00143.html">Date Next</a>][<a href="msg00127.html">Thread Prev</a>][<a href="msg00145.html">Thread Next</a>][<a href="maillist.html#00142">Date Index</a>][<a href="threads.html#00142">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 15 Jan 2006 08:44:53 +0900</li>
+<li><strong>From</strong>: <strong>Ian Wells &lt;<A HREF="mailto:ijw@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%5Btlug-digest%5D%20searching%20for%20kanji%20strings%2C%20ignore%20punctuation%20and%20end%20of%20lines.%20Text%20indexing%20and%20retrival%20in%20unicode.">ijw@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode.</strong></li>
+<li>References: &lt;200601130511.k0D5BxWg015897@example.com&gt; &lt;<a href="msg00121.html">43C84B5A.7000703@example.com</a>&gt; &lt;<a href="msg00123.html">d8fcc0800601131819p4c76af1ek@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+On 1/14/06, <b class="gmail_sendername">Josh Glover</b> &lt;<a href="mailto:jmglov@example.com">jmglov@example.com</a>&gt; wrote:<div><span class="gmail_quote"></span><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+On 14/01/06, David Riggs &lt;<a href="mailto:dariggs@example.com">dariggs@example.com</a>&gt; wrote:<br><br>&gt; On the other hand, instead of searching each time, is there a text<br>&gt; indexing and search system which works with unicode? All I find googling
+<br>&gt; around is commerical stuff which seems orientated towards western languages.<br><br>I don't know about this, but Perl's regexp engine handles Unicode and<br>multi-line strings. Give Perl a whirl. (Sorry.)<br><br>
+-Josh<br></blockquote></div><br>Completely untested and off the top of my head.<br><br>As Jim says elsewhere there are probably optimisations - particuarly if you know, for instance, that big chunks of the file aren't interesting.&nbsp; And If you can afford to load the whole line in at once there are much more efficient ways to deal with it.&nbsp; There's also also an optimisation when the last character on the line is clearly not a part of your match but it's probably not worth much.
+<br><br>#!/usr/bin/perl<br>use strict;<br>use warnings;<br>use utf8;&nbsp; # Source file is utf8, not ascii<br><br>binmode STDIN, ':utf8'; # Read multibyte characters, not bytewise<br>binmode STDOUT, ':utf8'; # ... and write them
+<br><br>my $oldline='';<br>while(defined(my $line=&lt;STDIN&gt;)) {<br>&nbsp;&nbsp; chomp $line;<br>&nbsp;&nbsp; $line=~s/\b//g; # Remove whitespace; add to this to remove punctuation; multibyte characters allowed in the regexp as the source file is in utf8
+<br>&nbsp;&nbsp; $oldline.=$line;<br><br>&nbsp;&nbsp; # Won't work if your pattern will match a substring of itself, if it does will you need <br>&nbsp;&nbsp; # to mention the next character<br>&nbsp;&nbsp; while(my ($throwaway, $match, $remainder)=$oldline=~/(.*?)(regexp here)(.*)/) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print &quot;Matched &quot;$match&quot; on $.\n&quot;; # Will say line 2000 even if the match spans line 1999.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $oldline=$remainder;<br>&nbsp;&nbsp; }<br>&nbsp;&nbsp; # You know the length of what you're trying to match, trim the front of $oldline to remove
+<br>&nbsp;&nbsp; # characters you definitely don't want.&nbsp; If you can't do this with substr or another regexp this algorithm may be crap.<br>&nbsp;&nbsp; $oldline=substr($oldline, -2, 2); # Supposed to keep the last 2 kanji; Someone correct this, it's probably wrong!
+<br>}<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00145" href="msg00145.html">Re: [tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode.</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00147" href="msg00147.html">Re: [tlug] Is removal of whitespace appropriate for searching forkanji strings?</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00121" href="msg00121.html">[tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines.  Text indexing and retrival in unicode.</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+<li><strong><a name="00123" href="msg00123.html">Re: [tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode.</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00141.html">Re: [tlug] USB devices behaving randomly</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00143.html">Re: [tlug] Use a shell that groks UTF-8</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00127.html">Re: [tlug] UTF-8 makes multi-byte ignorant UNIX tools play nice multi-byte characters</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00145.html">Re: [tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines. Text indexing and retrival in unicode.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00142"><strong>Date</strong></a></li>
+<li><a href="threads.html#00142"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

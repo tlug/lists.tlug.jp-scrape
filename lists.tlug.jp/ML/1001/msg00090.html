@@ -1,0 +1,199 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Did Apache change everything? (Setting up virtual hosts) -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Wed, 20 Jan 2010 12:57:20 +0900 -->
+<!--X-Message-Id: 20100120035720.GA28157@poetic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4B566ABC.5000504@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00079.html">Date Prev</a>][<a href="msg00080.html">Date Next</a>][<a href="msg00079.html">Thread Prev</a>][<a href="msg00080.html">Thread Next</a>][<a href="maillist.html#00090">Date Index</a>][<a href="threads.html#00090">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Jan 2010 12:57:20 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Did%20Apache%20change%20everything%3F%20%28Setting%20up%20virtual%20hosts%29">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</strong></li>
+<li>References: &lt;<a href="mailto:4B566ABC.5000504@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Did%20Apache%20change%20everything%3F%20%28Setting%20up%20virtual%20hosts%29">4B566ABC.5000504@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>In answer to your question, &quot;Did Apache change everything?&quot; the answer
+appears to be &quot;no, your distro changed everything.&quot;
+
+Given that this is highly likely to change again, both within your
+current distro and as you move to other distros, here's my suggestion
+on how to configure things so that these sorts of changes cause minimal
+pain.
+
+What you want to do is replace the default configuration file supplied
+by by your distro with your own configuration file that has the
+bare minimum of configuration possible and does not depend on any
+configuration information supplied by your distro. This will not
+insulate you from changes (since things like the location of loadable
+modules can move), but it will ensure that you are not left to the whims
+of someone else when it comes to configuration of most of your website,
+and minimize the amount of work you need to do when those few things do
+change.
+
+After installing apache, you can find out what configuration file
+it's using this way. First, start it, if it's not automatically
+started. Then use &quot;pgrep -lf apache&quot; find the binary that's running,
+and examine the command line to see if it has &quot;-f filename&quot;
+option. If it does, that's the configuration file it's using.
+If not, run the binary (often /usr/sbin/apache2) with the -V
+option and look for the SERVER_CONFIG_FILE definition, which
+will give you the default config file. (In my case it's &quot;-D
+SERVER_CONFIG_FILE=&quot;/etc/apache2/apache2.conf&quot;.) That's the file you
+want to replace.
+
+I recommend keeping your configuration file with your site, which
+ideally should be kept under revision control. (In particular, you must
+have a spare copy of the most recent version of your configuration file
+in case the package system modifies it.) If you do that, you can simply
+remove the system configuration file and replace it with a symlink to
+your file. Alternatively, if there are issues with that, you can just
+copy your configuration file over top of the system configuration file.
+
+This configuration file should be as small as possible, with just the
+bare minimum number of directives to get your site working properly.
+This will aid significantly in understanding and debugging your
+configuration. Comments should generally be avoided unless you're doing
+something especially tricky; copying the documentation from the manual
+into comments in your configuration file simply makes it harder to read
+(which, as I mentioned above, makes understanding and debugging the file
+more difficult).
+
+Avoid including any of the other system configuration files that the
+default system configuration may include; if these vanish, it can be
+difficult to figure out what was in them, and their contents can also
+change on you from time to time. For places where you need to repeatedly
+use information that changes from system to system (such as the user
+which apapache should become if started as root, the locations of
+modules or perhaps your document root directory), consider assigning
+these to variables and using those in your configuration file. I think
+that apache will let you do this with SetEnv and ${} syntax, such as
+
+    SetEnv APACHE_LOG_DIR /var/log/apache2
+    ...
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log vhost_combined
+
+This can serve to minimize and keep together the information you need to
+change when your vendor moves paths around on you.
+
+&gt; I'm going to skip past the bitching about having to learn new crap to
+&gt; accomplish the same tasks...
+
+Well, I can't say it's really a fair complaint, since it was you who
+decided to let somebody you don't even know change your configuration
+any time he feels like it. Take back control of your configuration and
+your life will certainly be happier.
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+             <a  rel="nofollow" href="http://www.starling-software.com">http://www.starling-software.com</a>
+The power of accurate observation is commonly called cynicism
+by those who have not got it.    --George Bernard Shaw
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00077" href="msg00077.html">[tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00079.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00080.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00079.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00080.html">Re: [tlug] Did Apache change everything? (Setting up virtual hosts)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00090"><strong>Date</strong></a></li>
+<li><a href="threads.html#00090"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

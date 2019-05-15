@@ -1,0 +1,173 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] grep, sed, and cat &#45; oh my! -->
+<!--X-From-R13: "Rnavry O. Dnznyrl" <qnavry.enznyrlNqenxr.rqh> -->
+<!--X-Date: Fri, 17 Sep 2010 02:24:45 +0900 -->
+<!--X-Message-Id: 201009161201.21913.daniel.ramaley@drake.edu -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4C924ACE.9000707@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00061.html">Date Prev</a>][<a href="msg00063.html">Date Next</a>][<a href="msg00069.html">Thread Prev</a>][<a href="msg00070.html">Thread Next</a>][<a href="maillist.html#00062">Date Index</a>][<a href="threads.html#00062">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] grep, sed, and cat - oh my!</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 16 Sep 2010 12:01:21 -0500</li>
+<li><strong>From</strong>: <strong>&quot;Daniel A. Ramaley&quot; &lt;<a href="mailto:daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20grep%2C%20sed%2C%20and%20cat%20-%20oh%20my%21">daniel.ramaley@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] grep, sed, and cat - oh my!</strong></li>
+<li>References: &lt;<a href="mailto:4C924ACE.9000707@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20grep%2C%20sed%2C%20and%20cat%20-%20oh%20my%21">4C924ACE.9000707@example.com</a>&gt;</li>
+<li>Organization: Drake University</li>
+<li>User-agent: KMail/1.13.5 (Linux/2.6.32-5-amd64; KDE/4.4.5; x86_64; ; )</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2010-09-16 at 11:50:22, Dave M G wrote:
+&gt;For combining the Javascript files in step 2, they are in
+&gt;subdirectories. I came across a command which supposedly might do the
+&gt;trick:
+&gt;ls -1R|grep :$|sed 's/:$//g'| awk '{print $1&quot;/*&quot;}'|xargs cat &gt; all.js
+
+How about something like this:
+
+find $DIR -type f -name '*.js' -exec cat {} \; &gt; all.js
+
+Replace $DIR with whatever directory your files are in. Will that work 
+for you?
+
+&gt;For step 4, editing the HTML files, I think I need to run the
+&gt;following command:
+&gt;sed 's/.*&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;
+&gt;src=&quot;javascript/includes.js&quot;&gt;&lt;/script&gt;.*/&lt;script
+&gt;type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;all-min.js&quot;&gt;&lt;/script&gt;/g'
+
+I can see one obvious problem. The sed command you are running is s///. 
+But the arguments to that command contain slash characters that are not 
+escaped. I'll make an assumption as to which slashes should *not* be 
+escaped, and escape the rest to show what i mean. Try this:
+
+sed 's/.*&lt;script type=&quot;text\/javascript&quot; charset=&quot;utf-8&quot;
+src=&quot;javascript\/includes.js&quot;&gt;&lt;\/script&gt;.*/&lt;script
+type=&quot;text\/javascript&quot; charset=&quot;utf-8&quot; src=&quot;all-min.js&quot;&gt;&lt;\/script&gt;/g'
+
+&gt;And in either case, can I tweak it to only act on files with a &quot;.html&quot;
+&gt;extension?
+
+Usually you have to specify what files sed is to operate on. Only feed 
+it files with a .html extension, and it will only operate on those. For 
+example:
+
+find $DIR -type f -name '*.html' -exec sed -i 's///' {} \;
+
+Flesh out the sed command as appropriate; i didn't copy the s/// 
+arguments so that they wouldn't clutter it up. You might need to add a
+-i switch to sed to make it edit the files in-place (i've added it 
+above).
+
+__
+Daniel A. Ramaley
+Network Engineer 2
+
+Dial Center 118, Drake University
+2407 Carpenter Ave / Des Moines IA 50311 USA
+Tel: +1 515 271-4540
+Fax: +1 515 271-1938
+E-mail: daniel.ramaley@example.com
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00060" href="msg00060.html">[tlug] grep, sed, and cat - oh my!</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00061.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00063.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00069.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00070.html">[tlug] Debian rant</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00062"><strong>Date</strong></a></li>
+<li><a href="threads.html#00062"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

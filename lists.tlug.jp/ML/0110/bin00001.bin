@@ -1,0 +1,197 @@
+DATOS          EQU        $02A0
+DIR1           EQU        $02A0
+COUNT          EQU        $02A2
+TEMP1          EQU        $02A4
+TEMP2          EQU        $02A6
+REGISTROS      EQU        $1000
+PORTA          EQU        $1000
+DDRA           EQU        $1001
+PORTG          EQU        $1002
+DDRG           EQU        $1003
+PORTB          EQU        $1004
+PORTF          EQU        $1005
+PORTC          EQU        $1006
+DDRC           EQU        $1007
+PORTD          EQU        $1008
+DDRD           EQU        $1009
+PORTE          EQU        $100A
+CFORC          EQU        $100B
+OC1M           EQU        $100C
+OC1D           EQU        $100D
+TCNT           EQU        $100E
+TIC1           EQU        $1010
+TIC2           EQU        $1012
+TIC3           EQU        $1014
+TOC1           EQU        $1016
+TOC2           EQU        $1018
+TOC3           EQU        $101A
+TOC4           EQU        $101C
+TI4O5          EQU        $101E
+TCTL1          EQU        $1020
+TCTL2          EQU        $1021
+TMSK1          EQU        $1022
+TFLG1          EQU        $1023
+TMSK2          EQU        $1024
+TFLG2          EQU        $1025
+PACTL          EQU        $1026
+PACNT          EQU        $1027
+SPCR           EQU        $1028
+SPSR           EQU        $1029
+SPDR           EQU        $102A
+BAUD           EQU        $102B
+SCCR1          EQU        $102C
+SCCR2          EQU        $102D
+SCSR           EQU        $102E
+SCDR           EQU        $102F
+ADCTL          EQU        $1030
+ADR1           EQU        $1031
+ADR2           EQU        $1032
+ADR3           EQU        $1033
+ADR4           EQU        $1034
+BPROT          EQU        $1035
+OPT2           EQU        $1038
+OPTION         EQU        $1039
+COPRST         EQU        $103A
+PPROG          EQU        $103B
+HPRIO          EQU        $103C
+INIT           EQU        $103D
+TEST1          EQU        $103E
+CONFIG         EQU        $103F
+CSSTRH         EQU        $105C
+CSCTL          EQU        $105D
+CSGADR         EQU        $105E
+CSGSIZ         EQU        $105F
+
+               ORG        $0000
+               JMP        INICIO
+
+               ORG        $00C4
+               JMP        SERIAL_INT
+
+INICIO:        ORG        $0100
+               LDS        #$3FF ;STACK
+               LDAA       #$00
+               STAA       SCCR1
+               LDAA       #$2C
+               STAA       SCCR2
+               LDAA       #$30   ;con un xtal de 8 Mhz, 9600 baud
+               STAA       BAUD
+               CLI
+LO:
+               BRA        LO
+SERIAL_INT:    LDX        #$1000
+               BRCLR      $2E,X,$80,NO_TDRE ;REG. SCSR
+NO_TDRE:       BRCLR      $2E,X,$40,NO_TC
+NO_TC:         BRCLR      $2E,X,$20,NO_RDRF
+               BSR        PROC_ENT ;PROCESA ENTRADA POR SERIAL.
+NO_RDRF:
+               RTI
+
+PROC_ENT:
+               LDX        #TEMP1
+               LDY        #$01
+               BSR        LEE_SERIAL
+               LDAA       TEMP1
+               CMPA       #$01
+               BNE        NOP1 ;Opcion 1, Guardar n bytes en memoria
+
+               LDX        #DIR1 ;LEE LA DIRECCION INICIAL
+               LDY        #$04 ;Y LA CANTIDAD DE BYTES
+               BSR        LEE_SERIAL ;EN DIR1 Y COUNT (DIR1+2)
+               LDX        DIR1 ;LEE Y GUARDA BYTES DESDE DIR1
+               LDY        COUNT ;COUNT BYTES
+               BSR        LEE_SERIAL
+               RTS
+
+
+NOP1:          ;opcion 2. pasar el control a otra direccion.
+               CMPA       #$2
+               BNE        NOP2 ;Opcion 1, Guardar n bytes en memoria
+               LDX        #DIR1 ;DIRECCION DE INICIO DEL PROGRAMA
+               LDY        #$02 ;DIRECCION DE INICIO
+               BSR        LEE_SERIAL
+               LDX        DIR1
+               TSY
+               STX        $09,Y
+               RTS
+
+
+NOP2:          CMPA       #$3 ;opcion 3 muestra n bytes de memoria.
+               BNE        NOP3
+
+               LDX        #DIR1
+               LDY        #$04
+               BSR        LEE_SERIAL
+               LDX        DIR1
+               LDY        COUNT
+               BSR        ESCRIBE_SERIAL
+               RTS
+
+NOP3:
+               CMPA       #$4 ;opcion 4, Programar un byte de eeprom.
+               BNE        NOP4
+
+               LDX        #DIR1
+               LDY        #$03    ;lee dos bytes de direccion y uno de dato
+               BSR        LEE_SERIAL
+               LDX        DIR1   ;Direccion en donde se escribe
+               LDAA       DIR1+2
+               CLR        BPROT
+               BSR        EEBPROG
+               LDY        #$01
+               BSR        ESCRIBE_SERIAL
+               LDAA       #$1F
+               STAA       BPROT
+               RTS
+
+NOP4:
+               RTS
+
+
+LEE_SERIAL:    LDAA       SCSR       ;VERIFICA EL ESTADO DEL SERIAL
+               ANDA       #$20       ;MIENTRAS RECIBA BYTES
+               BEQ        LEE_SERIAL ;SE ESPERA
+               LDAB       SCDR       ;LEE EL BYTE RECIBIDO
+               STAB       $00,X      ;LO ALMACENA EN X:00
+TR1:           LDAA       SCSR       ;VERIFICA EL ESTADO DEL SERIAL
+               ANDA       #$80       ;MIENTRAS NO PUEDA ESCRIBIR
+               BEQ        TR1        ;SE ESPERA
+               STAB       SCDR       ;MANDA LA RESPUESTA DE ECHO
+               INX                   ;INCREMENTA LA DIRECCION PARA EL SIGUENTE BYTE
+               DEY                   ;DECREMENTA EL CONTADOR Y
+               BNE        LEE_SERIAL ;MIENTRAS Y NO SEA CERO, SIGUE LEYENDO
+               RTS                   ;TERMINA SUBRUTINA LEE_SERIAL
+
+ESCRIBE_SERIAL:
+               LDAA       SCSR           ;VERIFICA EL ESTADO DEL SERIAL
+               ANDA       #$80           ;SI NO SE PUEDE ESCRIBIR
+               BEQ        ESCRIBE_SERIAL ;SE ESPERA
+               LDAB       $00,X          ;MANDA EL BYTE X:00 POR EL SERIAL
+               STAB       SCDR           ;
+               INX                       ;INCREMENTA LA DIRECCION X
+               DEY                       ;DECREMENTA EL CONTADOR Y
+               BNE        ESCRIBE_SERIAL ;MIENTRAS HALLA MAS BYTES, CONTINUA
+               RTS                       ;TERMINA SUBRUTINA ESCRIBE_SERIAL
+
+EEBERASE:      LDAB       #$16           ;RUTINA PARA BORRAR UN BYTE
+               STAB       PPROG          ;BORRA UN SOLO BYTE
+               STAB       $00,X          ;BORRA EL BYTE
+               INCB
+               STAB       PPROG          ;
+               BSR        PDEL
+               CLR        PPROG
+               RTS                      ;PARA LECTURA
+PDEL           LDY        #$1653         ;ESPERA 10ms
+ERL:           DEY
+               BNE        ERL
+               RTS
+EEBPROG:       BSR        EEBERASE       ;BORRA EL BYTE $00,X
+               LDAB       #$02           ;PONE PARA ESCRIBIR (NO BORRADO)
+               STAB       PPROG          ;
+               STAA       $00,X          ;X ES LA LOC A GRABAR
+               INCB
+               STAB       PPROG          ;PROGRAMA
+               BSR        PDEL
+               CLR        PPROG
+               RTS
+

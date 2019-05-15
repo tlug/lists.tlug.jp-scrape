@@ -1,0 +1,173 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: X configuration [was Re: sfdisk] -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Mon, 24 Jun 1996 04:58:32 GMT -->
+<!--X-Message-Id: m0uY3WS&#45;00000SC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199606240117.KAA23507@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00049.html">Date Prev</A>][<A HREF="msg00051.html">Date Next</A>][<A HREF="msg00049.html">Thread Prev</A>][<A HREF="msg00051.html">Thread Next</A>][<A HREF="maillist.html#00050">Date Index</A>][<A HREF="threads.html#00050">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: X configuration [was Re: sfdisk]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: X configuration [was Re: sfdisk]</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Mon, 24 Jun 96 13:45 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00049.html">199606240117.KAA23507@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; After a weekend of fiddling around and eventually
+    Jim&gt; reinstalling X_windows I can now switch between 3 video modes
+    Jim&gt; but still haven't got the color map.  Things like Xpaint only
+    Jim&gt; draws B&amp;W and Java applets complain they can't load the color
+    Jim&gt; maps....
+
+Do you get *any* colors other than black and white?  If you are
+getting other colors, then it sounds to me like you only have 16
+colors.  All of those colors are probably being allocated by your
+window manager and color xterms (mine uses at least 6, including the
+solid backdrop, and if I have any color xterms that pretty much would
+account for the rest of the 16).
+
+Xpaint and Java probably want to allocate their own color cells.  You
+have a color map, but if you've only got 16 colors then none are free
+most likely.  I suppose Java comes in via Netscape?  Netscape often
+allocates all of the free colorcells on my 256-color display, and
+everything complains about not enough colors then.
+
+    &gt;&gt; Check to make that /usr/X11R6/bin/X is symlinked to XF86_W32.
+
+Have you done this?  It looks to me like you are not using the svga or
+accelerated servers, but rather the vga16 server, if you are still
+only getting sixteen colors.  Run 'xpdyinfo | fgrep depth'.  You
+should see lots of '8's.  (Or pipe it to less, but that gives lots of
+confusing irrelevant info.)  Try running 'X -showconfig' from the
+command line.  If all of these indicate you should have the
+accelerated server running, you'll have to trace back from whatever
+command you use to start X normally (startx and xinit are typically
+involved) to make sure none of those scripts start the wrong server.
+
+Make sure that your path points to the right place, as do the various
+symlinks.  (XFree86 3.x likes to be installed in /usr/X11R6, but
+/usr/X11 and /usr/X386 are common aliases.  To make matters worse,
+/usr/bin/X11 is often an alias for /usr/X?/bin, and so on.)
+
+I'm not quoting the XF86Config file; it all looks fine to me.
+However, check the man page and make sure that your server can
+actually handle the 16 and 32 bit depths; XFree86 3.1.1 cannot handle
+&gt;8 bpp in the XF86_W32 incarnation.  You might want to back up your
+current XF86Config to XF86Config.orig and then start deleting
+everything that's irrelevant, including references to vga2, vga16, and 
+so on screens, high depth displays, extra mode lines (only the first
+four in that long list are relevant to you).  If that causes your
+server to stop working that will give you some idea where the problem
+is :-)
+
+    Jim&gt; Thanks for your help and sorry about the volume of this post.
+
+De nada.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00051" HREF="msg00051.html">Re: X configuration [was Re: sfdisk]</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00049" HREF="msg00049.html">Re: sfdisk</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00049.html">Re: sfdisk</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00051.html">Re: X configuration [was Re: sfdisk]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00049.html">Re: sfdisk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00051.html">Re: X configuration [was Re: sfdisk]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00050"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00050"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

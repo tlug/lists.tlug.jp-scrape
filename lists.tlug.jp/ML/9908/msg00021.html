@@ -1,0 +1,313 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: What decides Japanese file name encoding? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 6 Aug 1999 16:39:09 +0900 -->
+<!--X-Message-Id: 14250.37117.769995.52859@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199908050632.PAA23886@example.com -->
+<!--X-Reference-Id: 37AA6443.AE21B911@example.com&#45;japan.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00020.html">Date Prev</A>][<A HREF="msg00022.html">Date Next</A>][<A HREF="msg00019.html">Thread Prev</A>][<A HREF="msg00020.html">Thread Next</A>][<A HREF="maillist.html#00021">Date Index</A>][<A HREF="threads.html#00021">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: What decides Japanese file name encoding?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: What decides Japanese file name encoding?</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 6 Aug 1999 16:38:37 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00019.html">37AA6443.AE21B911@example.com</A>&gt;</LI>
+<LI>References: &lt;199908050632.PAA23886@example.com&gt;&lt;<A HREF="msg00019.html">37AA6443.AE21B911@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Blackson &lt;blackson@example.com&gt; writes:
+
+    Jim&gt; Thanks for the reply.  On Wed, 4 Aug 1999 15:02:40 +0900
+    Jim&gt; (JST) Stephen J. Turnbull wrote:
+    &gt;&gt; ... (see my earlier post re Unicode implementation)
+
+    Jim&gt; I searched the tlug mailing list archive and found some posts
+    Jim&gt; from 9705 or 9801.  Anything more recent?
+
+Yeah, August 4, 1999 ;-)   Sorry about the misleading subject:
+
+    From: "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+    To: tlug@example.com
+    Message-ID: &lt;<A HREF="msg00014.html">14247.52981.74635.211486@example.com</A>&gt;
+    Subject: Re: tlug: Re: pine, mutt, Chinese, Japanese
+    Date: Wed, 4 Aug 1999 14:26:13 +0900 (JST)
+
+The relevant part was:
+
+    sjt&gt; Unicode is going to require a certain amount of
+    sjt&gt; implementation of infrastructure.  The problem is that
+    sjt&gt; Unicode does not preserve collating orders and the like for
+    sjt&gt; anything except American English (and maybe British English).
+    sjt&gt; So sorts are going to have to be table-driven.  This is
+    sjt&gt; actually a good thing; JIS order isn't really all that
+    sjt&gt; interesting.  It would make it very easy to specify a sort
+    sjt&gt; like "kyouiku kanji by year, first, then jouyou kanji, then
+    sjt&gt; other Japanese kanji, then non-Japanese kanji, then other
+    sjt&gt; characters" by writing appropriate tables.  (Not to mention
+    sjt&gt; "unifying" zen and hankaku romaji, etc.)
+
+
+The rest of that thread may be applicable to your situation, too.  
+Continuing.
+
+    Jim&gt; How does this locale stuff really work?
+
+    &gt;&gt; Really work?  Really badly, at least for Japanese.  That's
+    &gt;&gt; required by JIS standard I believe.
+
+I should also add that the locale APIs are completely unsuited for use
+in multilingual applications, especially if threaded.  Anything plus
+English is usually more or less OK because ASCII is a subset of
+everything (so you can hope that the other locale won't mess up
+English processing too much), but other combinations make things hairy.
+
+    Jim&gt; I wondered if (had hoped?) the Japanese kernel uses
+    Jim&gt; internally some standard encoding for filenames, etc., and
+    Jim&gt; that there would be some document/spec describing how it is
+    Jim&gt; (to be) implemented.
+
+Japanese is standards-darake.  Unfortunately, except for Unicode,
+which is politically incorrect (and as yet only sparsely implemented),
+all of them have serious problems from the point of view of either the
+kernel or some parts of the user community.  So the effect is that
+there is no standard.  To be fair, it's hardly better outside of Japan
+in terms of _internationalization_ standards, but Japan is the only
+country where there is not a single de facto standard.
+
+"Japanese kernel"?  Aaargh.
+
+&lt;RANT&gt;
+There should be no such thing as a Japanese Linux kernel.  Such
+abominations (unfortunately) do in fact exist, but in the immortal
+phrasing of xemacs/src/lisp.h,
+
+/* Close your eyes now lest you vomit or spontaneously combust ... */
+
+I will say no more about such things; Tipper Gore would molest me for
+arresting children.
+&lt;/RANT&gt;
+
+The point is that kernels should only worry about shuffling very
+abstract things like byte streams and some simple very well-defined
+things like IP packets and filesystem inodes around (and microkernel
+advocates would say even IP packets and inodes belong in userland).
+Everything else should be accomplished outside of the kernel, in user
+processes (including some very privileged processes like `init').  If
+you maintain such a clean interface, the kernel will not be language-
+dependent at all (except for the unavoidable need to have static error 
+messages, and even there it might be possible to do something for all
+but the most primitive kernel functions---Heaven help log processing
+software, though ;-).
+
+I suppose you are aware that, despite (allegedly) using Unicode
+internally, the only Microsoft-provided solution to using Chinese and
+Japanese on the same box is dual-booting?  I'm pretty sure that one of 
+the main obstacles is the fact that FAT filesystems (including VFAT)
+use Shift-JIS and Big-5 encodings for Japanese and Taiwanese Chinese
+respectively.  File name parsers have to be rather tricky as these are 
+state-dependent encodings.  And neither one is compatible with
+ISO-2022 mechanisms for shifting encodings (more state-dependence, and 
+thus inappropriate anyway).
+
+Embedding that kind of trickiness in the kernel is just not
+acceptable, even for localized use.  Note that you can't be sure that
+application programs will pass in acceptable file names; your kernel
+needs to be able to handle putative file names that contain
+non-characters!  (It's an error, of course, but you need to make sure
+that you can handle errors like that.  So much easier if _all_ input
+strings have interpretations as legal filenames, and you can just
+return "no match".)  Not to mention that multilingual people (I'm not
+one, I'm just a groupie, but there are several on this list) would
+find a Japanization solution that rules out Chinese unacceptable.
+
+So the bottom line is that the kernel _can't_ be responsible for
+conversions.  The fact that there are no standards suggests that this
+is hard to automate.  And "since using Microsoft products means never
+having to say you're sorry" you can't depend on standards being
+followed anyway; Outlook Express, for one, regularly lies about the
+character set being used.  (Pine does, too, for that matter, but it
+doesn't pretend to be well-internationalized.)
+
+In fact, in turns out that it's pretty much every application for
+itself, since different applications specify various restrictions.
+Mail standards prohibit non-ASCII bytes in headers and deprecate them
+in message bodies, but 7-bit encodings are inappropriate for file
+systems precisely because they are too easy to confuse with ASCII.
+The right way to go is with a universal encoding; for the US and
+Europe that means ISO-8859-1, and you don't hear too many complaints
+about internationalization there since the majority of computer users
+worldwide still need only ISO-8859-1 to encode everything.  Even for
+non-US users, a switch to UTF-8 for file system and network use could
+be fairly transparent (how many users use binary editors on their
+directory nodes or read their mail by attaching `less' as a listener
+on port 25?)  So it seems pretty clear that Unicode is the way to go.
+
+The big problem is that all of the helper conversion programs,
+editors, etc are not yet Unicode-aware.  And unlike ISO-8859-1 where
+UTF-8 collates the same way for the Basic Latin subset as ISO-8859-1
+does, Unicode is effectively random compared to any of the Oriental
+sets.  This will play hell with localized grep, awk, perl, and so on.
+Big effort involved.  And some people don't like the idea in principle.
+
+So Unicode is out.  Shift-JIS is out.  Plain JIS is out, since the
+meaning is ambiguous (is bigendian 0x2331 the two characters "#1" or
+is it the single character "１"?)  What's left?
+
+You _can_ Japanize your system by using EUC-JP everywhere.  This is
+what commercial Unices do, and what Japanese free *nix distributions
+do.  EUC is file system safe for the same reason that UTF-8 is (all
+bytes in the range 0x00-0x7F are interpreted as single ASCII
+characters, and never as components of a multibyte character).  But
+this has a big problem with three aspects: it's a Japanization, not an
+internationalization or multilingualization.
+
+The first aspect is purely aesthetic.  I think Japanization is
+inelegant and parochial.
+
+The second may or may not be important depending on your application:
+you will need to hack around the Japanization to extend your
+application to other locales.  For example, if you are storing data
+per person in subdirectories with their name, and somebody named
+"Christian Nyb,Ax" shows up, you won't get their name right, since it
+will show up as (broken) Japanese on rereading.  So you'll have to
+test and filter out non-Japanese 8-bit character sets in that
+application.  Bletch.  (That's not going to be easy, either, since
+there is no way to distinguish between a well-formed string in EUC-JP
+and one in ISO-8859-any, without using the semantic content.  There
+are ISO-8859 strings which are ill-formed for EUC-JP, though, and
+again you're going to have to worry about what your application is
+going to do with that.  Linux file systems will be OK, but application
+level mechanisms can bomb.  This can't happen with Unicode; you'll
+just get "no match".)
+
+Finally, if your product is going to be internationalized, Japanizing
+it is probably a permanent commitment to maintaining a rather
+different Japanese version, because the Japanese locales are all
+currently broken in glibc (well, they were as of May), and glibc is
+not coming along very quickly with respect to multibyte characters.
+Ulrich Drepper, who maintains glibc, blames that on programmers who
+submit unusable patches for the wctombs library functions.  Uli is
+evidently capable of being a jerk, but he is the maintainer.  So
+unless the people working on libwctombs come around to his point of
+view, there isn't going to be a standard API to deal with both Asian
+languages and European ones for a while.
+
+And still you must deal with non-EUC stuff from outside of Known
+Space.  For starters, mail and news messages will usually be in
+ISO-2022-JP, but unless you have no Windows-using correspondents you
+will surely receive some Shift-JIS messages.  You'll probably get a
+few in EUC, too, which may break your mail software.  Not to mention
+all the Godawful web pages generated with MS Weird etc.  And watch out
+for filenames in Shift-JIS or whatever in mail attachments, say.
+
+"The only standard around here is that we have no standards."
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Technical Meeting: August 14 (Sat), 13:00  place: Temple Univ.
+*** Special guest: Marc Christensen (Salt Lake Linux Users Group)
+Next Nomikai: September 20 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00019" HREF="msg00019.html">tlug: Re: What decides Japanese file name encoding?</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Blackson &lt;blackson@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00020.html">tlug: Re: What is UDF?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00022.html">tlug: export DISPLAY / existing nonexisting files</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00019.html">tlug: Re: What decides Japanese file name encoding?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00020.html">tlug: Re: What is UDF?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00021"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00021"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

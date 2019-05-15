@@ -1,0 +1,206 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: [tlug] MySQL and utf8 Japanese characters. Again. -->
+<!--X-From-R13: Rnir [ U <znegvaNnhgbgryvp.pbz> -->
+<!--X-Date: Fri, 28 Apr 2006 15:53:03 +0900 -->
+<!--X-Message-Id: 4451BB05.6070609@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00520.html">Date Prev</a>][<a href="msg00522.html">Date Next</a>][<a href="msg00510.html">Thread Prev</a>][<a href="msg00523.html">Thread Next</a>][<a href="maillist.html#00521">Date Index</a>][<a href="threads.html#00521">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] MySQL and utf8 Japanese characters. Again.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 28 Apr 2006 15:49:41 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:martin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20MySQL%20and%20utf8%20Japanese%20characters.%20Again.">martin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] MySQL and utf8 Japanese characters. Again.</strong></li>
+<li>User-agent: Mail/News 1.5 (X11/20060309)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+TLUG,
+
+Old problems are new again. Yay!
+
+</pre><tt>Some might recall that I had some trouble getting Japanese contained 
+</tt><tt>within my MySQL database to display correctly in my home environment:
+</tt><pre style="margin: 0em;">
+<a  rel="nofollow" href="http://www.tlug.jp/ML/0602/msg00259.html">http://www.tlug.jp/ML/0602/msg00259.html</a>
+
+</pre><tt>To summarize, I have a database on a server that contains English and 
+</tt><tt>Japanese text. I have tried to ensure at every turn that all text 
+</tt><tt>encoding is in utf8.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>On the web hosting server where the live site resides, everything is 
+</tt><tt>working fine.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>But on my testing environment at home, the Japanese text displays as 
+</tt><tt>question marks.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Japanese text that is written directly into the PHP/HTML displays 
+</tt><tt>correctly. Only Japanese text retrieved from the database displays 
+</tt><tt>incorrectly.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>All the Japanese text was initially entered on the hosting server. To 
+</tt><tt>get the database duplicated onto my testing environment, I exported the 
+</tt><tt>database, and then imported it again. I also checked the .sql file that 
+</tt><tt>was generated to ensure that the utf8 encoded Japanese was still 
+</tt><tt>readable as Japanese before importing it.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Further, when I look at the database in phpMyAdmin, it displays the 
+</tt><tt>Japanese correctly, thus indicating that it is possible to see the text 
+</tt><tt>from within a PHP/HTML page.
+</tt><pre style="margin: 0em;">
+
+The solution, last time, was to add the following lines to /etc/mysql/my.cnf
+init-connect='SET NAMES utf8'
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+I've done this, and so these are my collation variables:
+
+Variable   Session value   Global value
+character set client        utf8       utf8
+character set connection     utf8     utf8
+character set database     utf8     utf8
+character set results     utf8     utf8
+character set server     utf8     utf8
+character set system     utf8     utf8
+</pre><tt>character sets dir     /usr/share/mysql/charsets/    
+</tt><tt>/usr/share/mysql/charsets/
+</tt><pre style="margin: 0em;">
+collation connection     utf8_general_ci     utf8_general_ci
+collation database     utf8_general_ci     utf8_general_ci
+collation server     utf8_general_ci     utf8_general_ci
+
+But this time the same solution does not seem to be working now.
+
+</pre><tt>I've posted on the MySQL mailing list, but people the question doesn't 
+</tt><tt>seem to be attracting any interest. So here I am again:
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Is there any other character set related setting that I may need to do 
+</tt><tt>on my local MySQL server to correctly display Japanese?
+</tt><pre style="margin: 0em;">
+
+My home set up:
+Ubuntu Dapper Drake 6.06
+MySQL MySQL 4.1.15
+phpMyAdmin 2.7
+PHP 4.4.2
+
+Any help would be much appreciated.
+
+Thank you.
+
+--
+Dave M G
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00523" href="msg00523.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00525" href="msg00525.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+<ul><li><em>From:</em> David E</li></ul></li>
+<li><strong><a name="00529" href="msg00529.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00520.html">Re: [tlug] Linux Filesystems Comparison Article</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00522.html">Re: [tlug] 2.6 Kernel vs 2.4 Kernel: &quot;internal s/w&quot;</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00510.html">Re: [tlug] 2.6 Kernel vs 2.4 Kernel</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00523.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00521"><strong>Date</strong></a></li>
+<li><a href="threads.html#00521"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: scsi drives no longer detected -->
+<!--X-From: schweiz@example.com (Jim Schweizer) -->
+<!--X-Date:  Sun, 29 Sep 1996 14:43:21 GMT -->
+<!--X-Message-Id: 199609291440.XAA22132@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00087.html">Date Prev</A>][<A HREF="msg00089.html">Date Next</A>][<A HREF="msg00086.html">Thread Prev</A>][<A HREF="msg00089.html">Thread Next</A>][<A HREF="maillist.html#00088">Date Index</A>][<A HREF="threads.html#00088">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>scsi drives no longer detected</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>scsi drives no longer detected</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:schweiz@example.com">schweiz@example.com</A> (Jim Schweizer)</strong></LI>
+<LI>Date: Sun, 29 Sep 1996 23:40:00 +0900</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi all,
+
+Wish I could have gone to the last meeting. One of these days....
+
+After having a great weekend I decided to get back to Linux and the web
+server problems. I re-read the hoohoo docs about NCSA httpd and in
+particular the FAQ which says that their httpd may not work with some Linux
+kernels. They said that httpd was patched for kernel 1.2.13 so as a test I
+tried to compile it but I can't seem to get the new kernel to recognize my
+scsi drives. 
+
+Right now I'm using kernel 1.3.20 as I haven't upgraded all the files the
+victims page says you need for 2.0. This is the part of the messages log
+that shows what 'works':
+
+-------------------------------------------------------------------
+-snip-
+Sep 29 23:06:51 wormhole kernel: FDC 0 is a post-1991 82077
+Sep 29 23:06:51 wormhole kernel: aha152x: porttest: ok, auto configuration:
+ok, detection complete
+Sep 29 23:06:51 wormhole kernel: aha152x: vital data: PORTBASE=0x340,
+IRQ=11, SCSI ID=7, reconnect=enabled, parity=disabled
+Sep 29 23:06:51 wormhole kernel: scsi0 : Adaptec 152x SCSI driver;
+$Revision: 1.9 $
+Sep 29 23:06:51 wormhole kernel: scsi : 1 host.
+Sep 29 23:06:51 wormhole kernel:   Vendor: QUANTUM   Model: FIREBALL1080S
+Rev: 1Q09
+Sep 29 23:06:51 wormhole kernel:   Type:   Direct-Access
+ANSI SCSI revision: 02
+Sep 29 23:06:51 wormhole kernel: Detected scsi disk sda at scsi0, channel 0,
+id 0, lun 0
+Sep 29 23:06:51 wormhole kernel:   Vendor: COMPAQ    Model: CD-ROM CR-503BCQ
+Rev: 1.1c
+Sep 29 23:06:51 wormhole kernel:   Type:   CD-ROM
+ANSI SCSI revision: 02
+Sep 29 23:06:51 wormhole kernel: Detected scsi CD-ROM sr0 at scsi0, channel
+0, id 5, lun 0
+Sep 29 23:06:51 wormhole kernel: scsi : detected 1 SCSI cdrom 1 SCSI disk total.
+Sep 29 23:06:51 wormhole kernel: SCSI Hardware sector size is 512 bytes on
+device sda
+-snip-
+------------------------------------------------------------
+
+When I try booting the new 1.2.13 (and yes I've recompiled several times
+trying different Adaptec drivers, and read the README, and removed the old
+include links and relinked, done the rdev /dev/fd0 /dev/sda1 since I'm
+trying to get it to boot off a floppy, in the Makefile tried ROOT_DEV =
+CURRENT to /dev/sda1 - I even tried building a kernel with EVERY scsi
+driver) it always gets to:
+
+FDC 0 is a post-1991 82077
+scsi : 0 hosts
+scsi : detected total.
+
+goes on to load PPP, SLIP etc and, of course, panics when it can't find the
+CD drive or sda1. As a reminder, this is my peanut brittle SCSI drive
+chained to the SB 16 card.
+
+I successfully compiled the 1.3.20 kernel so I know this can be done given
+my current setup. (The problem is I drank so much beer after the 'success' I
+forgot to write down how I did it - all you lurking newbies [yes, I know
+you're there:-)] take notes!)
+
+A question for you hardware jockies: can I detach the original IDE 200MB
+drive (which now only has a backup Linux filesystem) and connect the scsi
+drive directly to the motherboard? I'm way out of my depth here.
+
+Ever deeper in your debt....
+
+Jim S.
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: scsi drives no longer detected</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+<LI><STRONG><A NAME="00091" HREF="msg00091.html">Re: scsi drives no longer detected</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+<LI><STRONG><A NAME="00092" HREF="msg00092.html">Re: the importance of keeping notes</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00087.html">Re: (fwd) Toshiba Announces DVD Video And ROM Players 09/27/96</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00089.html">Re: scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00086.html">Linux JDK 1.0.2-pl1 released (fwd)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00089.html">Re: scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00088"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00088"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

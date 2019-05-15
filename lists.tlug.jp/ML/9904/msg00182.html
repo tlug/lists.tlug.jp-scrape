@@ -1,0 +1,163 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: IP "refresh" (cable modem/router) -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Fri, 23 Apr 1999 06:47:34 +0900 -->
+<!--X-Message-Id: 19990422182313K.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 49256759.0004E93D.00@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00181.html">Date Prev</A>][<A HREF="msg00183.html">Date Next</A>][<A HREF="msg00158.html">Thread Prev</A>][<A HREF="msg00159.html">Thread Next</A>][<A HREF="maillist.html#00182">Date Index</A>][<A HREF="threads.html#00182">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: IP "refresh" (cable modem/router)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:gray_s@example.com">gray_s@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: IP "refresh" (cable modem/router)</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 22 Apr 1999 18:23:13 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Tue, 20 Apr 1999 09:57:57 +0900"&lt;<A HREF="msg00157.html">49256759.0004E93D.00@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00157.html">49256759.0004E93D.00@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Shawn" == Atlas21 Shawn &lt;gray_s@example.com&gt; writes:
+
+    Shawn&gt; I was wondering about how linux goes about
+    Shawn&gt; renewing/refreshing (my japanese win95 says "henshin") the
+    Shawn&gt; IP.
+
+    Shawn&gt; What should I do with Linux to get the same results? What
+    Shawn&gt; is the linux equivalent of winipcfg?
+
+Shawn,
+
+	Not sure if you got your answer to this or not. This is done
+using dhcp protocol. The daemon dhcpcd makes a request to the cable
+modem. It gets back a IP, along with a lease saying how long it is
+good for. If you look in /var/log/messages, you should see something
+like:
+
+pr 22 17:53:50 localhost dhcpcd[12510]: msg from the DHCP server: NAK: Address does not belong to requesting client 
+Apr 22 17:53:50 localhost dhcpcd[12510]: REBOOTING: got DHCPNAK. Fall back to INIT 
+Apr 22 17:54:06 localhost dhcpcd[12510]: assigned IP address:        172.16.50.66 
+Apr 22 17:54:06 localhost dhcpcd[12510]: assigned subnetmask:        255.255.248.0 
+Apr 22 17:54:06 localhost dhcpcd[12510]: got in BOUND state 
+
+&gt;From dchpcd's man page:       
+
+	dhcpcd is an implementation of the DHCP client specified in
+RFC2131 (when -r option is not specified) and RFC1541 (when -r option
+is specified).
+
+It gets the host information (IP address, netmask, broadcast address,
+etc.) from a DHCP server and configures the network interface of the
+machine on which it is running. It also tries to renew the lease time
+according to RFC2131 or RFC1541 (obsolete). 
+
+The cable modem will specify how long to lease is good for, and how
+often it should be renewed. dchpcd will keep trying to renew to lease, 
+which the cable modem will normal grant. With my provider, it there is 
+no traffic for 12-18 hours, then it denies the lease.
+
+So, depending on your provider, you may be able to keep the lease
+indefinitely.
+
+Regards,
+
+	Andy
+-------------------------------------------------------------------
+Next Nomikai: TBD                    Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00157" HREF="msg00157.html">tlug: IP "refresh" (cable modem/router)</A></STRONG>
+<UL><LI><EM>From:</EM> "Atlas21 Shawn" &lt;gray_s@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00181.html">Re: tlug: RC5-64 Contest</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00183.html">tlug: Linux Japanese Frontends</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00158.html">Re: tlug: IP "refresh" (cable modem/router)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00159.html">Re: tlug: IP "refresh" (cable modem/router)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00182"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00182"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

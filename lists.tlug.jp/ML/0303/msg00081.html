@@ -1,0 +1,196 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] MountingFAT32Partition -->
+<!--X-From-R13: Quneyrf [hyyre <npzhyyreNtby.pbz> -->
+<!--X-Date: Sun, 16 Mar 2003 22:20:58 +0900 (JST) -->
+<!--X-Message-Id: 20030316.222058.74757325.acmuller@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030308030204.GA22380@example.com -->
+<!--X-Reference: 20030308093924.759aea28.gstewart@example.com -->
+<!--X-Reference: 3E74239E.511FB060@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00080.html">Date Prev</a>][<a href="msg00082.html">Date Next</a>][<a href="msg00079.html">Thread Prev</a>][<a href="msg00057.html">Thread Next</a>][<a href="maillist.html#00081">Date Index</a>][<a href="threads.html#00081">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] MountingFAT32Partition</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 16 Mar 2003 22:20:58 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Charles Muller &lt;<A HREF="mailto:acmuller@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20MountingFAT32Partition">acmuller@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] MountingFAT32Partition</strong></li>
+<li>References: &lt;<a href="msg00028.html">20030308030204.GA22380@example.com</a>&gt;&lt;<a href="msg00029.html">20030308093924.759aea28.gstewart@example.com</a>&gt;&lt;<a href="msg00078.html">3E74239E.511FB060@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Lyle (Hiroshi) Saxon wrote:
+
+&gt; How do I mount the partition that is sleeping
+&gt; with the FAT 32 data still sitting on it with RedHat?
+
+First, you have to have directories through which to access the FAT 32 area,
+so you should go to your /mnt directory and make subdirectories such as
+win_c, win_d, etc., depending on how many Windows partitions to which you
+need access.
+
+You should think about whether you want to create these new directories as
+root user or as regular user. I created them as regular user so that I have
+access to these partitions without having to become su.
+
+Then, to find out how Red Hat assigned the mount points to your FAT 32
+directories, go to a shell prompt and become su.
+
+Then do
+
+hwbrowser
+
+and check the hard drives to see how Linux named the appropriate drives.
+
+[It has been the case on my RH8 system, and on others that I have seen, that
+hwbrowser crashes immediately. I have written to RHN (which I am paying
+for) more than five times about this, and they never answer me. As an
+alternative, I have been finding out the mounting information by putting in the
+first RH CD and starting an install. When you get to the partitioning stage,
+you can see the names of the mount points and write them down.]
+
+Having this information, you can now edit your /etc/fstab file to include
+the appropriate information. Mine looks like this:
+
+-----------------------------------------------------------
+LABEL=/                 /                       ext3    defaults        1 1
+LABEL=/boot             /boot                   ext3    defaults        1 2
+none                    /dev/pts                devpts  gid=5,mode=620  0 0
+none                    /proc                   proc    defaults        0 0
+none                    /dev/shm                tmpfs   defaults        0 0
+/dev/hda7               swap                    swap    defaults        0 0
+/dev/fd0                /mnt/floppy             auto    noauto,owner,kudzu 0 0
+/dev/hda1		/mnt/win_c		vfat	noauto,owner,users 0 0
+/dev/hda2		/mnt/win_d		vfat	auto,users,uid=chuck,gid=chuck 0 0
+/dev/hda3		/mnt/win_f		vfat	auto,users,uid=chuck,gid=chuck 0 0
+/dev/sda1		/mnt/win_g		vfat	noauto,user 0 0
+/dev/sdb1		/mnt/win_h		vfat	noauto,user 0 0
+/dev/cdrom              /mnt/cdrom              iso9660 noauto,owner,kudzu,ro 0 0
+
+-----------------------------------------------------------
+
+You can see that I have my win_d and win_f drives mounted automatically when
+I start Linux. I can mount win_c and win_g, etc, but doing 
+
+su
+
+mount /mnt/win_c
+
+Most likely, the more advanced users on the list can give you more accurate
+advice than this.
+
+Chuck
+
+---------------------------
+Charles Muller  &lt;acmuller@example.com&gt;
+Faculty of Humanities,  Toyo Gakuen University
+Digital Dictionary of Buddhism and CJKV-English Dictionary [<A  HREF="http://www.acmuller.net">http://www.acmuller.net</A>]
+H-Buddhism List Editor [<A  HREF="http://www2.h-net.msu.edu/~buddhism/">http://www2.h-net.msu.edu/~buddhism/</A>]
+Mobile Phone: 090-9310-1787
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] MTA question...</a></strong>
+<ul><li><em>From:</em> Matt Doughty</li></ul></li>
+<li><strong><a name="00029" href="msg00029.html">Re: [tlug] MTA question...</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00078" href="msg00078.html">[tlug] MountingFAT32Partition</a></strong>
+<ul><li><em>From:</em> Lyle (Hiroshi) Saxon</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00080.html">Re: [tlug] Server Racks</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00082.html">RE: [tlug] VPN appliance and network connection suggestions?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00079.html">Re: [tlug] MountingFAT32Partition</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00057.html">Re: [tlug] MTA question...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00081"><strong>Date</strong></a></li>
+<li><a href="threads.html#00081"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

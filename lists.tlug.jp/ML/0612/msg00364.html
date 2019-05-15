@@ -1,0 +1,285 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] rsync / ssh error after Debian reinstall -->
+<!--X-From-R13: Quneyrf [hyyre <npzhyyreNcnve.pbz> -->
+<!--X-Date: Thu, 21 Dec 2006 13:15:06 +0900 -->
+<!--X-Message-Id: 20061221.131455.59472041.acmuller@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00363.html">Date Prev</a>][<a href="msg00365.html">Date Next</a>][<a href="msg00362.html">Thread Prev</a>][<a href="msg00367.html">Thread Next</a>][<a href="maillist.html#00364">Date Index</a>][<a href="threads.html#00364">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] rsync / ssh error after Debian reinstall</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 21 Dec 2006 13:14:55 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Charles Muller &lt;<a href="mailto:acmuller@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20rsync%20%2F%20ssh%20error%20after%20Debian%20reinstall">acmuller@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] rsync / ssh error after Debian reinstall</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I've just reinstalled Debian Etch, using Gnome for the first time after
+a few years of KDE. I was able to get just about everything running as
+it was right, but when I tried to rsync up to my web server, as follows:
+
+chuck@example.com:~$ rsync -uvptl -e ssh /mnt/win_d/docs/www.acmuller.net/public_html/ddb/*.xml acmuller@example.com:public_html/ddb/
+
+I received the below error:
+
+    rsync: Failed to exec ssh: No such file or directory (2)
+    rsync error: error in IPC code (code 14) at pipe.c(86) [sender=2.6.9]
+    rsync: writefd_unbuffered failed to write 4 bytes [sender]: Broken pipe (32)
+    rsync error: error in IPC code (code 14) at io.c(1122) [sender=2.6.9]
+
+I haven't changed anything in the .ssh files in my $HOME directory, but I
+reset the permissions just in case, 
+
+     chmod 711 $HOME/
+     chmod 700 $HOME/.ssh/
+     chmod 644 $HOME/.ssh/*
+     chmod 600 $HOME/.ssh/id_dsa
+
+and this had no effect. This rsync script does run on another machine
+that has the same ssh key setup, so there is no problem on the web host
+setup.
+
+I then tried copying the .ssh folder in dsa keys from that other machine
+to this one, and that didn't solve it either. The first local directory
+in the rsync command is definitely there and accessible, as per:
+
+    chuck@example.com:~$ cd  /mnt/win_d/docs/www.acmuller.net/public_html/ddb/
+    chuck@example.com:/mnt/win_d/docs/www.acmuller.net/public_html/ddb$ 
+
+I run strace (as I found instructed by googling), but the results are
+not something that I can decipher:
+
+
+dim5150:/home/chuck# strace rsync -uvptl -e ssh /mnt/win_d/docs/www.acmuller.net/public_html/ddb/*.xml acmuller@example.com:public_html/ddb/
+execve(&quot;/usr/bin/rsync&quot;, [&quot;rsync&quot;, &quot;-uvptl&quot;, &quot;-e&quot;, &quot;ssh&quot;, &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., &quot;/mnt/win_d/docs/www.acmuller.net&quot;..., ...], [/* 30 vars */]) = 0
+uname({sys=&quot;Linux&quot;, node=&quot;dim5150&quot;, ...}) = 0
+brk(0)                                  = 0x809f000
+access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7eea000
+access(&quot;/etc/ld.so.preload&quot;, R_OK)      = -1 ENOENT (No such file or directory)
+open(&quot;/etc/ld.so.cache&quot;, O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=49485, ...}) = 0
+mmap2(NULL, 49485, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7edd000
+close(3)                                = 0
+access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)
+open(&quot;/lib/libacl.so.1&quot;, O_RDONLY)      = 3
+read(3, &quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\320\23&quot;..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=22156, ...}) = 0
+mmap2(NULL, 20980, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7ed7000
+mmap2(0xb7edc000, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x5) = 0xb7edc000
+close(3)                                = 0
+access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)
+open(&quot;/lib/libpopt.so.0&quot;, O_RDONLY)     = 3
+read(3, &quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\0\22\0&quot;..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=26444, ...}) = 0
+mmap2(NULL, 29484, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7ecf000
+mmap2(0xb7ed6000, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x6) = 0xb7ed6000
+close(3)                                = 0
+access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)
+open(&quot;/lib/tls/i686/cmov/libc.so.6&quot;, O_RDONLY) = 3
+read(3, &quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\240O\1&quot;..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=1241580, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7ece000
+mmap2(NULL, 1247388, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7d9d000
+mmap2(0xb7ec4000, 28672, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x127) = 0xb7ec4000
+mmap2(0xb7ecb000, 10396, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7ecb000
+close(3)                                = 0
+access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)
+open(&quot;/lib/libattr.so.1&quot;, O_RDONLY)     = 3
+read(3, &quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0`\f\0\000&quot;..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=12840, ...}) = 0
+mmap2(NULL, 15796, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7d99000
+mmap2(0xb7d9c000, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2) = 0xb7d9c000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7d98000
+mprotect(0xb7ec4000, 20480, PROT_READ)  = 0
+set_thread_area({entry_number:-1 -&gt; 6, base_addr:0xb7d986c0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+munmap(0xb7edd000, 49485)               = 0
+rt_sigaction(SIGUSR1, {0x8057660, [], SA_NOCLDSTOP}, NULL, 8) = 0
+rt_sigaction(SIGUSR2, {0x8057a00, [], SA_NOCLDSTOP}, NULL, 8) = 0
+rt_sigaction(SIGCHLD, {0x8057a50, [], SA_NOCLDSTOP}, NULL, 8) = 0
+time(NULL)                              = 1166674192
+geteuid32()                             = 0
+umask(0)                                = 022
+brk(0)                                  = 0x809f000
+brk(0x80c0000)                          = 0x80c0000
+open(&quot;/usr/lib/locale/locale-archive&quot;, O_RDONLY|O_LARGEFILE) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=1209120, ...}) = 0
+mmap2(NULL, 1209120, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7c70000
+close(3)                                = 0
+open(&quot;/etc/popt&quot;, O_RDONLY|O_LARGEFILE) = -1 ENOENT (No such file or directory)
+open(&quot;/root/.popt&quot;, O_RDONLY|O_LARGEFILE) = -1 ENOENT (No such file or directory)
+rt_sigaction(SIGINT, {0x804ab80, [], SA_NOCLDSTOP}, NULL, 8) = 0
+rt_sigaction(SIGHUP, {0x804ab80, [], SA_NOCLDSTOP}, NULL, 8) = 0
+rt_sigaction(SIGTERM, {0x804ab80, [], SA_NOCLDSTOP}, NULL, 8) = 0
+rt_sigprocmask(SIG_UNBLOCK, [HUP INT USR1 USR2 TERM CHLD], NULL, 8) = 0
+rt_sigaction(SIGPIPE, {SIG_IGN}, NULL, 8) = 0
+rt_sigaction(SIGXFSZ, {SIG_IGN}, NULL, 8) = 0
+getcwd(&quot;/home/chuck&quot;, 4095)             = 12
+socketpair(PF_FILE, SOCK_STREAM, 0, [3, 4]) = 0
+fcntl64(3, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(3, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+fcntl64(4, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(4, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+socketpair(PF_FILE, SOCK_STREAM, 0, [5, 6]) = 0
+fcntl64(5, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(5, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+fcntl64(6, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(6, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xb7d98708) = 10900
+rsync: Failed to exec ssh: No such file or directory (2)
+rsync error: error in IPC code (code 14) at pipe.c(86) [sender=2.6.9]
+--- SIGCHLD (Child exited) @ 0 (0) ---
+waitpid(-1, [{WIFEXITED(s) &amp;&amp; WEXITSTATUS(s) == 14}], WNOHANG) = 10900
+waitpid(-1, 0xbfb2e540, WNOHANG)        = -1 ECHILD (No child processes)
+sigreturn()                             = ? (mask now [])
+close(6)                                = 0
+close(3)                                = 0
+fcntl64(5, F_GETFL)                     = 0x802 (flags O_RDWR|O_NONBLOCK)
+fcntl64(4, F_GETFL)                     = 0x802 (flags O_RDWR|O_NONBLOCK)
+select(5, NULL, [4], [4], {60, 0})      = 1 (out [4], left {60, 0})
+write(4, &quot;\35\0\0\0&quot;, 4)                = -1 EPIPE (Broken pipe)
+--- SIGPIPE (Broken pipe) @ 0 (0) ---
+write(2, &quot;rsync: writefd_unbuffered failed&quot;..., 76rsync: writefd_unbuffered failed to write 4 bytes [sender]: Broken pipe (32)) = 76
+write(2, &quot;\n&quot;, 1
+)                       = 1
+rt_sigaction(SIGUSR1, {SIG_IGN}, NULL, 8) = 0
+rt_sigaction(SIGUSR2, {SIG_IGN}, NULL, 8) = 0
+waitpid(10900, 0xbfb2e668, WNOHANG)     = -1 ECHILD (No child processes)
+getpid()                                = 10899
+kill(10900, SIGUSR1)                    = -1 ESRCH (No such process)
+write(2, &quot;rsync error: error in IPC code (&quot;..., 69rsync error: error in IPC code (code 14) at io.c(1122) [sender=2.6.9]) = 69
+write(2, &quot;\n&quot;, 1
+)                       = 1
+exit_group(14)                          = ?
+Process 10899 detached
+
+
+Does anyone have an idea as to what might be the problem?
+
+Thanks,
+
+Chuck
+
+
+
+-------------------
+
+Charles Muller  
+
+Toyo Gakuen University
+Faculty of Humanities  
+1660 Hiregasaki, Nagareyama-shi
+Chiba 270-0161 JAPAN
+Mobile Phone: 090-9310-1787
+
+Web Site: Resources for East Asian Language and Thought
+<a  href="http://www.acmuller.net">http://www.acmuller.net</a>
+
+&lt;acmuller[at]jj.em-net.ne.jp&gt;   
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00367" href="msg00367.html">Re: [tlug] rsync / ssh error after Debian reinstall</a></strong>
+<ul><li><em>From:</em> Al Hoang</li></ul></li>
+<li><strong><a name="00368" href="msg00368.html">Re: [tlug] rsync / ssh error after Debian reinstall</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00370" href="msg00370.html">[tlug] rsync / ssh error after Debian reinstall</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00363.html">Re: [tlug] Switch the VT?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00365.html">[tlug] backing up zaurus filesystem architecture? (warning,	lots of data)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00362.html">[tlug] simple answer to my many recent problems</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00367.html">Re: [tlug] rsync / ssh error after Debian reinstall</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00364"><strong>Date</strong></a></li>
+<li><a href="threads.html#00364"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

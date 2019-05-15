@@ -1,0 +1,174 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] solaris 10 ZFS and Japanese -->
+<!--X-From-R13: "X. Rnivq Prhgry" <wqoNtrgfh.pbz> -->
+<!--X-Date: Mon, 28 Mar 2005 14:51:27 &#45;1000 -->
+<!--X-Message-Id: 4248A68F.808@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 423F73BC.4080409@example.com -->
+<!--X-Reference: d8fcc08005032119273db372d3@example.com -->
+<!--X-Reference: 423F99BA.4080609@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00365.html">Date Prev</a>][<a href="msg00367.html">Date Next</a>][<a href="msg00290.html">Thread Prev</a>][<a href="msg00284.html">Thread Next</a>][<a href="maillist.html#00366">Date Index</a>][<a href="threads.html#00366">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] solaris 10 ZFS and Japanese</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 28 Mar 2005 14:51:27 -1000</li>
+<li><strong>From</strong>: <strong>&quot;J. David Beutel&quot; &lt;<A HREF="mailto:jdb@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20solaris%2010%20ZFS%20and%20Japanese">jdb@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] solaris 10 ZFS and Japanese</strong></li>
+<li>References: &lt;<a href="msg00283.html">423F73BC.4080409@example.com</a>&gt; &lt;<a href="msg00287.html">d8fcc08005032119273db372d3@example.com</a>&gt; &lt;<a href="msg00290.html">423F99BA.4080609@example.com</a>&gt;</li>
+<li>User-agent: Mozilla Thunderbird 1.0.2 (Windows/20050317)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Rabbs helped me find some unofficial answers to my questions (below)!  
+(Thanks!)  There's no official ZFS release schedule yet, but I think 
+I'll wait for it a while.
+
+Cheers,
+11011011
+
+&gt;1.  How easy (or possible) is it to install the root/boot filesystem on  ZFS RAID1?
+&gt;  
+&gt;
+It is part of the design, and it should be very straightforward.  Having
+said that, because the root filesystem will be affected, it's part of
+the boot re-architecture project (currently going into Project Nevada,
+the OpenSolaris builds, which is also Solaris Express).  You should be
+able to have RAID-1 like functionality very easily and simply OOB.  If
+you need to add disks (i.e. upgrade to faster/larger disks) you should
+even be able to do that without taking the OS down.  This also has
+implications on LiveUpgrade (i.e. the ability to upgrade the OS while
+it's running, then reboot to the upgrade in a service outage).
+
+
+&gt;2.  Does the mirrored self-healing data work with all IDE hardware  (i.e.,
+&gt;what does &quot;repair&quot; mean and how does it relocate unwritable disk  blocks)?
+&gt;  
+&gt;
+Yes, it works with all hardware. It's in the design of the filesystem, 
+so it doesn't matter if you're using a USB memory stick or a 2 petabyte 
+SAN. As long as it's a block device, Solaris will be able to handle it. 
+Relocating is actually nothing new-- it's a matter of recalculating the 
+missing data (i.e. 1 bit has flipped, figure out what it should be from 
+a checksum [it's in the algorithms for the checksums and calculations 
+that the real magic of ZFS's auto-healing is] and then put it somewhere 
+else. Then I assume they mark the block bad, but I don't know that for 
+certain. DOS had stuff like this back in the 80s-- it just wasn't as 
+sophisticated or on the fly. But that was also in the days of horrible 
+reliability MFM hard drives.
+
+Obviously, there are levels of self-healing to this. You can get some of 
+it with just one device, but if the entire device fails, you have a 
+problem. So, you'd need two or more devices (behind different 
+controllers, on different arrays, different switches, different power) 
+to get the ultimate reliability. I personally have seen and been 
+involved in situations where certain vendors array's firmware has 
+silently corrupted data! ZFS would make some of these errors detectable 
+at the time of the write.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00283" href="msg00283.html">[tlug] solaris 10 ZFS and Japanese</a></strong>
+<ul><li><em>From:</em> J. David Beutel</li></ul></li>
+<li><strong><a name="00287" href="msg00287.html">Re: [tlug] solaris 10 ZFS and Japanese</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00290" href="msg00290.html">Re: [tlug] solaris 10 ZFS and Japanese</a></strong>
+<ul><li><em>From:</em> J. David Beutel</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00365.html">[tlug] making a HTPC work with Japanese SkyPerfecTV tuner</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00367.html">[tlug] [tlug-digest] SuSE Pro 9.3 due in mid April</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00290.html">Re: [tlug] solaris 10 ZFS and Japanese</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00284.html">[tlug] OT: laptop in Akihabara</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00366"><strong>Date</strong></a></li>
+<li><a href="threads.html#00366"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

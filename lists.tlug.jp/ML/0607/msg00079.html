@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] compilation warnings for unsigned char -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 06 Jul 2006 13:53:29 +0900 -->
+<!--X-Message-Id: 87hd1vbagp.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200607060115.k661F4nV003268@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00078.html">Date Prev</a>][<a href="msg00080.html">Date Next</a>][<a href="msg00076.html">Thread Prev</a>][<a href="msg00080.html">Thread Next</a>][<a href="maillist.html#00079">Date Index</a>][<a href="threads.html#00079">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] compilation warnings for unsigned char</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 06 Jul 2006 13:53:26 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20compilation%20warnings%20for%20unsigned%20char">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] compilation warnings for unsigned char</strong></li>
+<li>References: &lt;<a href="mailto:200607060115.k661F4nV003268@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20compilation%20warnings%20for%20unsigned%20char">200607060115.k661F4nV003268@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b27 (linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; &quot;Jim&quot; == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+
+    Jim&gt; I hope you experts can help; I've done a lot of RTFMing but
+    Jim&gt; got nowhere.
+
+You won't find this in TFM because it's the GCC equivalent of WMD in
+Iraq.  A highly overrated threat handled by a really big mistake.  I
+believe they've hired Col. North as a coverup consultant. :-)
+
+    Jim&gt; With my latest distro (FDC4) the gcc (version 4.0.2 20051125
+    Jim&gt; (Red Hat 4.0.2-8)) spews out warnings for every strcpy,
+    Jim&gt; strcat, etc. E.g.
+
+If you have no worries about anything but char, try -Wno-conversion.
+Unfortunately, conversions of integers generally *are* dangerous, so
+you could lose bad.  I don't recommend it :-(, but you know your code
+better than I do.
+
+    Jim&gt; Now in that case, both arguments are &quot;unsigned char&quot;, so I
+    Jim&gt; assume the warning is because strcpy's prototype says it
+    Jim&gt; should be &quot;char&quot;.
+
+Right.
+
+    Jim&gt; Putting -funsigned-char as a gcc option makes no difference.
+
+Good!  The libraries you're calling were compiled with the default
+definition of char; their prototypes should not be changed.  (I wonder
+how they manage this?  I don't see anything obvious in &lt;string.h&gt;.)
+
+What might fool GCC is to change the type that you use to &quot;char&quot; and
+then use -funsigned-char.  This would of course hose anybody whose
+compiler doesn't support -funsigned-char.  You probably don't want to
+do that.
+
+    Jim&gt; Can anyone suggest a solution/workaround?
+
+The following is good because you know that these functions only test
+for equality.  It might be preferable to do this at a somewhat higher
+level, if you have some standard patterns of usage you could encapsulate.
+
+#ifdef PSYCHOPATHIC_GCC
+# ifdef I_TRUST_CPP
+
+#define strcat(head,tail) strcat ((char *) (head), (char *) (tail))
+
+# else
+
+inline unsigned char *
+gcc_in_a_straitjacket_strcat (unsigned char *head, unsigned char *tail)
+{
+  return (unsigned char *) strcat ((char *) head, (char *) tail);
+}
+
+#undef strcat
+#define strcat gcc_in_a_straitjacket_strcat
+
+# endif /* I_TRUST_CPP */
+#endif /* PSYCHOPATHIC_GCC */
+
+If there isn't an autoconf macro to test for PSYCHOPATHIC_GCC, there
+should be!  I_TRUST_CPP is a developer constant, so one arm can be
+optimized away. :-)
+
+-- 
+School of Systems and Information Engineering <a  rel="nofollow" href="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</a>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00075" href="msg00075.html">[tlug] compilation warnings for unsigned char</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00078.html">[tlug] Adding programs for Japanese support</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00080.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00076.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00080.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00079"><strong>Date</strong></a></li>
+<li><a href="threads.html#00079"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

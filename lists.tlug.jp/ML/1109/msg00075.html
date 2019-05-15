@@ -1,0 +1,166 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] firefox SSL certs -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Mon, 12 Sep 2011 12:51:17 +0900 -->
+<!--X-Message-Id: 4E6D8002.1090303@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4E6D3A61.6020409@dcook.org -->
+<!--X-Reference: 87sjo2pr6d.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Reference: 4E6D5C1C.8050904@dcook.org -->
+<!--X-Reference: CAM5TeUwMe=vVon42304Fxja8Lw6xY1AdXDnMJ+nTbogJzX0zWA@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00074.html">Date Prev</a>][<a href="msg00076.html">Date Next</a>][<a href="msg00072.html">Thread Prev</a>][<a href="msg00073.html">Thread Next</a>][<a href="maillist.html#00075">Date Index</a>][<a href="threads.html#00075">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] firefox SSL certs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 12 Sep 2011 12:44:02 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] firefox SSL certs</strong></li>
+<li>References: &lt;<a href="mailto:4E6D3A61.6020409@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">4E6D3A61.6020409@example.com</a>&gt;	&lt;<a href="mailto:87sjo2pr6d.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">87sjo2pr6d.fsf@example.com</a>&gt;	&lt;<a href="mailto:4E6D5C1C.8050904@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">4E6D5C1C.8050904@example.com</a>&gt;	&lt;<a href="mailto:CAM5TeUwMe%3DvVon42304Fxja8Lw6xY1AdXDnMJ%2BnTbogJzX0zWA@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">CAM5TeUwMe=vVon42304Fxja8Lw6xY1AdXDnMJ+nTbogJzX0zWA@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.21) Gecko/20110831 Thunderbird/3.1.13</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt; But it turns out the .0 files (that are new) are just symbolic links to
+&gt;&gt; .pem files (that are not), and the linked filename tells me as much as I
+&gt;&gt; need to know. (BTW, the deleted .o file seems to correspond with the
+&gt;&gt; deleted DigiNotar_Root_CA.pem.)
+&gt; 
+&gt; Given that DigiNotar was hacked and their certs revoked, wouldn't you
+&gt; expect changes?
+
+Nope; I'm fine with that.
+
+It is the other changes/additions that happened at the same time that
+are confusing me.
+
+After a little more googling, I think what has happened is c_rehash got
+run yesterday (presumably by the firefox package update) and therefore
+created hashes for a couple of certificates that have been added since
+whenever it was last run. (&quot;UbuntuOne-Go_Daddy&quot; is one of them, and
+dates back to 2011-04-15, so it seems c_rehash does not get run very often!)
+
+And, regarding, packet ownership, the certificates for almost all of
+them are actually kept under /usr/share/ca-certificates/ which is owned
+by the ca-certificates package. So, the &quot;problem&quot; was simply that symbol
+links are not package-owned. It'd be nice if apt-file had an option to
+follow symlinks.
+
+So, satisfied I've just checked all the changes into git. Thanks for the
+replies and education. :-)
+
+Darren
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00069" href="msg00069.html">[tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00070" href="msg00070.html">[tlug]  firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00071" href="msg00071.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00072" href="msg00072.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00074.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00076.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00072.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00073.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00075"><strong>Date</strong></a></li>
+<li><a href="threads.html#00075"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

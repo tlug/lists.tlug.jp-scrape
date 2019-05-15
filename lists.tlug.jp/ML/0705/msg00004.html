@@ -1,0 +1,185 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] installing Ubuntu on Panasonic CF&#45;R4 -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Tue, 01 May 2007 12:21:41 +0900 -->
+<!--X-Message-Id: 87lkg9gqy5.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 678C7C4D&#45;DF8D&#45;4330&#45;905A&#45;EED4D078057E@asahi&#45;net.email.ne.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00003.html">Date Prev</a>][<a href="msg00005.html">Date Next</a>][<a href="msg00003.html">Thread Prev</a>][<a href="msg00006.html">Thread Next</a>][<a href="maillist.html#00004">Date Index</a>][<a href="threads.html#00004">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] installing Ubuntu on Panasonic CF-R4</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 01 May 2007 12:31:30 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20installing%20Ubuntu%20on%20Panasonic%20CF-R4">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] installing Ubuntu on Panasonic CF-R4</strong></li>
+<li>References: &lt;<a href="msg00001.html">678C7C4D-DF8D-4330-905A-EED4D078057E@asahi-net.email.ne.jp</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Bruce writes:
+
+ &gt; *Note: I do not want to erase the XP or the recovery section (orders  
+ &gt; from no.2).
+ &gt; (It does not come with a back up CD, as recovery is installed on the  
+ &gt; hard drive)
+
+I hate to tell you this, but my experience (a couple years back, IBM
+A30p) is that the recovery &quot;disk&quot; is a second partition that can't be
+copied and moved (in my case, to a larger disk).  Nor did XP itself
+like its partition being resized, I had to reinstall from CD (XP was
+an upgrade, so I had one).  I don't see a partition that would be
+holding the recovery disk in the partition list you present.  Can you
+still access the recovery boot?
+
+ &gt; In the partition part, I choose Manual, and
+ &gt; double-click partition 2 (/dev/sda2) and change Type to ext3,
+ &gt; register it, then choose partition 2 (/dev/sda2)
+ &gt; then click the forward button to go to the next stage...
+
+ &gt; and get this error message:
+ &gt; ---------------------------------------------
+ &gt; No root file system is defined
+ &gt; Please correct this from the partitioning menu.
+ &gt; ---------------------------------------------
+ &gt; 
+ &gt; I don't see anything labeled as the partitioning menu.
+
+It's the table that you showed, which as shown lacks a root file
+system:
+
+ &gt; /dev/sda1    ntfs     /media/sda1                   40805 MB   4400 MB
+ &gt; /dev/sda2    ext3     /media/sda1      Check        15981 MB   3200 MB
+                              ^
+This is the problem ----------+  It needs to be &quot;/&quot;, aka root.  Even
+in a manual install, that should be hard coded (ie, when you change to
+a configuration that lacks a root file system, you should be prompted
+&quot;which partition should be root? or make a new partition?&quot;)
+
+ &gt; I double click on /dev/sda2 and can change the mount point (?) to
+ &gt; /, /boot, /dev/sda,  /etc....
+ &gt; but it still doesn't work.
+
+If you can change the mount point to /dev/sda (or anything under
+/dev), the installer is potentially hazardous to the health of your
+system (maybe it does the check later, but do you want to bet your
+system on it?)  Be very careful, you could easily hose your XP
+partition blundering about like this.[1]
+
+Are you sure &quot;/&quot; doesn't work?  It should look like:
+
+ &gt; /dev/sda1    ntfs     /media/sda1                   40805 MB   4400 MB
+ &gt; /dev/sda2    ext3     /                Check        15981 MB   3200 MB
+
+(except that I'm not sure what that &quot;check&quot; is about, probably a bad
+blocks check at mkfs time).  Then click on [continue] or whatever the
+button's name is.
+
+
+Footnotes: 
+[1]  Strictly speaking, there's no technical reason why you can't have
+a mount point under /dev, and with devfs or udev, /dev itself might be
+a mount point for a special file system.  But a user-friendly distro
+shouldn't allow you to even think about it at install time.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">[tlug] installing Ubuntu on Panasonic CF-R4</a></strong>
+<ul><li><em>From:</em> Bruce</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00003.html">Re: [tlug] installing Ubuntu on Panasonic CF-R4</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00005.html">Re: [tlug] Patricia Benner's &quot;From Novice to Expert: Excellence,	and Power in Clinical Nursing Practice&quot;</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00003.html">Re: [tlug] installing Ubuntu on Panasonic CF-R4</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00006.html">Re: [tlug] installing Ubuntu on Panasonic CF-R4</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00004"><strong>Date</strong></a></li>
+<li><a href="threads.html#00004"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

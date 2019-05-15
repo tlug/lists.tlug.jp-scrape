@@ -1,0 +1,208 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: sendmail question -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Thu, 15 Oct 1998 13:31:44 +0900 -->
+<!--X-Message-Id: m3btne8mw6.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981015131402.2090g&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00615.html">Date Prev</A>][<A HREF="msg00617.html">Date Next</A>][<A HREF="msg00613.html">Thread Prev</A>][<A HREF="msg00618.html">Thread Next</A>][<A HREF="maillist.html#00616">Date Index</A>][<A HREF="threads.html#00616">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: sendmail question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: sendmail question</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 15 Oct 1998 13:33:29 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: Scott Stone's message of "Thu, 15 Oct 1998 13:14:12 +0900 (JST)"</LI>
+<LI>References: &lt;<A HREF="msg00613.html">Pine.LNX.3.96LJ1.1b7.981015131402.2090g-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Scott Stone &lt;sstone@example.com&gt; writes:
+
+&gt; &gt; What is "SMART_HOST"?
+&gt; 
+&gt; I don't know, but how is this relevant to my question?
+
+Sorry, Scott; it was a Jeopardy answer.  Have a look in
+sendmail/cf/README and search for SMART.  I think this is the
+declaration that you need; it sets a host to which Sendmail will
+send any mail that it can't make out.  Better might be
+RELAY_HOST, which (if memory serves me correctly) defines a host
+for unconditional relay forwarding of all external addresses.  If
+your firewall sendmail is defined to be strict on spammers (8.9.1
+is tight by default), it will need to be be told that relaying is
+permitted for your friendly machine.  I just set this up
+yesterday for a student on a subnet spur that pokes into our
+faculty from the Economics department.  It's poorly documented,
+and it took me about 6 tries over three days to get it right.
+What you need is to set an entry like this in /etc/mail/access on
+the firewall machine:
+
+  my.royal.host		RELAY
+
+Then do something like:
+
+  makemap hash /etc/access.db &lt; /etc/access
+
+This will open the firewall sendmail to relay requests from
+my.royal.host.  The README says this about relaying outbound
+mail.  It was too dense for me, but the bottom lines should solve
+your problem:
+
+*****
+
+For example, if you are on machine mastodon.CS.Berkeley.EDU and you have
+FEATURE(stickyhost), the following combinations of settings will have the
+indicated effects:
+
+email sent to....       eric                      eric@example.com
+
+LOCAL_RELAY set to      mail.CS.Berkeley.EDU      (delivered locally)
+mail.CS.Berkeley.EDU      (no local aliasing)       (aliasing done)
+
+MAIL_HUB set to         mammoth.CS.Berkeley.EDU   mammoth.CS.Berkeley.EDU
+mammoth.CS.Berkeley.EDU   (aliasing done)           (aliasing done)
+
+Both LOCAL_RELAY and    mail.CS.Berkeley.EDU      mammoth.CS.Berkeley.EDU
+MAIL_HUB set as above     (no local aliasing)       (aliasing done)
+
+If you do not have FEATURE(stickyhost) set, then LOCAL_RELAY and
+MAIL_HUB act identically, with MAIL_HUB taking precedence.
+
+If you want all outgoing mail to go to a central relay site, define
+SMART_HOST as well.  Briefly:
+
+        LOCAL_RELAY applies to unqualified names (e.g., "eric").
+        MAIL_HUB applies to names qualified with the name of the
+                local host (e.g., "eric@example.com").
+        SMART_HOST applies to names qualified with other hosts.
+
+However, beware that other relays (e.g., UUCP_RELAY, BITNET_RELAY,
+DECNET_RELAY, and FAX_RELAY) take precedence over SMART_HOST, so if you
+really want absolutely everything to go to a single central site you will
+need to unset all the other relays -- or better yet, find or build a
+minimal config file that does this.
+
+*****
+
+Add this to the *.mc source of your config file, and do the
+usual:
+
+  m4 ../cf/cf.m4 &lt;name_of_master.mc&gt; &gt; sendmail.cf
+
+Put sendmail.cf where it belongs (/etc/sendmail.cf or
+/etc/mail/sendmail.cf) and kill and restart your daemon.
+
+Should work ... YMMV
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00618" HREF="msg00618.html">Re: tlug: sendmail question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00633" HREF="msg00633.html">Re: tlug: sendmail question</A></STRONG>
+<UL><LI><EM>From:</EM> Sean Bennett &lt;sean@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00613" HREF="msg00613.html">Re: tlug: sendmail question</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00615.html">Re: tlug: Linux wishlist (fwd)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00617.html">Re: tlug: Re: linux cluster</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00613.html">Re: tlug: sendmail question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00618.html">Re: tlug: sendmail question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00616"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00616"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

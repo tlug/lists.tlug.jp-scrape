@@ -1,0 +1,165 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] cron and lftp problems -->
+<!--X-From-R13: "Seva R. Vhturf" <revaNg&#45;znex.pb.wc> -->
+<!--X-Date: Wed, 26 Jan 2005 17:59:55 +0900 -->
+<!--X-Message-Id: IDEBIMGDAKLIOLIMNIKGEEAACFAA.erin@example.com&#45;mark.co.jp -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00194.html">Date Prev</a>][<a href="msg00196.html">Date Next</a>][<a href="msg00193.html">Thread Prev</a>][<a href="msg00196.html">Thread Next</a>][<a href="maillist.html#00195">Date Index</a>][<a href="threads.html#00195">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] cron and lftp problems</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 26 Jan 2005 17:59:55 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Erin D. Hughes&quot; &lt;<A HREF="mailto:erin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20cron%20and%20lftp%20problems">erin@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] cron and lftp problems </strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Today I  wrote 2 scripts
+1 is a lftp  script to log into a remote server get updated data
+2 is a run script that runs the program and then writes the events to a log
+file
+
+Independently they both work, the lftp script can log in and dl files from
+the remote server, the run script can run the lftp script and writes the
+findings to the log file. The problem occurs when I try to cron the job. The
+script returns a error saying it cant find the lftp command. 
+I am completely baffled by this cause I use this same script in several
+other places and in the same fashion and it always works like a dream. 
+
+First Ver info 
+Server Red Hat 7.2 
+Lftp Version 2.6.5 
+&lt;code&gt;
+Run script
+
+#!/bin/sh
+# source environment
+. /etc/profile
+# set logfile
+logfile=&quot;/home/httpd/xyzsite/xyzcom.log&quot;
+#get the current date and time and put append it to the log file
+date &gt;&gt; &quot;$logfile&quot;
+# run script, log all output to file.
+/home/httpd/xyzsite/upload &gt;&gt; &quot;$logfile&quot; 2&gt;&amp;1
+
+lftpscript *note this can not have any carriage returns or it will not work
+lftp -e 'set ssl:verify-certificate no &amp;&amp; open <A  HREF="ftp://user:pass@example.com">ftp://user:pass@example.com</A>
+&amp;&amp; cd /localdir/html &amp;&amp; lcd /remote/dir /on/remote/server &amp;&amp; mirror -cn
+dir_to_copy &amp;&amp; exit EOF'
+&lt;/code&gt;
+
+Log file entries
+Wed Jan 26 17:34:22 JST 2005&lt;--------- When I run from command line 
+cd ok, cwd=/to_t-mark
+lcd ok, local cwd=/home/httpd/some dir
+Usage: exit [&lt;exit_code&gt;]
+Total: 3 directories, 4 files, 0 symlinks
+To be removed: 1 directory, 0 files, 0 symlinks
+Wed Jan 26 17:35:00 JST 2005&lt;-----------When the cron job runs
+/home/httpd/sfcg/sfcg-ircom/upload: lftp: command not found
+
+Any thoughts on this would be appreciated. Thanks 
+Erin
+</pre>
+<p><tt>&lt;&lt;attachment: winmail.dat&gt;&gt;</tt></p>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00196" href="msg00196.html">Re: [tlug] cron and lftp problems</a></strong>
+<ul><li><em>From:</em> Jake Morrison</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00194.html">Re: [tlug] perl, cgi, and moji-baki-SOLVED</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00196.html">Re: [tlug] cron and lftp problems</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00193.html">RE: [tlug] sort</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00196.html">Re: [tlug] cron and lftp problems</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00195"><strong>Date</strong></a></li>
+<li><a href="threads.html#00195"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

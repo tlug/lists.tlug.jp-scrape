@@ -1,0 +1,168 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: Two ssh servers on one IP?: Access by different names . . . . .	[tlug] -->
+<!--X-From-R13: wrc200404 <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Wed, 01 Aug 2007 23:42:14 +0900 -->
+<!--X-Message-Id: 20070801104210.246cf41a.jep200404@columbus.rr.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46B04BBA.1040609@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00052.html">Date Prev</a>][<a href="msg00054.html">Date Next</a>][<a href="msg00047.html">Thread Prev</a>][<a href="msg00056.html">Thread Next</a>][<a href="maillist.html#00053">Date Index</a>][<a href="threads.html#00053">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: Two ssh servers on one IP?: Access by different names . . . . .	[tlug]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 1 Aug 2007 10:42:10 -0400</li>
+<li><strong>From</strong>: <strong>jep200404 &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20Two%20ssh%20servers%20on%20one%20IP%3F:%20Access%20by%20different%20names%20.%20.%20.%20.%20.%9%5Btlug%5D">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: Two ssh servers on one IP?: Access by different names . . . . .	[tlug]</strong></li>
+<li>References: &lt;<a href="msg00040.html">46B04BBA.1040609@dcook.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Darren Cook wrote:
+
+&gt; I've a client with a firewall and two machines behind it, and I have an
+&gt; ssh account on both, and both are assigned to the same IP but different
+&gt; ports at the firewall. So I'd do:
+&gt;   ssh -p 1001 1.2.3.4
+&gt;   ssh -p 1002 1.2.3.4
+&gt; 
+&gt; The problem is that when I try the 2nd command, ssh very loudly tells me
+&gt; someone might be doing a man-in-the-middle attack, ...
+
+Ssh's behavior is appropriate. It realizes the keys don't match. 
+
+&gt; ... and to set the correct key in ~/.ssh/known_hosts.  
+&gt; (I tried using &quot;1.2.3.4:1001&quot; and &quot;1.2.3.4:1002&quot; in known_hosts, 
+&gt; but they get ignored.)
+
+Josh gave you one solution, I'll give you another that works for 
+me in a similar situation. Instead of accessing the machines by raw IP, 
+access them by different _names_. E.g., 
+
+   ssh -p 1001 firewall
+   ssh -p 1002 behind
+
+Add two lines in /etc/hosts, something like: 
+
+   1.2.3.4 firewall
+   1.2.3.4 behind
+
+For fun, go back and look at your known_hosts file. 
+
+&gt; Is my only option to edit known_hosts each time I want to switch the
+&gt; server I log in to? 
+
+No, although I also used to do just that. 
+
+&gt; (or log in to one, then log in to the other using
+&gt; the private IP address)
+
+No, although you can do that, it sure sucks. 
+
+I'll have to try Josh's solution also some time. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00056" href="msg00056.html">[tlug] SSH Host Key Fingerprint Distribution</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00040" href="msg00040.html">[tlug] Two ssh servers on one IP?</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00052.html">[tlug] Announcement TLUG August 17th Nomikai</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00054.html">Re: [tlug] meaning of dprofpp output</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00047.html">Re: [tlug] Two ssh servers on one IP?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00056.html">[tlug] SSH Host Key Fingerprint Distribution</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00053"><strong>Date</strong></a></li>
+<li><a href="threads.html#00053"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

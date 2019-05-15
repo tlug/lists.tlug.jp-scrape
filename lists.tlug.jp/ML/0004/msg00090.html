@@ -1,0 +1,226 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Debian installation &#45; scsi problem -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 17 Apr 2000 12:45:58 +0900 -->
+<!--X-Message-Id: 14586.35025.831344.712993@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000413120615.699D74048@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00089.html">Date Prev</A>][<A HREF="msg00091.html">Date Next</A>][<A HREF="msg00078.html">Thread Prev</A>][<A HREF="msg00076.html">Thread Next</A>][<A HREF="maillist.html#00090">Date Index</A>][<A HREF="threads.html#00090">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Debian installation - scsi problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Debian installation - scsi problem</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 17 Apr 2000 12:45:21 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00067.html">20000413120615.699D74048@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00067.html">20000413120615.699D74048@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;ulrike@example.com&gt; writes:
+
+    Ulrike&gt; I am currently at work trying to install (for the first
+    Ulrike&gt; time) Debian 2.1 on a
+
+Ooops, I should have keyed on "first-time Debian."  I probably have
+the same thing installed on my notebook.  Lessee ... hmm, no saved
+.config.  OK, I do have a saved /boot/config-2.2.10 with the following
+settings:
+
+CONFIG_SCSI=y				# SCSI is BUILT-IN
+CONFIG_BLK_DEV_SD=y			# SCSI disk is BUILT-IN
+CONFIG_CHR_DEV_ST=m
+CONFIG_BLK_DEV_SR=y			# SCSI CD-ROM is BUILT-IN
+# CONFIG_BLK_DEV_SR_VENDOR is not set
+CONFIG_CHR_DEV_SG=m
+CONFIG_SCSI_AIC7XXX=y			# Adaptec AIC7xxx support is BUILT-IN
+# CONFIG_AIC7XXX_TCQ_ON_BY_DEFAULT is not set
+CONFIG_AIC7XXX_CMDS_PER_DEVICE=8
+CONFIG_AIC7XXX_PROC_STATS=y
+CONFIG_AIC7XXX_RESET_DELAY=15
+
+I see no reason why this policy of compiling those features into the
+boot install kernel would have changed, so all of the things that are
+happening for you seem perfectly normal, except for the failure to
+automatically detect the SCSI CD-ROM.
+
+In /lib/modules/2.2.14/scsi you will have st.o, sg.o, and a couple of
+others I don't recognize.  You should _not_ have scsi_mod.o or
+sr_mod.o (because they're built in) so the "can't find" messages are
+perfectly normal (you've guessed that by now, but let's make it
+perfectly clear ;).
+
+    Ulrike&gt; Fujitsu FMV-590DE which seems to have a scsi CDROM,
+    Ulrike&gt; Adaptec, AHA-2940. I
+
+OK, so you should be OK.
+
+As Selva suggested, "dmesg | grep '^scsi : [0-9]* host'" wil show
+whether any hosts were detected, "dmesg | grep 'scsi0'" should tell
+you about the first SCSI host (if any), and "dmesg | grep 'Detected.*scsi'"
+will show you the devices which were detected.  (I won't guarantee any
+of those but they work on my boxes with an AIC7xxx but no SCSI CD-ROM
+and a Buslogic with SCSI CD-ROM respectively.)
+
+`dmesg' is the standard way to remember the kernel messages.
+(Unfortunately, not _everything_ anybody would want _ever_ to know is
+there, but in this case if it's not in dmesg, it didn't happen.)
+
+Everything below is moderately educated guesswork, I am not a
+qualified hardware jock.  But since the hardware jocks have not seen
+fit to step in to the discussion, I'll take a shot at it.
+
+    Ulrike&gt; know what the proper settings are. The Adaptec menu for
+    Ulrike&gt; "Host Adapter SCSI Termination" gives three options:
+    Ulrike&gt; automatic, enabled, disabled. Which is the correct
+    Ulrike&gt; setting?
+
+"Automatic" should work.  If you have _both_ external and internal SCSI
+devices hooked up, you could try "disabled".  If you have only
+internal, or only external, devices hooked up, you could try enabled.
+
+    Ulrike&gt; /proc/scsi/scsi says: "Attached devices: none" Interesting
+
+OK, your CD-ROM is NOT being recognized.  This could be due to faulty
+termination.  Or it might just not be hooked up.  If it is internal,
+open the case and make sure the SCSI cable is firmly seated on both
+the adaptor and the CD-ROM drive, and that the power cable is firmly
+attached to the CD-ROM drive.  Does the CD-ROM drive have a power
+light (they usually do)?  Does it come on?  If it's external, before
+opening any cases, check that the external housing is plugged in, the
+SCSI cable is properly plugged in to both the SCSI adaptor and the
+external case, and that the power switch on the external case is on.
+(Yeah, you've probably done this already but let's be thorough.  If
+Austin has to make a house call for an unplugged power cord we'll
+_never_ hear the end of it!)
+
+If all cables are OK and the power is on, it could be termination.  If
+the CD-ROM is the ONLY device hooked to the SCSI adaptor, then both
+the adaptor (set "enabled" in the BIOS") and the CD-ROM (sorry, dunno
+'bout this one but it's probably a jumper, you'll have to read the
+docs or call in the vendor if they didn't supply docs) should have
+termination.
+
+If there are OTHER devices on the SCSI bus (hard drives, scanners,
+tapes, whatever) then we need to know in what order they appear on the
+internal bus (if any) and the external bus (if any).  The rule is that
+the SCSI host should be at one end of each bus (physically, an
+internal cable with several sockets or a daisy-chain of external
+devices).  If both buses have devices on them the host must not be
+terminated, otherwise the host must be terminated.  The device which
+is farthest (counting along the cable or daisy-chain) away from the
+host on each bus should be terminated, none of the others should be
+terminated.
+
+    Ulrike&gt; for me who does not understand a thing is that there is
+    Ulrike&gt; also a file /proc/scsi/aic7xxx ... ???
+
+The 2940 is a "SCSI host", the CD-ROM drive is an "attached SCSI
+device".  The fact that you have /proc/scsi/aic7xxx means there's an
+excellent chance that the SCSI board is working fine.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00067" HREF="msg00067.html">tlug: Debian installation - scsi problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00089.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00091.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00078.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00076.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00090"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00090"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

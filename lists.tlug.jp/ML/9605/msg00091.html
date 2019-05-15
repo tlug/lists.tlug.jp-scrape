@@ -1,0 +1,265 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: question for friend -->
+<!--X-From: TMatsumu@example.com -->
+<!--X-Date:  Fri, 24 May 1996 03:57:04 GMT -->
+<!--X-Message-Id: D6DCA53101FFFFFFF@&#45;SMF&#45; -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0uMb8s&#45;0005vcC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00090.html">Date Prev</A>][<A HREF="msg00092.html">Date Next</A>][<A HREF="msg00089.html">Thread Prev</A>][<A HREF="msg00072.html">Thread Next</A>][<A HREF="maillist.html#00091">Date Index</A>][<A HREF="threads.html#00091">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: question for friend</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: question for friend</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:TMatsumu@example.com">TMatsumu@example.com</A></strong></LI>
+<LI>Date: 24 May 96 12:53:00 EDT</LI>
+<LI>Cc: <A HREF="mailto:gah@example.com">gah@example.com</A> ("Gary A. Hildebrand")</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00089.html">m0uMb8s-0005vcC@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00089.html">m0uMb8s-0005vcC@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Form: Reply
+Text: (14 lines follow)
+
+{Aside to Ted:  are you convinced yet that I know the difference
+between my ass and a 10BaseT jack?}
+
+Definitely.  You know your linux and scsi.
+
+BTW, my friend Vernon at support@example.com tells me that Gary may want to 
+try BIOS 3.20 (bios files are free, but you need eprom burner) as he feels 
+this may be the version that the linux drivers were based upon, however he 
+also gives the disclaimer that linux is not officially supported.  I hope 
+this changes sometime...
+
+Ted
+
+Original text: (89 lines follow)
+&gt;From owner-tlug@example.com, on 5/23/96 11:13 PM:
+&gt;&gt;&gt;&gt;&gt; "Ted" == Ted Matsumura &lt;tedm@example.com&gt; writes:
+
+    Ted&gt; Hi, I was wondering if any of you gurus could help out a
+    Ted&gt; friend, please cc: him as he's not yet on the list, but
+
+    Ted&gt; From: "Gary A. Hildebrand" &lt;gah@example.com&gt;
+
+    Ted&gt; I'm trying to run Slackware 2.3.0 (based on Linux 1.2.8 circa
+    Ted&gt; 5/7/95) on an AST 486DX33 PC with 16MB of RAM and ISA bus,
+
+If this is the Sept 95 Infomagic CD ROM set, it's ugly.  I didn't have
+any problem with the aha1542 driver, but I had lots of trouble with
+the aic7880 driver....  Upgrading to Slackware 3.x or switching to
+RedHat might help, but probably not.
+
+    Ted&gt; that has an Adaptec 1542B ISA bus SCSI adapter installed.
+    Ted&gt; The version number of the Adaptec BIOS is 3.10.  A 1GB drive
+    Ted&gt; (Toshiba?) is attached to the adapter.  I have never had any
+    Ted&gt; trouble using the adapter from DOS/Windows, with either the
+    Ted&gt; 1GB drive or a previous 0.5GB Fujitsu drive.
+
+This is not necessarily relevant; DOS/Windows makes lots of
+assumptions that Linux does not.
+
+    Ted&gt; configuration.  BUT, the 1542 driver reports the following
+    Ted&gt; error message during boot:
+    Ted&gt;   aha1542_in failed(3): Unable to determine Adaptec DMA
+    Ted&gt; priority.  Disabling board
+
+Yep.  Found it in the code.  It looks to me like your board is not
+where Linux expects it to be---the very first time Linux makes a
+request to the board it times out (that "3" is "3 bytes remaining of 3
+requested").  The 1.3.76 driver (sorry, I don't have access to a 1.2.8
+vintage source) demands that the board live at 0x330 or 0x334.  This
+can be overridden in LILO:
+
+/*
+ * LILO params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]
+ *
+ * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:
+ *                      0x130, 0x134, 0x230, 0x234, 0x330, 0x334
+ *         &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus
+ *                  when transferring data.  1542A power-on default is 11us,
+ *                  valid values are in range: 2..15 (decimal)
+ *         &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while
+ *                  it is transferring data (not to monopolize the bus).
+ *                  Power-on default is 4us, valid range: 1..64 
+microseconds.
+ *         &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),
+ *                  but experimenter can alter it with this.
+ *                  Valid values: 5, 6, 7, 8, 10 (MB/s)
+ *                  Factory default is 5 MB/s.
+ */
+
+So where the Slackware boot disk asks you what to boot, use
+
+...
+boot: ramdisk aha1542=0x330
+
+"boot:" is the LILO prompt; "ramdisk" is which kernel---this is
+required, LILO will try and fail to find a kernel called
+"aha1542=0x330" if you don't include it, "ramdisk" is the usual
+default for the installation process; "aha1542=" signals the kernel to
+pass the following parameters to the driver, and you should change
+"0x330" to fit your installation.  You should not have to touch the
+other values; DMASPEED in particular is *not* the DMA priority level
+mentioned in the message.  BUSON and BUSOFF are tuning parameters;
+they might make your system faster if set to non-default values, but
+they should not affect whether it works at all....
+
+No promises, of course.  I haven't seen your hardware....  Do make
+sure that it's really an Adaptec 1542B (the first time I opened one of
+my boxes I found a number of unpleasant surprises where the mfr had
+substituted "equivalent" hardware).  Check and see where the board is
+configured; several MIDI and sound boards apparently like to use that
+0x330 I/O address, so the SCSI host may be elsewhere.  Boot DOS and
+use Norton SI or Quarterdeck Manifest or the like; that should give
+you most of that information.
+
+{Aside to Ted:  are you convinced yet that I know the difference
+between my ass and a 10BaseT jack?}
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+Use Proportional Font: true
+Previous From: owner-tlug@example.com
+Previous To: tlug@example.com
+Previous Cc: gah@example.com ("Gary A. Hildebrand")
+Attachment Count: 0
+--$----Novell--Attachment----$
+
+X-NVL-Content-Type: UNKNOWN
+X-NVL-Content-Typename: UNKNOWN
+X-NVL-Content-Charset: X-IBM-437
+X-NVL-Content-Filename: ATTRIBS.BND
+X-NVL-Content-Transfer-Encoding: X-UUENCODE
+
+begin 777 ATTRIBS.BND
+M0F5Y;VYD(%!A8VME9"!!='1R:6)U=&amp;5S`([]"(=0"@``````0F5Y;VYD(%!R
+M;W!R:65T87)Y($1A=&amp;$:`````!$```````0`#0`F`P``````````````````
+M````````3W)I9VEN86P@=&amp;5X=&amp;L01@example.com`````````````%`,#`&amp;L0#@,"``(`
+M``!8``(``0`!`#4``````````@`V`#80````````./\```````"0`0``````
+M````35,@example.com%N&lt;R!397)I9@``````````````````````````````./\`````
+M``"0`0``````````0V]U&lt;FEE&lt;@``````````````````````````````````
+M`````0`!`#8``@`V`/=_`@!U`/=_`@!V`/=_`@"X`/=_`@#Y`/=_`@#Z`/=_
+M`@`N`?=_`@`O`?=_`@!V`?=_`@"Z`?=_`@"[`?=_`@`"`O=_`@!&amp;`O=_`@")
+M`O=_`@"N`O=_`@"O`O=_`@#R`O=_`@`X`_=_`@!^`_=_`@##`_=_`@#Y`_=_
+M`@#Z`_=_`@`V!/=_`@!7!/=_`@!8!/=_`@"&lt;!/=_`@#`!/=_`@`!!?=_`@`E
+M!?=_`@`F!?=_`@!I!?=_`@"J!?=_`@#Q!?=_`@`X!O=_`@!]!O=_`@"8!O=_
+M`@"9!O=_`@"&lt;!O=_`@#@!O=_`@#C!O=_`@`&lt;!_=_`@!=!_=_`@"J!_=_`@#W
+M!_=_`@`V"/=_`@!^"/=_`@#'"/=_`@`5"?=_`@!:"?=_`@"7"?=_`@#/"?=_
+M`@#^"?=_`@`""O=_`@`#"O=_`@`_"O=_`@!`"O=_`@!$"O=_`@!@"O=_`@!A
+M"O=_`@"A"O=_`@#:"O=_`@`:"_=_`@!A"_=_`@"D"_=_`@#H"_=_`@`M#/=_
+M`@!P#/=_`@"U#/=_`@#H#/=_`@#I#/=_`@`L#?=_`@!S#?=_`@"W#?=_`@#]
+M#?=_`@!##O=_`@"'#O=_`@#+#O=_`@#I#O=_`@#J#O=_`@`K#_=_`@!/#_=_
+M`@!0#_=_`@!4#_=_`@"%#_=_`@#2#_=_`@`?$/=_`@!L$/=_````````````
+M````9``!I`$!2`,![`0!D`8!-`@!V`D!?`L!(`T!Q`X!:!`!#!(!L!,!5!4!
+M^!8```````````````!D``'@`0'``P&amp;@!0&amp;`!P%@"0%`"P$@#0$`#P'@$`'`
+M$@&amp;@%`&amp;`%@%@&amp;`%`&amp;@``$0``````!``$`!$!````````````````````````
+M``!497ATW0$*"@````````````#_``,`W0'X``$``0````H``@`!``$`W0$`
+M```````X_P```````)`!``````````!#;W5R:65R````````````````````
+M```````````````````!``$``0`!``(`0@`"`$,`9@`"`&amp;&lt;`9P`"`&amp;@`D@`"
+M`),`DP`"`)0`V`$"`-D!V0$"`-H!W0$"`-X!W@$```````````````!D``'@
+M`0'``P&amp;@!0&amp;`!P%@"0%`"P$@#0$`#P'@$`'`$@&amp;@%`&amp;`%@%@&amp;`%`&amp;@``````
+M`````````&amp;0``:0!`4@#`&gt;P$`9`&amp;`30(`=@)`7P+`2`-`&lt;0.`6@example.com`0P2`;`3
+)`505`?@example.com&lt;@``
+`
+end
+
+--$----Novell--Attachment----$--
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: question for friend</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00090.html">Re: tlug-digest V1 #205</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00092.html">Re: TLUG Meeting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00089.html">Re: question for friend</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00072.html">Re: compaq</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00091"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00091"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

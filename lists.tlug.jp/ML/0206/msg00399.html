@@ -1,0 +1,221 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Running an Exec file with Cron -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 17 Jun 2002 23:22:25 +0900 (JST) -->
+<!--X-Message-Id: 878z5e6l3h.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: JNEKIALKKBDCNHBDFKEDKELCCEAA.acmuller@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00398.html">Date Prev</a>][<a href="msg00400.html">Date Next</a>][<a href="msg00400.html">Thread Prev</a>][<a href="msg00376.html">Thread Next</a>][<a href="maillist.html#00399">Date Index</a>][<a href="threads.html#00399">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Running an Exec file with Cron</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 17 Jun 2002 23:22:42 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Running%20an%20Exec%20file%20with%20Cron">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Running an Exec file with Cron</strong></li>
+<li>References: &lt;<a href="msg00392.html">JNEKIALKKBDCNHBDFKEDKELCCEAA.acmuller@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.0808 (Gnus v5.8.8) XEmacs/21.4 (Informed Management (RC0+))</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Charles&quot; == Charles Muller &lt;acmuller@example.com&gt; writes:
+
+    &gt;&gt; crontabs are kept in a spool area private to cron, and only
+    &gt;&gt; root (ie, the suid crontab program) can put them there.
+
+    Charles&gt; This also clarifies something that I needed to know,
+    Charles&gt; because I had read in one of the explanatory pages that
+    Charles&gt; some systems allowed the regular user to do crontab -e
+    Charles&gt; (and on my system, I can do it as regular user, and the
+    Charles&gt; file saves as usual in /etc, but it doesn't seem to run).
+
+That seems wrong.  AFAIK, Linux systems all use Vixie cron, which
+supplies an suid[1] crontab program.  All it does is (1) cp your crontab
+to /tmp, (2) start your editor with the copy in a buffer, and (3) cp
+it back when you're done.  As BOTi mentioned, the spool area is under
+/var on Debian; it's not part of the system config, so it really
+doesn't belong in /etc.  Here's mine:
+
+bash-2.05a$ su -c 'ls -laR /var/spool/cron/'
+Password: 
+/var/spool/cron/:
+total 5
+drwxr-xr-x    5 root     root         1024 Sep 13  2001 .
+drwxr-xr-x   12 root     root         1024 Oct 26  2001 ..
+drwx------    2 daemon   daemon       1024 Jan 21 20:37 atjobs
+drwx------    2 daemon   daemon       1024 Sep 20  2001 atspool
+drwxr-xr-x    2 root     root         1024 May 24 23:47 crontabs
+
+/var/spool/cron/atjobs:
+total 3
+drwx------    2 daemon   daemon       1024 Jan 21 20:37 .
+drwxr-xr-x    5 root     root         1024 Sep 13  2001 ..
+-rw-------    1 daemon   daemon          6 Sep 20  2001 .SEQ
+
+/var/spool/cron/atspool:
+total 2
+drwx------    2 daemon   daemon       1024 Sep 20  2001 .
+drwxr-xr-x    5 root     root         1024 Sep 13  2001 ..
+
+/var/spool/cron/crontabs:
+total 4
+drwxr-xr-x    2 root     root         1024 May 24 23:47 .
+drwxr-xr-x    5 root     root         1024 Sep 13  2001 ..
+-rw-------    1 root     steve        1275 May 24 23:47 steve
+bash-2.05a$ 
+
+Note I had to su to see cron's directories, except for the user
+crontabs subdirectory.
+
+For the crontab &quot;steve&quot; in the crontabs subdirectory, the owner is
+root; only root can read and write the crontab for user steve.  I'm
+not sure if there's any significance to the group &quot;steve&quot;, I think
+with those perms it's a don't-care so crontab just doesn't bother to
+sgid or chgrp the file.
+
+If you don't have a &quot;chuck&quot; crontab somewhere, then somehow you're not
+convincing crontab -e to edit the right thing.
+
+    Charles&gt; So if I can only run crontab as SU, then I guess that I
+
+No, there's no need to run crontab as the root user; you can just edit
+the cron spool file for root, or the system spool file in  /etc/crontab.
+
+    Charles&gt; should just have to settle with the fact that tarballs
+    Charles&gt; and copied files will all end up having root permissions?
+
+No.  If your system provides a crontab program, then its only purpose
+is to allow ordinary users to read and write files that would
+otherwise be prohibited to them.  It doesn't provide any editing
+capability itself.
+
+If it is not editing a crontab in the spool area [the Debian manpage
+says:
+
+       cron searches its  spool  area  (/var/spool/cron/crontabs)
+       for  crontab  files  (which  are  named  after accounts in
+       /etc/passwd); crontabs found are loaded into memory.]
+
+then something's broken.  With Red Hat it seems unlikely that
+something this broken would go unnoticed.  It's quite possible that
+Red Hat puts the spool area somewhere else,
+
+strings `which crontab` | fgrep /cron
+
+should turn it up.  (User crontabs may be in a subdirectory.)
+
+Footnotes: 
+[1]  SUID == &quot;Set User ID&quot; to the owner of the file.  If root owns it,
+then the program is executed with root permissions.  Thus crontab can
+copy from anywhere to anywhere else, but it's hardwired to copy from
+the spool area to /tmp, and nothing else.
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+ My nostalgia for Icon makes me forget about any of the bad things.  I don't
+have much nostalgia for Perl, so its faults I remember.  Scott Gilbert c.l.py
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00392" href="msg00392.html">RE: [tlug] Running an Exec file with Cron</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00398.html">Re: [tlug] Running an Exec file with Cron</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00400.html">Re: [tlug] Running an Exec file with Cron</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00400.html">Re: [tlug] Running an Exec file with Cron</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00376.html">Re: [tlug] Setting Date Variable for Cron Job</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00399"><strong>Date</strong></a></li>
+<li><a href="threads.html#00399"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

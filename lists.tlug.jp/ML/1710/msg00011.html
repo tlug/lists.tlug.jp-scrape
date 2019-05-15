@@ -1,0 +1,242 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] A tale of two computers -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Sun, 08 Oct 2017 12:09:13 +0900 -->
+<!--X-Message-Id: 20171008030912.ov3tya3ju6yexx74@monotonic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1507324433.4266.14.camel@uchicago.edu -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00010.html">Date Prev</a>][<a href="msg00012.html">Date Next</a>][<a href="msg00006.html">Thread Prev</a>][<a href="msg00012.html">Thread Next</a>][<a href="maillist.html#00011">Date Index</a>][<a href="threads.html#00011">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] A tale of two computers</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 8 Oct 2017 12:09:12 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20A%20tale%20of%20two%20computers">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] A tale of two computers</strong></li>
+<li>References: &lt;<a href="msg00006.html">1507324433.4266.14.camel@uchicago.edu</a>&gt;</li>
+<li>User-agent: NeoMutt/20170113 (1.7.2)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2017-10-06 17:13 -0400 (Fri), Stuart Luppescu wrote:
+
+&gt; In .xsession on both computers I have these lines:
+&gt; 
+&gt;     eval `/usr/bin/dbus-launch --sh-syntax --exit-with-session`
+&gt;     eval `ssh-agent -s`
+&gt;     ssh-add 
+&gt; 
+&gt; And in both computers /etc/ssh/ssh_config has IdentityFile ~/.ssh/id_rsa2
+&gt; 
+&gt; On the work computer the ssh-agent works as it should. But on my
+&gt; personal computer when I try to ssh to a remote machine it prompts me
+&gt; for the passphrase for ~/.ssh/id_rsa2, and then it connects. The other
+&gt; computer connects without prompting for the passphrase.
+...
+&gt; 3) I use ibus and anthy to switch language input. It works fine on the
+&gt; Dell, but on the NUC, I can't input Japanese in Chrome, but it works
+&gt; fine in other programs.
+
+These sound to me like an issue with the environment variables being
+passed to the processes. SSH is the easier one to debug since you
+simply have to check that `SSH_AUTH_SOCK` is set (a typical value will
+be `/tmp/ssh-NtwrK2hAT2AM/agent.1215`) and that, as multiple agents
+might be running, `ssh-add -l` shows that that agent contains the
+key you added elsewhere. (If `SSH_AUTH_SOCK` is different
+between two different processes, they won't be talking to the same agent.)
+
+Unfortunately, though `ssh -v` does tell you the files whence it tries
+to load a key, it doesn't give details about the agent it's contacting
+when it uses an agent.
+
+For an application using ibus you want the following set in the
+environment:
+
+    export XMODIFIERS=@im=ibus
+    export GTK_IM_MODULE=ibus
+    export QT_IM_MODULE=ibus
+
+There's more detail and links to some handy pages at:
+
+    <a  rel="nofollow" href="https://github.com/0cjs/sedoc/blob/master/linux/i18n.md">https://github.com/0cjs/sedoc/blob/master/linux/i18n.md</a>
+
+Unfortunately, I have yet to write such handy documentation on X11
+startup; there are various interactions between `.profile`, `.xinit`
+`.xession` and the startup procedures of various desktop systems
+that are a bit complex. However, here are a few hints:
+
+The particular startup process will be initiated by the Display
+Manager, which is what puts up the login screen. (Yes, it's
+confusingly named.) This is provided by the `x-display-manager`
+package in Debian and is usually LightDM with a greeter (login screen)
+specific to the distribution and desktop system.
+
+Your DM should usually give you a menu to choose what flavour of
+session you want to start; mine offers:
+
+  * Default Xsession
+  * Fvwm
+  * Xfce Session
+
+The third one does whatever Xfce normally does. The second one runs a
+&quot;pure&quot; Fvwm 2 configuration that does not appear to run `.xsession` or
+`.xinitrc` (see below), presumably relying on `.fvwm/config` to do
+all the setup.
+
+I use the first, which runs my `.xsession` file. (I don't recall if
+&quot;Xfce Session&quot; uses this.) From looking at it and the `startx(1)`
+manpage, it's clear that the `.xsession` is supposed to set up the
+entire environment; here's mine:
+
+    #!/bin/bash
+    #
+    #  .xsession is run on login from a display manager (graphical login screen).
+    #  It combines the roles of .profile and .xinitrc.
+    #
+    #  This file must be set executable!
+    #
+
+    # XXX This is supposed to be done by the system, but sometimes isn't?
+    exec &gt;&gt;$HOME/.xsession-errors 2&gt;&amp;1
+
+    echo ===== sourcing profile;    . ~/.profile
+    echo ===== execing .xinitrc;    exec ~/.xinitrc
+
+Note here that I'm careful to source my profile, not execute it in a
+subshell, to ensure that all the environment variables it sets are set
+in the current process so that they'll be inherited by sub-processes.
+(And yes, I should be sourcing `~/.bash_profile` instead of `~/.profile`
+if the former exists.)
+
+The `.xinitrc` is what's normally run when you run `startx`; that of
+course doesn't run the profile because you're alredy logged in
+(presumably on a console terminal) if you're running that command.
+
+The first thing I'd check is which of the sessions you're starting
+from the DM on each machine; if you're starting different ones you
+will probably see different behaviour.
+
+And while my comment above about not having any sedoc documentation
+on this was true when I started, it is now false; you can find the
+notes I made based on the research for this message at:
+
+    <a  rel="nofollow" href="https://github.com/0cjs/sedoc/blob/master/linux/x11.md">https://github.com/0cjs/sedoc/blob/master/linux/x11.md</a>
+
+&gt; The work computer is a Dell Latitude E7440, and the personal
+&gt; computer is an Intel NUC. They both have similar hardware: both have
+&gt; i7 CPUs...
+
+Just as a side note, be very careful when comparing portable versus
+desktop versions of parts that have the same or similar names.
+Especially for CPUs and graphics processors, vendors often choose to
+use the same name for parts with substantially different capabilities.
+For example, that i7 you have in your laptop is not nearly as powerful
+as a desktop i5 CPU of similar generation.
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00006" href="msg00006.html">[tlug] A tale of two computers</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00010.html">Re: [tlug] Recommendation on watching European/American/Independent movies/TV programs in Japan?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00012.html">[tlug] Ubuntu 16.04.3 LTS in Tokyo and places of interest</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00006.html">[tlug] A tale of two computers</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00012.html">[tlug] Ubuntu 16.04.3 LTS in Tokyo and places of interest</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00011"><strong>Date</strong></a></li>
+<li><a href="threads.html#00011"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

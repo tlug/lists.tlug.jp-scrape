@@ -1,0 +1,276 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: PPP for Dummies :&#45;) -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Mon, 1 Jun 1998 08:25:02 +0900 -->
+<!--X-Message-Id: 199805311541.PAA00414@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199805311027.TAA12296@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00001.html">Date Prev</A>][<A HREF="msg00003.html">Date Next</A>][<A HREF="msg00001.html">Thread Prev</A>][<A HREF="msg00013.html">Thread Next</A>][<A HREF="maillist.html#00002">Date Index</A>][<A HREF="threads.html#00002">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: PPP for Dummies :-)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: PPP for Dummies :-)</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 31 May 1998 15:41:00 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;199805311027.TAA12296@example.com&gt; from "Eric Standlee and Family" at May 31, 98 07:26:31 pm</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi everybody,
+
+as there apparently are people having trouble with getting ppp
+running ( wonder why.....it's that easy..... ) I'll give some
+instruction of doing it the quick and dirty and easy way.
+
+First, the basis for checking any modem connection is a terminal
+program. Minicom is simple and handy.
+
+Start up Minicom and see to it that it is started on the serial
+port your modem is connected to. See to it that the modem is
+initialized correctly. Test that by dialling into an ordinary
+BBS system and see whether everything works correctly. Try a
+zmodem download, if possible to verify whether that works.
+
+Everything OK ? Good. Now we will proceed to getting a ppp
+connection to your Internet provider. Before we proceed any
+further, we will deal with the theory of authentication first.
+
+There are two fundamental ways of authentication: terminal and
+pap/chap authentication. Terminal authentication is just what it
+says: you get a "login:" prompt, reply with your login name,
+then you get a "Password:" prompt and you reply with your
+password. Then you are logged in. If you did that with your
+ISP, you won't get a shell prompt now. After a few seconds
+you'll see garbage like this: #$%&amp;'()~+* This is actually the
+ppp daemon of your ISP trying to talk to its colleague of your
+machine.
+
+In case you have pap/chap authentication you just wait for your
+modem to get the connection to your ISP. Then you leave your
+terminal program WITHOUT CLOSING DOWN THE CONNECTION and start
+your ppp in authentication mode. Your pppd now talks to that one
+of the ISP and does the authentication for you and then sets up
+the ppp connection. Nifty, eh ?
+
+In the case of Minicom you do that by typing the sequence CTRL-A Q
+and then starting up your pppd with the required parameters.
+
+Good, you say, and what are the required parameters ? Here is
+what I use for terminal authentication:
+
+/usr/sbin/pppd /dev/ttyS1 57600 crtscts mtu 1500 mru 1500 \
+defaultroute noipdefault
+
+What does that mean ? Glad ya asked :-)
+
+In the above pppd is started using its absolute address (a
+little bit of luxury maybe....). It is connected to the
+interface /dev/ttyS1, in other words, COM2 (to use DOS lingo)
+with a speed of 57600 bits/second. On the serial interface
+hardware flow control is used using the RTS/CTS status lines (
+this is what "crtscts" means ). The maximum packet sizes for
+transmission (mtu) and reception (mru) are 1500 bytes ( this is
+what "mtu 1500 mru 1500" mean ). Then follows a "\" which simply
+escapes the linefeed at the end of the line to append the stuff
+of the next line, too.
+
+What the fuch then means "defaultroute noipdefault".
+Hahaaa....that's the net wizard's special incantations.....
+
+A "defaultroute" has to do with Internet routing. It is the
+interface to which all requests for addresses locally unknown
+are sent. Locally unknown means, if the addresses or the network
+to which they belong are not explicitely entered into your
+kernel routing table ( to read it type "route" at the command
+prompt ). And now the important catch......
+
+It may happen that you configured your scripts in a way that the
+defaultroute is already set to your ethernet card interface if
+you have one. In this case your kernel sends all requests to
+your ethernet interface instead to the ppp interface and from
+there into the Internet. 
+
+So what have you got then ? Your PPP connection runs fine, but
+all your requests to the Internet go into the Bg Bit Bucket.
+
+Ultra super uncool megabummer !!!! No Internet !
+
+So, when doing a "route" and the default does not point to
+ppp something you got that problem. Go and change the startup
+scripts involved. Then reboot and start up ppp again. If route
+now shows the correct default route you're all set. Go and enjoy
+the Internet.....
+
+Now for the remaining incantation that reads "noipdefault". Most
+probably you don't have a fixed IP address, your ISP assigns you
+one each time you dial in. This "noipdefault makes pppd ask for
+the assignment of an IP address from the ISP and subsequently
+using it for the connection. Just leave it there. It always
+works :-)
+
+More catches......
+It is of utmost importance that the speed and the interface you
+connect to using Minicom and subsequently pppd are EXACTLY the
+same for both or your pppd will die after a few seconds. So if
+you connect to /dev/modem under Minicom you also have to connect
+to /dev/modem with pppd. /dev/cua1 or /dev/ttyS1 WON'T do, even
+when /dev/modem is a link to one of them.
+
+Also see to it that the protocol under Minicom is set to "8n1"
+(8 data bits, no parity, one stop bit).
+
+OK.....and how about that pap/chap stuff ? Well, just a little
+extension......
+
+Here is my callup of pppd for pap:
+
+/usr/sbin/pppd /dev/ttyS1 57600 crtscts mtu 1500 mru 1500 \
+defaultroute noipdefault remotename oberland.net user karlmax
+
+As you can see, it's exactly the same garbage than above with
+some stuff added, more specifically "remotename oberland.net
+user karlmax". The remotename is simply the name of my ISP (the
+best in the world - you should subscribe to them, too) and my
+username there.
+
+Actually, the remotename is only required to find the correct
+line in the file containing the password, /etc/ppp/pap-secrets.
+
+In my case it looks like this:
+
+karlmax   oberland.net   MyPassword
+
+It may have more than one line, but I need only one. The
+sequence of entries in a line is &lt;username&gt; &lt;remotename&gt;
+&lt;password&gt;.
+
+Hey, and don't try to pirate my account with the above. I have
+another password, of course.....
+
+As already said in the above, you just use Minicom to get a
+modem connection running and then leave it and start up pppd to
+do the rest. I put all that into little scripts calling up
+minicom first and automatically launching pppd when I leave
+minicom.
+
+And by the way, there is a good book on Linux networking: Olaf
+Kirch's "Linux Network administrator's Guide". The book is
+excellent and helped me a lot when I started. It is available
+from O'Reilly in paper form or from any good LDP archive in
+electronic form. Get it and study it.
+
+Hello, TLUG archivar ! Please could you put this posting into
+some sort of archive, into the TLUG homepage or whatever ? I
+have that eerie feeling that the next newbie will ask the same
+questions soon and I don't want to post that every week ! Thank
+you !
+
+Hope that helps. Questions welcome !
+
+                                Karl-Max Wagner
+                                karlmax@example.com
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+After June 13, the next meeting is 8 August at Tokyo Station
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00013" HREF="msg00013.html">Re: tlug: PPP for Dummies :-)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00016" HREF="msg00016.html">RE: tlug: PPP for Dummies :-)</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">PPP Problems (Re: tlug: PPP for Dummies :-)</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00001.html">Re: tlug: base64</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00003.html">tlug: Re: Linux Port to limited environment</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00001.html">Re: tlug: base64</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00013.html">Re: tlug: PPP for Dummies :-)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00002"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00002"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

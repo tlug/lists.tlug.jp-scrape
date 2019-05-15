@@ -1,0 +1,284 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Java -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Sat, 21 Oct 1995 16:30:18 GMT -->
+<!--X-Message-Id: m0t6ghq&#45;0004PHC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.91.951020184913.378G&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00055.html">Date Prev</A>][<A HREF="msg00057.html">Date Next</A>][<A HREF="msg00055.html">Thread Prev</A>][<A HREF="msg00051.html">Thread Next</A>][<A HREF="maillist.html#00056">Date Index</A>][<A HREF="threads.html#00056">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Java</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Java</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Sun, 22 Oct 95 01:23 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00053.html">Pine.LNX.3.91.951020184913.378G-100000@example.com</A>&gt; (anishi@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+&gt;&gt;&gt;&gt;&gt; "Nori" == Andrew N Nishigaya &lt;anishi@example.com&gt; writes:
+
+    Nori&gt; On Mon, 16 Oct 1995, Stephen J. Turnbull wrote:
+
+    &gt;&gt; Anybody out there writing Java pages?  How hard is it?  (I
+    &gt;&gt; haven't even seen it in action---I'm just assuming you have to
+    &gt;&gt; do something with it.)
+
+    Nori&gt; Yes, Cyber is working on a lot of Java and Java-related
+    Nori&gt; stuff.  It is basically C++ with tighter typechecking and
+
+I hate it when people say "it is basically ... with ...".  That's what
+John E Davis says about his SLang extension/scripting language.  "It's
+basically C"---except it's not (it's a stack language, like Forth!)  :-)
+
+I looked at both the language spec (which looks like something
+Bjarne---or Brian or Dennis for that matter, could have written, I
+agree) and at the applets on www.java.com.
+
+IMO, it's not tighter type-checking; they simply removed a lot of the
+low-level types (specifically C arrays and pointers) that allow you to
+get into big trouble.  There is a little bit of run-time checking
+added for Arrays, but nothing you couldn't get from C++ easily.  I do
+think that for Java's target applications it makes sense to put real
+arrays in the language so that you can easily declare
+
+    Object[80] database;
+
+(yes, the abstract declarator syntax works in declarations in Java)
+instead of multiply deriving a database class from a bounds-checked
+array class and Object, and declaring
+
+    ObjectDataBase database(80);
+
+to get DataBases that will be bounds-checked etc.  If a "database" is
+really just implemented as an array, then the code could reflect that
+rather than hiding behind the impressive declaration, which only is
+used to get the bounds-checking functionality.  But change this to
+
+    Pixel[1600] scanLine;
+
+and you realize that Java is not a systems programming language.  I
+also thought that using 'threadsafe' instead of its complement 'volatile'
+is a good idea.  But making the unmarked case the less common one
+(local variables are thread-safe, aka reentrant) has efficiency costs,
+as the implementers themselves admit.  I doubt that these are as
+important as the bounds-checked-array costs, of course.
+
+The use of '/** */' style comments to implement Emacs-LISP-style
+doc-strings was a good idea.
+
+Also, the applets looked more like Prolog than C++!  Sure, the
+expressions have that characteristic C look.  You've got all the
+neat-o assignment operators like '+=' of course.  But I don't find it
+very hard to write expressions in Pascal or FORTRAN or even LISP
+(although I do prefer my Polish reversed).
+
+The declarative style of the Sun applets was very different from
+anything I've written in C++; felt more like Prolog or Mathematica, as
+I say.  This is due to the apparently extensive class libraries being
+provided in the JDK.  I mean, the Sun applets don't even have a
+main()!  They just declare the class as
+
+    /** Nantoka is a Kantoka that Runs */
+    class Nantoka extends Kantoka implements Runnable;
+
+and away we go!  Now, that is way cool.  But it's also going to depend
+on finely tuned class libraries, and one wonders if they're there yet,
+or soon.  Remember, they need to be standardized, or you'll have to
+ship them out with your applets, sort of contradicting the 'let' in
+'applet'.
+
+I wonder if those "native" methods will be user-implementable
+(presumably requiring compiling and relinking, of course) as in the
+configurable drivers for Ghostscript etc, or whether they'll be like
+"compiled C function objects" in Emacs---really only suitable for use
+by the Emacs developers.  The easy-add approach would really improve
+efficiency, but of course it would likey lead to a proliferation of
+thoroughly incompatible libraries.
+
+Anyway, I'm looking forward to Linux Java :-) It's not clear to me why
+we have to wait on the pthreads package.  I didn't see how the Sun
+applets used threading, really.  Most trivial applets (trivets?) won't
+as far as I can see.
+
+    Nori&gt; easier memory management (like none required :-).  There is
+
+No.  That's false.  If you read the spec, you'll see that there is a
+"finalize" operation.  In other words, there is a class of memory
+leaks (known in the database trade as "persistent objects" ;-/ ) that
+the Java gc can't in principle handle.  Eg, Web pages.  How do you
+know when a Web page can be gc'd?  Easy.  Wait 'til Judgement Day,
+check the last accessed field, then [sic] delete on that date ;-)
+
+But persistent objects aren't so common, you may say.  Ah, true---in
+the monolithic C++ programs that most of us write.  But Java code is
+going to be full of cooperating applets creating persistent objects,
+and references to them, that often live "out there" on the Web.
+*Most* of the objects created by a class of Java applications I can
+think of (user-registration Web Pages) are going to be persistent....
+The bottom line is that memory-management problems will remain, but
+the Java gc will take care of the most easily automated stuff like
+buffer allocation and deallocation behind the scenes, which are the
+most common source of memory leaks because they happen so frequently.
+
+BTW, typical applet code looks simple enough that applet-writing
+applets look like a distinct possibility.  (The Java compiler
+implemented as a Java applet that lives on www.java.com and mirror
+sites ... the mind boggles, does it not?
+BOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLEBOGGLE
+boggle!)
+
+    Nori&gt; also an impressive class lib of objects that make animation,
+    Nori&gt; sound, and net interfaces quite easy.  Since it is basically
+    Nori&gt; c++, porting from c++ to java should be fairly easy.  So
+    Nori&gt; breakout that dusty c++ code and try porting to Java!
+
+Depends.  Most of my C and C++ code is user interface, connecting to
+libraries which do the real work.  Or patches and drivers for PD
+software like Ghostscript.  Somehow, I can't see Jim's ROM code being
+done in Java ;-)  The stuff that I put in cgi-bin is generally written
+in Perl (although I'm thinking about moving to C++ for a lot of it now
+that I understand the GNU regexp package a lot better---trying to
+figure out Perl semantics is like arguing with my mother---every time
+I think I've got it right, the assumptions change on me!)
+
+None of those will port well to Java.  The user interface will be
+handled by those impressive class libraries, HTML forms, and the like.
+The patches have to be done in the original language for link
+compatibility.  (Somehow I don't think the typical Ghostscript user
+would want to dynamically load my screen driver as a Java applet from
+across the Pacific :-&gt; )  And ROMable and Perl code ....
+
+Personally, I think that the restrictions in Java are likely to bind a
+lot on typical C++ programs.  Expressions are about the only thing
+that will port "easily."  I also think that, just as writing good C++
+code requires C programmers to break a lot of habits, so will writing
+good Java code require C++ programmers to break habits.
+
+BTW, one thing that worries me about Java is that it's a wonderful
+tool for hackers.  The security holes inherent in this ... well ... 
+let's just say that root enabling MIME auto-execution of Ghostscript
+for arbitrary Postscript objects is probably safer.  It's going to be
+cross-platform.  When was the last time you worried about a virus in
+your Linux machine?  But with Java ....  Maybe HotJava should run
+"suid nobody" by default :-)  And then ... just think what will
+probably be hiding in the Microsoft implementation of the Java runtime
+for Windows 95^H6^H7 :-(  Remember the Prodigy scandal? 
+
+Of course, the scariest thing of all is going to be the Java Hall of
+Shame (a la the Netscape Hall of Shame, the page where the absolutely
+most garish and shameless use of Netscape extensions is collected).
+
+:-)(-::-)(-::-)(-::-)(-::-)(-::-)(-::-)(-::-)(-::-)(-::-)(-::-)(-:
+
+None of this is intended to say I think Java is not Hot, indeed.  It
+looks like a really neat environment for creating great app(let)s.  I
+guess basically, it seems to me that C++ may be nearly the end of the
+line for systems programming languages.  A lot of the newer members of
+the C family seem to be doing away with access to those "dangerous"
+arrays and pointers, which are what makes C so powerful in the first
+place.  In so doing, they end up having a recognizable C heritage, but
+rather different flavors from each other, as Objective-C and now Java
+do.
+
+I feel a little sad knowing that "*dest++ = *src++" is probably an
+endangered idiom....
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00053" HREF="msg00053.html">Re: netscape 2.0</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew N. Nishigaya" &lt;anishi@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00055.html">Re: netscape 2.0</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00057.html">Linuxdoc-SGML 1.4</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00055.html">Re: netscape 2.0</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00051.html">Re: netscape 2.0</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00056"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00056"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

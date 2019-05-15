@@ -1,0 +1,314 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs and Kanji detection -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 4 Jun 1997 14:31:57 GMT -->
+<!--X-Message-Id: m0wZH06&#45;00002KC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m267vvnx6i.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00046.html">Date Prev</A>][<A HREF="msg00048.html">Date Next</A>][<A HREF="msg00043.html">Thread Prev</A>][<A HREF="msg00023.html">Thread Next</A>][<A HREF="maillist.html#00047">Date Index</A>][<A HREF="threads.html#00047">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs and Kanji detection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs and Kanji detection </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 04 Jun 1997 23:25:21 +0900</LI>
+<LI>In-reply-to: Your message of "03 Jun 1997 18:23:01 -0400."            &lt;<A HREF="msg00043.html">m267vvnx6i.fsf@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Steve" == Steve Dunham &lt;dunham@example.com&gt; writes:
+
+    Steve&gt; I believe the locale is passed to the input method. (I
+    Steve&gt; suspect this is why the Solaris input method didn't work
+    Steve&gt; for me.)
+
+Dunno about Solaris, but under Linux, XIM will definitely crash your
+XEmacs+Mule if XMODIFIERS sets an input method and that input method
+fails to open for any reason.  However, locale is used in a bunch of
+places in XEmacs.  For starters, `fgrep -l locale
+/var/project/xemacs-20.2/src/*.[ch]' lists 25 files.
+
+    &gt;&gt; The locale processing also seems to be inconsistently
+    &gt;&gt; implemented, since "LANG=ja_JP.EUC" results in SJIS being
+    &gt;&gt; correctly displayed (and "LANG=ja_JP.SJIS" produces correct
+    &gt;&gt; results for EUC).
+
+    Steve&gt; Umm, what do you want it to do? Disable EUC support?
+
+Well, there are times when I'd like to be able to do something like
+that, since there are ambiguous files.  I have yet to figure out how
+to get a buffer to be reread in various different encodings
+conveniently.  One can set `buffer-file-coding-system' and relatives,
+but this is pretty clumsy.
+
+    Steve&gt; Currently it only uses the LANG variable to determine the
+    Steve&gt; "default" language for startup.
+
+Thanks for confirming that.
+
+    Steve&gt; XEmacs, by default, seems to have iso-2202 filters in the
+    Steve&gt; loading process.  The SJIS detection seems to be added when
+    Steve&gt; you load the japanese language stuff.  This happens when
+    Steve&gt; LANG=ja or you pick the Japanese menu item.
+
+To be picky, iso-2022 seems to be enabled by Mule; it doesn't work if
+you compile XEmacs without Mule.  (I had some spare cycles while I was
+lecturing the other day....)  I would guess that SJIS can _only_ be
+recognized if you assume Japanese; I'm not sure why EUC doesn't get
+recognized (my guess is that most EUC files do not conform to the
+ISO-2022 standard of starting out in ASCII (ISO-Latin-1?) and shifting
+into Japanese; if they did, they'd probably be recognized).
+
+    Steve&gt; (You can probably do this in .emacs too, you should be able
+    Steve&gt; to select Japanese and "Save Options", but I haven't tried
+    Steve&gt; it.)
+
+This works, Jason Molenda mentioned it.
+
+    Steve&gt; Anyways, you can change the "default" language in the menu:
+    Steve&gt; "Options/Language Environment".
+
+But this is too late for XIM (as I mentioned earlier).
+
+    Steve&gt; File encoding can be set on a per buffer basis using C-x
+    Steve&gt; C-n f (type C-x C-n C-h for a list of bindings).
+
+Unfortunately, this doesn't work.  :-)  You need to use
+`set-buffer-file-coding-for-read' which isn't bound.  A trivial
+complaint since one can bind it oneself.
+
+    &gt;&gt; Furthermore, using `(setenv "LANG" "C")' or any other locale
+    &gt;&gt; does not affect this, so the locale of the XEmacs process seems
+    &gt;&gt; to be fixed at invocation, and only used to invoke Mule
+    &gt;&gt; features.
+
+    Steve&gt; Ahh, digging around, I found yet another reason for this:
+    Steve&gt; in the lisp directory, there is a
+    Steve&gt; locale/ja/locale-start.el.  Apparently, there is no
+    Steve&gt; directory for other locales.  (XEmacs desperately needs
+    Steve&gt; testers for non-japanese MULE stuff.)
+
+Do you know where this is used?  All this file does is set up a
+localized version of the opening "splash frame", and a localized
+version of the usage message.
+
+    Steve&gt; Why do you get a feeling that the mule features are hacked
+    Steve&gt; in?  It feels fairly clean to me.  There are probably some
+    Steve&gt; necessary differences from the gnu emacs MULE, because of
+
+Yes, and all the ones I've seen so far I like ;-)
+
+    Steve&gt; design differences in the core editor.  But as far as I can
+    Steve&gt; tell, MULE is nicely integrated into the editor.
+
+Aaaah, maybe I misspoke (I'm not sure about that yet).  Maybe it's the 
+XIM that's not properly integrated into Mule.  But Mule (from the
+little I've read the code) seems not to be designed to integrate
+external henkan servers into its multilingual features.  As far as I
+can tell, you either use a server or you don't, it's more or less
+fixed at startup (for XIM, at compilation in the cases of native Canna
+and Wnn support), and it is not selectable by menu.  This is maybe a
+Mule problem more than an XEmacs problem.
+
+    &gt;&gt; It seems to choke on the (standard-compliant) MIME content-type
+    &gt;&gt; header.  If that (`Content-type: text/html;
+    &gt;&gt; charset=iso-2022-jp') is present, the non-ASCII characters turn
+    &gt;&gt; into mojibake :-(.
+
+    Steve&gt; Sounds like a bug in w3.el... It seems to be ignoring the
+    Steve&gt; charset specification in the HTTP header.  Does it work in
+    Steve&gt; MULE?
+
+Dunno for sure; can't get the 3.0.x version of w3.el to work with GNU
+Emacs/Mule (I think this is due to my config stepping on it; but I'm
+not sure where).  But w3-2.2.26 shows the same bug with GNU
+Emacs/Mule.
+
+And it's worse than ignoring; it only gets it wrong when the charset
+spec is present.
+
+Anyway, I've reported the bug.
+
+    &gt;&gt; Do you get the right charsets when switching from an SJIS
+    &gt;&gt; server to an ISO-2022 server in w3.el?  Do you need to do
+    &gt;&gt; anything else (in particular I'm thinking of the liblocale
+    &gt;&gt; dodge that works with Netscrap)?  Do you get messages about not
+    &gt;&gt; being able to set locale, using C/POSIX instead?
+
+    Steve&gt; This is the funny thing: I get those messages from XEmacs
+    Steve&gt; for "LANG=de", perl does the same thing.  But I don't get
+    Steve&gt; any messages from Netscape (which displays correctly
+
+Netscape probably does not use libc localization, it probably uses
+Motif localization.  Unless you mean it displays localized messages to 
+std{err,out}.
+
+    Steve&gt; localized text) or various GNU utilities (again with
+    Steve&gt; varying degrees of localized text).
+
+But that's not the explanation for GNU.  GNU probably is just more
+robust for some reason.
+
+Ah, yes.  Looking at /usr/share/locale/*, you'll see that locale `de'
+doesn't have full support, evidently because the German countries
+don't share currency and date conventions and so on.  So all that is
+there is the LC_MESSAGES subdirectory.  Evidently perl and XEmacs
+either have a use for money :-) and GNU utilities don't, or they are
+less careful about checking all that kind of stuff, while the GNU
+utilities only request the locale functions they expect to need.  I'll
+have to try this out.
+
+Yup, perl only complains about character sorting and typing, and
+doesn't complain if you specify `LANG=de_DE'.
+
+    Steve&gt; I fully expect that message for LANG=ja, since I don't have
+    Steve&gt; any "ja" locale in /usr/share/locale.  (This needs to be
+    Steve&gt; fixed.)
+
+Do you know if anyone is working on it, or where to find out?  I
+wonder if the i18n features properly support LC_COLLATE and LC_CTYPE
+for wc/mb character sets ... I suppose they must.
+
+    Steve&gt; This is why the liblocale.so is needed. Apparently,
+    Steve&gt; it calls some internal X functions to trick it into
+    Steve&gt; thinking it has a wide character locale on systems lacking
+    Steve&gt; the "ja" locale (English Solaris ships without it).
+
+    Steve&gt; I believe the X locale functions will work in conjuction
+    Steve&gt; with libc locale
+
+In one sense, yes.  The models are different.  X puts everything into
+one big text file, and is very concerned about character sets and
+encodings, while ignoring money (I can't :) and messages (ditto).
+Linux's implementation of C/POSIX splits things into what are
+apparently compiled objects for each category, and doesn't seem to
+care about character sets (due to Unicode?).
+
+So evidently the models are pretty well orthogonal to each other,
+which is the impression I get from the OReilly "R5 Update" volume,
+which says that X i18n is built on ANSI C i18n.
+
+Apparently the liblocale.so hack works only because most programs
+never actually call any locale functions except for setlocale()
+(which is as it should be), and neither does Linux....
+
+    &gt;&gt; Lists of all defined locales and aliases are in
+    &gt;&gt; /usr/X11R6/lib/X11/locale/locale.{dir,alias}.
+
+    Steve&gt; The X locale information is there.  The libc locales are in
+    Steve&gt; /usr/share/locale (on Debian).
+
+
+    Steve&gt; $B%9%A%'%t!&amp;%@!&lt;%J%`(Bdunham@example.com
+
+    Steve&gt; -----------------------------------------------------------------
+    Steve&gt; a word from the sponsor will appear below -----------------------------------------------------------------
+    Steve&gt; The TLUG mailing list is proudly sponsored by TWICS -
+    Steve&gt; Japan's First Public-Access Internet System.  Now offering
+    Steve&gt; 20,000 yen/year flat rate Internet access with no time
+    Steve&gt; charges.  Full line of corporate Internet and intranet
+    Steve&gt; products are available.  info@example.com Tel: 03-3351-5977
+    Steve&gt; Fax: 03-3353-6096
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00043" HREF="msg00043.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> Steve Dunham &lt;dunham@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00046.html">tlug: Another File Manager</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00048.html">tlug: smail aliasing host configuration</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00043.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00023.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00047"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00047"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

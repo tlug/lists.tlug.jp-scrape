@@ -1,0 +1,172 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: RE: memory holes and kernel params -->
+<!--X-From-R13: "Rbhtugl, [vpunry" <Rbhtugl_[vpunryNofwxx.pb.wc> -->
+<!--X-Date: Fri, 27 Jul 2001 19:51:18 +0900 -->
+<!--X-Message-Id: 424302D32895D211995700805F85D8320216F763@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00497.html">Date Prev</a>][<a href="msg00499.html">Date Next</a>][<a href="msg00474.html">Thread Prev</a>][<a href="msg00481.html">Thread Next</a>][<a href="maillist.html#00498">Date Index</a>][<a href="threads.html#00498">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>RE: memory holes and kernel params</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>&quot;'<A HREF="mailto:tlug@example.com">tlug@example.com</A>'&quot; &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>RE: memory holes and kernel params</strong></li>
+<li><strong>From</strong>: <strong>&quot;Doughty, Michael&quot; &lt;<A HREF="mailto:Doughty_Michael@example.com">Doughty_Michael@example.com</A>&gt;</strong></li>
+<li>Date: Fri, 27 Jul 2001 19:51:18 +0900</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;Doughty_Michael@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;IrjwN.A.GLD.jfUY7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+In case anyone cares, the answer (found via the careful 
+and exact science of trial and error) is as follows:
+The statement mem=###M@example.com means that there is
+a contiguous of ###MB Ram starting at the 16M point.
+This means that if you have 128M of ram, the statement
+to use all of it after the 16M hole would be:
+mem=112M@example.com
+
+But wait! There's more!!
+If you want to use it all, the following statement is great:
+mem=exactmap mem=14M@example.com mem=112M@example.com
+
+This nets me a total of 126 megs.  I could probably get a 
+little more if I chose to start at the 0 or 640k mark, but
+as some machines appear to have a hole at both 0 and 
+15M, I decided to be on the extra cautious side.  
+Anyone want to throw out an improvement on this approach 
+of mine?
+
+Michael
+
+-----Original Message-----
+From: Doughty, Michael 
+Sent: 13”N7ŒŽ26“ú 19:06
+To: 'tlug@example.com'
+Subject: memory holes and kernel params
+
+
+Ok, here is the deal.  I have an ancient Compaq 1500 
+beast that I have dropped linux on.  But I have a 
+minor problem, in that it has a memory hole that is 
+causing the kernel a bit of grief.  Now I know I can 
+warn it about the memory hole in lilo.conf with a line 
+like:
+append=&quot;mem=##M@example.com&quot;
+
+What I don't know, and can't find any documentation on,
+is what do the ## stand for?  Does this line say I have
+a contiguous block of RAM that is ## in size starting 
+at 16M, or does it say I have a total of ## in ram, with
+a 1MB hole running from 15M-16M?  ie, if I have 128M of 
+physical memory and a memory hole at 15-16M, should my
+lilo line look like:
+
+append=&quot;mem=112M@example.com&quot;
+
+or
+
+append=&quot;mem=128M@example.com&quot;
+
+Thanks,
+
+Michael
+
+-----------------------------------------------------------------------
+Next Nomikai Meeting:    Fri, Aug 10 19:30-  Tengu Tokyo Eki-Mae
+Next Technical Meeting:  Sat, Sep 15 13:30-  Akasaka Kumin Center
+-----------------------------------------------------------------------
+more info: <A  HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00497.html">Re: Kana/Kanji</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00499.html">KDE Sound</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00474.html">memory holes and kernel params</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00481.html">Kana/Kanji</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00498"><strong>Date</strong></a></li>
+<li><a href="threads.html#00498"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

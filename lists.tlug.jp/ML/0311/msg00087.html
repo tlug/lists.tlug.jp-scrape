@@ -1,0 +1,167 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Process monitoring with Nagios -->
+<!--X-From-R13: Enz Fvyqref <fnzNwbivnacebwrpgf.pbz.nh> -->
+<!--X-Date: Fri, 14 Nov 2003 16:14:30 +1100 -->
+<!--X-Message-Id: 200311141614.30089@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3FB45D5A.2030609@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00086.html">Date Prev</a>][<a href="msg00089.html">Date Next</a>][<a href="msg00085.html">Thread Prev</a>][<a href="msg00086.html">Thread Next</a>][<a href="maillist.html#00087">Date Index</a>][<a href="threads.html#00087">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Process monitoring with Nagios</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 14 Nov 2003 16:14:30 +1100</li>
+<li><strong>From</strong>: <strong>Sam Tilders &lt;<A HREF="mailto:sam@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Process%20monitoring%20with%20Nagios">sam@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Process monitoring with Nagios</strong></li>
+<li>References: &lt;<a href="msg00085.html">3FB45D5A.2030609@example.com</a>&gt;</li>
+<li>Organization: Jovian Projects</li>
+<li>User-agent: KMail/1.4.3</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Fri, 14 Nov 2003 15:43, Sven Simon wrote:
+&gt; Has anybody been trying out Nagios (www.nagios.org) ? I just stumbled
+&gt; over their
+
+I've been using nagios to monitor about 450 services on over 70 hosts, 
+including linux, windows and routers/terminal servers.
+
+&gt; website and I think this is pretty much what I'm looking for. We have
+&gt; rolled out quite
+&gt; a bunch of Linux boxes and I need to ensure that some dedicated
+&gt; processes run on
+&gt; specific machines at specific times. Any opinions on how Nagios handles
+&gt; such situations.
+
+Nagios schedules checks to run periodically during specific windows of time. 
+If your processes were long running enough you could have nagios check that 
+the process was running by syncronising the period for the checks to run.
+
+&gt; Any other tools I should look at? How much of an impact do the agents
+&gt; have on the
+&gt; systems?
+
+The impact of the nagios checks depends on which checks you're doing. The 
+check_procs plugin basically does a ps and grep for the process you're 
+checking for. This can time out on systems with very large process lists.
+It's possible to write more specific check plugins that may be more optimised 
+for finding the process you're checking for, like looking for a PID file then 
+checking /proc for the pid, then checking the cmdline in /proc to see if it 
+is the correct process. I have had to write some of these to cope with plugin 
+timeouts.
+
+Nagios is very good at monitoring services that should always be available, or 
+at least available for significant windows of time. I usually have my service 
+checks set to every 5 minutes.
+However, you can set the units to be seconds and set the check periods much 
+shorter. This would of course increase load from the nagios scheduler and the 
+execution of the check plugins.
+
+-- 
+--
+Sam Tilders
+sam@example.com
+(Move to Jupiter)
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00085" href="msg00085.html">[tlug] Process monitoring with Nagios</a></strong>
+<ul><li><em>From:</em> Sven Simon</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00086.html">[tlug] November Meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00089.html">Re: [tlug] cp problem in gentoo install</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00085.html">[tlug] Process monitoring with Nagios</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00086.html">[tlug] November Meeting</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00087"><strong>Date</strong></a></li>
+<li><a href="threads.html#00087"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: HTTP headers q -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 17 Feb 2000 16:26:42 +0900 -->
+<!--X-Message-Id: 14507.41448.751663.732378@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14507.37841.61305.810703@example.com -->
+<!--X-Reference-Id: Pine.LNX.4.20.0002171532190.24149&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00181.html">Date Prev</A>][<A HREF="msg00183.html">Date Next</A>][<A HREF="msg00181.html">Thread Prev</A>][<A HREF="msg00183.html">Thread Next</A>][<A HREF="maillist.html#00182">Date Index</A>][<A HREF="threads.html#00182">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: HTTP headers q</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: HTTP headers q</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 Feb 2000 16:23:20 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00181.html">Pine.LNX.4.20.0002171532190.24149-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00180.html">14507.37841.61305.810703@example.com</A>&gt;&lt;<A HREF="msg00181.html">Pine.LNX.4.20.0002171532190.24149-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Adrian" == Adrian Havill &lt;havill@example.com&gt; writes:
+
+    Adrian&gt; On Thu, 17 Feb 2000, Stephen J. Turnbull wrote:
+
+    &gt;&gt; &gt;&gt;&gt;&gt;&gt; "Adrian" == Adrian Havill &lt;havill@example.com&gt; writes:
+
+    Adrian&gt; Also, your output to stdout is buffered whether you like
+    Adrian&gt; it or not, even if you use "nph-", for compatibility with
+    Adrian&gt; SSL and other things.
+
+    &gt;&gt; The Apache &gt;=v1.3 FAQ alleges not.  FWIW.
+
+    Adrian&gt; &lt;URL:<A TARGET="_top" HREF="http://www.apache.org/docs/upgrading_to_1_3.html">http://www.apache.org/docs/upgrading_to_1_3.html</A>&gt;:
+
+    Adrian&gt; : [snip] : "nph-" CGIs, which formerly provided a direct
+    Adrian&gt; socket to the client : without any server post-processing,
+    Adrian&gt; were not fully compatible with : HTTP/1.1 or SSL
+    Adrian&gt; support. As such they would have had to implement the :
+    Adrian&gt; transport details, such as encryption or chunking, in
+    Adrian&gt; order to work : properly in certain situations. Now, the
+    Adrian&gt; only difference between nph : and non-nph scripts is
+    Adrian&gt; "non-parsed headers". : [snip]
+
+    Adrian&gt; Am I misunderstanding this?
+
+Dunno, depends on what you mean by buffering.  Evidently some
+buffering is done, but in 1.3 CGIs are allegedly unbuffered in the
+sense that a stdout flush results in packets being sent:
+
+------------------------------------------------------------------------
+F. Dynamic Content (CGI and SSI)
+
+   4. How can I get my script's output without Apache buffering
+      it?  Why doesn't my server push work?
+
+  As of Apache 1.3, CGI scripts are essentially not buffered.  Every time
+  your script does a "flush" to output data, that data gets relayed on to
+  the client.  Some scripting languages, for example Perl, have their own
+  buffering for output - this can be disabled by setting the `$|'
+  special variable to 1.  Of course this does increase the overall number
+  of packets being transmitted, which can result in a sense of slowness for 
+  the end user.
+
+  Prior to 1.3, you needed to use "nph-" scripts to accomplish
+  non-buffering.  Today, the only difference between nph scripts and
+  normal scripts is that nph scripts require the full HTTP headers to
+  be sent.
+------------------------------------------------------------------------
+
+I think that's the interesting sense of "unbuffered."  I'm not sure
+how Apache would handle (eg) a partial header, whether it would stash
+it until it was complete, then send it on, or whether it would stash
+headers until all the stashed headers in the block were complete.  But
+that probably doesn't matter.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00183" HREF="msg00183.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> Adrian Havill &lt;havill@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00180" HREF="msg00180.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00181" HREF="msg00181.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> Adrian Havill &lt;havill@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00181.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00183.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00181.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00183.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00182"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00182"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

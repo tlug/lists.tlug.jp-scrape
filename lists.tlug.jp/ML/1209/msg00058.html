@@ -1,0 +1,209 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Any way to make code running on a cloud service publicly verifiable? -->
+<!--X-From-R13: Pevna ZnHnyyrr <o.yninyyrrNtybonygnax.wc> -->
+<!--X-Date: Fri, 21 Sep 2012 19:05:36 +0900 -->
+<!--X-Message-Id: CC822DB9.2A672%b.lavallee@globaltank.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CA+su7OWvHruqQ8MVWKqkGNSwrnLS0GeZECk=B4P4AwWN=qR8eg@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00057.html">Date Prev</a>][<a href="msg00059.html">Date Next</a>][<a href="msg00067.html">Thread Prev</a>][<a href="msg00046.html">Thread Next</a>][<a href="maillist.html#00058">Date Index</a>][<a href="threads.html#00058">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 21 Sep 2012 14:44:09 +0900</li>
+<li><strong>From</strong>: <strong>Brian LaVallee &lt;<a href="mailto:b.lavallee@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Any%20way%20to%20make%20code%20running%20on%20a%20cloud%20service%20publicly%20verifiable%3F">b.lavallee@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</strong></li>
+<li>User-agent: Microsoft-Entourage/12.33.0.120411</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>To get what you are looking take the following approach:
+
+1. Compute and sign the hash for each file in the source.
+2. Include the signed hash in the source.
+3. Package the source.
+4. Compute and sign the hash for the package.
+5. Make the signed hash available with the package.
+
+At this point, you ONLY have generated trusted source code.  [Add a script
+making it easier for a user to verify the files.]
+
+The next step involves a third-party server that should do the following:
+
+1. Get a fresh copy of the package and signed hash.
+2. Verify the package.
+3. Install the local package locally.
+4. Fetch the file and associated hash from Cloud Provider.
+5. Compare and verify hash files from the source and Cloud Provider.
+6. Fetch the file, compute the hash, and verify.
+
+Now we have ONLY verified files used at the Cloud Provider.  Should be
+enough for most users to accept THE CODE is creditable.  But it does NOT
+guarantee the Cloud Provider isn't doing anything between the application
+and user.
+
+Because the application is intended to be API driven, use that as another
+verification step.  Do permeation testing by running scripts on a
+third-party server and make API calls, then compare against expected
+results.  You could even create API's to specifically verify the code.
+
+This will get you most of the way there.  HOWEVER  Without controlling your
+own infrastructure, this is where verification (TRUST) runs against a brick
+wall.  
+
+I see the integrity of public-key cryptography is your biggest risk, both
+keys are theoretically available to the Cloud Provider.  In memory,
+temporary files, mail queue, etc...
+
+A bigger concern is using public-key cryptography on a Cloud Provider, there
+is not way to insure the integrity of a random seed.  Theoretically it could
+be compromised by logging /dev/random (urandom, PRNG, etc...), which could
+allow another user of the Cloud Provider infrastructure to duplicate your
+keys.
+
+
+Sincerely,
+Brian LaVallee
+
+
+On 9/14/12 4:47 PM, &quot;Edmund Edgar&quot; &lt;lists@example.com&gt; wrote:
+
+&gt; Recently I've run into a couple of situations where I've wanted to run
+&gt; some code on a server somewhere, in such a way that people can verify
+&gt; that it's really running the code that I say I am.
+&gt; 
+&gt; For example, I'd like to run a simple, api-only version of
+&gt; www.coinapult.com, where in essence what my app has to do is:
+&gt; 1) You tell me an email address.
+&gt; 2) I make up a random number.
+&gt; 3) I make a private/public keypair based on the random number.
+&gt; 4) I email the private key to the email address.
+&gt; 5) I tell you the public key.
+&gt; 6) I forget all about the random number and the private key.
+&gt; 
+&gt; I don't mind people having to trust some big, well-known organization
+&gt; with no particular interest in my service, but I'd like them to be
+&gt; able to be able to put as little trust as possible in me - in
+&gt; particular to be able to check up on me to make sure that I'm not
+&gt; secretly keeping the private key.
+&gt; 
+&gt; Ideally I'd be running a known, public, verifiable image, which I
+&gt; couldn't log into, on some trusted organization's hardware, and the
+&gt; image would grab my code from some public, verifiable URL.
+&gt; 
+&gt; I stumbled on this paper talking about the same thing - their example
+&gt; is a voting system - but I'm looking for a way to actually do it.
+&gt; <a  rel="nofollow" href="http://www.cs.duke.edu/~brownan/pubs/trusted-cloud-platform-services.pdf">http://www.cs.duke.edu/~brownan/pubs/trusted-cloud-platform-services.pdf</a>
+&gt; 
+&gt; It looks like I could get part of the way by making an EC2 AMI,
+&gt; setting it to fetch code based on a parameter set when it was run and
+&gt; locking myself out of it, but I'm not sure that I could effectively
+&gt; let people verify that the server I was running at a given IP address
+&gt; was really using that AMI, and I'm also not quite confident that there
+&gt; isn't some other way of secretly horsing around with an instance that
+&gt; you own.
+&gt; 
+&gt; Can anyone think of a good way to do this?
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00038" href="msg00038.html">[tlug] Any way to make code running on a cloud service publicly	verifiable?</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00057.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00059.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00067.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00046.html">[tlug] [announcement] Rakuten Technology Conference will be held on	October 20th.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00058"><strong>Date</strong></a></li>
+<li><a href="threads.html#00058"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

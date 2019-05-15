@@ -1,0 +1,642 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<termios.h>
+#include<stdlib.h>
+#include<fcntl.h>
+#include<string.h>
+#define NO_ABIERTO 10
+#define ERROR -1
+#define SALIR 1
+#define MD 2
+#define MS 3
+#define BS 4
+#define GR 5
+#define EEW 6
+#define LP 7
+#define EEE 8
+int serial_fd,prog,numb,vtermp;
+char *serial_name,buf[10],buf2[10]; 
+
+struct termios serial_attr,serial_bk,stdin_bk,stdin_attr; 
+FILE *prog2; 
+typedef union W {
+    unsigned char hl[2]; 
+    unsigned int W;
+}word;
+typedef struct programa {
+    unsigned char programa[0xFFFF];
+    unsigned int tam;
+} programa;
+typedef struct progs { 
+    unsigned int inicio;
+    unsigned char *segmento; 
+    unsigned int tam; 
+    struct progs *siguiente;
+} progs;
+typedef struct eep {
+    unsigned int inicio,final;
+    struct eep *sig;
+
+int abre(char *terminal);
+progs *pparse_s19(FILE *s19);
+void progs_up(progs *prog);
+programa parse_s19(FILE *s19); 
+void uploader(programa prog); 
+void bootstrap(programa prog);
+unsigned char xtod(char x); 
+void terminal();
+int com_parser(char *comando);
+void set_attr();
+void reset_attr();
+
+programa upload;
+
+
+main(int argc,char **argv)
+{
+	char c=0,c2=0;
+	word i;
+	unsigned int P,estado=0;
+    size_t comando_t=0;
+    char *comando=NULL;
+	
+    printf("Hola");
+	abre(argv[1]);
+	tcgetattr(serial_fd,&serial_bk); 
+    tcgetattr(STDIN_FILENO,&stdin_bk);
+    tcgetattr(STDIN_FILENO,&stdin_attr);
+	set_attr(); 
+	prog2=fopen(argv[2],"r");
+	upload=parse_s19(prog2);
+    bootstrap(upload);
+	tcgetattr(STDIN_FILENO,&stdin_bk);
+	stdin_attr.c_cc[VMIN]=1;
+	stdin_attr.c_cc[VTIME]=0;
+	c='a';
+	tcsetattr(STDIN_FILENO,TCSAFLUSH,&stdin_attr);
+    i.W=0;
+    while(estado!=SALIR) {
+        putchar(':');
+        getline(&comando,&comando_t,stdin);
+        estado=com_parser(comando);
+	}
+    fcloseall();
+    return(0);
+	tcsetattr(STDIN_FILENO,TCSAFLUSH,&stdin_bk);
+	reset_attr();
+	close(serial_fd);
+}
+
+
+/* 
+ * Utiliza un archivo de texto como entrada de comandos.
+ */
+int fparser(char *nombre)
+{
+    FILE *arch;
+    char *cad=NULL;
+    int val=0;
+    
+    if((arch=fopen(nombre,"r"))==NULL)
+        return ERROR;
+    while(getline(&cad,&val,fopen))
+        com_parser(cad);
+    fclose(arch);
+    free(cad);
+}
+
+/* 
+ * Hace el parseo del comando.
+ */
+int com_parser(char *comando)
+{
+    char *copia,*token;
+    int ret=0,loop;
+    unsigned char c,echo;
+    unsigned int dir,cant;
+    FILE *tmp;
+    
+    copia=strdup(comando);
+    token=strtok(copia," \t");
+    if(!strcasecmp(token,"exit\n"))
+        return SALIR;
+     else if(!strcasecmp(token,"md")) //memory display  md <dir> [<count>]
+    {
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        dir=strtoul(token,NULL,16); 
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            c=3; //opcion 3 en el talker
+            write(serial_fd,&c,1); 
+            read(serial_fd,&echo,1);
+            c=dir>>8; //byte mas significativo
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=dir;  //byte menos significativo.
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=0;  
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=1;  
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            
+            read(serial_fd,&c,1);
+            printf("%.2X\n",c); 
+        } else
+        {
+            cant=strtoul(token,NULL,16);
+            if(!cant) //Leer 0 bytes?!
+        {   
+            free(copia);
+            return ERROR;            //toma el siguiente token, la direccion.
+        }
+            c=3;
+            write(serial_fd,&c,1); //manda la opción 7 al talker.
+            read(serial_fd,&echo,1); //espera respuesta con echo.
+            c=dir>>8; //byte mas significativo
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=dir;  //byte menos significativo.
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=cant>>8; //byte mas significativo
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            c=cant;  //byte menos significativo.
+            write(serial_fd,&c,1);
+            read(serial_fd,&echo,1);
+            for(loop=0;loop<cant;loop++)
+            {
+                read(serial_fd,&echo,1);
+                printf("%.2X ",echo);
+            }
+            putchar('\n');
+        }
+        ret=MD;
+    }
+    else if(!strcasecmp(token,"ms")) //memory set.
+    {
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;            //toma el siguiente token, la direccion.
+        }
+        dir=strtoul(token,NULL,16);
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;            //toma el siguiente token, el valor.
+        }
+        c=1;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir>>8;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=0;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=1;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=strtoul(token,NULL,16);
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        ret=MS;
+    }
+    else if(!strcasecmp(token,"bs\n")) //bootsrap.
+    {
+        bootstrap(upload);
+        ret=BS;
+    }
+    else if(!strcasecmp(token,"gr\n")) //get registers.
+    {
+        
+        ret=GR;
+    }
+    else if(!strcasecmp(token,"eew")) //eeprom write.
+    {
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        dir=strtoul(token,NULL,16);
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        c=4; //opción para grabar eeprom
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir>>8;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        cant=strtoul(token,NULL,16);
+        c=cant;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        read(serial_fd,&echo,1);
+        ret=EEW;
+        //read(serial_fd,&echo,1);
+    }
+    else if(!strcasecmp(token,"lp")) //load program.
+    {
+        
+        if((token=strtok(NULL," \t\n"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        printf("archivo: %s\n",token);
+         if((tmp=fopen(token,"rw"))==NULL)
+         {
+             perror(NULL);
+             return ERROR;
+         }
+        pparse_s19(tmp);
+        fclose(tmp);
+        ret=LP; 
+    }
+    else if(!strcasecmp(token,"g")) //go
+    {
+        if((token=strtok(NULL," \t"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        dir=strtoul(token,NULL,16);
+        c=2; //opción 4, cambiar PC de valor.
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir>>8;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+        c=dir;
+        write(serial_fd,&c,1);
+        read(serial_fd,&echo,1);
+    }
+    else if((!strcasecmp(token,"term\n"))||!(strcasecmp(token,"term")))
+    {
+        terminal();
+    }
+    else if((!strcasecmp(token,"batch")))
+    {
+        if((token=strtok(NULL," \t\n"))==NULL)
+        {
+            free(copia);
+            return ERROR;
+        }
+        fparser(token);
+    }
+    else 
+    {
+        free(copia);
+        return ERROR;
+    }
+    free(copia);
+    return ret;
+}
+
+void terminal()
+{
+    unsigned char c,c2;
+    
+    cfmakeraw(&stdin_attr);
+    
+    serial_attr.c_cc[VMIN]=0;
+	serial_attr.c_cc[VTIME]=0;
+    stdin_attr.c_cc[VMIN]=0;
+	stdin_attr.c_cc[VTIME]=0;
+    tcsetattr(STDIN_FILENO,TCSAFLUSH,&stdin_attr);
+    tcsetattr(serial_fd,TCSAFLUSH,&serial_attr);
+    while(c!='x') {
+        if(read(STDIN_FILENO,&c,1)) 
+        {
+  		    write(serial_fd,&c,1);
+        }
+ 
+		if(read(serial_fd,&c2,1))
+            //write(STDIN_FILENO,&c2,1);
+            printf("%.2X ",c2);
+		//putchar(c2);
+		if(c==0xd)
+        {
+            putchar('\n');
+            c=0;
+        }
+        
+        
+    }
+    tcsetattr(STDIN_FILENO,TCSAFLUSH,&stdin_bk);
+    serial_attr.c_cc[VMIN]=1;
+	serial_attr.c_cc[VTIME]=0;
+    tcsetattr(serial_fd,TCSAFLUSH,&serial_attr);
+}
+
+/*
+*abre un archivo como terminal.
+*/
+int abre(char *terminal)
+{
+    
+	if((serial_fd=open(terminal,O_RDWR))<0) { //O_NOCTTY
+		perror(terminal);
+		return(-1);
+	}
+	if(!isatty(serial_fd)) {
+		perror(terminal);
+		return(-1);
+	}
+	return(1);
+}
+
+/*
+*Configura la terminal.
+*/
+void set_attr()
+{
+	cfmakeraw(&serial_attr);
+	cfsetspeed(&serial_attr,B1200);
+	
+	serial_attr.c_cc[VMIN]=1;
+	serial_attr.c_cc[VTIME]=0;
+	serial_attr.c_cflag&=~PARENB;
+	serial_attr.c_iflag&=~(INPCK|ISTRIP);
+	serial_attr.c_cflag|=CS8|CREAD|CLOCAL;
+
+	tcsetattr(serial_fd,TCSAFLUSH,&serial_attr);
+	
+}
+
+/*
+*Manda los p.tam datos contenidos en p.programa a la tarjeta, y espera una respuesta
+echo por cada uno.
+*/
+void uploader(programa p)
+{
+    unsigned int PC=0;
+    unsigned char echo;
+    
+    for(PC=0;PC<p.tam;PC++)
+    {
+        write(serial_fd,&p.programa[PC],1);
+        read(serial_fd,&echo,1);
+        printf("Caracter %.2X correcto: %.2X\t%.2X\n",PC,p.programa[PC],echo);
+    }
+    read(serial_fd,&echo,1);
+}
+
+/*Llamar a esta rutina cuando se inicie la tarjeta en modo bootstrap.
+Limpia los buuferes de entrada y salida, manda el caracter de inicio (0xFF),
+y carga el programa prog.
+*/
+void bootstrap(programa prog)
+{
+    unsigned char c=0xFF;
+    
+    printf("Booting\n");
+    tcflush(serial_fd,TCIOFLUSH);
+    write(serial_fd,&c,1);
+    /* cfsetspeed(&serial_attr,B9600);
+    tcsetattr(serial_fd,TCSAFLUSH,&serial_attr); */
+    //read(serial_fd,&c,1);
+    uploader(prog);
+    cfsetspeed(&serial_attr,B9600);
+    tcsetattr(serial_fd,TCSAFLUSH,&serial_attr); 
+}
+
+/*Llamar a esta rutina antes de salir del programa.
+Restaura los atributos del puerto serial.
+*/
+void reset_attr()
+{
+	tcsetattr(serial_fd,TCSANOW,&serial_bk);
+}
+
+/*Llamar a esta rutina para cargar un programa en un buffer de 64K.
+Recibe como parametro un apuntador FILE al archivo a cargar, y devuelve una
+variable tipo programa con el buffer a cargar y el tamaño del buffer.
+Usada para cargas lineales, sin brincos.
+*/
+programa parse_s19(FILE *s19)
+{
+	char *pars1,*pars2;
+	int n=0,p,tam;
+	unsigned int PC=0;
+	size_t p1,p2;
+	unsigned char count,low,high,c,c2;
+    programa ret;
+    
+    printf("HOLAS");
+	p1=0;
+	pars1=NULL;
+	while((p=getline(&pars1,&p1,s19))>-1) {
+	pars2=pars1+2;
+	switch((char)*(pars2-1)) {
+		case '0':
+			printf("cero\n");
+		break;
+		case '1':
+			count=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+			high=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+			low=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+			count-=3;
+			if((high*0x100+low)>PC) 
+            {
+			    c=1;
+			    while(PC<(high*0x100+low)) 
+                {
+                    ret.programa[PC]=c;
+			        n++;
+			        PC++;
+			    }
+			}
+			while(count>0) 
+            {
+				c=xtod(*pars2)*16+xtod(*(pars2+1));
+                ret.programa[PC]=c;
+				pars2+=2;
+				count--;
+      			PC++;
+                ret.tam=PC;
+			}
+		break;
+		case '2':
+		break;
+		case '3':
+		break;
+		case '4':
+		break;
+		case '5':
+		break;
+		case '6':
+		break;
+		case '7':
+		break;
+		case '8':
+		break;
+		case '9':
+		break;
+	}
+	}
+     free(pars1); 
+	return ret;
+}
+
+/*
+Rutina para convertir un caracter de hexadecimal a decimal.
+*/
+unsigned char xtod(char x)
+{
+	if((x>='a'&&x<='f')) {
+		return x-'a'+10;
+	}
+	if((x>='A'&&x<='F')) {
+		return x-'A'+10;
+	}
+	if((x>='0'&&x<='9')) {
+		return x-'0';
+	}
+}
+
+/*
+Rutina para parsear un programa S19 y cargarlo en una variabe progs
+*/
+progs *pparse_s19(FILE *s19)
+{
+    char *pars1,*pars2;
+	int n=0,p,tam;
+	unsigned int PC=0;
+	size_t p1,p2;
+	unsigned char count,low,high,c,c2;
+    progs *ret;
+    progs **sig;
+	
+    /* ret->tam=0;
+    ret->segmento=NULL; //inicialización de ret.
+    *sig=ret; */
+    
+	p1=0;
+	pars1=NULL;
+	while((p=getline(&pars1,&p1,s19))>-1) {
+	pars2=pars1+2;  //brinca el registro S
+	switch((char)*(pars2-1)) {
+		case '0':
+			printf("cero\n");
+		break;
+		case '1':
+			count=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+            /* (*sig)->tam=count; //el tamaño del segmento */
+			high=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+			low=xtod(*pars2)*16+xtod(*(pars2+1));
+			pars2+=2;
+            /* (*sig)->inicio=high*0x100+low; //dirección de inicio del segmento */
+			count-=3;
+            /* (*sig)->segmento=malloc((*sig)->tam); */
+            PC=0;
+            c='1'; //opción 3, escribir n bytes.
+            write(serial_fd,&c,1);
+            read(serial_fd,&c2,1);
+            c=high; //escribe parte alta de la direccion
+            write(serial_fd,&c,1);
+            read(serial_fd,&c2,1);
+            c=low; //escribe parte baja de la direccion.
+            write(serial_fd,&c,1);
+            read(serial_fd,&c2,1);
+            c=0; //escribe parte alta de la cantidad
+            write(serial_fd,&c,1);
+            read(serial_fd,&c2,1);
+            c=count; //escribe parte baja de la cantidad
+            write(serial_fd,&c,1);
+            read(serial_fd,&c2,1);
+			while(count>0) 
+            {
+				c=xtod(*pars2)*16+xtod(*(pars2+1));
+                write(serial_fd,&c,1);
+                read(serial_fd,&c2,1);
+                //printf("Caracter mandado %.2X; recibido %.2X\n",c,c2);
+                
+                
+                /*ret.programa[PC]=c;
+				pars2+=2;
+				count--;
+      				PC++;
+                ret.tam=PC; */
+                /* ret->segmento[PC]=c; */
+                count--;
+                PC++;
+                pars2+=2;
+			}
+			/* (*sig)=(*sig)->siguiente; */
+		break;
+		case '2':
+		break;
+		case '3':
+		break;
+		case '4':
+		break;
+		case '5':
+		break;
+		case '6':
+		break;
+		case '7':
+		break;
+		case '8':
+		break;
+		case '9':
+		break;
+    } //switch
+    
+    } //while
+    free(pars1);
+}
+
+/* 
+ * sube un flujo de codigo
+ */
+void progs_up(progs *prog)
+{
+    unsigned int PC=0;
+    unsigned char echo;
+    progs *temp;
+    
+    temp=prog;
+    while(temp!=NULL)
+    {
+        for(PC=0;PC<temp->tam;PC++)
+        {
+            write(serial_fd,&(temp->segmento[PC]),1);
+            read(serial_fd,&echo,1);
+            printf("Caracter enviado y recibido! \t%c\t%c\n",temp->segmento[PC],echo);
+        }
+        temp=temp->siguiente;
+    }
+    
+    
+    /* for(PC=0;PC<p.tam;PC++)
+    {
+        write(serial_fd,&p.programa[PC],1);
+        read(serial_fd,&echo,1);
+        printf("Caracter correcto: %.2X\n",p.programa[PC]);
+    } */
+}
+

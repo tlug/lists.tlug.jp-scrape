@@ -1,0 +1,176 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: compact flash card/ compiling modules -->
+<!--X-From: Tobias Diedrich <ranma@example.com> -->
+<!--X-Date: Sat, 30 Dec 2000 15:13:45 +0100 (CET) -->
+<!--X-Message-Id: Pine.LNX.4.21.0012301445120.443&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200012301112.eBUBChP02065@example.com&#45;tokyo.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00293.html">Date Prev</A>][<A HREF="msg00295.html">Date Next</A>][<A HREF="msg00293.html">Thread Prev</A>][<A HREF="msg00296.html">Thread Next</A>][<A HREF="maillist.html#00294">Date Index</A>][<A HREF="threads.html#00294">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: compact flash card/ compiling modules</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: compact flash card/ compiling modules</strong></LI>
+<LI><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 30 Dec 2000 15:13:45 +0100 (CET)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00293.html">200012301112.eBUBChP02065@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;zi2QyD.A.6mE.Y7eT6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Sat, 30 Dec 2000, Joerg Winkelmann wrote:
+
+[...]
+&gt; card into the PCMCIA slot of my Laptop with SuSe Linux 2.0.33 on it,
+                                              ^^^^^^^^^^^^^^^^^
+I guess you mean the linux kernel version is 2.0.33.
+Which version of the SuSE distribution are you using ?
+What does your login prompt say ?
+It should be something like "Welcome to SuSE Linux &lt;suseversion&gt; - Kernel
+&lt;kernelversion&gt;"
+
+&gt; it apparently realizes that there is a memory card, but fails to
+&gt; load the appropriate driver, which seems to be broken.
+&gt; At least this is my guess from the lines in /var/log/messages,
+&gt; which follow:
+&gt; 
+&gt; Dec 29 15:24:57 jwnote cardmgr[76]: initializing socket 2
+&gt; Dec 29 15:24:57 jwnote cardmgr[76]: socket 2: ATA/IDE Fixed Disk
+&gt; Dec 29 15:24:57 jwnote cardmgr[76]: executing: 'insmod /lib/modules/2.0.33/pcmcia/ide_cs.o'
+&gt; Dec 29 15:24:57 jwnote cardmgr[76]: + /lib/modules/2.0.33/pcmcia/ide_cs.o: unresolved symbol ide_unregister
+&gt; Dec 29 15:24:57 jwnote cardmgr[76]: + /lib/modules/2.0.33/pcmcia/ide_cs.o: unresolved symbol ide_register
+[...]
+
+BTW all pcmcia related kernel modules belong to the pcmcia package.
+You may have to install the pcmcia source package from the zq series with
+YaST.
+If you do that you will have the file pcmcia-cs-&lt;some version
+number&gt;.tar.gz in your /usr/src/packages/SOURCES directory.
+Recompile that package. (unpack using tar xvzf, ./configure, make all,
+make install)
+
+&gt; I then tried to upgrade the kernel modules, downloaded modules-2.1.13
+&gt; from ftp.kernel.org, but this failed completely: It just does not compile,
+&gt; producing a flood of error messages including the following lines:
+&gt; 
+&gt; In file included from insmod.h:29,
+&gt;                  from insmod.c:71:
+&gt; 
+&gt; insmod.c: In function `main':
+&gt; insmod.c:1008: sizeof applied to an incomplete type
+&gt; insmod.c:1009: sizeof applied to an incomplete type
+[...]
+
+I think you downloaded modutils not modules.
+Most kernel modules are part of the kernel sources (except for example the
+pcmcia modules which are part of the pcmcia package).
+So you would have to install the kernel sources from your SuSE CD's or
+grab some newer kernel from <A TARGET="_top" HREF="ftp://ftp.kernel.org/pub/linux/kernel/v2.0/">ftp://ftp.kernel.org/pub/linux/kernel/v2.0/</A> or
+<A TARGET="_top" HREF="ftp://ftp.kernel.org/pub/linux/kernel/v2.2/">ftp://ftp.kernel.org/pub/linux/kernel/v2.2/</A>.
+Newest 2.0 kernel is 2.0.38.
+Newest 2.2 kernel is 2.2.18.
+You most certainly don't want to try out the 2.4 kernel and
+even more you don't want to try a kernel with an odd second version number
+because those are developer kernels which tend to be very unstable
+sometimes and may corrupt your filesystem, things like that (2.1.x,
+2.3.x, 2.4.x-pre )
+
+But my guess is you will only need the pcmcia package and recompile that
+which should be _alot easier_ than recompiling your kernel.
+
+Hope that helps,
+
+Tobias Diedrich
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00293" HREF="msg00293.html">compact flash card/ compiling modules</A></STRONG>
+<UL><LI><EM>From:</EM> Joerg Winkelmann &lt;jwinkel@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00293.html">compact flash card/ compiling modules</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00295.html">display of jp fonts bunged by installing atokx</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00293.html">compact flash card/ compiling modules</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00296.html">Re: compact flash card/ compiling modules</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00294"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00294"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

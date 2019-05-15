@@ -1,0 +1,182 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] unicode and Perl&#45; how to pass command line unicodearguments -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 13 Feb 2006 15:36:26 +0900 -->
+<!--X-Message-Id: 87d5hrix3v.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 43EFF8C4.4050704@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00247.html">Date Prev</a>][<a href="msg00249.html">Date Next</a>][<a href="msg00246.html">Thread Prev</a>][<a href="msg00252.html">Thread Next</a>][<a href="maillist.html#00248">Date Index</a>][<a href="threads.html#00248">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 13 Feb 2006 15:36:20 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20unicode%20and%20Perl-%20how%20to%20pass%20command%20line%20unicodearguments">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</strong></li>
+<li>References: &lt;<a href="msg00242.html">43EFF8C4.4050704@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b23 (daikon, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;David&quot; == David Riggs &lt;dariggs@example.com&gt; writes:
+
+    David&gt; Somehow your suggested utf8::decode($x) only returns a
+    David&gt; &quot;1&quot;, presumably for success, and I do not see how to get
+    David&gt; it to return the value.
+
+As David E points out, it's doing its work in place.  Not good.
+
+    David&gt; Very mystifying.
+
+Not really, if you understand what's actually happening.  The main
+thing is to disabuse yourself of the notion that anything that's
+useful for real programming work can &quot;just work&quot; with Unicode (or with
+anything; be thankful you only have to deal with Unicode and not IEEE
+754 floating point!)  The basic problem is that languages that have
+inherited their way of thinking about text from C always have an
+assumption that text == a region of memory built in, and strings are
+really just a collection of bytes.
+
+Then people get used to programming as though strings and byte arrays
+are the same thing, and you don't know what &quot;this is text&quot; means; is
+it an array of 8-bit integers, or is it a UTF-8 stream of characters
+of variable width?  So all of these languages allow you to treat
+memory regions as strings, and it's the programmer's responsibility
+(this means YOU! ;-) to disambiguate.
+
+    David&gt; And I thought perl was supposed to just work with unicode!
+
+You might be happier with Python (or some other language with similar
+design).  Python has separate types for byte strings and Unicode
+strings.  Unicode literals are a bit of an annoyance since you have to
+do something like
+
+    var = &quot;Yes, this is valid UTF-8!&quot;.unicode('utf-8')
+
+but if you're generally reading from files you can set the default
+codec to the appropriate UTF, and you &quot;just read&quot; from the files and
+everything &quot;just works.&quot;  The basic principle is that all your
+workhorse functions should assume (and check for, if they can be
+called at higher levels) Unicode as input.  Everything should be
+converted to Unicode _explicitly_ as early as possible.
+
+It's probably possible to program in this style in Perl, too, but Perl
+believes that anything that can't be implicit should be made so
+obscure that it might as well be implicit---it won't be pleasant. ;-)
+
+-- 
+School of Systems and Information Engineering <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00252" href="msg00252.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> gabor</li></ul></li>
+<li><strong><a name="00253" href="msg00253.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00242" href="msg00242.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00247.html">Re: [tlug] unicode and Perl</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00249.html">[tlug] KuroBox HG Sid and Xterm not root problem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00246.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00252.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00248"><strong>Date</strong></a></li>
+<li><a href="threads.html#00248"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

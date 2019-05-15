@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: bash ? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 28 Feb 1997 05:33:53 GMT -->
+<!--X-Message-Id: m0w0Kog&#45;00001pC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.970227181416.schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00109.html">Date Prev</A>][<A HREF="msg00111.html">Date Next</A>][<A HREF="msg00106.html">Thread Prev</A>][<A HREF="msg00111.html">Thread Next</A>][<A HREF="maillist.html#00110">Date Index</A>][<A HREF="threads.html#00110">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: bash ?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: bash ? </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 28 Feb 1997 14:25:10 +0900</LI>
+<LI>In-reply-to: Your message of "Thu, 27 Feb 1997 17:42:56 +0900."            &lt;<A HREF="msg00106.html">XFMail.970227181416.schweiz@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Purpose: find files by date and rm, cat, cp or whatever.
+
+    Jim&gt; This works fine:
+
+    Jim&gt; ls -l | grep -i 'feb 27' | cut -c56-
+
+    Jim&gt; for finding todays files, but I want to write a shell script
+    Jim&gt; for it like:
+
+This isn't a _script_, it's a _shell function_.  The difference is it
+won't work under other shells, and it doesn't invoke a subshell.
+
+    Jim&gt; function lsdate {
+
+Problem:  The `()' after lsdate is missing.  It turns out that the
+keyword `function' can be omitted if there are parens, but the parens
+are necessary (at least if you want to use positional parameters).
+See "Tip:" below.
+
+    Jim&gt;   date=$1
+    Jim&gt;   ls -l | grep -i "^.\43\}$date" | cut -c56-
+                            ^^^^^^^ 
+What's this, gomi?
+
+    Jim&gt; }
+
+    Jim&gt; then call the script like lsdate 'feb 27' but the script
+    Jim&gt; isn't accepting the filename arguments.
+
+If you simply put `ls -l | grep -i "$1" | cut -c56-' in a file it
+should do what you want (once you put the file on your path and chmod
+it to be executable).  For safety put `#!/bin/sh' as the first line.
+As a function, you need the syntax `function func () { ... }' in your
+.bashrc or .profile (or type it at the command line).
+
+Tip:  having defined a function `squash' at the command line, you can
+then debug it, and use the `declare' builtin to add it to your .bashrc:
+
+bash-2.00$ function squash () {
+&gt;     local d=`date +%y%m%d`;    # local declares a local variable so
+&gt;     mv $1 $1.$d;               # you don't step on any predefined values
+&gt;     gzip $1.$d
+&gt; }
+bash-2.00$ declare -f squash
+squash () 
+{ 
+    local d=`date +%y%m%d`;
+    mv $1 $1.$d;
+    gzip $1.$d
+}
+bash-2.00$ declare -f squash &gt;&gt;.bashrc
+bash-2.00$ 
+
+Of course you should go edit .bashrc to use the explicit syntax
+beginning with `function'.
+
+    Jim&gt; I realize this is pretty basic, but what am I doing wrong?
+
+    Jim&gt; BTW, the new XFMail mentioned in this month's Linux Gazette
+
+I'm having too much fun hacking on mh-e.el ;-)
+
+    Jim&gt; is pretty spiffy. No more limits on text in the editor,
+    Jim&gt; ispell works fine with it and it loads much faster. My only
+
+Who needs ispell :-P
+
+    Jim&gt; viewer, etc) It doesn't appear to support kanji but it does
+
+Awwww......
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: tlug: bash ?</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00106" HREF="msg00106.html">tlug: bash ?</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00109.html">Re: tlug: HAN IP addresses</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00111.html">Re: tlug: bash ?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00106.html">tlug: bash ?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00111.html">Re: tlug: bash ?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00110"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00110"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Font Encodings &#45; Re: tlug: Java and Japanese -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 28 Aug 1997 09:13:32 GMT -->
+<!--X-Message-Id: m0x40bX&#45;00000wC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970828153139.3832A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00136.html">Date Prev</A>][<A HREF="msg00139.html">Date Next</A>][<A HREF="msg00137.html">Thread Prev</A>][<A HREF="msg00133.html">Thread Next</A>][<A HREF="maillist.html#00138">Date Index</A>][<A HREF="threads.html#00138">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Font Encodings - Re: tlug: Java and Japanese</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Font Encodings - Re: tlug: Java and Japanese </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 28 Aug 1997 18:11:03 +0900</LI>
+<LI>In-reply-to: Your message of "Thu, 28 Aug 1997 15:36:28 +0900."            &lt;<A HREF="msg00137.html">Pine.HPP.3.95.970828153139.3832A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+I already sent a version of this to Craig; decided to clean it up and
+pass it on to TLUG, TWIW.
+
+On Thu, 28 Aug 1997, John Little wrote:
+
+gaijin&gt;% 
+gaijin&gt;% I'm not sure what the "8859_1" means.  Does anyone know?
+gaijin&gt;% 
+gaijin&gt;
+gaijin&gt;   ISO encoding 8859_1, usually known as "Western English" or
+gaijin&gt;   "Latin-1", as opposed to 8859_2, the encoding for "European
+gaijin&gt;   English". The latter includes codes for umlaut, cedilla, acute
+gaijin&gt;   and friends. Check out the X11 fonts directory (encoding).
+
+This is not exactly true, in fact Latin-[1234] all have the accents
+and stuff for the major European languages; they are tweaked for ones
+with a small number of speakers.  Latin-[5678] are completely revamped
+for Cyrillic, Arabic, Greek and Hebrew (which have no glyphs in common
+with ASCII, and so no space for the accented glyphs in these sets).
+Latin-9 and Latin-10 are needed only for one language each (Icelandic
+and Turkish, respectively) and can handle most majors.  (Source:
+Nishikimi, et al.  Maruchiringaru Kankyou no Jitsugen.  Prentice-Hall.)
+
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; That's weird.  I wonder why I have to I have to specify
+    Craig&gt; 8859_1?  I asked Tsurui-san about this and he said that he
+    Craig&gt; read it on the Java mailing list in reference to the JDBC.
+    Craig&gt; This is the same thing I was reading.  There really wasn't
+    Craig&gt; an explanation of why it was needed.  Tsurui-san thought it
+    Craig&gt; was the specification for unicode.
+
+Nah.  Specifications of unicode and ISO-Latin-1 CAN'T matter (mostly)
+because they are unrelated to the semantics of this program as long as
+conversions are invertible.  Ie, the only things that're relevant are
+that (1) the servlet NEVER produce non-Latin-1-equivalent Unicode
+characters; (2) Latin-1 to Unicode is one-to-one; (3) none of the
+bytes in the stream are non-Latin-1.
+
+(1a) HTTP/1.x specifies that unless otherwise stated by a Content-Type
+    header, HTTP message bodies (including POSTs) MUST (caps in the
+    RFC 2068 :) be presumed to be ISO-8859-1.  Therefore if
+    HttpServletRequest is correctly implemented, POSTs from broken
+    clients will be interpreted by default as ISO-8859-1.
+(1b) A Java program automatically converts strings into Unicode; by
+    (1a), the servlet package must tell Java that the input is Latin-1.
+(2) By specification.
+(3) By specification (Latin-1 uses all 256 code points; no byte is out 
+    of domain).
+
+The hole in (1) generates the bug, which is that when a properly
+internationalized client sends eg an ISO-2022-JP Content-Type or a
+UTF-? Content-Type, the servlet package should (if HttpServletRequest
+is properly implemented) produce Unicode Japanese out of those.  (The
+default assumption is producing not Unicode but a 16-bit encoding of
+8-bit bytes according to the Latin-1-&gt;Unicode tables. :-) This Unicode
+Japanese should then bomb (out of range) on back-conversion to
+ISO-8859-1 in Craig's code.
+
+Having no knowledge of servlets, I don't know how to handle this.
+
+Ciao
+
+Steve
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00137" HREF="msg00137.html">Re: Font Encodings - Re: tlug: Java and Japanese</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00136.html">Re: tlug: jpeglib.h and Gimp</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00139.html">tlug: Gimp novice question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00137.html">Re: Font Encodings - Re: tlug: Java and Japanese</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00133.html">tlug: jpeglib.h and Gimp</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00138"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00138"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

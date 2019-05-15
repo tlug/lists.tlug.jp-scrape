@@ -1,0 +1,266 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] issues with format of double (or IEEE754) -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Wed, 26 Jul 2006 23:33:28 +0900 -->
+<!--X-Message-Id: 20060726103316.5fd3a597.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00382.html">Date Prev</a>][<a href="msg00384.html">Date Next</a>][<a href="msg00380.html">Thread Prev</a>][<a href="msg00384.html">Thread Next</a>][<a href="maillist.html#00383">Date Index</a>][<a href="threads.html#00383">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] issues with format of double (or IEEE754)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 26 Jul 2006 10:33:16 -0400</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] issues with format of double (or IEEE754)</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29">20060726125907.GH5111@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi giggling high school girl, 
+
+&gt; Hello :)
+
+&gt; I appologize if this is not a sort of &quot;only linux related question&quot;.
+&gt; Still I believe there is some kind of relation to linux, since I do all
+&gt; the described actions using debian testing 
+
+Your question is most definitely Linux related. 
+
+&gt; on an i386 mashine...
+
+ISA bus? 
+
+&gt; I have a problem with getting a double precision number from my digital
+&gt; nanovoltmeter (keithley 2182A). 
+&gt; 
+&gt; ... gpib interface ... 10byte data in format:
+&gt; (ascii header)#0 (just 64 bits) 1110010.....
+&gt; 
+&gt; So after two characters, 64 zeros and ones come. 
+&gt; The later are organised such that first 11 bits are &quot;exponent bits&quot;
+&gt; followed by 52 &quot;fraction bits&quot;, conforming to IEEE754 format.
+
+Maybe your meter follows IEEE754. Maybe it does not. 
+
+Regardless of documentation, 
+I would not assume that IEEE754 format is followed. 
+I would not be surprised if there are little differences. 
+
+&gt; So I use a function ibrd() [2] to read this data in a buffer defined in
+&gt; this way:
+&gt; char result_normal_plus[17]=&quot;00000000000000000&quot;;
+
+If that is global, keep in mind that result_normal_plus will 
+initialized only _once_. 
+
+&gt; ibrd(K2182Ud,result_normal_plus,10);
+
+What do you do with the other seven bytes of result_normal_plus[]? 
+(That is a side issue, probably unrelated. It just looks wierd)
+
+&gt; result_normal_plus[ibcnt]='\0';
+
+I am confused about which data is binary and which data is ASCII. 
+I get the hazy impression that ibrd() does binary, 
+so seeing result_normal_plus[ibcnt]='\0' looks odd. 
+
+&gt; presult= result_normal_plus+2;
+&gt; 
+&gt; where presult is a pointer to double, 
+&gt; eg. defined as: double *presult;
+
+Maybe double* follows IEEE754. Maybe it does not. 
+
+It mostly likely follows internal representation of '387 
+even if you don't have '387 math chip. I don't expect Intel 
+to guarantee IEEE754 compliance, especially back then. 
+
+You are braver than I. I don't expect standards to be followed. 
+This is where I would put my greatest suspicion. 
+Do you have the 80387 coprocessor? 
+Regardless of whether you have a '387 or not, 
+using the double* trick is what gets my greatest suspicion. 
+
+&gt; The problem is that if I print the number:
+&gt; 
+&gt; printf(&quot;*presult: %.12f \n&quot;,*presult);
+&gt; 
+&gt; I always get a number which is 4 orders of magnitude lower. For example:
+&gt; 0.00002 instead of 0.2 
+
+My gut feeling is that Intel did not use IEEE754 format. 
+
+&gt; Can anyone help me to understand why it is so? 
+
+Simple, different things are using different formats. 
+
+Where is the problem? Divide and conquer. 
+Does the meter output in the format you expect? How do you know? 
+Does double* use the format you expect? How do you know? 
+
+Print out in hexadecimal (or even binary!), 
+the data returned by ibrd(). 
+
+Parse it by hand. Calculate what you believe the numbers to be. 
+
+&gt; Or maybe suggest a more clever [3] way of getting the result from
+&gt; nanovoltmeter? 
+
+Not clever, just tedious. 
+
+&gt; The compilation is done with gcc (GCC) 4.0.4 20060507 (prerelease)
+&gt; (Debian 4.0.3-3), 
+&gt; using -pg -Wall flags. 
+&gt; (-pg is for profiler info)
+
+This should not matter. There might be some flag about some 
+IEEE compatibility, 
+&gt; 
+&gt; For clarity, I once more rewrite the structure of my program:
+
+Your program is not clear. Too much magic. 
+&gt; 
+&gt; ...
+&gt; double *presult;
+&gt; char result_normal_plus[17]=&quot;00000000000000000&quot;;
+
+One time initialization? 
+Where does 17 come from? 
+
+&gt; ...
+&gt; ibrd(K2182Ud,result_normal_plus,10);
+&gt; result_normal_plus[ibcnt]='\0';
+
+mixing ASCII and binary is always suspect. 
+(BTW, where does ibcnt come from?)
+
+&gt; presult= result_normal_plus+2;
+&gt; printf(&quot;*presult: %.12f \n&quot;,*presult);
+
+&gt; [3] I have implemented reading in ASCII format and than converting with
+&gt; atof() function, but this I prefer to avoid, since 
+
+First, make it work right, then make it work correct. 
+
+Did reading in ASCII, then converting with atof() work correctly? 
+
+&gt; atof() takes more
+&gt; time than reading straight in double format (or at least I think so)
+
+How much time does it take to do it _correctly_? 
+Is the ASCII format and atof(), the fastest way that works _correctly_?
+Avoid premature optimization. 
+
+Why do you care about speed? How much speed is enough? 
+What are your speed goals? Until you have actual need for speed, 
+just worry about correctness and making your program easy to understand. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00384" href="msg00384.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00387" href="msg00387.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00382.html">Re: [tlug] I'm a glutton for punishment - Palm Pilot and Ubuntu Dapper LTS connectivity</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00384.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00384.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00383"><strong>Date</strong></a></li>
+<li><a href="threads.html#00383"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

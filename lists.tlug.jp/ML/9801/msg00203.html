@@ -1,0 +1,172 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: UTF&#45;8 [was: Re: tlug: A couple of questions about Unicode] -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Mon, 19 Jan 1998 03:20:44 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xuCEX&#45;00012bC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199801091717.CAA03920@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.95.980112000142.2645C&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00202.html">Date Prev</A>][<A HREF="msg00204.html">Date Next</A>][<A HREF="msg00202.html">Thread Prev</A>][<A HREF="msg00205.html">Thread Next</A>][<A HREF="maillist.html#00203">Date Index</A>][<A HREF="threads.html#00203">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>UTF-8 [was: Re: tlug: A couple of questions about Unicode]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>UTF-8 [was: Re: tlug: A couple of questions about Unicode]</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 19 Jan 1998 17:07:01 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00089.html">Pine.LNX.3.95.980112000142.2645C-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00059.html">199801091717.CAA03920@example.com</A>&gt;&lt;<A HREF="msg00089.html">Pine.LNX.3.95.980112000142.2645C-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Gaspar" == Gaspar Sinai &lt;gsinai@example.com&gt; writes:
+
+    Gaspar&gt; Hi,
+    Gaspar&gt; I feel compelled to contribute to this thread. So here are
+    Gaspar&gt; my thoughts:
+
+    Gaspar&gt;   I think linux only gains if it uses utf8 instead of ucs2.
+
+I don't see this.  UTF-8 works like this, as I recall.  First of all,
+it's modal (which is bad in itself, but not terrible).  In the start
+state,
+
+if (0x80 &amp; byte) == 0x00, it's a single-byte character to be
+                          interpreted as GL of ISO-8859-1 (= US-ASCII?)
+else it's multibyte and
+  if (0xC0 &amp; byte) == 0x80, it's a two-byte character with Unicode
+                          value == 256 * (0x3F &amp; byte) + next-byte + 128
+  else it's two or more bytes
+
+and it continues from there using the top bits to identify the length
+of a multi-byte sequence.  (What I meant by "modal" is that picking up
+a byte stream at an arbitrary place, trailing bytes in the range
+0x00-0x7F can't be distinguished from ASCII unless you backtrack 8 (?
+or so) bytes, the longest multibyte sequence, or to the previous
+multibyte leader byte.)  Now, at best this can encode 256*64 + 256, or
+somewhat over 16K characters.  If I remember correctly, none of these
+are kanji or Devanagari (I could be wrong).  Definitely none of them
+are private space.
+
+That means that in UTF-8 the majority of human beings on the planet
+require 3 bytes or more to write the vast majority of their text.  I
+think that in fact UTF-8 fixes the modality partially by requiring
+that trailing bytes be in the range 0x00-0x7F (this guarantees at most
+one corrupt character per error as you scan forward in the stream,
+although you don't know whether error results in one-for-one
+substitution---if a 2-byte leading byte gets dropped, the trailer
+becomes ASCII, or many-for-one substitution, or one-for-many, if an
+ASCII byte is corrupted to a leading byte), but that reduces the
+number of code points expressible in 2 bytes by nearly 1/2.
+
+That's an oops in my opinion, one which is going to make people like
+Ohta ("Now, Japanese is in Danger") even less happy than Unicode
+itself.
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00205" HREF="msg00205.html">Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00059" HREF="msg00059.html">tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> "Jonathan Byrne" &lt;jbyrne@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00202.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00204.html">Re: tlug: memory size strangeness(?)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00202.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00205.html">Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00203"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00203"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

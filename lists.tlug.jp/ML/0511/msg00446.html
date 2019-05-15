@@ -1,0 +1,217 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Network with Windows and Linux -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Tue, 29 Nov 2005 10:36:30 +0900 -->
+<!--X-Message-Id: 20051129010941.GA54833@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20051129001338.87636.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00445.html">Date Prev</a>][<a href="msg00447.html">Date Next</a>][<a href="msg00443.html">Thread Prev</a>][<a href="msg00448.html">Thread Next</a>][<a href="maillist.html#00446">Date Index</a>][<a href="threads.html#00446">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Network with Windows and Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 28 Nov 2005 20:09:41 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Network%20with%20Windows%20and%20Linux">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Network with Windows and Linux</strong></li>
+<li>References: &lt;<a href="msg00443.html">20051129001338.87636.qmail@example.com</a>&gt;</li>
+<li>User-agent: mutt-ng/devel-r581 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On Mon, Nov 28, 2005 at 04:13:37PM -0800, Gerald Naughton wrote:
+&gt; Hi All
+&gt; Wondering how you how stanadardize between
+&gt; Windows/Solaris/Linux
+&gt; env
+&gt; i.e.
+&gt;   home directories 
+&gt;   same passwords for all dir
+
+I was doing fine till you said  home directories.  :)
+
+Here is what we have.
+
+An AIX box, the NIS server.  A separate box running samba.  
+
+Windows users who authenticate email via NIS and get it from a BSD box
+which is an NIS client.  
+
+The samba servers, on other BSD boxes (Free, but I don't think it makes
+a difference, in a pinch wihle moving servers, I used Net on a laptop
+and Arch Linux on something else) are not NIS clients.   They
+authenticate through server or domain, that is, when the user logs onto
+the MS network, they can then, if permissions on both Samba and MS allow
+it, access the samba shares.  
+
+We also have some Macs that go into samba shares (and get email) the
+same way.  
+
+One problem would be with the NIS client.  ~IF~ I wanted to add a user
+form the NIS domain, I would run into trouble because the AIX default
+shell is /usr/bin/ksh which isn't on the BSD NIS client.  
+
+One workaround, for IMAP was, as root on the BSD box, (the client)
+simply create the user's IMAP directories and assign the permissions.
+
+Another thing I did while playing, was to symlink /bin/sh to
+/usr/bin/ksh on the BSD box to see if that would allow a login.  (I
+don't remember hte results now, I think it worked.)
+
+In many ways it will depend upon how many different O/S's you are using
+and in what setup.  Ours is an NT domain (and only a few users
+understand that there are two different domains in play here--the NT
+domain and the AIX domain) with a mission critical application runing on
+an AIX mainframe which the users reach by using a terminal emulator in
+Windows.  
+
+However, this app also displays images which are stored on samba
+servers--they reach those servers with NT authentication. 
+
+So, it can all work, but it depends upon what authentication for what
+system is being used for what application. 
+
+Are they logging onto a Windows domain, which will supply
+authentication?  In that case, samba might serve all your needs. 
+
+I suspect I'm only confusing you further, so I'll shut up now.  
+
+It's what happens when different technologies are added, bit by bit,
+after the original setup.
+
+Oh the NFS shares, forgot that part.  Well, ok, that's nice and
+straightforward (snicker.)
+
+The BSD box mounts an NFS share from the AIX box and the Windows boxes
+mount it from the BSD box as a samba share.  And that, boys and girls is
+how we have the Windows boxen accessing the AIX server.  
+
+
+So, first mount it on the BSD box.  Add the share in smb.conf, then the
+Windows box can mount the share--but not directly from AIX, they get it
+off the BSD box.
+
+- -- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Riley: I thought maybe we could have a little spread. Sandwiches,
+maybe some ants. Could be fun. 
+Buffy: We were talking about a picnic? 
+Riley: Oh... so, was that a conversation I actually had or one I 
+was just practicing? 
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (FreeBSD)
+
+iD8DBQFDi6pV+lTVdes0Z9YRAhIzAJ9Q+8alrzeZopbKd2LgI5i5NfL/BACeMUqR
+B/dvmGS7Ewc/o7ArJXOF9b8=
+=waUQ
+-----END PGP SIGNATURE-----
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00443" href="msg00443.html">[tlug] Network with Windows and Linux</a></strong>
+<ul><li><em>From:</em> Gerald Naughton</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00445.html">[tlug] Aki Day???</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00447.html">Re: [tlug] Subversion (was: More Tech Meeting Torrents)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00443.html">[tlug] Network with Windows and Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00448.html">Re: [tlug] Network with Windows and Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00446"><strong>Date</strong></a></li>
+<li><a href="threads.html#00446"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

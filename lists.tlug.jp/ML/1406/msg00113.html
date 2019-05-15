@@ -1,0 +1,185 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Scanner not found -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 30 Jun 2014 18:19:08 +0900 -->
+<!--X-Message-Id: 87zjguvjp1.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: mailman.1.1404097202.30642.tlug@tlug.jp -->
+<!--X-Reference: BAY178&#45;W362516696C94FE4641F5E0A2040@phx.gbl -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00112.html">Date Prev</a>][<a href="msg00114.html">Date Next</a>][<a href="msg00112.html">Thread Prev</a>][<a href="msg00104.html">Thread Next</a>][<a href="maillist.html#00113">Date Index</a>][<a href="threads.html#00113">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Scanner not found</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 30 Jun 2014 18:19:06 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Scanner%20not%20found">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Scanner not found</strong></li>
+<li>References: &lt;mailman.1.1404097202.30642.tlug@tlug.jp&gt;	&lt;<a href="msg00112.html">BAY178-W362516696C94FE4641F5E0A2040@phx.gbl</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Raedwolf Summoner writes:
+
+ &gt; I may have left the more important information out: I know next to
+ &gt; nothing about computers or programming. I would not have a clue
+ &gt; how to try that without it being spelled out for me. Could you tell me
+ &gt; how to make it look there?
+
+
+OK, so your 40-libsane.rules has an entry like this:
+
+# Brother MFC-6490CW 
+ATTRS{idVendor}==&quot;04f9&quot;, ATTRS{idProduct}==&quot;01f2&quot;, MODE=&quot;0664&quot;, GROUP=&quot;scanner&quot;, ENV{libsane_matched}=&quot;yes&quot;
+
+and the ATTRS line is all on one line, right?  (The scanner name is a
+comment and doesn't matter AFAIK.)
+
+Next make sure that your Brother driver is listed in
+/etc/sane.d/dll.conf.  You may want to comment out all the scanners
+you don't have (saves some startup time).  This name must correspond
+to a filename like /etc/lib64/sane/libsane-brother.so (ie, drop the
+path, the &quot;libsane-&quot;, and the .so as well as any version numbers after
+.so).  If all that seems to be in order, and things still don't work,
+keep going.
+
+Now, having looked at things a little more closely, I suspect that you
+have a previous configuration for that scanner floating around
+(probably from Ubuntu).  I don't know where that configuration would
+live, as it's not documented in the normal SANE distribution.
+
+So, first, reboot.  (Sorry.)  Next try &quot;sane-find-scanner&quot; from the
+command line.  This will tell you about any scanners that the
+operating system (and sane-find-scanner) recognizes.  If it doesn't
+look familiar, or there's nothing interesting there, try
+sane-find-scanner again as root (using su or sudo).  If the output
+between your ordinary user and root is different, you have a
+permissions problem.  Check the 40-libsane.rules entry for typos, if
+that doesn't help, post the results here.
+
+If you didn't get any joy from that, there's still hope.  Keep
+going....
+
+Then try &quot;scanimage -L&quot;.  This lists the scanners that sane knows
+about.  Most scanners it can find by checking the known backend
+drivers, but unfortunately the Brother driver is (or used to be)
+deficient in this respect so you may need to tell it how to find it.
+If scanimage -L finds it, there will be a device name that looks
+something like &quot;device brother:/dev/sg1 is a scanner&quot;.  You should now
+be able to use the scanner from any SANE application without further
+configuration (could happen, in which case presumably you discovered
+and fixed a typo above).
+
+If not found, try &quot;scanimage -L -d=brother3:/dev/bus/usb/003/002&quot; and
+see if that helps.  If not, use of -L and -d together may be a syntax
+error, so try &quot;scanimage -h -d=brother3:/dev/bus/usb/003/002&quot; and see
+if it tells you all the wonderful options available with your Brother
+scanner.
+
+If you *still* don't have a scanner, send me (or the list) all the
+info you've gathered about, preferably cut and paste from the 'term.
+
+Good luck!
+
+Steve
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00112" href="msg00112.html">Re: [tlug] Scanner not found</a></strong>
+<ul><li><em>From:</em> Raedwolf Summoner</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00112.html">Re: [tlug] Scanner not found</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00114.html">[tlug] [announcement] July 26 TLUG Technical Meeting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00112.html">Re: [tlug] Scanner not found</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00104.html">[tlug] [OT] Phones in Japan again</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00113"><strong>Date</strong></a></li>
+<li><a href="threads.html#00113"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

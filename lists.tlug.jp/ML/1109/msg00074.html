@@ -1,0 +1,169 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] firefox SSL certs -->
+<!--X-From-R13: Buvyvcc Ibyyreznaa <zrNcuvyjb.qr> -->
+<!--X-Date: Mon, 12 Sep 2011 12:50:58 +0900 -->
+<!--X-Message-Id: 7ECF7587&#45;4624&#45;4C07&#45;BDA1&#45;548637F42171@philwo.de -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4E6D3A61.6020409@dcook.org -->
+<!--X-Reference: 87sjo2pr6d.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Reference: 4E6D5C1C.8050904@dcook.org -->
+<!--X-Reference: 87pqj6pk0k.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00073.html">Date Prev</a>][<a href="msg00075.html">Date Next</a>][<a href="msg00073.html">Thread Prev</a>][<a href="msg00076.html">Thread Next</a>][<a href="maillist.html#00074">Date Index</a>][<a href="threads.html#00074">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] firefox SSL certs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 12 Sep 2011 12:44:12 +0900</li>
+<li><strong>From</strong>: <strong>Philipp Wollermann &lt;<a href="mailto:me@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">me@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] firefox SSL certs</strong></li>
+<li>References: &lt;<a href="mailto:4E6D3A61.6020409@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">4E6D3A61.6020409@example.com</a>&gt;	&lt;<a href="mailto:87sjo2pr6d.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">87sjo2pr6d.fsf@example.com</a>&gt;	&lt;<a href="mailto:4E6D5C1C.8050904@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">4E6D5C1C.8050904@example.com</a>&gt;	&lt;<a href="mailto:87pqj6pk0k.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20firefox%20SSL%20certs">87pqj6pk0k.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi,
+
+On Sep 12, 2011, at 11:33, Stephen J. Turnbull wrote:
+
+&gt;&gt; My third question is what would happen if I delete these new
+&gt;&gt; symlinks?
+&gt; 
+&gt; I don't think anything will care if you delete the symlinks; both the
+&gt; meaningless names and the .0 extension seem to indicate that they're
+&gt; $TMP detritus of some sort.
+
+No, that's wrong. If you delete the symlinks, OpenSSL and all software using this library for SSL won't be able to use the certificate for validation anymore, because OpenSSL doesn't care for the *.pem filenames but expects correctly named symlinks after a certain hashing scheme (these are the 12345.0 links you're seeing). You can actually regenerate these symlinks via the &quot;c_rehash&quot; script supplied by the openssl package.
+
+&gt;&gt; What would happen if I deleted the *.pem files they point to? Would
+&gt;&gt; it just mean an extra behind-the-scenes certificate download next
+&gt;&gt; time I visit a site that needs it? (In other words is
+&gt;&gt; /etc/ssl/certs just a cache directory?) Or would valid sites start
+&gt;&gt; complaining when I browse them?
+&gt; 
+&gt; AFAIK those certs are all root authorities.  Those will not be
+&gt; downloaded just because you browse a page, because those are the
+&gt; ultimate control over who you trust without following the chain
+&gt; yourself, and who you don't.  Of course what this means is that
+&gt; ultimately you trust Mozilla ....
+
+Mozilla, Debian and all others recently pushed an urgent security update which removes the root certificate of the DigiNotar CA from the trust store (aka /etc/ssl/certs).
+
+See this security advisory: <a  rel="nofollow" href="http://www.debian.org/security/2011/dsa-2299">http://www.debian.org/security/2011/dsa-2299</a>
+
+By the way, all SSL certificates in /etc/ssl/certs are supplied via this package:
+<a  rel="nofollow" href="http://packages.debian.org/squeeze/ca-certificates">http://packages.debian.org/squeeze/ca-certificates</a>
+(an equivalent package also exists in Ubuntu)
+
+Philipp
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00076" href="msg00076.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00069" href="msg00069.html">[tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00070" href="msg00070.html">[tlug]  firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00071" href="msg00071.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00073" href="msg00073.html">Re: [tlug] firefox SSL certs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00073.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00075.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00073.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00076.html">Re: [tlug] firefox SSL certs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00074"><strong>Date</strong></a></li>
+<li><a href="threads.html#00074"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

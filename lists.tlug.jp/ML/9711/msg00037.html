@@ -1,0 +1,215 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Simple Ghostview Question -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Thu, 6 Nov 1997 08:49:36 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xTS8E&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199711050600.GAA01129@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00036.html">Date Prev</A>][<A HREF="msg00038.html">Date Next</A>][<A HREF="msg00036.html">Thread Prev</A>][<A HREF="msg00042.html">Thread Next</A>][<A HREF="maillist.html#00037">Date Index</A>][<A HREF="threads.html#00037">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Simple Ghostview Question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Simple Ghostview Question</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 6 Nov 1997 22:37:58 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00021.html">199711050600.GAA01129@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00021.html">199711050600.GAA01129@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Rob" == bickel  &lt;bickel@example.com&gt; writes:
+
+    Rob&gt; I have ghostview 3.58 that I installed from PJE-0.1beta (the
+
+Huh?  AFAIK ghostview is still at 1.5 or something like that; I have
+not looked at it for a while, but that's where it was say 6-8 months
+ago.  It hasn't been actively maintained for quite a while.
+
+GNU Ghostscript was at 3.53 last I checked, that was about 3 months
+ago.  Lessee....
+
+Hm.  At the official Ghostscript distribution site (ftp.cs.wisc.edu), 
+we have under ghost/gnu
+
+ghostscript @ 3.33; I would guess 3.5x will be out soon.
+ghostview   @ 1.5
+gv          @ 3.5.8; this is a separate development branch, but I
+                     guess it's OK to call it ghostview since that's
+                     the origin and the progenitor appears defunct
+
+Recent Ghostscripts are under ghost/aladdin.
+
+    Rob&gt; new Japanese packages).  This is the only program for which I
+    Rob&gt; can not see the Japanese correctly.  If I have a tex file, I
+    Rob&gt; can see the Japanese correctly as I write it in mule or vi on
+    Rob&gt; kterm.  When I tex it, I can see the Japanese correctly in
+    Rob&gt; the .dvi file with xdvi.  When I convert the .dvi file to a
+
+Then you're almost surely using a Japan-localized version of xdvi
+which uses virtual* fonts.  (Virtual* because they are not the
+official notion of virtual font which is used by TeX and dvi*k
+programs.)  Which version of Japanese TeX are you using?
+
+    Rob&gt; postscript file with dvi2ps, I can not see the Japanese
+
+Try dvipsj instead.  dvi2ps was always pretty cranky in my
+experience.  That was another problem I had with JE: they invariably
+used the least compatible localizations of common programs.  Looks
+like they're still at it.
+
+    Rob&gt; correctly with gv (ghostview) or gs (ghostscript).  When I
+    Rob&gt; print it out, it looks fine, Japanese okay.  Now also, when
+    Rob&gt; one of my students rlogins in to my machine and uses my gv or
+    Rob&gt; gs, but displaying on his machine, he can see the Japanese.
+    Rob&gt; When he logs in directly to my machine, he can not.  I must
+
+This sounds highly unlikely to me, but I'll take your word for it.
+Get the student to do `echo $PATH' in both situations.  Look for
+multiple versions of Ghostscript (it's probably not a problem with gv
+or ghostview) on the PATH.  What is the ghostscript console saying
+while this is happening?
+
+    Rob&gt; then assume the problem will be somewhere in how I display
+    Rob&gt; Japanese, but again on any other program, I can see Japanese
+    Rob&gt; with no problem(this includes xdvi, kterm, mule, netscape,
+    Rob&gt; etc).
+
+xdvi uses .pk fonts.  If necessary, it will use MKTEXPK to build them
+at run time from Metafont sources.  All of the others use X fonts.
+Ghostscript uses (surprise, surprise) Postscript fonts, except for the
+hacked-up vfonts versions and the platform fonts version.  (Note that
+as far as I know the vfont versions of Ghostscript do not use the
+platform fonts interface---they patch the source :-(.  If you can
+check it out, let me know; I'd like to find out I'm wrong.)
+
+    Rob&gt; Does anyone have an idea of where I should look to determine
+    Rob&gt; what is wrong here?
+
+There is an option to use `platform fonts' with Ghostscript; in this
+case it would allow you to use X.  It's possible that the PJE guys
+decided to build that in to your version of Ghostscript.  do a `gs
+--help 2&gt;&amp;1 | less' and find out what version you're using, and what
+options are in it.  what the hell, while you're at it, do `( gs --help
+; gs --config ) 2&gt;&amp;1 | sendmail turnbull@example.com'.
+
+However, it seems rather unlikely that this would be done.  It's even
+more unlikely that TeX would produce a file that invoked X fonts,
+which are pretty ugly when printed out.  Most probably you have
+Japan-localized versions of TeX and Ghostscript which use virtual*
+fonts, and the problem is in the dvips.
+
+Another possibility is that by default ghostscript searches for all
+kinds of stuff in `.' first, hardwired, which is a very, very bad
+idea.  Lots of people have argued with Peter about this, but he seems
+unwilling to rethink the interface so that users can search for their
+own files there if they want without also picking up init files and
+library files there.  However, a compile-time switch is provided to
+alter this behavior, and the PJE guys may have decided to do that.  In 
+which case it is likely that ghostscript will display erratic
+behavior.
+
+Next TLUG meeting is Saturday Dec. 13, 1997  (possibly Nov. 13?)
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00042" HREF="msg00042.html">Re: tlug: Simple Ghostview Question</A></STRONG>
+<UL><LI><EM>From:</EM> "Robert J. Bickel" &lt;rob@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00021" HREF="msg00021.html">tlug: Simple Ghostview Question</A></STRONG>
+<UL><LI><EM>From:</EM> bickel@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00036.html">Re: tlug: Simple Ghostview Question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00038.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00036.html">Re: tlug: Simple Ghostview Question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00042.html">Re: tlug: Simple Ghostview Question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00037"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00037"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

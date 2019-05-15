@@ -1,0 +1,175 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Sbackup Question -->
+<!--X-From-R13: "Rnavry O. Dnznyrl" <qnavry.enznyrlNqenxr.rqh> -->
+<!--X-Date: Tue, 06 Jan 2009 00:48:30 +0900 -->
+<!--X-Message-Id: 200901050909.12672.daniel.ramaley@drake.edu -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4961964D.6050707@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00047.html">Date Prev</a>][<a href="msg00049.html">Date Next</a>][<a href="msg00041.html">Thread Prev</a>][<a href="msg00103.html">Thread Next</a>][<a href="maillist.html#00048">Date Index</a>][<a href="threads.html#00048">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Sbackup Question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 5 Jan 2009 09:09:12 -0600</li>
+<li><strong>From</strong>: <strong>&quot;Daniel A. Ramaley&quot; &lt;<a href="mailto:daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Sbackup%20Question">daniel.ramaley@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Sbackup Question</strong></li>
+<li>References: &lt;<a href="msg00041.html">4961964D.6050707@gmail.com</a>&gt;</li>
+<li>User-agent: KMail/1.9.5</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Sunday January 4 2009 23:10, CL wrote:
+&gt;What I would like to do is install the basic OS and then do a restore
+&gt; of the current installation on the smaller HDD so that, when the
+&gt; machine is turned back on, it will be as if nothing had changed.
+
+If you are happy with the current installation, why not just move the 
+whole installation to the new drive rather than installing and trying 
+to restore important files from a backup?
+
+I've done this several times with Linux, OpenBSD, Mac OS (both Classic 
+and X), and even Windows. With Linux the basic steps are:
+
+1) Install both drives into a machine.
+2) Boot from a live CD, preferably for the same distribution you are 
+running.
+3) Create 2 directories somewhere, i'll say /mnt/src and /mnt/dest.
+4) Mount the source drive on /mnt/src. Look in etc/fstab on the drive 
+and make sure you mount all partitions in the appropriate places.
+5) Partition and format the destination drive the way you want it, and 
+mount it as /mnt/dest. Run mkswap on a swap partition (if any). If you 
+are using multiple data partitions, create the mount points and mount 
+those partitions.
+6) Run this to copy the files. There are many other commands that will 
+do this; this is just the one i use since tar seems to handle device 
+and other weird files acceptably:
+    (cd /mnt/src ; tar -cf - .) | (cd /mnt/dest ; tar -xvpf -)
+7) If the drives are different enough to use different device names (say 
+when migrating from ATA to SCSI), edit etc/fstab and possibly whatever 
+config file your boot loader uses.
+8) Install a boot loader on the new drive. How to do this will differ 
+depending on which one you use (most likely either Lilo or Grub). 
+Usually you'd do something like chroot to /mnt/dest, and then run 
+whatever command installs the loader, possibly with an argument telling 
+it what device to put it on (if different from what it will be after 
+install).
+
+That might sound like a lot of stuff to do, but it really doesn't take 
+long. Just be careful when partitioning and formatting the destination 
+drive that you are working on the correct one. In my experience the 
+easiest place to experience problems is with installing the bootloader. 
+Sometimes i remove the source drive and put the destination in its 
+final place and then boot from the live CD again to install the 
+bootloader. That way device names are usually the same as they will be 
+when booting from the drive and the process is often smoother.
+
+------------------------------------------------------------------------
+Dan Ramaley                            Dial Center 118, Drake University
+Network Programmer/Analyst             2407 Carpenter Ave
++1 515 271-4540                        Des Moines IA 50311 USA
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00103" href="msg00103.html">Re: [tlug] Sbackup Question</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00041" href="msg00041.html">[tlug] Sbackup Question</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00047.html">Re: [tlug] [tlug-admin] WTF [K]Ubuntu (was: Call for presenters -	January 10th (this Saturday) technical meeting - FINAL)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00049.html">Re: [tlug] [OT] Interesting info for foreigners living in JP</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00041.html">[tlug] Sbackup Question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00103.html">Re: [tlug] Sbackup Question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00048"><strong>Date</strong></a></li>
+<li><a href="threads.html#00048"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

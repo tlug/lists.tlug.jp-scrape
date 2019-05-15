@@ -1,0 +1,175 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] how to tune reiser4 for millions of files? -->
+<!--X-From-R13: Bngevpx Preavre <cngNFLb@S.ADU> -->
+<!--X-Date: Fri, 29 Jan 2010 03:13:21 +0900 -->
+<!--X-Message-Id: 20100128180431.GA10687@OZoNE.TZoNE.ORG -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100128073847.GH13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Reference: 20100128095957.GB24344@analytic.cynic.net -->
+<!--X-Reference: 20100128132701.GI13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Reference: 87wrz2s08d.fsf@xemacs.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00130.html">Date Prev</a>][<a href="msg00132.html">Date Next</a>][<a href="msg00130.html">Thread Prev</a>][<a href="msg00139.html">Thread Next</a>][<a href="maillist.html#00131">Date Index</a>][<a href="threads.html#00131">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] how to tune reiser4 for millions of files?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 28 Jan 2010 13:04:31 -0500</li>
+<li><strong>From</strong>: <strong>Patrick Bernier &lt;<a href="mailto:pat@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">pat@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] how to tune reiser4 for millions of files?</strong></li>
+<li>References: &lt;<a href="mailto:20100128073847.GH13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128073847.GH13095@example.com</a>&gt;	&lt;<a href="mailto:20100128095957.GB24344@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128095957.GB24344@example.com</a>&gt;	&lt;<a href="mailto:20100128132701.GI13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128132701.GI13095@example.com</a>&gt;	&lt;<a href="mailto:87wrz2s08d.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">87wrz2s08d.fsf@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Quoting Stephen J. Turnbull:
+&gt; One thing: ls is possibly the slowest possible application imaginable,
+&gt; because all it does is make syscalls.  I would expect that the problem
+&gt; is not the syscall overhead (although I bet that's non-negligible),
+
+I would tend to guess that his ls is trying to SORT the entire file listing
+before printing anything, which of course cannot be done before having
+loaded the ENTIRE file list in memory.
+
+Michal, when one needs to get the list of files from a big directory using
+the shell, using &quot;find&quot; is always the fastest way to go: a plain &quot;find&quot;
+will only call opendir, readdir and closedir, not bothering to stat the
+files or anything -- and will neither try to sort the output.
+
+Knowing how to pipe the result of find into xargs to get your files
+processed one by one is a very useful thing to learn for all shell users.
+One example:
+
+	find . -print0 | xargs -0 -r -- ls -l
+
+... will give you a detailed unsorted recursive file listing from the
+current directory. Note that xargs assumes by default that it can provide
+several filenames at once to the program it is calling; use the -L option
+to specify a limit, e.g. -L 1 if your program can only deal with one
+filename at once:
+
+find . -maxdepth 1 -type f -print0 | xargs -0 -L 1 -r -- ~/myprogram
+
+-print0 is important to deal with filenames that include special
+characters. -maxdepth 1 here means to not recurse into subdirectories.
+-type f means &quot;only regular files&quot;, e.g. don't try to run my program on
+directories.
+
+See the manpages for all the amazing details.
+
+-- 
+()  Patrick (L.) Bernier &lt;pat@example.com&gt;
+()  <a  rel="nofollow" href="http://www.TZoNE.ORG/~pat/">http://www.TZoNE.ORG/~pat/</a>
+()  GPG B070 BBB6 188D EB1E 353A 90E4 96FF D8EB 1ADC BE03
+()  &quot;Words have meaning, and names have power.&quot; -- Lorien
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00139" href="msg00139.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00126" href="msg00126.html">[tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00128" href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00130" href="msg00130.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00130.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00132.html">Re: [tlug] OSS network visualization software,	WAS: [Semi-OT]	Network  connectivity diagnosis</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00130.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00139.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00131"><strong>Date</strong></a></li>
+<li><a href="threads.html#00131"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

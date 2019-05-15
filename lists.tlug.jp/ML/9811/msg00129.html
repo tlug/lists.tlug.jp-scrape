@@ -1,0 +1,237 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: static binaries (was: Re: tomsrtbt & glibc) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 6 Nov 1998 13:16:14 +0900 -->
+<!--X-Message-Id: 13890.30708.933767.41266@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13888.8088.691934.626118@example.com -->
+<!--X-Reference-Id: Pine.LNX.4.05.9811042119390.8079&#45;100000@example.com -->
+<!--X-Reference-Id: 19981106104214.F13392@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00128.html">Date Prev</A>][<A HREF="msg00130.html">Date Next</A>][<A HREF="msg00126.html">Thread Prev</A>][<A HREF="msg00130.html">Thread Next</A>][<A HREF="maillist.html#00129">Date Index</A>][<A HREF="threads.html#00129">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 6 Nov 1998 13:15:48 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00125.html">19981106104214.F13392@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00079.html">13888.8088.691934.626118@example.com</A>&gt;&lt;<A HREF="msg00082.html">Pine.LNX.4.05.9811042119390.8079-100000@example.com</A>&gt;&lt;<A HREF="msg00125.html">19981106104214.F13392@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Rex" == Rex Walters &lt;rex@example.com&gt; writes:
+
+    Rex&gt; Forgive me my hyperbole.  I meant overkill in the sense that
+    Rex&gt; for many of the executables in /sbin it simply doesn't matter
+    Rex&gt; whether or not they are statically linked.
+
+Which ones?  If having /lib/libc.so disappear doesn't bother you with
+respect to a given dynamically linked executable, then how is it
+necessary?  Shouldn't it go to /usr/sbin?
+
+    Rex&gt; I wasn't referring to bloat (on disk or in memory).  FHS 2.0
+    Rex&gt; says /sbin is for executables only run by an admin and not
+    Rex&gt; normal users.  I can probably live without mkfs.msdos being
+    Rex&gt; statically linked.
+
+A prime candidate for moving to /usr/sbin IMHO.
+
+    Rex&gt; I'm a little puzzled at Stephen pushing "only static binaries
+    Rex&gt; in /bin and /sbin" since it isn't in FHS 2.0 (nor, by
+    Rex&gt; extension, in the Debian Policy Manual).
+
+I'm not pushing for it, I don't do it myself, after all.  I do think
+of it as a slight extra safety factor.  As for the cites to FHS and
+Debian Policy:  yes, I do advocate following standards strictly.  But
+here, the manuals are more advice than requirement; it's _my_ system
+after all.  It doesn't hurt other systems if mine is non-conforming.
+So this is not a case of a bad standard is better than none, so I'm
+willing to play the devil's advocate.
+
+    Rex&gt; I also agree, however, that there would seem to be need for
+    Rex&gt; more than just ln and sync being statically linked.  And I'm
+    Rex&gt; puzzled why the FHS doesn't include more -- I wondered if
+    Rex&gt; anyone knew the reason.
+
+My *guess* is that people who think about it seriously, and advocate
+dynamic executables, are thinking about things like security and other
+bug fixes.  If it's dynamically linked, you need to rebuild and
+install a library---and you know that's where the bug was.  If it's
+static, you need to rebuild everything after rebuilding the library
+(unless you know exactly what programs depend on the given function).
+
+So there's controversy about the relative value of consistent bug and
+security fixes vs the possibility of shooting yourself in the foot and
+destroying libc.  FHS takes the conservative standpoint (which is also
+convenient for distribution integrators) of not creating new
+requirements by minimizing the statically linked executables.
+
+ln and sync, if not static, would make updating libc on the fly rather 
+dangerous, if not impossible.  So they're an exception to the above
+conservative stance.
+
+I think that probably FHS should add a priority list of things that
+distribution integrators and individual sysadmins should consider
+statically linking and/or moving to /{bin,sbin,lib} with rationales
+pro and con.  Howard's MD/RAID example is a good example.
+
+    Howard&gt; Rex Walters wrote:
+
+    &gt;&gt; I wasn't referring to bloat (on disk or in memory).  FHS 2.0
+    &gt;&gt; says /sbin is for executables only run by an admin and not
+    &gt;&gt; normal users.
+
+    Howard&gt; Then what's the difference between /sbin and /usr/sbin?
+    Howard&gt; (Honest question, I thought /sbin was only for recovering
+    Howard&gt; / booting when /usr couldn't be accessed.)
+
+Besides recovery and booting, there are some other maintenance tasks
+that you might want to do without mounting /usr, and there is always
+the possibility that /usr lives on an NFS server or the like (CODA
+might not have the problem) which goes south on you.  I could imagine
+putting the X server and fonts in /bin and /lib respectively (NB:
+
+bash-2.01$ ldd /usr/X11R6/bin/X
+        /lib/nfslock.so.0 =&gt; /lib/nfslock.so.0 (0x4000d000)
+        libc.so.6 =&gt; /lib/libc.so.6 (0x40013000)
+        /lib/ld-linux.so.2 =&gt; /lib/ld-linux.so.2 (0x40000000)
+
+so that at least I'd always have an X terminal available.  Imagine, I
+wrote, I'm not nuts.  (Oh, heavens, I'm probably giving Chris ideas!  :-)
+
+Note that FHS does say that what goes in /s?bin vs what goes in
+/usr/s?bin is going to be system-dependent.  It depends on what _you_
+need and want in such a situation.
+
+And I disagree with some decisions about bin vs. sbin.  Eg, on Debian
+traceroute is in /usr/sbin, not /usr/bin.  That doesn't stop users
+from using it, and it is often useful for someone who is _not_ the
+sysadmin to be able to use it.
+
+    Howard&gt; One that I have to deal with: mdrun / mdadd for software
+    Howard&gt; raid devices.  Until this discussion, I wasn't sure why it
+    Howard&gt; NEEDED to access /usr/lib before being able to start any
+    Howard&gt; mdX devices.  So, because it's not statically linked, I
+    Howard&gt; can't put /usr on a raid partition without extra work.
+    Howard&gt; (Last time, I just had 2 copies of the libraries, so that
+    Howard&gt; the one disappeared when it /usr got mounted.)  Now I know
+    Howard&gt; the right way to fix it: find the source and statically
+    Howard&gt; link it.
+
+Probably you can also ldd and mv any relevant libraries from /usr/lib
+to /lib.  No?  (See the X server example above.)
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+----------------------------------------------------------------
+Next Nomikai: 20 November, 19:30   Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00130" HREF="msg00130.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00079" HREF="msg00079.html">tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00082" HREF="msg00082.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;chris@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00125" HREF="msg00125.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00128.html">Re: tlug: MS looks at open source (Halloween 2)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00130.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00126.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00130.html">Re: tlug: Re: static binaries (was: Re: tomsrtbt &amp; glibc)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00129"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00129"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

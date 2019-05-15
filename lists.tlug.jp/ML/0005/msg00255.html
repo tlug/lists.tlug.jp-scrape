@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: Xconfig problems -->
+<!--X-From: ulrike@example.com -->
+<!--X-Date:  Mon, 22 May 2000 18:59:17 +0900 -->
+<!--X-Message-Id: 20000522095849.34D4F15770@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00254.html">Date Prev</A>][<A HREF="msg00256.html">Date Next</A>][<A HREF="msg00211.html">Thread Prev</A>][<A HREF="msg00257.html">Thread Next</A>][<A HREF="maillist.html#00255">Date Index</A>][<A HREF="threads.html#00255">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: Xconfig problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: Xconfig problems</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:ulrike@example.com">ulrike@example.com</A></strong></LI>
+<LI>Date: Mon, 22 May 2000 18:58:49 +0900</LI>
+<LI>Cc: <A HREF="mailto:ulrike@example.com">ulrike@example.com</A></LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Thanks for the instructions on how to get rid of xdm, Steve. Unfortunately I am 
+still having difficulties with configuring X. The following is what I could find 
+out about my hardware:
+
+Computer: Fujitsu FMV-590DE
+Monitor/Display: Fujitsu FMV-DP842
+Display Adaptor: Fujitsu Power 9100(FMV-560DE,590DE,590T)
+
+sound card: Creative Labs Sound Blaster 16 or AWE-32
+mouse port:
+type of mouse: standard PS/2 port mouse (IRQ12)
+type of graphics card: VGA/SVGA
+horizontal sync: 31-57
+vertical sync: 56-73
+resolution: 1280 x 1024 bit 1677 $BK|?'(B
+
+CD-ROM: MATSHITA CD-ROM CR-562
+keyboard: 106 $BF|K\8l(B (A01) $B%-!&lt;%\!&lt;%I(B(Ctrl+$B1Q(B?)
+
+Result of XFree86 SuperProbe (glibc20):
+	First video: Super-VGA
+	Chipset: Tseng ET4000 (Port Probed)
+	Memory: 256 Kbytes
+	RAMDAC: Generic 8-bit pseudo-color DAC (with 6-bit wide lookup tables (or in 6-
+bit mode))
+
+
+Several previous attempts have failed, so this time I tried to work my way up 
+from the bottom. Since I don(IU(Bt know where the problem is I will list every 
+choice I made:
+
+mouse protocol type? 	4.  PS/2 Mouse
+enable Emulate3Buttons? 	y
+Mouse device? 	/dev/mouse # took the default not knowing better ...
+Keymap? 	1  Standard 101-key, US encoding  # would prefer Japanese, but could 
+not find ...
+horizontal sync range?	1  31.5; Standard VGA, 640x480 @ 60 Hz
+vertical sync range?	1  50-70
+monitor identifier, vendor name, model name?	(defaults)
+look at the card database? 	n  # didn't find anything there at last attempt(II(B
+default screen type?	vga16
+modify the /etc/X11/Xserver file?	y
+video memory?	1  256K
+identifier for your video card definition?	(default)
+vendor name?	Tseng
+model (board) name?	ET4000
+Clockchip setting?	n
+run 'X -probeonly' now? 	n # led to problems in previous attempts
+write it to the default location, /usr/X11R6/lib/X11/XF86Config?	y
+
+The result were vertical black and white stripes. I could get out of the x 
+though with ctrl-alt-backspace. 
+
+Then I tried the same as before except for:
+horizontal sync range?	2  31.5 - 35.1; Super VGA, 800x600 @ 56 Hz
+default screen type?	svga
+
+For each depth, a list of modes (resolutions) is defined.  The default
+resolution that the server will start-up with will be the first listed
+mode that can be supported by the monitor and card.
+Currently it is set to:
+
+"640x400" for 8bpp
+"640x480" for 16bpp
+"640x480" for 24bpp
+"640x480" for 32bpp
+
+5  The modes are OK, continue.
+
+This led to monochrome blinking garbage on the screen and no way to get out of 
+it with ctrl-alt-backspace, I did not know better than to press the reset button  
+This was also the result of several previous attempts, so I thought I better ask 
+for help.
+
+I don't know whether this is relevant, but when I got the machine it had Windows 
+installed and the color display was working fine. When I installed debian no 
+colors showed up even after choosing color display during the basic install. 
+
+After several difficulties with cdrom and color display under debian I thought I 
+might have damaged the hardware when I carried the computer from one table to 
+another, so I installed Windows again on one partition to test this assumption. 
+
+Booting Windows first gave a this colored picture of Windows at startup, then it 
+switched to monochrome for good. This could be fixed with installing some kind 
+of driver, but I don't know which driver, unfortunately I did not write it down 
+and the person who was so nice to install it is not here at the moment. 
+
+Interestingly the cdrom that did not work with debian worked again with Windows, 
+but not the scsi cdrom, but we did not have the right drivers, it came with 
+Macintosh drivers and a search on the web was without luck. But that is actually 
+unimportant, since I want to run debian anyway.
+
+So does anyone have any idea how to configure this thing? Do I have
+a
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: June 16 (Fri), 19:00   Tengu TokyoEkiMae
+Next Technical Meeting: July 8 (Sat) 13:30   Topic: TBA
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00257" HREF="msg00257.html">Re: tlug: Re: Xconfig problems</A></STRONG>
+<UL><LI><EM>From:</EM> Selva Nair &lt;selva@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00271" HREF="msg00271.html">Re: tlug: Re: Xconfig problems</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeo Honda &lt;shige@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00254.html">Re: tlug: Still no procmail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00256.html">tlug: Re: Xconfig problems</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00211.html">tlug: Re: Xconfig problems</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00257.html">Re: tlug: Re: Xconfig problems</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00255"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00255"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

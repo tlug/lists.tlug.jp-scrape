@@ -1,0 +1,300 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: mail -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Tue, 30 Jun 1998 16:19:30 +0900 -->
+<!--X-Message-Id: 19980630161237.10820@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 003f01bda33f$ceef5360$34e6dbca@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00815.html">Date Prev</A>][<A HREF="msg00817.html">Date Next</A>][<A HREF="msg00783.html">Thread Prev</A>][<A HREF="msg00776.html">Thread Next</A>][<A HREF="maillist.html#00816">Date Index</A>][<A HREF="threads.html#00816">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: mail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: mail</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 30 Jun 1998 16:12:37 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00772.html">003f01bda33f$ceef5360$34e6dbca@example.com</A>&gt;; from Eric Standlee on Mon, Jun 29, 1998 at 06:22:55PM +0900</LI>
+<LI>Mail-Followup-To: Tokyo Linux Users Group &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00772.html">003f01bda33f$ceef5360$34e6dbca@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Mon, Jun 29, 1998 at 06:22:55PM +0900, Eric Standlee wrote:
+&gt; Since I am connected to the internet, and can send mail from my Linux Box
+&gt; and can view web pages via Lynx; I assume that my mail problem is with my
+&gt; mail set up, but I am at a loss.
+&gt; 
+&gt; I connect just fine via fetchmail to my pop servers, but they either don't
+&gt; get mail or they lose it or they cannot transfer it to my MTA (smail via the
+&gt; /usr/lib/sendmail -oem).
+&gt; 
+&gt; Any hints.  I am certain that since most of my problems up until now have
+&gt; been rather simple in hind-sight, that this problem is probably too simple.
+&gt; That is why I am missing the solution.
+&gt; 
+&gt; please help me escape M$ to the greatest extent that I can,
+
+There's a sentiment I understand.  :-)
+
+I'm not sure I understand your problem, though.  Are you having a problem
+sending mail or receiving mail?   What do the logs show?
+
+Electronic mail is one of my favorite things to fool around with, so I
+can't help replying.
+
+I would debug as follows:
+
+1.  Can you pick up mail via POP from your ISP?
+
+    I'd just use a mail client that speaks POP directly to test this (or
+    just telnet to the pop port of your ISP's server).  [I use the
+    "mutt" mailer myself -- see "<A TARGET="_top" HREF="http://www.cs.hmc.edu/~me/mutt/">http://www.cs.hmc.edu/~me/mutt/</A>".  Mutt
+    can pick up POP mail directly (and doesn't require X).]
+
+    Leave fetchmail alone for the moment.
+
+2.  Can you deliver mail locally?
+
+    Using whatever mail client you normally use, can you send mail from
+    one user on your home Linux machine to another user?  
+    
+    Many clients deliver mail by sending it to binmail (either directly
+    or via sendmail), procmail (sometimes via sendmail), or whatever (a
+    very few even check the return status, but that's another story
+    altogether).  A few programs send to the smtp port of the local
+    machine (fetchmail being the most obvious example).  Both delivery
+    mechanisms (stdin to the delivery program, or via smtp) must work.
+
+    One of the confusing things about your message is that you mention
+    both smail and sendmail.  I've never used smail, but my
+    understanding is that it is both a mail transport agent (MTA) and a
+    mail delivery agent (MDA) -- i.e. that it replaces sendmail
+    entirely.  Many programs use "/usr/lib/sendmail -oem" (or
+    /usr/sbin/sendmail) to send mail locally, but if you are using smail
+    that shouldn't be necessary (I think).
+
+    I myself use qmail (my world revolves around modularity).  It's been
+    a while since I've been forced to muck with sendmail, but here goes:
+    
+    I *think* the best test of local delivery on a sendmail machine is
+    to type:
+
+	% cat | /usr/sbin/sendmail -oem localuser
+	To: localuser
+	Subject: test1
+
+	&lt;CTRL-D&gt;	
+
+    "localuser" must be the name of a valid user on your machine (i.e.
+    listed in /etc/passwd).  After running this, the mail should appear
+    in /var/spool/mail/localuser.  If it doesn't, try the following:
+
+    1) "grep '^M' /etc/sendmail.cf" -- you should see a mailer defined
+       named "local" or somesuch that calls /bin/mail.  If not, it
+       probably calls procmail but your system might be really weird and
+       configured for something else.
+
+    2) Assuming /bin/mail, try:
+	
+	% cat | /bin/mail localuser
+	To: localuser
+	Subject: test2
+
+	&lt;CTRL-D&gt;
+
+       Again, the mail should appear in /var/spool/mail/localuser.  If
+       binmail delivers okay, and the sendmail test above failed, your
+       sendmail.cf file is seriously broken.
+
+2.  Can you deliver mail received via smtp?
+
+    Assuming local deliveries worked okay above, you need to see if
+    somebody throwing mail at your machine via smtp has a chance.
+
+    Try the following:
+
+	% telnet localhost smtp
+	% # or equivallently: "telnet 127.0.0.1 25"
+	Trying 127.0.0.1 ...
+	Connected to localhost.
+	Escape character is '^]'.
+	220 mybox.mydomain Sendmail blah blah (cracker candy)
+     -&gt; helo howdydo
+	250 mybox.mydomain Hello howdydo blah blah
+     -&gt;	mail From: &lt;localuser&gt;
+	250 &lt;localuser&gt;... Sender ok
+     -&gt;	rcpt To: &lt;localuser&gt;
+	250 &lt;localuser&gt;... Recipient ok
+     -&gt;	data
+	354 Enter mail, end with "." on a line by itself
+     -&gt;	To: &lt;localuser&gt;
+     -&gt;	Subject: test4
+     -&gt;
+     -&gt;	This is a test of the emergency broadcast system, this is only a
+     -&gt;	test.
+     -&gt;	.
+	250 Mail accepted
+     -&gt;	quit
+	%
+
+    [You enter the indicated lines above.]
+
+    Again, mail should be delivered okay.  
+    
+    If you can't even telnet to the smtp port (port 25), make sure that
+    sendmail is running in daemon mode.  Type "ps auxww | grep
+    sendmail".  You should see a sendmail process running with options
+    like "/usr/sbin/sendmail -bd -q 15m".  If not, check the logs for
+    error messages, and ensure that your boot scripts start sendmail
+    correctly.
+
+    Since you mentioned smail, it's possible that sendmail won't be
+    running and that smail is handling incoming SMTP traffic.  You'll
+    have to go to the smail documentation for help.
+
+If you've made it this far, you should be able to get fetchmail to
+connect to your ISP, grab your mail, and deliver it with a simple
+.fetchmail recipe (man fetchmail).  If you suspect your ISP is losing
+your mail, why are they still your ISP?  :-)
+
+It's possible that I've misunderstood your problem and that retrieving
+mail via fetchmail works fine, but you can't send outbound mail.  That
+is equally complex, and may involve (shudder) mucking about with
+/etc/sendmail.cf.   Smail should be much easier to set up for outbound
+mail than sendmail (indeed, I think that is the entire point).  Qmail
+(IMHO) is also pretty easy to set up.
+
+For what it's worth, my home machine is configured as follows:
+
+    o Sendmail completely, irrevocably, happily removed from the system.
+
+    o Qmail 1.01 installed (I'd go with 1.03 today, but haven't bothered
+      to upgrade at home yet).
+
+    o Outbound mail is queued in a special maildir.
+
+    o My ppp startup scripts invoke fetchmail to periodically query my
+      ISP for any incoming mail (delivering it via smtp to qmail for
+      delivery if there is any).
+
+    o My ppp startup scripts also (continually) invoke serialmail to 
+      transfer any queued mail in the special maildir above to my ISP's
+      mail server via SMTP.
+
+This works extremely well for me.
+
+Hope this helps.
+
+Best regards,
+-- 
+Rex
+    
+---------------------------------------------------------------
+Next Nomikai: 15 May Fri, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+--------------------------------------------------------------
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+featuring Linux on multiple platforms:
+i386, Sparc, PA-Risc, Amiga, SGI, Alpha, PalmPilot, ...
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00772" HREF="msg00772.html">tlug: mail</A></STRONG>
+<UL><LI><EM>From:</EM> "Eric Standlee" &lt;fwiw3980@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00815.html">RE: tlug: It works!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00817.html">Re: tlug: SQL on the TLUG server</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00783.html">Re: tlug: mail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00776.html">tlug: SQL on the TLUG server</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00816"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00816"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

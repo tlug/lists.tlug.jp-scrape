@@ -1,0 +1,180 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Japanese Word processor for linux -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNtzk.ng> -->
+<!--X-Date: Sat, 29 Nov 2003 22:38:07 +0100 -->
+<!--X-Message-Id: 20031129213807.GC24700@example.com&#45;a&#45;geek.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200311270301.hAR311am000409@example.com -->
+<!--X-Reference: 3FC56CBA.7010505@example.com -->
+<!--X-Reference: 20031127151018.GA19800@example.com&#45;a&#45;geek.org -->
+<!--X-Reference: 3FC6245E.2010604@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00126.html">Date Prev</a>][<a href="msg00128.html">Date Next</a>][<a href="msg00113.html">Thread Prev</a>][<a href="msg00108.html">Thread Next</a>][<a href="maillist.html#00127">Date Index</a>][<a href="threads.html#00127">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Japanese Word processor for linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 29 Nov 2003 22:38:07 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Japanese%20Word%20processor%20for%20linux">ranma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Japanese Word processor for linux</strong></li>
+<li>References: &lt;200311270301.hAR311am000409@example.com&gt; &lt;<a href="msg00103.html">3FC56CBA.7010505@example.com</a>&gt; &lt;<a href="msg00111.html">20031127151018.GA19800@example.com</a>&gt; &lt;<a href="msg00113.html">3FC6245E.2010604@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+David Oftedal wrote:
+
+&gt; &gt;You may have to add the locale (ja_JP.SJIS) to /etc/locale.gen and run
+&gt; &gt;locale-gen to generate it.
+&gt; 
+&gt; You can do that? I've always done it manually with localedef. (Though 
+&gt; what I've generated is a ja_JP.UTF-8, locale, not SJIS.
+
+At least in Debian, yes.
+However /usr/sbin/locale-gen is a shellscript, so it may be a Debianism:
+
+#!/bin/sh
+
+set -e
+
+LOCALEGEN=/etc/locale.gen
+LOCALES=/usr/share/i18n/locales
+if [ -n &quot;$POSIXLY_CORRECT&quot; ]; then
+  unset POSIXLY_CORRECT
+fi
+
+
+[ -f $LOCALEGEN -a -s $LOCALEGEN ] || exit 0;
+
+# Remove all old locale dir and locale-archive before generating new
+# locale data.
+rm -rf /usr/lib/locale/* || true
+
+umask 022
+
+echo &quot;Generating locales...&quot;
+while read locale charset; do \
+	case $locale in \#*) continue;; esac; \
+	[ -n &quot;$locale&quot; -a -n &quot;$charset&quot; ] || continue
+	echo -n &quot;  `echo $locale | sed 's/\([^.\@]*\).*/\1/'`&quot;; \
+	echo -n &quot;.$charset&quot;; \
+	echo -n `echo $locale | sed 's/\([^\@]*\)\(\@example.com*\)*/\2/'`; \
+	echo -n '...'; \
+        if [ -f $LOCALES/$locale ]; then input=$locale; else \
+        input=`echo $locale | sed 's/\([^.]*\)[^@]*\(.*\)/\1\2/'`; fi; \
+	localedef -i $input -c -f $charset -A /etc/locale.alias $locale; \
+	echo ' done'; \
+done &lt; $LOCALEGEN
+echo &quot;Generation complete.&quot;
+
+-- 
+/* Tobias */     int main(int a,char **b)    /* PGP: <A  HREF="http://9ac7e0bc.2ya.com">http://9ac7e0bc.2ya.com</A> */
+{char i,j,t,*r=*++b;srand(getpid());for(;*r;){for(;*r&amp;&amp;!isalpha(*r);r++);for(i=
+1;isalpha(r[i+1]);i++){j=rand()%i;t=r[i];r[i]=r[++j];r[j]=t;}r+=i+1;}puts(*b);}
+np: Omi Minami: Ruri Hoshino at Vocal 02 - Rose Bud []
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00103" href="msg00103.html">[tlug] Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> Sam Joseph</li></ul></li>
+<li><strong><a name="00111" href="msg00111.html">[tlug] Re: Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+<li><strong><a name="00113" href="msg00113.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> David Oftedal</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00126.html">[tlug] Re: Japanese Word processor for linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00128.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00113.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00108.html">[tlug] usb cable and *nix</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00127"><strong>Date</strong></a></li>
+<li><a href="threads.html#00127"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: donegal fell into hyperspace and can't get up -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 12 Sep 1996 05:49:30 GMT -->
+<!--X-Message-Id: m0v14bP&#45;00001LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.91.960912131213.421B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00018.html">Date Prev</A>][<A HREF="msg00020.html">Date Next</A>][<A HREF="msg00018.html">Thread Prev</A>][<A HREF="msg00021.html">Thread Next</A>][<A HREF="maillist.html#00019">Date Index</A>][<A HREF="threads.html#00019">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: donegal fell into hyperspace and can't get up</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: donegal fell into hyperspace and can't get up</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 12 Sep 96 14:46 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00016.html">Pine.LNX.3.91.960912131213.421B-100000@example.com</A>&gt; (message from Dennis McMurchy on Thu, 12 Sep 1996 13:15:47 +0900 (GMT+0900))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Dennis McMurchy &lt;denismcm@example.com&gt; writes:
+
+    Dennis&gt;   Thankyou so much, Jim and Steve.  My problem with
+    Dennis&gt; sendmail is now solved.  You emboldened me to try doing
+    Dennis&gt; exactly what it says NOT to do in the header of
+    Dennis&gt; /etc/hosts.  I can't specify an IP address for my hostname
+    Dennis&gt; because I'm only on the net when I dial up my provider,
+    Dennis&gt; who allocates addresses dynamically, so I just added the
+    Dennis&gt; line 
+
+    Dennis&gt; 127.0.0.1 donegal
+
+    Dennis&gt;   By God, it did the trick - sendmail doesn't complain,
+    Dennis&gt; and actually moves the mail.
+
+    Dennis&gt;   This is my /etc/hosts :
+
+    Dennis&gt; 127.0.0.1	localhost
+    Dennis&gt; 127.0.0.1	donegal
+
+I'm not sure this is entirely correct; maybe it should be done as an
+alias:
+
+127.0.0.1	donegal	localhost
+
+    Dennis&gt; # End of hosts.
+
+    Dennis&gt;   I'm a little nervous about problems that this might
+    Dennis&gt; cause further down the road, but it sure works.  The thing
+    Dennis&gt; is though, as Steve said, sendmail ought to be able to
+    Dennis&gt; figure out that donegal is localhost.  Things certainly
+    Dennis&gt; were not this way in my earlier Slackware installation,
+    Dennis&gt; and should not be this way now.  If anyone can figure out
+    Dennis&gt; a more elegant solution that would allow me to remove this
+    Dennis&gt; line from /etc/hosts, I'd feel better about it.
+
+I don't understand exactly how these things work since I haven't
+looked at the source code.  However, what you should be able to do is
+change /etc/hosts.conf to "bind, hosts" and run named(8).  Then
+/etc/hosts should not be consulted when your inet connection is up,
+because named should be asking your provider's nameserver.
+
+You should be able to configure named to alias donegal to the IP
+address assigned by your provider.  (But the man page is not exactly
+crystal clear....)
+
+[Theoretically, by having multiple named.boot files and using
+
+cd /etc
+cp -f named.boot.now-needed named.boot
+kill SIGHUP `cat /etc/named.pid`"
+
+you should be able to reconfigure it on the fly if necessary.  I don't 
+think it should be necessary.]
+
+Elegant?  Dunno....
+
+    Dennis&gt;   Great to be running again though.  Thanks again, guys.
+
+De nada.
+
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Tittsler &lt;jwt@example.com&gt; writes:
+
+    Jim&gt; In article &lt;<A HREF="msg00016.html">Pine.LNX.3.91.960912131213.421B-100000@example.com</A>&gt;,
+    Jim&gt; you wrote:
+    &gt;&gt; NOT to do in the header of /etc/hosts.  I can't specify an IP
+    &gt;&gt; address for my hostname because I'm only on the net when I dial
+    &gt;&gt; up my provider, who allocates addresses dynamically, so I just
+
+    Jim&gt; You can add one.  Just pick one from the blocks of
+    Jim&gt; "disconnected networks" like 172.16.xx.xx.  When you get a
+
+They don't necessarily stay disconnected....  Shouldn't be a problem,
+but weird things happen occasionally.
+
+    Jim&gt; dynamically assigned IP address during the connection it will
+    Jim&gt; be added to the routing tables (and your machine will become
+    Jim&gt; something like fukuoka37.junk.or.jp in addition to donegal :-).
+
+You should be able to delete the junk address from the routing tables, 
+but I forget exactly how.  You want to do this just before you
+connect, I think.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00021" HREF="msg00021.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00016" HREF="msg00016.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00018.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00020.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00018.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00021.html">Re: donegal fell into hyperspace and can't get up</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00019"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00019"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

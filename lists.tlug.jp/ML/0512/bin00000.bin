@@ -1,0 +1,123 @@
+#!/usr/local/bin/perl -w
+
+use strict;
+use Tk;
+#---------------------------------------------------------#
+#  SUBROUTINES
+#---------------------------------------------------------#
+my @example.com = qw(Sun Mon Tue Wed Thu Fri Sat);
+sub changeTime {
+	my $info = $_[0];
+    my $time = time();
+	foreach my $locale (sort keys %{$info->{'Locales'}}) {
+		my ($sec, $min, $hour, $week_day) = 
+				(
+					gmtime($time + $info->{'Locales'}{$locale}{tz_offset})
+				)[0,1,2,6];
+		my $time_stamp = sprintf(
+			"%s %2d:%02d", $DaysOfWeek[$week_day], $hour, $min,
+		);
+		$info->{'Time'}{$locale}->configure(-text => $time_stamp);
+	}
+}
+#---------------------------------------------------------#
+#  MAIN
+#---------------------------------------------------------#
+# The default info is text for now.  The thought is that it
+# might be worth saving this as a file optionally so user
+# can modify it.
+my $InitInfoText = "
+	# offsets are in hours.
+	{
+		'Locales'		=> {
+			'Petaluma'		=>   {
+				tz_offset => -8,
+				daylight => {
+					start => '9/1', end => '6/5', offset => 1,
+				},
+			},
+			'Milwaukee'		=>   {
+				tz_offset => -5,
+			},
+			'Kanata'		=>	 {
+				tz_offset => -4,
+			},
+			'Belgium'		=>    {
+				tz_offset => 0,
+			},
+			'Bangalore'		=>  {
+				tz_offset => 5.5,
+			},
+			'Tokyo'			=>    {
+				tz_offset => 9,
+			},
+		},
+		'CurrentLocale'	=> 'Petaluma',
+	}
+";
+# Read our initialiaztion file and die unless it looks right.
+my $TzInfo;
+if ($^O eq 'solaris') {
+	my $ini_file = ($ENV{HOME})
+		? "$ENV{HOME}/.clock_info"
+		: '.clock_info';
+	$TzInfo = eval {
+		my $ini_file = ($ENV{HOME})
+			? "$ENV{HOME}/.clock_info"
+			: '.clock_info';
+		die "Failed to find $ini_file: no such file.\n" unless(-f $ini_file);
+		system("perl -c $ini_file")
+			&& die "$ini_file not good perl ref.\n";
+		open(F, $ini_file) || die "Failed to open $ini_file for read.\n";
+		my @example.com = <F>;
+		close F;
+		eval "@example.com";
+	};
+	if ($@) {
+		print "Failed to read user's clock initialization file.: $@example.com";
+		$TzInfo = undef;
+	}
+}
+unless ($TzInfo) {
+	print "Using internal default clock initialization.\n";
+	# Offsets from GMT in hours.
+	$TzInfo = eval $InitInfoText;
+}
+
+	
+
+# Scale the local time offset from hours to seconds.
+map {$TzInfo->{'Locales'}{$_}{tz_offset} *= 3600} keys %{$TzInfo->{'Locales'}};
+
+my $mainWin = MainWindow->new('-title' => 'CLOCK' )
+	|| die "Failed to get a window.\n";
+my $frame = $mainWin->Frame();
+$frame->pack();
+
+foreach my $locale (sort {
+			$TzInfo->{'Locales'}{$a}{tz_offset}
+				<=> $TzInfo->{'Locales'}{$b}{tz_offset}
+	} keys %{$TzInfo->{'Locales'}}) {
+	$TzInfo->{'Time'}{$locale} = $frame->Label(-text => '');
+	$TzInfo->{'Labels'}{$locale} = $frame->Label(-text => $locale);
+	$TzInfo->{'Labels'}{$locale}->grid(
+		$TzInfo->{'Time'}{$locale}, -sticky => "nsew"
+	);
+	if (exists $TzInfo->{'CurrentLocale'}
+				&& ($locale eq $TzInfo->{'CurrentLocale'})) {
+		$TzInfo->{'Time'}{$locale}->configure(
+			'-background' => 'yellow', '-foreground' => 'black'
+		);
+		$TzInfo->{'Labels'}{$locale}->configure(
+			'-background' => 'yellow', '-foreground' => 'black'
+		);
+	}
+}
+my $t = time() % 60;
+# my $t1 = 60 - (localtime())[0];
+# print time(), ":$t:$t1\n";
+sleep (60 - $t);
+changeTime($TzInfo); # initialize the time.
+$frame->repeat(60000, sub{changeTime($TzInfo)});
+MainLoop();
+

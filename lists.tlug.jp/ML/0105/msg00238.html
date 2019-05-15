@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Mon, 14 May 2001 13:53:12 +0900 -->
+<!--X-Message-Id: 15103.25784.653677.494797@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200105110609.PAA19966@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00237.html">Date Prev</A>][<A HREF="msg00239.html">Date Next</A>][<A HREF="msg00189.html">Thread Prev</A>][<A HREF="msg00233.html">Thread Next</A>][<A HREF="maillist.html#00238">Date Index</A>][<A HREF="threads.html#00238">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 14 May 2001 13:53:12 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00189.html">200105110609.PAA19966@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00189.html">200105110609.PAA19966@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;-jfp3C.A.NNF.0a2_6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; If so, a fairly stupid thing to do. LC_CTYPE is not supposed
+    Jim&gt; to be for that.
+
+Agreed, but that doesn't make POSIX bad, it makes the implementers bad.
+
+    Jim&gt; Yerk. And it still won't work. If I have LANG set to "en_US"
+    Jim&gt; or something like that and I want to input Japanese via XIM
+    Jim&gt; I'm stuffed.  Ne?
+
+Of course not.  You just do `LANG=ja_JP.eucJP kterm &amp;', which is
+enough for most practical pruposes.
+
+OK, so let's be responsive to your real question.  True, you can't
+change IMs on the fly with that code.  But that's not what I wrote
+that code for.  That code is for protecting the program from X11's
+broken usage of locale.
+
+The code I write for _you_ is
+
+  char JimsLocale[A_BIG_ENOUGH_NUMBER];
+  char save_locale[A_BIG_ENOUGH_NUMBER];
+
+  printf("Enter desired locale for IM: ");
+  scanf("%s",JimsLocale);
+
+  strcpy(save_locale, setlocale(LC_CTYPE,""));
+  if (strcmp(JimsLocale,""))
+    setlocale(LC_CTYPE,JimsLocale);
+  else
+    setlocale(LC_CTYPE,getenv("LANG"));
+  /* initialize the XIM, and maybe the XIC */
+  setlocale(LC_CTYPE, save_locale);
+
+Don't ask me why nobody does this.  I know it works in toy programs,
+maybe it doesn't work in production?  Or maybe they're just lazy.  You
+can also switch between different Japanese IMs by massaging XMODIFIERS
+in the same way.
+
+It's really not all that much code, either.  The only real objection
+to it is that it requires lots of system calls (getenv, setenv,
+setlocale), and can't be done purely in userland.  But that's not all
+that bad, changing IMs is a really rare event.
+
+    Jim&gt; Balls. What the user wants to do is run kterm, i.e. to read
+    Jim&gt; and write xterm-like things in Japanese. It's absolutely
+    Jim&gt; valid for the kterm code to assume that the user wants to
+    Jim&gt; read or write Japanese, because that's the only reason the
+    Jim&gt; bloody program exists.
+
+Wrong.  Go read the docs.  kterm is explicitly documented as
+multilingual.  True, Japanese is the primary use.  But the buttheads
+who wrote the program are trying to cater to the primary use and be
+multilingually correct at the same time.
+
+I really rather doubt they would have screwed up this way if they
+weren't paying lip service to internationalization issues.
+
+    Jim&gt; I'll accept the desirability of having something like a
+    Jim&gt; LANGUAGE variable setting to announce things like which set
+    Jim&gt; of languages the user wants to see and input. Having kterm
+    Jim&gt; refuse to run unless LANG is set to "jp_*" is plain B A D.
+
+Nobody is denying that.
+
+But that's not POSIX's fault; POSIX does not define a missing locale
+as a fatal error, kterm does.
+
+My point is that POSIX locales are better than nothing, but people who
+thought they could do better than POSIX have made that a moot point.
+The bone I have to pick with you is your claim that POSIX is
+responsible for the fucked up state of the world.  It's not.  POSIX
+internationalization has never been tried.  Not in free software,
+anyway.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00189" HREF="msg00189.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00237.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00239.html">Re: Yet another locale question....</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00189.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00233.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00238"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00238"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

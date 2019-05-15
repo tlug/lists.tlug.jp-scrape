@@ -1,0 +1,177 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: mounting removeable media -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Thu, 13 Aug 1998 14:48:23 +0900 -->
+<!--X-Message-Id: 19980813144950.11711@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980811182437.4232i&#45;100000@example.com -->
+<!--X-Reference-Id: Pine.LNX.4.00.9808121832150.3813&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00241.html">Date Prev</A>][<A HREF="msg00243.html">Date Next</A>][<A HREF="msg00215.html">Thread Prev</A>][<A HREF="msg00044.html">Thread Next</A>][<A HREF="maillist.html#00242">Date Index</A>][<A HREF="threads.html#00242">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: mounting removeable media</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: mounting removeable media</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 13 Aug 1998 14:49:50 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00215.html">Pine.LNX.4.00.9808121832150.3813-100000@example.com</A>&gt;; from Christopher Sekiya on Wed, Aug 12, 1998 at 06:32:47PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00187.html">Pine.LNX.3.96LJ1.1b7.980811182437.4232i-100000@example.com</A>&gt; &lt;<A HREF="msg00215.html">Pine.LNX.4.00.9808121832150.3813-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Aug 12, 1998 at 06:32:47PM +0900, Christopher Sekiya wrote:
+&gt; 
+&gt; On Tue, 11 Aug 1998, Scott Stone wrote:
+&gt; 
+&gt; &gt; You can use amd to automount local filesystems, but it's considerably more
+&gt; &gt; trouble than it's worth.  I've tried it.
+&gt; 
+&gt; Scott, Scott ... amd was superceded by autofs over a year ago.  Pick up
+&gt; the source on ftp.kernel.org
+
+Maybe "obviated" would be a better choice than "superceded".
+
+Amd, for it's sins, is available on more platforms.  If you need to
+admin a heterogeneous network (i.e. if you're misfortunate enough to have
+"other" unix platforms) amd can be your friend.
+
+The biggest problem with amd (and Sun's original automounter) is the
+inability to do directory lookups on an automount point (explicit design
+decision: would have to actually mount everything to stat() the contents
+-- s-l-o-w).  
+
+amd and automount simply return nothing rather than actually mounting
+everything (leading directly to countless luser trouble tickets of the
+"MY HOME DIRECTORY IS GONE!" ilk).  That is, amd and automount wait until
+you reference an automounted subdirectory explicitly: 
+
+    ls -l /home/user1
+
+returns everything you would expect, while
+
+    ls -l /home
+
+will only show subdirectories that have recently been accessed rather
+then all possible automount directories.
+
+It's kind of like 0111 permissions on a normal directory -- you can get
+at anything you want IFF you know what it's called.
+
+The Solaris automount developer once talked about making
+the automounter simply lie -- e.g. making an "ls -l" in /home return
+something like:
+
+    ----------   1 nobody      0           0 Jan  1  1970 user1
+    ----------   1 nobody      0           0 Jan  1  1970 user2
+    ----------   1 nobody      0           0 Jan  1  1970 usern
+
+Don't know if they ever actually did it though.  
+
+I haven't played with autofs yet.  What does it do if, say, you are
+automounting umpteen NFS (or iso9660, VFAT, whatever) filesystems under
+/home and you do an "ls -l /home"?
+
+Regards,
+-- 
+Rex
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00187" HREF="msg00187.html">Re: tlug: mounting removeable media</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00215" HREF="msg00215.html">Re: tlug: mounting removeable media</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00241.html">Re: tlug: nomikai</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00243.html">Re: tlug: nomikai</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00215.html">Re: tlug: mounting removeable media</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00044.html">tlug: acrobat reader</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00242"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00242"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

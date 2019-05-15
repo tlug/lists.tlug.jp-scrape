@@ -1,0 +1,181 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: gcc question -->
+<!--X-From: Fredric Fredricson <fredric.fredriksson@example.com> -->
+<!--X-Date:  Thu, 13 Jan 2000 07:10:41 +0900 -->
+<!--X-Message-Id: 387CFBBB.B2E37BBD@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.1000112114004.523B&#45;100000@example.com&#45;link.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00037.html">Date Prev</A>][<A HREF="msg00039.html">Date Next</A>][<A HREF="msg00037.html">Thread Prev</A>][<A HREF="msg00043.html">Thread Next</A>][<A HREF="maillist.html#00038">Date Index</A>][<A HREF="threads.html#00038">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: gcc question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: gcc question</strong></LI>
+<LI><strong>From</strong>: <strong>Fredric Fredricson &lt;<A HREF="mailto:fredric.fredriksson@example.com">fredric.fredriksson@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 12 Jan 2000 23:10:03 +0100</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: MYDATA automation AB</LI>
+<LI>References: &lt;<A HREF="msg00037.html">Pine.LNX.3.96.1000112114004.523B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I would say this question is more appropriate on a c mailing
+list or news group but I will try to answer it anyway:
+
+Your code is broken in a way that will show up differently on
+different OSes.
+
+"Drew C. Poulin" wrote:
+&gt; 
+&gt; #include&lt;stdio.h&gt;
+&gt; 
+&gt; main(){
+&gt; 
+&gt;   char *fname, *lname;
+Defines two pointers to char arrays. Usually the pointers are
+initialized to 0x0000, but you can never be sure.... 
+&gt; 
+&gt;   puts("Enter fname:\n");
+Prints a message
+&gt;   gets(fname);
+Reads user input and writes it to wherever the fname pointer 
+points (probably to 0x000, which will give you an exception
+in Linux but not in all OSes (but it is a bug in all OSes)).
+&gt;   puts("Enter lname:\n");
+&gt;   gets(lname);
+Se above.
+&gt;  printf("First name: %s\tLast name: %s\n", fname, lname);
+&gt; 
+&gt; }
+For short, your pointers are not properly initialized.
+Easiest fix would be to define fname and lname
+to be
+   char fname[1024] ;
+   char lname[1024] ;
+Note that fname/lname are still pointers, but initialized 
+to point to char[1024] arrays, that is 1024 long
+character strings. This way you can enter up to 1023
+characters into fname/lname without an error (the last
+character is required for the terminating zero).
+
+This pointer/array stuff is one of the things in c that 
+beginners find complicated. Most other languages
+don't bother about pointers and stuff but in c they are
+vital. 
+
+It is also important to remember that there is no
+built in bounds checking in c arrays. None. At all.
+C is difficult for a beginner since it is essentially
+a more or less portable assembler on steroids.
+
+But it is also very common, portable and the language
+of choice for most people in the Linux community (makes
+you wonder... ;-)
+
+have fun...
+
+/Fredric
+-------------------------------------------------------------------
+Next Technical Meeting: January 14 (Fri) 19:00
+* Topic: "glibc - current status and future developments"
+* Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+* Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00043" HREF="msg00043.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00037" HREF="msg00037.html">tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Drew C. Poulin" &lt;poulin@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00037.html">tlug: gcc question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00039.html">tlug: Re:  gcc question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00037.html">tlug: gcc question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00043.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00038"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00038"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

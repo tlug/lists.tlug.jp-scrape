@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: PPP&RH5.0 (was: Infoworld Review) -->
+<!--X-From: "A.Tomita,Jr." <alberto@example.com> -->
+<!--X-Date: Tue, 3 Feb 1998 10:45:00 &#45;0500 (EST) -->
+<!--X-Message-Id: 199802031544.AAA16418@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199802030814.RAA04310@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.980203082950.24460A&#45;100000@example.com -->
+<!--X-Reference-Id: m0xzfHK&#45;00014KC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00020.html">Date Prev</A>][<A HREF="msg00022.html">Date Next</A>][<A HREF="msg00015.html">Thread Prev</A>][<A HREF="msg00022.html">Thread Next</A>][<A HREF="maillist.html#00021">Date Index</A>][<A HREF="threads.html#00021">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: PPP&amp;RH5.0 (was: Infoworld Review)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: PPP&amp;RH5.0 (was: Infoworld Review)</strong></LI>
+<LI><strong>From</strong>: <strong>"A.Tomita,Jr." &lt;<A HREF="mailto:alberto@example.com">alberto@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 04 Feb 1998 00:44:13 +0900</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00015.html">m0xzfHK-00014KC@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00012.html">199802030814.RAA04310@example.com</A>&gt;&lt;<A HREF="msg00009.html">Pine.LNX.3.96.980203082950.24460A-100000@example.com</A>&gt;&lt;<A HREF="msg00012.html">199802030814.RAA04310@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+At 19:08 98/02/03 +0900, you wrote:
+&gt; This is not as interesting as `route -n'.  (If the DNS is likely to
+&gt; get screwy, you need that `-n'.)  In particular, I'd like to know what
+&gt; the `metric' column says. 
+
+It says:
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+165.76.88.27    0.0.0.0         255.255.255.255 UH    0      0        0 ppp0
+192.168.1.0     0.0.0.0         255.255.255.0   U     0      0        4 eth0
+127.0.0.0       0.0.0.0         255.0.0.0       U     0      0        3 lo
+0.0.0.0         165.76.88.27    0.0.0.0         UG    0      0        1 ppp0
+
+&gt; WTF is that 192.168.****100****.1?!!?  I hope it's a typo.
+
+It was an attempt to see if the error could be related to the IP address
+assigned to the interface. It wasn't, as the problem persists.
+ 
+&gt; What does your ifconfig say about your interfaces?  Do you have ip
+&gt; forwarding, firewalling, and/or bridging enabled?  See what `ipfwadm
+&gt; -{F,I,O} -l' has to say.
+
+Output from ifconfig:
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Bcast:127.255.255.255  Mask:255.0.0.0
+          UP BROADCAST LOOPBACK RUNNING  MTU:3584  Metric:1
+          RX packets:20574 errors:0 dropped:0 overruns:0
+          TX packets:20574 errors:0 dropped:0 overruns:0
+
+eth0      Link encap:Ethernet  HWaddr 00:80:AD:B4:39:A7
+          inet addr:192.168.1.1  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:826 errors:0 dropped:0 overruns:0
+          TX packets:468 errors:0 dropped:0 overruns:0
+          Interrupt:9 Base address:0x300
+
+ppp0      Link encap:Point-to-Point Protocol
+          inet addr:165.76.88.176  P-t-P:165.76.88.27  Mask:255.255.0.0
+          UP POINTOPOINT RUNNING  MTU:1524  Metric:1
+          RX packets:11 errors:0 dropped:0 overruns:0
+          TX packets:11 errors:0 dropped:0 overruns:0
+
+IP forwarding is enabled. I also tried enablig firewalling/ip_masquerading,
+setting the policy:
+
+	/sbin/ipfwadm -F -p deny
+	/sbin/ipfwadm -F -a m -S 192.168.1.0/24 -D 0.0.0.0/0 -W ppp0
+
+On this policy, I got a hint from the IP masquerade mailing list that
+removing -W ppp0 could work. It didn't.
+
+
+
+---
+A.Tomita,Jr.   atomita@example.com
+               atomita@example.com
+
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00022" HREF="msg00022.html">Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Tomita,Jr." &lt;alberto@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00012" HREF="msg00012.html">Re: tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Tomita,Jr." &lt;Alberto@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00009" HREF="msg00009.html">tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> joem &lt;joem@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00015" HREF="msg00015.html">Re: tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00020.html">Re: tlug: Re: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00022.html">Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00015.html">Re: tlug: Infoworld Review</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00022.html">Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00021"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00021"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

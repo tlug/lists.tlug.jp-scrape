@@ -1,0 +1,196 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Debian installation &#45; scsi problem -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 17 Apr 2000 17:23:32 +0900 -->
+<!--X-Message-Id: 14586.51685.355528.578218@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000417060119.6CC2115779@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00094.html">Date Prev</A>][<A HREF="msg00096.html">Date Next</A>][<A HREF="msg00091.html">Thread Prev</A>][<A HREF="msg00097.html">Thread Next</A>][<A HREF="maillist.html#00095">Date Index</A>][<A HREF="threads.html#00095">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Debian installation - scsi problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Debian installation - scsi problem</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 17 Apr 2000 17:23:01 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00091.html">20000417060119.6CC2115779@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00091.html">20000417060119.6CC2115779@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;ulrike@example.com&gt; writes:
+
+    &gt;&gt; OK, I do have a saved /boot/config-2.2.10 with the following
+    &gt;&gt; settings:
+
+    Ulrike&gt; This also might explain why I have no file with "config"
+    Ulrike&gt; in its name in /boot?
+
+If all you've got are the floppies, then very little documentation
+will be installed.
+
+    &gt;&gt; OK, your CD-ROM is NOT being recognized.  This could be due to
+    &gt;&gt; faulty termination.  Or it might just not be hooked up.
+
+    Ulrike&gt; It worked with Windows with the same settings
+    Ulrike&gt; ("automatic") when I used the CD to make the install
+    Ulrike&gt; floppies ...
+
+Well, that sounds good, except that Windows drivers often use
+non-public information.  I dunno FMV machines from a cinderblock;
+maybe they have special hardware (that seems silly with SCSI but you
+never know with "Designed for Windows[MBS]"[1] boxen) that requires
+special drivers.
+
+    Ulrike&gt; "Automatic" was the original setting, it is also marked
+    Ulrike&gt; with a * in the menu. But this gives a warning:
+
+See if you continue having problems booting with "enabled".  If you
+don't have problems again, you should probably continue to do that.
+
+    Ulrike&gt; (scsi0) &lt;Adaptec AHA-294X Ultra SCSI host adapter&gt; found at PCI 5/0
+    Ulrike&gt; (scsi0) Narrow Channel, SCSI ID=7, 16/255 SCBs
+
+Normal, I think.
+
+    Ulrike&gt; (scsi0) Warning - detected auto-termination
+
+No big deal.
+
+    Ulrike&gt; [...]
+    Ulrike&gt; (scsi0) Cables present (Int-50 NO, Ext-50 NO)
+
+This looks very bad.  It does not seem to have detected your internal
+cable.  I assume the CD-ROM drive cannot be detected in that case.  I
+wouldn't be surprised if the FMV Windose SCSI/AIC7xxx driver is
+"enhanced" to ignore this information and try to initialize the drive
+anyway.  Quite likely the CD-ROM drive is not properly terminated.
+
+Make sure the cable hasn't come loose (either by checking the hardware
+physically or booting Windose again).
+
+Another possibility (given that I'm pretty ignorant on really
+expensive hardware) is that you have a more advanced (wide) CD-ROM
+drive attached to a 68-wire cable, but for some reason only the
+50-wire cable is being checked.  But I suspect the driver would tell
+you you have WIDE SCSI in that case, as well as Ultra SCSI.
+
+    Ulrike&gt; Why is there only ide0 and ide1 when there are three hard
+    Ulrike&gt; drives? Shouldn't there be ide2 as well? (Or maybe not?) 
+    Ulrike&gt; And what this md driver?
+
+ide0 and ide1 are the two IDE controllers that are standard; they can
+handle two drives (one master and one slave) each (ide0 -&gt; /dev/hda
+and /dev/hdb, ide1 -&gt; /dev/hdc and hdd IIRC).  md is the "multiple
+device" driver which allows you to treat several devices as a single
+one (make a big partition out of several small ones sequentially or in
+parallel, or automatically mirror the same data to two drives, the
+several flavors of so-called RAID devices).
+
+Footnotes: 
+[1]  [MBS] = "Mark of Bullshit"
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00091" HREF="msg00091.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00094.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00096.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00091.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00097.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00095"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00095"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

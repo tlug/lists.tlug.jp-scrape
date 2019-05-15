@@ -1,0 +1,158 @@
+<!-- MHonArc v2.5.0 -->
+<!--X-Subject: hc11 and a program i am "writting" -->
+<!--X-From-R13: Rnivq Sqhneqb Ubzrm @example.com <qnivqtaNfreivqbe.hanz.zk> -->
+<!--X-Date: Fri, 12 Oct 2001 10:34:27 &#45;0600 -->
+<!--X-Message-Id: 20011012103427.72e17346.davidgn@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Derived: bin00000.bin -->
+<!--X-Derived: bin00001.bin -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00006.html">Date Prev</a>][<a href="msg00008.html">Date Next</a>][<a href="msg00006.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a href="maillist.html#00007">Date Index</a>][<a href="threads.html#00007">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>hc11 and a program i am &quot;writting&quot;</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>tlug &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>hc11 and a program i am &quot;writting&quot;</strong></li>
+<li><strong>From</strong>: <strong>David Eduardo Gomez Noguera &lt;<A HREF="mailto:davidgn@example.com">davidgn@example.com</A>&gt;</strong></li>
+<li>Date: Fri, 12 Oct 2001 10:34:27 -0600</li>
+<li>Cc: <A HREF="mailto:davidgn@example.com">davidgn@example.com</A>,由利さん
+ &lt;<A HREF="mailto:yuri_adrian@example.com">yuri_adrian@example.com</A>&gt;</li>
+<li>Content-type: multipart/mixed;boundary=&quot;Multipart_Fri__12_Oct_2001_10:34:27_-0600_08300058&quot;</li>
+<li>Delivered-to: tlug@example.com</li>
+<li>List-help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-return-path: &lt;davidgn@example.com&gt;</li>
+<li>Reply-to: <A HREF="mailto:davidgn@example.com">davidgn@example.com</A>, <A HREF="mailto:dabicho2001@example.com">dabicho2001@example.com</A></li>
+<li>Resent-from: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-message-id: &lt;L21eU.A.5f.Xf-z7@example.com&gt;</li>
+<li>Resent-sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>hello all. good morning.
+
+I am in a course to microcomputers. Unlike what i thought it would be like, they just teach us a microcontroller. hc11 it is.
+However, there is no program i could found that let me interface the PC with it, so i started witting my own.
+By the way, thank you to everyone who pointed me about programming the serial. =) helped a lot.
+
+However, to do this, there must be a programm in the micro as well as a programm in the PC.
+The micro has 4 initialization modes, driven by jumpers, to be
+bootstrap
+single chip
+expanded
+test
+it has 1kb of internal ram, 512 bytes of internal eeprom. some more ram for configuration registers. and a rom area accessible only on bootstrap and test modes. there are configuration registers that says where in a 64kb area each internal memory resides (except for the internal bootstrap rom). in bootstrap more, each has adefault value. In extended and test mode you can use external memory to have the grand total of 64kbytes! in bootstrap mode, ram starts at 0x0000 to 0x03ff, registers from 0x1000 to 0x2000, eeprom from 0xfe00 to 0xffff, and the bootstrap rom from 0xbe00 to 0xbfff. interrupt vectors go from 0xbf00 to 0xbfff  (and the last part of eeprom in other modes)
+
+in bootstrap mode, it automatically jumps to a rom program that sets the micro to comunicate with 1200 or some other speed (4.xxs, dont remember) depending on timming. To know wich speed to use, the micro expects the first character to be 0xFF. next, the micro downloads a series of data to the beginning of the internal ram, being it at address 0x0000 to 0x03ff. 
+so far, i wrote an asm program for the micro, and its interface with the pc.
+the porgram for the micro does the following.
+configures for 9600 bauds (when it starts running) and has an interrupt routin that handles operations from the serial communication, which are recibe and write n bytes starting from addres d, send the content of n writes starting from address d, changing the content of the PC/IP register to pass control to a program, and writting a value to eeprom.
+
+to write a value to eeprom, first i have to modify the content of a register [pprog] to enable programming/special erasing modes, write the data to de value, then rewrite the past register to set the programming bit to start writing to the eeprom, then wait 10 to 20 ms for it to take effect, then reset the register pprog to 0 to finish and voila. this proccess has to be done for every byte i want to program. and the byte should be properly erased beforehand, so it can take to 20 to 40 ms.
+the micro's asm program does all this. it erases the byte, then it programs it, and itself was a delay procedure too. 
+so far, it takes 256 bytes of the micro. I could write it to the eeprom, but i can use only 256 bytes there, so i dont interfere with the reserved eeprom interrupt vectors. This would make so that i could reset in bootstrap and just send 3 bytes to jump to the eeprom, or to set it so that extended or singlechip would boot directly to the eeprom.
+
+My problem is i cant come up with a desicion. i need the code to be smaller, so i think i could make it so that from the interface on the pc makes all the work, and only have the functions to send and receive data from the micro (no eeprom programing/erasing). i would need to make timing in the pc too, i could also make a function in the micro to wait 10 ms and send a data to the pc so the micro takes care of timing. I am trying to make the interface so to be able to program eeprom or normal bytes without loosing time. the iface could check a variable to see if the area is eeprom or not. but in the interface i have commands for writing/reading n bytes of normal memory, and a command to write 1 byte of eeprom.
+I have just found i have not too much experience in programming and some problems with wanting it to bee pretty good the first time. so far everything works, expect i would like to make it simpler to write to the micro, mixing writing ram and eeprom.
+The files are commented in spanish, so sorry about that too. i think it might be understandable without the comments though.
+
+Sorry for the super long mail.
+and thank you for your time =)
+-- 
+ICQ: 15605359 Bicho
+                                  =^..^=
+First, they ignore you. Then they laugh at you. Then they fight you. Then you win. Mahatma Gandhi.
+........Por que no pensaran los hombres como los animales? Pink Panther........
+-------------------------------気検体の一致------------------------------------
+暑さ寒さも彼岸まで。
+アン アン アン とっても大好き
+</pre><p><strong>Attachment:
+<a href="bin00000.bin" ><tt>m68hc11.c</tt></a></strong><br>
+<em>Description:</em> Binary data</p>
+<p><strong>Attachment:
+<a href="bin00001.bin" ><tt>talk2.asm</tt></a></strong><br>
+<em>Description:</em> Binary data</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00006.html">test</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00008.html">kernel 2.4.12 Re: dd &amp; cat</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00006.html">test</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">kernel 2.4.12 Re: dd &amp; cat</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00007"><strong>Date</strong></a></li>
+<li><a href="threads.html#00007"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

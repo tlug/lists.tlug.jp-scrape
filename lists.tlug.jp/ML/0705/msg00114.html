@@ -1,0 +1,187 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] sed / shell / redirection question -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Mon, 07 May 2007 00:35:14 +0900 -->
+<!--X-Message-Id: 20070506145633.GA6840@mail.scottro.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 463DE078.2090005@pitchpipe.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00113.html">Date Prev</a>][<a href="msg00115.html">Date Next</a>][<a href="msg00112.html">Thread Prev</a>][<a href="msg00113.html">Thread Next</a>][<a href="maillist.html#00114">Date Index</a>][<a href="threads.html#00114">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] sed / shell / redirection question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 6 May 2007 10:56:33 -0400</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20sed%20%2F%20shell%20%2F%20redirection%20question">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] sed / shell / redirection question</strong></li>
+<li>References: &lt;<a href="msg00110.html">463DE078.2090005@pitchpipe.org</a>&gt;</li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Sun, May 06, 2007 at 11:04:40PM +0900, Mark Makdad wrote:
+&gt; TLUG,
+&gt; 
+&gt; sed 's*old/path/name*new_variable_name*' ....
+&gt; 
+&gt; But then I decided to make this into a shell script, so:
+&gt; 
+&gt; #!/bin/bash
+&gt; for X in *.php
+&gt; do
+&gt;    sed 's*old/path/name*new_variable_name*' $X &gt; $X
+&gt; done
+&gt; 
+&gt; Which seemed to work?  I'm not sure, I tried many things, and when I executed 
+&gt; sed by itself on the shell I got the desired results.  However, I don't want to 
+&gt; rename the files a bunch of times; I want to edit them as-is.  My question is:
+&gt; 
+&gt; Why did this take all of my input files and truncate them at zero bytes?
+
+That one was expected.  You can try it with something like creating a
+file called test with the word testing.
+
+sed 's/ing//' test &gt; test.  You'll see that the new test has nothing in
+it. 
+
+Unless Linux's sed is far different than FreeBSD's what you'd want is
+something like  sed -i '' then your commands without the redirect.  
+
+For example, with the same file
+
+sed -i '' 's/ing//' test; cat test
+
+will give me the expected result, that the word testing has been changed
+to test in the file called test. 
+
+Another way to do it (I haven't used this one in awhile, so don't try it
+wihtout testing it first) is
+
+sed 'do whatever' test &gt; test$$; mv test$$ test
+
+The $$ will give it a unique name, based on the shell's PID (in zsh at
+least).  
+
+The -i option means make the changes to the file--in general,  sed just
+echoes to the console rather than actually changing the file.  The ''
+means don't make a backup, otherwise you do something like -i bak and it
+will edit the file called test and also create test.bak.
+ 
+&gt; 
+&gt; Am I screwing up a basic redirection thing there?  And also, does anyone have a 
+&gt; stiff drink?   
+
+No, I ran out of Diet Mountain Dew, had to buy some so it's in the
+fridge now--it should be cold in an hour or so.  :)
+
+
+
+-- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Xander: It's time for me to act like a man... and hide. 
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00110" href="msg00110.html">[tlug] sed / shell / redirection question</a></strong>
+<ul><li><em>From:</em> Mark Makdad</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00113.html">[tlug] Ubuntu / EPIA / Media Player</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00115.html">Re: [tlug] Ubuntu / EPIA / Media Player</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00112.html">[tlug] sed / shell / redirection question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00113.html">[tlug] Ubuntu / EPIA / Media Player</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00114"><strong>Date</strong></a></li>
+<li><a href="threads.html#00114"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

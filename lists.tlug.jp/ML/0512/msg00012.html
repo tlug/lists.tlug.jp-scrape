@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Video Clips -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Fri, 02 Dec 2005 17:46:05 +0900 -->
+<!--X-Message-Id: d8fcc0800512020045k5e489379s100b9cc82e14d00b@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 438FEC3F.7020709@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00011.html">Date Prev</a>][<a href="msg00013.html">Date Next</a>][<a href="msg00011.html">Thread Prev</a>][<a href="msg00014.html">Thread Next</a>][<a href="maillist.html#00012">Date Index</a>][<a href="threads.html#00012">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Video Clips</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 2 Dec 2005 17:45:30 +0900</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Video%20Clips">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Video Clips</strong></li>
+<li>References: &lt;<a href="msg00011.html">438FEC3F.7020709@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 12/2/05, Lyle (Hiroshi) Saxon &lt;ronfaxon@example.com&gt; wrote:
+
+&gt; I'm helping a friend put a site together and they (unfortunately) want
+&gt; some video clips on their site.  Any tips on what the most
+&gt; cross-platform compatible formats are?
+
+I'd say one of the MPEG formats. MPEG-4 video with MPEG-3 audio, maybe?
+
+&gt; Also - I think they're going to give me a DVD with some stuff (with no
+&gt; copyright issues or copyguard AFAIK).  Is there something within the
+&gt; Linux world I can use to edit out a couple of clips of 20-25 seconds in
+&gt; length?  (Hopefully reading the data directly from the DVD drive in my
+&gt; Linux box and not relying on an external player, but I suppose the
+&gt; on-board video capabilities of my old 450MHz Dell are probably not up to
+&gt; the task?)
+
+Is this a video DVD, or a data one? If it is the latter, you can just
+copy the video files to your PC. If not, you have to get a little more
+jiggy[1] wit' it.
+
+Pull up the &quot;The Quick-n-Dirty Guide to DVD Backup&quot;[2] (what? you mean
+you don't have qnd-guides.net bookmarked!?) and read the &quot;Tools of the
+Trade&quot; section (<a  rel="nofollow" href="http://www.qnd-guides.net/qnd-dvd-backup.html#tools">http://www.qnd-guides.net/qnd-dvd-backup.html#tools</a>),
+then skip down the the section on dual-layer DVDs
+(<a  rel="nofollow" href="http://www.qnd-guides.net/qnd-dvd-backup.html#dual">http://www.qnd-guides.net/qnd-dvd-backup.html#dual</a>). Read down to
+step  6 (actually, you may skip step 5, since we do not need to shrink
+the video).
+
+Now, do something like this:
+
+vol=&quot;WINNIE_THE_FOO&quot;; \
+for i in `seq 1 4`; do \
+  mplayer dvd://$i -dumpstream -dumpfile /scratch/ripdvd/${vol}-$i.vob &amp;&amp; \
+  tcextract -i /scratch/ripdvd/${vol}-${i}.vob -d 2 -x mpeg2
+&gt;/scratch/ripdvd/${vol}-${i}.m2v &amp;&amp; \
+  tcextract -i /scratch/ripdvd/${vol}-${i}.vob -d 2 -x ac3 -a 0 \
+   &gt;/scratch/ripdvd/${vol}-${i}.ac3 &amp;&amp; \
+  rm /scratch/ripdvd/${vol}-${i}.vob &amp;&amp; \
+  mplex -f 8 -v 1 -S 0 -o /scratch/shrinkdvd/${vol}-${i}.mpg \
+   /scratch/ripdvd/${vol}-${i}.m2v /scratch/ripdvd/${vol}-${i}.ac3 &amp;&amp; \
+  rm /scratch/ripdvd/${vol}-${i}.m2v /scratch/ripdvd/${vol}-${i}.ac3;
+done
+
+OK, now you have MPEG files of the first four chapters on the DVD. Now
+you can edit them with Kino[3] or some such. Your machine might be
+slow at doing the editing, but it *should* be able to do it at last.
+
+HTH,
+Josh
+
+[1] <a  rel="nofollow" href="http://www.randomhouse.com/wotd/index.pperl?date=20000222">http://www.randomhouse.com/wotd/index.pperl?date=20000222</a>
+[2] <a  rel="nofollow" href="http://www.qnd-guides.net/qnd-dvd-backup.html">http://www.qnd-guides.net/qnd-dvd-backup.html</a>
+[3] <a  rel="nofollow" href="http://www.kinodv.org/">http://www.kinodv.org/</a>
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00014" href="msg00014.html">Re: [tlug] Video Clips</a></strong>
+<ul><li><em>From:</em> Lyle (Hiroshi) Saxon</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00011" href="msg00011.html">[tlug] Video Clips</a></strong>
+<ul><li><em>From:</em> Lyle (Hiroshi) Saxon</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00011.html">[tlug] Video Clips</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00013.html">Re: [tlug] Aki Day???</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00011.html">[tlug] Video Clips</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00014.html">Re: [tlug] Video Clips</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00012"><strong>Date</strong></a></li>
+<li><a href="threads.html#00012"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

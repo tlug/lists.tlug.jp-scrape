@@ -1,0 +1,162 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: jwb@example.com (Jim Breen) -->
+<!--X-Date: Tue, 10 Apr 2001 16:37:16 +0900 (JST) -->
+<!--X-Message-Id: 200104100737.QAA17630@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00072.html">Date Prev</A>][<A HREF="msg00074.html">Date Next</A>][<A HREF="msg00081.html">Thread Prev</A>][<A HREF="msg00074.html">Thread Next</A>][<A HREF="maillist.html#00073">Date Index</A>][<A HREF="threads.html#00073">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI>Date: Tue, 10 Apr 2001 16:37:16 +0900 (JST)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;eWeujB.A.riE.ugr06@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt; From: "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+&gt;&gt; (2) It explicitly opens an X Input Method:
+&gt;&gt; 
+&gt;&gt;     (a) It sets the program's locale using the standard library
+&gt;&gt;         function setlocale(), either from the environment (default) or
+&gt;&gt;         explicitly.  Eg, "ja_JP.eucJP".  I think it specifically looks
+&gt;&gt;         at the LANG and LC_ALL variables, but not at any of the
+&gt;&gt;         subcategories.
+
+Where in the configuration is LANG, etc. set? I note that in my
+/etc/X11/xinit/xinitrc.d/xinput it looks at LC_ALL and if it contains
+ja_JP it starts kinput2. Presumably LC_ALL gets set before then, but
+where?
+
+&gt;&gt;     (b) It gets the (possibly program-augmented) contents of the
+&gt;&gt;         XMODIFIERS environment variable.  This is a string of the form
+&gt;&gt; 
+&gt;&gt;         "@example.com=value;@example.com=value..."
+&gt;&gt; 
+&gt;&gt;         AFAIK the only implemented tag is @example.com  Then it extracts the
+&gt;&gt;         order list of input methods such as "@example.com=isoaccent;@example.com=kinput2".
+&gt;&gt; 
+&gt;&gt;     (c) Then it does XOpenIM(...).  XOpenIM walks the list, attempting
+&gt;&gt;         to contact each method in turn, and on success asking "do you
+&gt;&gt;         do $LANG?"  isoaccent says "ja? bu-wha-ha-ha!".  XOpenIM
+&gt;&gt;         translates that to "iie"[1], and goes on to kinput2.  Kinput2
+&gt;&gt;         says "hai!", they shake hands, and XOpenIM returns a struct
+&gt;&gt;         _xim or something like that that Xlib will use to control
+&gt;&gt;         console input thereafter.
+
+What if a user wants to run an app that switches between a Korean IM and
+a German one? Locales can't be changed on the fly
+
+&gt;&gt; In your case, you need (a) XMODIFIERS="@example.com=kinput2" 
+
+Got that.
+
+&gt;&gt; and (b)
+&gt;&gt; LANG="ja_JP.eucJP" (probably, works for me but YYMV) in your
+&gt;&gt; environment or you will lose.  Of course, you may lose anyway; this is
+&gt;&gt; XIM.
+
+Doesn't work. Possibly because LC_ALL contains "C", according to the
+return from setlocale().
+
+-- 
+Jim Breen  [jwb@example.com  <A TARGET="_top" HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>]
+Visiting Professor, Institute for the Study of Languages and Cultures of 
+Asia and Africa, Tokyo University of Foreign Studies, Japan
++81 3 5974 3880         [$B%8%`!&amp;%V%j!&lt;%s(B@$BEl5~30Bg(B]
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00074" HREF="msg00074.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher SEKIYA &lt;wileyc@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00086" HREF="msg00086.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00072.html">Re: Mutt and Japanese</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00074.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00081.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00074.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00073"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00073"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

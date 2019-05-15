@@ -1,0 +1,200 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Um, so... systemd? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Tue, 17 Jan 2017 11:22:58 +0900 -->
+<!--X-Message-Id: 20170117022257.GA5738@quadratic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1484466028.1128194.848109712.20A4C328@webmail.messagingengine.com -->
+<!--X-Reference: d4bcb8a1&#45;a9a1&#45;781f&#45;3c36&#45;fbc3ba4ee2a0@dcook.org -->
+<!--X-Reference: 7e953f7b&#45;a75e&#45;26e4&#45;72a5&#45;709d1936c4f9@cisco.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00021.html">Date Prev</a>][<a href="msg00023.html">Date Next</a>][<a href="msg00021.html">Thread Prev</a>][<a href="msg00023.html">Thread Next</a>][<a href="maillist.html#00022">Date Index</a>][<a href="threads.html#00022">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Um, so... systemd?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Jan 2017 11:22:57 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Um%2C%20so...%20systemd%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Um, so... systemd?</strong></li>
+<li>References: &lt;<a href="msg00013.html">1484466028.1128194.848109712.20A4C328@webmail.messagingengine.com</a>&gt;	&lt;<a href="msg00018.html">d4bcb8a1-a9a1-781f-3c36-fbc3ba4ee2a0@dcook.org</a>&gt;	&lt;<a href="msg00021.html">7e953f7b-a75e-26e4-72a5-709d1936c4f9@cisco.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2017-01-17 09:28 +0900 (Tue), dblomber wrote:
+
+&gt; For systemd a lot of the arguments I hear are around breaking scripts 
+&gt; and controls people have built around init.d.
+
+Arguably most of those scripts were already broken in one way or
+another and it just wasn't obvious. :-)
+
+But yeah, if you're not just using using standard packages or
+Docker+Kubernates or whatever, to get reliable startup you are pretty
+much going to have to spend a bit of time learning how systemd works.
+On the other hand, either you already had to do that once before with
+init.d when you added whatever extra system (daemontools, supervisord,
+etc.) to get process supervision. (Or you never did that and you
+really, really want to do something to get process supervision, and
+systemd is now a nice standard way of doing it.)
+
+&gt; Mix in the journald and binary files becoming increasingly wedged in
+&gt; raising some hackles.
+
+Yeah, I'm not a big fan of binary files myself, when they're not
+necessary. But in this case I think the tradeoff is worth it; syslog
+has always made me nervous with the ability of any program on your
+system (and sometimes off it) to insert very nearly arbitrary log
+entries into any log file they like. I'm a lot more confident when
+trying to diagnose a potential attack when I know I can rely on the
+information about what process a log entry came from (assuming my
+system hasn't been totally rooted, of course). With the ability to
+build a hash chain of log blocks, too, even if my system does get
+rooted I can tell if the attacker has been modifying log files.
+
+Revision control systems from SCCS and RCS through [CVS] used
+text-format files as well. Subversion and Git switched to a binary
+storage format and I think, despite now having to use special tools to
+grovel the repo, that was a worthwhile move too.
+
+[CVS]: <a  rel="nofollow" href="https://en.wikipedia.org/wiki/Concurrent_Versions_System">https://en.wikipedia.org/wiki/Concurrent_Versions_System</a>
+
+&gt; I know a number of people that turn off network manager on RHEL7
+&gt; installs due to the number of problems it is causing in their
+&gt; environments. 
+
+That's nothing to do with systemd; I generally turn it off also
+servers not running systemd, such as RHEL 6.
+
+&gt; Businesses are pressing hard for systemd, journald. Oddly when I ask 
+&gt; mine why, the people that reply don't have a real answer for the change. 
+
+Well, sounds like those people are about as well-informed as many of
+the folks loudly protesting the change.
+
+&gt; The best reason I see is from Red Hat in Parallelization of boot up 
+&gt; making the systems start faster.
+
+It certainly does help a lot with speed, but that's relatively low on
+the list of good reasons to make the switch.
+
+The easiest way to see the huge difference is simply to build a tiny
+server (along the lines of my [docker-echo], but without the Docker
+container around it) and then write what you need to make it start,
+run, restart, stop and log reliably under both systemd and your other
+favourite init system de jour. That should convert pretty much anybody
+if they do it right in both cases. (And no, `echo &gt;&gt;/etc/rc.local
+'/opt/myserver/server &amp;'` is not doing it right. :-))
+
+[docker-echo]: <a  rel="nofollow" href="https://github.com/c-j-s/docker-echo">https://github.com/c-j-s/docker-echo</a>
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00013" href="msg00013.html">[tlug] Um, so... systemd?</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] Um, so... systemd?</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00021" href="msg00021.html">Re: [tlug] Um, so... systemd?</a></strong>
+<ul><li><em>From:</em> dblomber</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00021.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00023.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00021.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00023.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00022"><strong>Date</strong></a></li>
+<li><a href="threads.html#00022"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] ifup gives "ifRTNETLINK answers: Invalid argument" error -->
+<!--X-From-R13: Xrna&#45;Quevfgvna Wzornhyg <wpNzrtn&#45;ohpxf.pb.wc> -->
+<!--X-Date: Mon, 10 Feb 2003 12:48:38 +0900 -->
+<!--X-Message-Id: 3E472116.9080303@example.com&#45;bucks.co.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00162.html">Date Prev</a>][<a href="msg00164.html">Date Next</a>][<a href="msg00162.html">Thread Prev</a>][<a href="msg00164.html">Thread Next</a>][<a href="maillist.html#00163">Date Index</a>][<a href="threads.html#00163">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 10 Feb 2003 12:48:38 +0900</li>
+<li><strong>From</strong>: <strong>Jean-Christian Imbeault &lt;<A HREF="mailto:jc@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ifup%20gives%20%22ifRTNETLINK%20answers%3A%20Invalid%20argument%22%20error">jc@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error </strong></li>
+<li>User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.0.2) Gecko/20021120 Netscape/7.01</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I have two RH8.0 machines, one with two network interfaces, one public 
+one private and the other with just one private interface.
+
+I've been able to configure the multi-homed so that at boot time it 
+configures itself properly (it seems that way anyway):
+
+# ifconfig eth0; ifconfig eth1
+eth0      Link encap:Ethernet  HWaddr 00:30:48:51:96:5F
+           inet addr:21x.x.x.x  Bcast:21x.x.x.255  Mask:255.255.255.0
+           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+           RX packets:1205 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:956 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:100
+           RX bytes:166688 (162.7 Kb)  TX bytes:362981 (354.4 Kb)
+           Interrupt:10
+
+eth1      Link encap:Ethernet  HWaddr 00:30:48:51:96:60
+           inet addr:10.1.1.2  Bcast:10.1.1.255  Mask:255.0.0.0
+           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+           RX packets:571 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:913 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:100
+           RX bytes:92729 (90.5 Kb)  TX bytes:83288 (81.3 Kb)
+           Interrupt:11 Base address:0x2000
+
+[root@example.com root]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use 
+Iface
+21x.x.x.x       *               255.255.255.0   U     0      0        0 eth0
+10.0.0.0        *               255.0.0.0       U     0      0        0 eth1
+127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+default         21x.x.x.y       0.0.0.0         UG    0      0        0 eth0
+
+
+But if I try and do the configuration manually I get this cryptic, 
+catch-all error:
+
+# ifdown eth1
+# ifup eth1 10.1.1.2 netmask 255.255.255.0 braodcast 10.1.1.255
+ifRTNETLINK answers: Invalid argument
+
+But the interface comes up and is configured properly.
+
+I've googled around for mentions of this error and all I can find are 
+reference to some kernel option. This machine *is* running a custom 
+2.4.20 kernel so maybe I did forget some option but if so I can't figure 
+out which one ...
+
+Can anyone point me in the right direction?
+
+The config files are as as such:
+
+# cat /etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=localhost.localdomain
+GATEWAY=21x.x.x.x
+
+# cat /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE=eth0
+ONBOOT=yes
+IPADDR=21x.x.x.x
+BROADCAST=21x.x.x.255
+
+# cat /etc/sysconfig/network-scripts/ifcfg-eth1
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=10.1.1.2
+NETWORK=10.1.1.0
+BROADCAST=10.1.1.255
+
+Thanks,
+
+Jc
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00164" href="msg00164.html">Re: [tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+<li><strong><a name="00165" href="msg00165.html">Re: [tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00162.html">Re: [tlug] Architect ???</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00164.html">Re: [tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00162.html">Re: [tlug] Architect ???</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00164.html">Re: [tlug] ifup gives &quot;ifRTNETLINK answers: Invalid argument&quot; error</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00163"><strong>Date</strong></a></li>
+<li><a href="threads.html#00163"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

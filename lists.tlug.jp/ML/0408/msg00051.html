@@ -1,0 +1,194 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] i18n Primer -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 09 Aug 2004 12:39:28 +0900 -->
+<!--X-Message-Id: 874qndm13j.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3118.24.123.50.150.1092007994.squirrel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00050.html">Date Prev</a>][<a href="msg00052.html">Date Next</a>][<a href="msg00048.html">Thread Prev</a>][<a href="msg00060.html">Thread Next</a>][<a href="maillist.html#00051">Date Index</a>][<a href="threads.html#00051">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] i18n Primer</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 09 Aug 2004 12:39:28 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20i18n%20Primer">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] i18n Primer</strong></li>
+<li>References: &lt;<a href="msg00048.html">3118.24.123.50.150.1092007994.squirrel@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (chayote, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Josh&quot; == Josh Glover &lt;tlug@example.com&gt; writes:
+
+    Josh&gt; Will one of the i18n gurus on this list (Steve, Jim, et al.) 
+    Josh&gt; please recommend *the* i18n primer for software developers? 
+    Josh&gt; I need to remedy my glaring lack of knowledge in the area.
+
+There isn't one that I know of.  Jim and I were going to write one,
+but it hasn't happened yet.
+
+    Josh&gt; Using Google, I found &quot;Introduction to i18n&quot;, by Kubota
+    Josh&gt; Tomohiro,[1] which I have printed off for reading. Is this a
+    Josh&gt; good intro?
+
+No.  It's written by a Japanese, which normally implies a quite warped
+point of view toward i18n.  Kubota is no exception.  Nor am I (I may
+not have been born Japanese, but my I18N baptism was in the Church of
+Shit-JIS Mojibake).
+
+However, it may be the best there is in English.  Suzuki et al have a
+book in Japanese, but it's oriented to the specialist.  O'Reilly's X
+Window System series had an X11R5 update volume which introduced a
+bunch of things reasonably well, but obviously it's heavily
+X-oriented.  And I don't know how that's been treated in the X11R6
+editions.  My article in the LJ in 1999 was too heavy on theory, not
+very strong on practice, as was my chapter in Wrox's Professional
+Linux Programming.
+
+    Josh&gt; I am trying to avoid writing software that is difficult to
+    Josh&gt; internationalise, so I am looking to become familiar with
+    Josh&gt; the basics of i18n.
+
+There are no basics of I18N, really.  It's all advanced details.
+
+However, if you plan to leave the details to others, it's not too
+hard.  The first principle is to convert to Unicode (if you're working
+in a low-level language like C/C++, preferably widechars, not UTF-8,
+so as to ensure that English doesn't work serendipitously if you use
+the wrong API) as soon as possible, and do all internal string
+processing in Unicode.
+
+The second issue is to decide whether you are supporting localization
+(ie, users are normally monolingual), or multilingualization (the user
+community is multilingual, even if the users are not).  In the former
+case, you just need to make sure you always do the conversion, and the
+default external encoding can be a global setting.  In the latter
+case, you need to strictly control which modules are allowed to do
+I/O, because otherwise it's possible for different modules to get
+conflicting ideas about what encodings are being used.  Furthermore,
+if somebody later decides to do more sophisticated conversions etc,
+they'll be chasing bugs forever as different parts of the program get
+updated at different times because there's no complete list.
+
+The third issue is message localization using gettext.  This has a
+moderate number of tricky parts if you want to do it right (for
+example, dealing with printf when the variable parts come in different
+orders in different languages), but it's also something that you can
+typically leave to a specialist, since these issues are normally
+localized to each message.  That is, your program's architecture can't
+make it harder or easier for the translation team.  However, if you
+want to encourage L10N from the get-go, learn that stuff and provide
+message catalogs.  There are lots of tools, and the suite in the
+gettext package is quite complete.
+
+As long as you use a language (a p-language, for example) or toolkit
+(GTK) that supports Unicode internally, you generally do not have to
+worry about issues like font handling or input methods.  Those are
+somebody else's problem.  ;-)
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk">http://turnbull.sk</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00048" href="msg00048.html">[tlug] i18n Primer</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00050.html">Re: [tlug] Paging list admins</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00052.html">[tlug] New SUSE LINUX Enterprise Server 9 evaluation download available</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00048.html">[tlug] i18n Primer</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00060.html">Re: [tlug] i18n Primer</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00051"><strong>Date</strong></a></li>
+<li><a href="threads.html#00051"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

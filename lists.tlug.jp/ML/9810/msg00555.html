@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Locale mess -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 15:44:52 +0900 -->
+<!--X-Message-Id: 13860.18507.778282.564240@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981014090731.859A&#45;100000@example.com&#45;tech.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00554.html">Date Prev</A>][<A HREF="msg00556.html">Date Next</A>][<A HREF="msg00552.html">Thread Prev</A>][<A HREF="msg00557.html">Thread Next</A>][<A HREF="maillist.html#00555">Date Index</A>][<A HREF="threads.html#00555">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Locale mess</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Locale mess</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 15:44:27 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00497.html">Pine.LNX.3.96LJ1.1b7.981014090731.859A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00497.html">Pine.LNX.3.96LJ1.1b7.981014090731.859A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Totoro" == Totoro  &lt;riley@example.com&gt; writes:
+
+    Totoro&gt; All of a sudden yesterday, my locale broke and now all I
+    Totoro&gt; get is this error from kterm:
+
+    Totoro&gt; kterm: error in loading shared libraries : undefined
+    Totoro&gt; symbol: _Xsetlocale
+
+I see you got it fixed, but here's a partial explanation of what's
+going on.
+
+POSIX locales have been unimplemented on most systems for most locales 
+until very recently.  I think Linux only got a working Japanese locale 
+within the last few months, and then only for glibc systems.
+
+This was obviously unacceptable to X11, which has had working foreign
+language support since R4.  However, X did not want to be
+incompatible, so in R5 (IIRC) X11 specified the POSIX locale model as
+its locale model, and then proceeded to implement as much as it needed
+ad hoc.  So X11 implementations can use either a libc locale
+implementation or a libX11 locale implementation.  Furthermore, if a
+satisfactory libc implementation is available, this can be selected
+unconditionally when you do `make World' in the X11 source tree.  In
+this case, the X libraries will delegate locale support to the libc
+implementation unconditionally.
+
+If you do not, and elect to support the X11 locale implementation,
+then you can again decide when you build a program.  By including
+&lt;X11/Xlocale.h&gt; you include some trickery which does
+
+#define setlocale Xsetlocale
+
+and declares it as a function.  Then that function calls _Xsetlocale,
+which is conditionally compiled, based on a private X11 #define
+X_LOCALE, to call either libc's setlocale or the private X code that
+implements X11-style locales.  (Remember that the compiler prepends a
+"_" so the loader complains about _Xsetlocale and __Xsetlocale).  The
+reason for this extra level of indirection is so that source code need
+not worry about whether it is calling libc or libX11 routines.
+
+This is the hook that muriyari Netscape uses to implement Japanese
+input etc on Linux, at least until recently.
+
+I seem to recall that one version or another of XFree86 took the
+unconditional-delegate-to-libc route.  So you might have got such a
+library, in which case a program built to use Xsetlocale mightn't
+work.  I'm not really sure why, though, I thought the whole point of
+the trickery was to avoid this outcome.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00557" HREF="msg00557.html">Re: tlug: Locale mess</A></STRONG>
+<UL><LI><EM>From:</EM> Totoro &lt;riley@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00558" HREF="msg00558.html">Re: tlug: Locale mess</A></STRONG>
+<UL><LI><EM>From:</EM> Klaus Kudielka &lt;kudielka@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00589" HREF="msg00589.html">tlug: Mailer preference</A></STRONG>
+<UL><LI><EM>From:</EM> Michael Casinghino &lt;michael@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00497" HREF="msg00497.html">tlug: Locale mess</A></STRONG>
+<UL><LI><EM>From:</EM> Totoro &lt;riley@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00554.html">tlug: re: TL install/*LI*</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00556.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00552.html">Re: tlug: Locale mess</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00557.html">Re: tlug: Locale mess</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00555"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00555"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

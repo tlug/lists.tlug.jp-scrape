@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: scsi drives no longer detected -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Mon, 30 Sep 1996 00:26:25 GMT -->
+<!--X-Message-Id: m0v7W8P&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199609291440.XAA22132@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00088.html">Date Prev</A>][<A HREF="msg00090.html">Date Next</A>][<A HREF="msg00088.html">Thread Prev</A>][<A HREF="msg00091.html">Thread Next</A>][<A HREF="maillist.html#00089">Date Index</A>][<A HREF="threads.html#00089">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: scsi drives no longer detected</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: scsi drives no longer detected</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Mon, 30 Sep 96 09:22 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00088.html">199609291440.XAA22132@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi all, Wish I could have gone to the last meeting. One of
+    Jim&gt; these days....
+
+Me, too.  Sigh ... I'm only 2.5 hours from the TLUG meetings, but
+somehow I never seem to be able to get there!
+
+    Jim&gt; so as a test I tried to compile it but I can't seem to get
+    Jim&gt; the new kernel to recognize my scsi drives.
+
+Ah, but you don't *have* a SCSI *board*, despite your log:
+
+    Jim&gt; Sep 29 23:06:51 wormhole kernel: FDC 0 is a post-1991 82077
+    Jim&gt; Sep 29 23:06:51 wormhole kernel: aha152x: porttest: ok, auto config:
+    Jim&gt;                 ok, detection complete
+    Jim&gt; Sep 29 23:06:51 wormhole kernel: aha152x: vital data: PORTBASE=0x340,
+
+That port looks like a Sound Blaster to me....  Why the driver says
+'aha152x' I don't know and don't have time to read all those config
+files to figure out.  I take a wild guess below.  Where are the
+messages relating to your Sound Blaster board?
+
+BTW, you may be able to boot by using "&lt;kernel_name&gt; aha152x
+port=0x340" (or similar options, like "portbase=0x340", or one of
+those two in all caps) at the LILO prompt.  If you're not using LILO,
+I dunno....  I'm not really sure of the syntax, and I'd have to read
+the source of the aha152x driver to figure it out.
+
+    Jim&gt;                 IRQ=11, SCSI ID=7, reconnect=enabled, parity=disabled
+    Jim&gt; Sep 29 23:06:51 wormhole kernel: scsi0 : Adaptec 152x SCSI driver;
+    Jim&gt;                 $Revision: 1.9 $
+    Jim&gt; Sep 29 23:06:51 wormhole kernel: scsi : 1 host.
+
+    Jim&gt; to /dev/sda1 - I even tried building a kernel with EVERY scsi
+    Jim&gt; driver) it always gets to:
+
+    Jim&gt; FDC 0 is a post-1991 82077 scsi : 0 hosts scsi : detected
+    Jim&gt; total.
+
+I suspect that aha152x looks for the board at 0x320 and 0x330 and
+gives up (if I remember correctly).  The Sound Blaster driver probes
+every port in Known Space.  It probably then enables an aha152x
+compatible scsi interface at 0x340, and *then* the aha152x driver can
+find it if it's loaded *after* the SBPCD driver.
+
+    Jim&gt; I successfully compiled the 1.3.20 kernel so I know this can
+    Jim&gt; be done given my current setup. (The problem is I drank so
+
+Your current setup is to be found in /usr/src/linux/.config.  *Don't*
+just copy it over; the configs change from kernel to kernel.  *Do*
+print it out and use it as a guide to how to answer the quiz in 'make
+config'.
+
+In particular, you probably should *not* enable *any* scsi drivers
+whatsoever; the CONFIG_SBPCD series of configuration flags (I'm pretty
+sure you'll find them in .config) probably does that for you, and it
+may matter how it's done.
+
+    Jim&gt; did it - all you lurking newbies [yes, I know you're
+    Jim&gt; there:-)] take notes!)
+
+The main one is "build kernels early and often, then you'll know how!"
+:-)
+
+    Jim&gt; A question for you hardware jockies: can I detach the
+    Jim&gt; original IDE 200MB drive (which now only has a backup Linux
+    Jim&gt; filesystem) and connect the scsi drive directly to the
+    Jim&gt; motherboard? I'm way out of my depth here.
+
+Nope.  Even the connectors are different.  If they were the same,
+you'd probably fry your motherboard, your drive, or both :-P
+
+Good luck,
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00088" HREF="msg00088.html">scsi drives no longer detected</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00088.html">scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00090.html">Re: scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00088.html">scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00091.html">Re: scsi drives no longer detected</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00089"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00089"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

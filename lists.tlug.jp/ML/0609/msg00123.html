@@ -1,0 +1,230 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] Bogus load data -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Tue, 12 Sep 2006 16:55:34 +0900 -->
+<!--X-Message-Id: d8fcc0800609120055u6c88d1bat3ff1cdaf9bfaf523@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00122.html">Date Prev</a>][<a href="msg00124.html">Date Next</a>][<a href="msg00121.html">Thread Prev</a>][<a href="msg00130.html">Thread Next</a>][<a href="maillist.html#00123">Date Index</a>][<a href="threads.html#00123">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Bogus load data</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 12 Sep 2006 16:55:31 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Bogus%20load%20data">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Bogus load data</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+Today I came across a host that was reporting bogus load data:
+
+: jglover@example.com; top
+00:39:48  up 24 days,  5:16,  8 users,  load average: 71.25, 71.17, 71.03
+720 processes: 719 sleeping, 1 running, 0 zombie, 0 stopped
+CPU states:  cpu    user    nice  system    irq  softirq  iowait    idle
+          total    2.8%    0.8%    1.1%   0.0%     0.2%    0.1%   94.5%
+          cpu00    5.1%    0.9%    1.5%   0.0%     0.5%    0.1%   91.4%
+          cpu01    0.5%    0.7%    0.7%   0.0%     0.0%    0.1%   97.6%
+Mem:  8209748k av, 8085384k used,  124364k free,       0k shrd,  195128k buff
+                  3144408k actv, 3564156k in_d,  129840k in_c
+Swap: 2040212k av,   50420k used, 1989792k free                 5901868k cached
+
+ PID USER     PRI  NI  SIZE  RSS SHARE STAT %CPU %MEM   TIME CPU COMMAND
+8171 xxxxxx    15   0 47120  46M 12972 S     1.4  0.5   0:13   0 XxXxXxXxXxX
+16297 xxxxxx    25  10 30672  29M  3284 S N   0.6  0.3   0:36   0 perl
+14272 xxxxxx     0 -20 42288  40M  1004 S &lt;   0.4  0.5 149:51   0 rvd
+[...]
+
+The root cause turned out to be:
+
+: jglover@example.com; tail /var/log/kern.log
+Sep 32 25:20:02 xxxxxxxxxxx kernel: nfs: server yyyyyyyyyyyyyyy not
+responding, still trying
+Sep 32 25:20:02 xxxxxxxxxxx kernel: nfs: server yyyyyyyyyyyyyyy not
+responding, still trying
+
+But while I was trying to figure it out, I whipped up a C program to
+test the system response to see if the load was really off. You can
+check it out at:
+
+<a  rel="nofollow" href="http://www.rafb.net/paste/results/19YhpB15.html">http://www.rafb.net/paste/results/19YhpB15.html</a>
+
+I will also include it inline so people can comment:
+
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+#include &lt;sys/time.h&gt;
+
+int main(void) {
+	struct timeval tv_start, tv_stop;
+   unsigned int usec = 20000; // fastest response that I've seen on Linux
+
+	while (1) {
+		if (gettimeofday(&amp;tv_start, NULL) == -1) {
+			fprintf(stderr, &quot;gettimeofday() failed to set tv_start\n&quot;);
+			exit(1);
+		}
+		if (usleep(usec) == -1) {
+			fprintf(stderr, &quot;usleep() failed to sleep for %u microseconds\n&quot;,
+				usec);
+			exit(2);
+		}
+		if (gettimeofday(&amp;tv_stop, NULL) == -1) {
+			fprintf(stderr, &quot;gettimeofday() failed to set tv_stop\n&quot;);
+			exit(1);
+		}
+
+		if (tv_stop.tv_usec &lt; tv_start.tv_usec) tv_stop.tv_usec += 1000000;
+		fprintf(stderr, &quot;Tried to sleep for %u microseconds, actually slept &quot;
+			&quot;for %u microseconds\n&quot;, usec,
+			(unsigned int)(tv_stop.tv_usec - tv_start.tv_usec));
+
+		usec += 20000;
+
+		if (usec == 1000000) break;
+
+       sleep(1);
+	}
+
+	return 0;
+} // main()
+
+
+So, thoughts? This is extremely unscientific, but do you think it
+might give some indication of a problem on a system that is *really*
+heavily loaded? My idea was that if the system was busy, this would
+report trying to sleep for a short time, but actually sleeping for a
+much longer one, due to slow context switches. The &quot;sleep(1);&quot; line at
+the end of the main loop is to ensure at least one context switch
+occurs between usleep() syscalls.
+
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+From test runs, I found data like the following on an unloaded machine:
+</pre></blockquote><pre style="margin: 0em;">
+
+: jglover@example.com; gcc -Wall -o usleep usleep.c
+: jglover@example.com; ./usleep
+Tried to sleep for 20000 microseconds, actually slept for 27528 microseconds
+Tried to sleep for 40000 microseconds, actually slept for 50047 microseconds
+Tried to sleep for 60000 microseconds, actually slept for 69989 microseconds
+Tried to sleep for 80000 microseconds, actually slept for 90004 microseconds
+Tried to sleep for 100000 microseconds, actually slept for 109777 microseconds
+[...]
+Tried to sleep for 500000 microseconds, actually slept for 510023 microseconds
+Tried to sleep for 520000 microseconds, actually slept for 530119 microseconds
+Tried to sleep for 540000 microseconds, actually slept for 550026 microseconds
+Tried to sleep for 560000 microseconds, actually slept for 570025 microseconds
+Tried to sleep for 580000 microseconds, actually slept for 590027 microseconds
+[...]
+Tried to sleep for 900000 microseconds, actually slept for 910042 microseconds
+Tried to sleep for 920000 microseconds, actually slept for 930042 microseconds
+Tried to sleep for 940000 microseconds, actually slept for 950062 microseconds
+Tried to sleep for 960000 microseconds, actually slept for 970053 microseconds
+Tried to sleep for 980000 microseconds, actually slept for 990054 microseconds
+
+Cheers,
+Josh
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00130" href="msg00130.html">Re: [tlug] Bogus load data</a></strong>
+<ul><li><em>From:</em> Junichi Uekawa</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00122.html">Re: [tlug] OT Posting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00124.html">Re: [tlug] [ANN] TLUG Special Nomikai feat. Heinz-M. Graesing</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00121.html">Re: [tlug] OT Posting</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00130.html">Re: [tlug] Bogus load data</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00123"><strong>Date</strong></a></li>
+<li><a href="threads.html#00123"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

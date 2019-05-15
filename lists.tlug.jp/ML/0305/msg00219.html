@@ -1,0 +1,270 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] banal bash script opinion -->
+<!--X-From-R13: Xbfu Uybire <wztybiNvapbtra.pbz> -->
+<!--X-Date: Sun, 18 May 2003 11:29:02 &#45;0400 -->
+<!--X-Message-Id: 20030518152901.GF2714@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 3EC65721.4050705@example.com -->
+<!--X-Derived: pgp00049.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00218.html">Date Prev</a>][<a href="msg00220.html">Date Next</a>][<a href="msg00213.html">Thread Prev</a>][<a href="msg00221.html">Thread Next</a>][<a href="maillist.html#00219">Date Index</a>][<a href="threads.html#00219">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] banal bash script opinion</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 18 May 2003 11:29:02 -0400</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20banal%20bash%20script%20opinion">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] banal bash script opinion</strong></li>
+<li>References: &lt;<a href="msg00201.html">3EC65721.4050705@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4.1i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Quoth Pietro Zuco (Sat 2003-05-17 05:37:05PM +0200):
+
+&gt; I wanted to write a script that I pass the name of a file, the new name I 
+&gt; want it had and a number indicating the number of copies of that file with 
+&gt; the new names that I want.
+&gt; 
+&gt; Do it for me thanks ..
+
+Oh har har. You are lucky that I hit PgDn, or your flame-retardent overalls
+would have been put to the test. ;)
+
+&gt; I wrote the script and it worked well for my needs. I just wanted to know 
+&gt; some suggestions about it, if it could be made in less lines.
+&gt; I know this is a banal script but I'm learning bash scripting.
+
+OK, here are my suggestions. Note that I am a big fan of readability, even
+(or maybe especially) in [shell] scipts.
+
+&gt; I pass the name of an existing file, the new name for the copies and the
+&gt; numer
+&gt; 
+&gt; ./scriptname filename.extension newfilename.extension number_of_copies
+
+First of all, this invocation leads to (presumably) undesired behaviour:
+
+: jmglov@example.com; ./old.sh foo.sh bar.sh 3
+: jmglov@example.com; ls *.sh
+bar.sh0.sh  bar.sh1.sh  bar.sh2.sh  cnt-comments.sh  foo.sh  new.sh  old.sh
+
+
+This is probably what we want the user to do:
+
+: jmglov@example.com; ./old.sh foo.sh bar 3
+: jmglov@example.com; ls *.sh
+bar.sh0.sh  bar.sh2.sh  bar1.sh  cnt-comments.sh  new.sh
+bar.sh1.sh  bar0.sh     bar2.sh  foo.sh           old.sh
+
+
+So, the first order of business is to provide the user with a good, clear
+usage message.
+
+The main way to improve your script is to merge the two cases (where there
+is an extension and where there is none) by adding a '.' to the beginning
+of the extension if there is one. Then, you can happily add the extension
+to the new filename unconditionally, if there is none, it is just the empty
+string.
+
+So, after my re-write, we have a script that is easier to read and only
+three nanoseconds slower on my trivial test case:
+
+: jmglov@example.com; dd if=/dev/urandom of=test-one.case bs=512 count=1
+: jmglov@example.com; dd if=/dev/urandom of=test-two.case bs=512 count=1
+: jmglov@example.com; ls -l *.case
+-rw-rw----    1 jmglov   jmglov        512 May 18 11:26 test-one.case
+-rw-rw----    1 jmglov   jmglov        512 May 18 11:26 test-two.case
+: jmglov@example.com; time ./old.sh test-one.case test-old 100
+
+real    0m0.400s
+user    0m0.140s
+sys     0m0.250s
+: jmglov@example.com; time ./old.sh test-two.case test-new 100
+
+real    0m0.403s
+user    0m0.180s
+sys     0m0.220s
+
+
+Here is my take on your script:
+
+-------------------------------------------------------------------------------
+#!/bin/bash
+
+
+# Usage message
+USAGE=&quot;Usage: $0 &lt;oldfile&gt; &lt;newfile&gt; &lt;num&gt;&quot;
+
+# Control variables
+oldfile=&quot;&quot;      # Original filename
+newfile=&quot;&quot;      # New filename
+copies=0        # Number of copies
+ext=&quot;&quot;          # Optional extension
+
+
+# If the first argument ($1) is null, spew the usage message and exit with
+# an error code
+function checkArg
+{
+  if [ -z &quot;$1&quot; ]; then
+    echo $USAGE
+    exit 255
+  fi
+
+} # checkArg()
+
+
+# Handle arguments
+
+# Make sure we have a valid arg
+checkArg $@
+
+# Maybe the user is sending a cry for help?
+if [ &quot;$1&quot; == &quot;-?&quot; -o &quot;$1&quot; == &quot;--help&quot; ]; then
+  echo $USAGE
+  exit 0
+fi
+
+# OK, grab the args that we expect to see
+oldfile=&quot;$1&quot;
+shift
+checkArg $@
+newfile=&quot;$1&quot;
+shift
+checkArg $@
+let &quot;copies=$1&quot;
+shift
+
+
+# Is there an extension?
+ext=$(echo $oldfile | sed -n -e 's/[[:print:]]*\.//gp')
+if [ -n &quot;$ext&quot; ]; then ext=&quot;.$ext&quot;; fi
+
+# Copy the file
+i=0
+while [ $i -lt $copies ]; do
+  cp $oldfile $newfile$i$ext
+  let &quot;i++&quot;
+done
+-------------------------------------------------------------------------------
+ 
+
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+<A  HREF="http://www.incogen.com/">http://www.incogen.com/</A>
+
+GPG keyID 0x62386967 (7479 1A7A 46E6 041D 67AE  2546 A867 DBB1 6238 6967)
+gpg --keyserver pgp.mit.edu --recv-keys 62386967
+</pre>
+<p><strong>Attachment:
+<a href="pgp00049.pgp" ><tt>pgp00049.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00221" href="msg00221.html">Re: [tlug] banal bash script opinion</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00201" href="msg00201.html">[tlug] banal bash script opinion</a></strong>
+<ul><li><em>From:</em> Pietro Zuco</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00218.html">[tlug] cron+pam syslogs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00220.html">Re: [tlug] cron+pam syslogs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00213.html">Re: [tlug] banal bash script opinion</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00221.html">Re: [tlug] banal bash script opinion</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00219"><strong>Date</strong></a></li>
+<li><a href="threads.html#00219"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: cron/logrotate -->
+<!--X-From: Jake Morrison <jake_morrison@example.com> -->
+<!--X-Date: Tue, 5 Jun 2001 06:42:01 &#45;0700 (PDT) -->
+<!--X-Message-Id: 20010605134201.30621.qmail@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F2485b6KZmcK8r6beUz0001d60b@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00078.html">Date Prev</A>][<A HREF="msg00080.html">Date Next</A>][<A HREF="msg00061.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00079">Date Index</A>][<A HREF="threads.html#00079">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: cron/logrotate</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: cron/logrotate</strong></LI>
+<LI><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@example.com">jake_morrison@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 5 Jun 2001 06:42:01 -0700 (PDT)</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00061.html">F2485b6KZmcK8r6beUz0001d60b@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:Jacob.Morrison@example.com">Jacob.Morrison@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;rGxjM.A._zD.wGOH7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Jc,
+
+--- Jean-Christian Imbeault &lt;jean_christian@example.com&gt; wrote:
+&gt; &gt;rotatelogs comes with the source.
+&gt; &gt;You can build it separately and use it with your RPM based system.
+&gt; 
+&gt; Done that :) Installed 1.3.20 on a test machine jsut to see what I'm
+&gt; up against.
+&gt; 
+&gt; &gt;  $ ./configure --prefix=PREFIX
+&gt; &gt;  $ make
+&gt; &gt;  $./configure --prefix=PREFIX make install
+&gt; &gt;  $ PREFIX/bin/apachectl start
+&gt; &gt;
+&gt; &gt;Now that wasn't so painful, was it :-)
+&gt; 
+&gt; Not at all;) But is my 1.3.12 conf file compatible?
+&gt; Compiling/installing the source was easy. I'm just 
+&gt; worried about library conflicts and wether
+&gt; or not the conf file will still work.
+
+Generally speaking, yes. Apache is pretty good about backwards
+compatibility, so I would expect that any 1.3.x config file
+would work with 1.3.20. 
+
+The only issue is how messed up the Red Hat config file is. :-)
+It is probably best to just use the new one and make any
+necessary changes. 
+
+&gt; 
+&gt; Also, would an "rpm -e apache-1.2.12" before the new installation
+&gt; cause any problems? 
+&gt; How about *after* the new installation; 
+&gt; doing it after is preferable so that I can switch over 
+&gt; quickly and minimize the downtime.
+
+I would keep the old and new installations running simultaneously
+until you are sure things are working properly.
+
+What you should do is install the new Apache in a directory
+different from the Red Hat default. /usr/local/apache is
+pretty common (i.e. "configure --prefix=/usr/local/apache") 
+
+Edit the httpd.conf file to specify a non-standard port
+for testing (e.g. 8080). Change the "DocumentRoot" directive
+to point to point to where your files are now. This way it
+will read documents from your existing tree. 
+
+You will also have to change the access control specification
+further down in the file to match this directory. You 
+will likely also have to do the same for the CGI directory,
+or just copy any CGI programs over to the new cgi-bin directory.
+
+You should then be able to start up the new httpd by saying
+"/usr/local/apache/bin/apachectl start"
+Point your browser to port 8080 and see if things work.
+
+This assumes that your Apache installation is pretty generic.
+If not, you may need to tweak things in the new installation
+to match the old. When you are done, you will know what's
+going on and you will be in control :-)
+
+If things are working fine with the new Apache, you can
+switch over to the new by changing it to port 80.
+You can then uninstall the Apache RPM. You might want
+to move the document/CGI files somewhere more planned,
+as well. 
+
+You may want to install nifty things like PHP and
+mod_perl/mod_ruby/mod_snake to make your developers happy. 
+That is lots of fun all by itself.
+
+&gt; 
+&gt; &gt;There is also a logrotate man page.
+&gt; 
+&gt; For some reason that didn't get installed automagically. 
+&gt; The page is there 
+&gt; under "/usr/local/apache/man/man8/rotatelogs.8" but a man rotatelog
+&gt; brings up nothing. 
+&gt; I had to man it manually. 
+
+You could always copy it yourself, or set MANPATH.
+
+&gt; It's helpful but doesn't say how to 
+&gt; set up rotatelogs to make only 4 copies, but I'm looking into it.
+&gt; 
+
+You can use a separate script for that, if you like. The key
+is that now it won't affect the existing web server processes.
+
+Jake
+
+
+__________________________________________________
+Do You Yahoo!?
+Get personalized email addresses from Yahoo! Mail - only $35 
+a year!  <A TARGET="_top" HREF="http://personal.mail.yahoo.com/">http://personal.mail.yahoo.com/</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00061" HREF="msg00061.html">Re: cron/logrotate</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00078.html">Re: sucks</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00080.html">Re: So SLOW!!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00061.html">Re: cron/logrotate</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">freebsd &amp; java</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00079"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00079"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

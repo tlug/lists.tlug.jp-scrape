@@ -1,0 +1,212 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] searching for kanji strings, ignore punctuation and end of lines -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Mon, 16 Jan 2006 16:46:16 +0900 -->
+<!--X-Message-Id: 43CB4F48.1060200@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00190.html">Date Prev</a>][<a href="msg00192.html">Date Next</a>][<a href="msg00247.html">Thread Prev</a>][<a href="msg00192.html">Thread Next</a>][<a href="maillist.html#00191">Date Index</a>][<a href="threads.html#00191">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] searching for kanji strings, ignore punctuation and end of lines</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Jan 2006 16:46:16 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20searching%20for%20kanji%20strings%2C%20ignore%20punctuation%20and%20end%20of%20lines">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] searching for kanji strings, ignore punctuation and end of lines</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Thanks for the helpful suggestions, sorry to be so long in getting back. 
+    Still looking for a solution.
+
+My first post:
+
+ &gt; I need to find short kanji strings in a giant haystack of texts. Grep
+ &gt; does not work because the haystack (the CBETA canon of Buddhist texts)
+ &gt; adds punctuation characters, and inserts newline characters and line
+ &gt; numbers.
+ &gt;
+ &gt; One approach is to make a pipeline to grep for the first kanji, strip
+ &gt; out the punctuation characters with sed, and search again for the rest
+ &gt; of the kanji:
+ &gt;
+ &gt; grep first-ji * | sed  -e 's/[,;]//g' | grep later-kanjis
+ &gt;
+ &gt; This is OK, but does not work for a string which spans a new line, and
+ &gt; anyway, I am not sure that sed is really doing a character replacement
+ &gt; (the real punctuation is unicode two byte maru and space). If it is
+ &gt; doing a byte-by-byte replacement, it could mangle kanji by taking the
+ &gt; second byte of one and the first byte of the following ji.
+ &gt;
+ &gt;
+ &gt; Is there a way to do this, preferably a fast way to do this? My haystack
+ &gt; is hundreds of megabytes and I have to do it a lot.
+
+
+
+
+To clarify: this all assumes utf-8 in data and in locale.
+
+I have a quote that is just a
+string of kanji, and I am looking for where it came from. I do have an
+etext version of the canon (several hundred megabytes and thousands of
+files), in utf8, which most like contains this phrase.
+
+The problem is that the etexts inserts a special &quot;space&quot; or a maru
+(i.e. a unicode period, little circle) at random places, trying to
+make it easier to read, and making it impossible to find with grep.
+
+I can assume that two lines is enough to look at, and there is
+actually no ascii white space, just those two unicode characters that
+get in the way.
+
+Example, using ABCDEF for a six kanji phrase I am looking for, and 
+&quot;ghijklmnopq...&quot; for other kanji that happen to be on the line.  And &quot;.&quot; 
+for the maru:
+
+p0001a05(00)-ghi.jklmn.op.rs.AB.
+p0001a06(00)-CD.EFtuvw.xyz.
+
+After finding that first kanji with grep, I need to look for the rest, 
+ignoring both the &quot;punctuation&quot; maru and unicode space, and continue 
+onto the next line, ignoring the initial line numbers.
+
+The line numbers are easy to ignore, thay are a fixed set of
+[-0-9()pabc], and the output of grep will include the file name, also
+a fixed set of 0-9 and ascii letters.  BUT, I need to get that file
+name and the line number!
+
+Ian, thanks for the perl. I will have to study it, since my perl is
+terrible, but I do not think it quite fits.
+
+
+If I could take a two line unit spat out by grep -A2, then process it
+as a separate set, I could do it rather easily. Strip out stuff after 
+the match for the first kanji: newline, punctuation, and line numbers. 
+Then if there is a match print out the working data area.
+
+But pipelines do not work like that: once out of grep it just a
+stream, and I do not see how to chunk it back up again into two line
+groups.
+
+Still trying to figure it out. But it does seem that there is hope in 
+getting perl to do this. Time to sit down with perl, and time to order 
+_Mastering Regular Expressions_ . Sigh, I was hoping this was an obvious 
+and easy problem.
+
+But, from the silence on the second part of my question, I guess there
+is no pre-index program that would handle this kind of thing and do it 
+in a flash? Even a simple search on my data set takes a while.
+
+Thanks everyone,
+
+David Riggs, Kyoto
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00192" href="msg00192.html">Re: [tlug] searching for kanji strings, ignore punctuation and end of lines</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00193" href="msg00193.html">Re: [tlug] searching for kanji strings, ignore punctuation and endof lines</a></strong>
+<ul><li><em>From:</em> Ramil Sagum</li></ul></li>
+<li><strong><a name="00194" href="msg00194.html">Re: [tlug] searching for kanji strings, ignore punctuation and endof lines</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00197" href="msg00197.html">Re: [tlug] searching for kanji strings, ignore punctuation and endof lines</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00190.html">Re: [tlug] Make Web Mail Server that Follows Polysaturated Threads</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00192.html">Re: [tlug] searching for kanji strings, ignore punctuation and end of lines</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00247.html">Re: [tlug] [C&amp;C] Nasty Problem: this is worth acquiring a good mail reader ;-)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00192.html">Re: [tlug] searching for kanji strings, ignore punctuation and end of lines</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00191"><strong>Date</strong></a></li>
+<li><a href="threads.html#00191"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

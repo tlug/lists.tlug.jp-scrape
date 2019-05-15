@@ -1,0 +1,170 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Computer fails to boot -->
+<!--X-From-R13: "Rnivq Preang" <qoreangNtby.pbz> -->
+<!--X-Date: Wed, 31 Dec 2008 08:57:47 +0900 -->
+<!--X-Message-Id: TcZVrFCr.1230681467.2554560.dbernat@gol.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 87myedsoyu.fsf@xemacs.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00257.html">Date Prev</a>][<a href="msg00259.html">Date Next</a>][<a href="msg00256.html">Thread Prev</a>][<a href="msg00259.html">Thread Next</a>][<a href="maillist.html#00258">Date Index</a>][<a href="threads.html#00258">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Computer fails to boot</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 31 Dec 2008 08:57:47 +0900</li>
+<li><strong>From</strong>: <strong>&quot;David Bernat&quot; &lt;<a href="mailto:dbernat@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Computer%20fails%20to%20boot">dbernat@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Computer fails to boot</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&quot;Stephen J. Turnbull&quot; &lt;stephen@example.com&gt; wrote:
+
+&gt;Aha, enlightenment crashes through.  Of course you can't, / is a CD
+&gt;(plus a little magic that makes it a little bit writable :-&amp;#254; ).
+&gt;That's also why you can't change the permissions of /bin/sh, most
+&gt;likely.  But you don't want to, you want to fix the one on the hard
+&gt;drive.
+&gt;
+&gt;Try this:
+&gt;
+&gt;$ sudo mkdir /tmp/mnt
+&gt;$ sudo mount -t ext3 /dev/sda1 /tmp/mnt
+&gt;# for comparison's sake
+&gt;$ ls -l /tmp/mnt/bin/*sh
+&gt;$ sudo chmod 0755 /tmp/mnt/bin/sh
+&gt;$ ls -l /tmp/mnt/bin/*sh
+&gt;
+&gt;# Eyeball the ls output.  Pretty much all of these should have
+&gt;# permissions &quot;-rwxr-xr-x&quot; except for &quot;sh&quot; itself which should be a
+&gt;# symlink with permissions &quot;lrwxrwxrwx&quot;.  Especially whatever &quot;sh&quot;
+&gt;# points to should be &quot;-r-xr-xr-x&quot; or &quot;-rwxr-xr-x&quot;.  The size of &quot;sh&quot;
+&gt;# (or its target, if a symlink) is likely to be around 80KB (for dash)
+&gt;# or 1MB (for bash/zsh), if not, worry about disk corruption.
+
+ubuntu@example.com:~$ sudo mkdir /tmp/mnt
+ubuntu@example.com:~$ sudo mount -t ext3 /dev/sda1 /tmp/mnt
+ubuntu@example.com:~$ ls -l /tmp/mnt/bin/*sh
+-rwxr-xr-x 1 root root 813912 2008-05-12 18:36 /tmp/mnt/bin/bash
+-rwxr-xr-x 1 root root 100856 2008-03-12 11:52 /tmp/mnt/bin/dash
+lrwxrwxrwx 1 root root      4 2008-07-15 06:28 /tmp/mnt/bin/rbash -&gt; bash
+lrwxrwxrwx 1 root root      4 2008-07-15 14:55 /tmp/mnt/bin/sh -&gt; dash
+ubuntu@example.com:~$ sudo chmod 0755 /tmp/mnt/bin/sh
+ubuntu@example.com:~$ ls -l /tmp/mnt/bin/*sh
+-rwxr-xr-x 1 root root 813912 2008-05-12 18:36 /tmp/mnt/bin/bash
+-rwxr-xr-x 1 root root 100856 2008-03-12 11:52 /tmp/mnt/bin/dash
+lrwxrwxrwx 1 root root      4 2008-07-15 06:28 /tmp/mnt/bin/rbash -&gt; bash
+lrwxrwxrwx 1 root root      4 2008-07-15 14:55 /tmp/mnt/bin/sh -&gt; dash
+
+&gt;# If success, eject CD and ...
+&gt;
+&gt;$ shutdown -r now
+
+Preparing to shut down and restart the computer now.
+
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00259" href="msg00259.html">Re: [tlug] Computer fails to boot</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00256" href="msg00256.html">Re: [tlug] Computer fails to boot</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00257.html">Re: [tlug] Computer fails to boot: overlapping mount points</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00259.html">Re: [tlug] Computer fails to boot</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00256.html">Re: [tlug] Computer fails to boot</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00259.html">Re: [tlug] Computer fails to boot</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00258"><strong>Date</strong></a></li>
+<li><a href="threads.html#00258"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

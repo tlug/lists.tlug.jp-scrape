@@ -1,0 +1,151 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Sound Card -->
+<!--X-From: jwt@example.com (Jim Tittsler) -->
+<!--X-Date:  Fri, 15 Mar 1996 10:33:30 GMT -->
+<!--X-Message-Id: xFUSxUr0BQvU088yn@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199603150220.LAA23348@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00082.html">Date Prev</A>][<A HREF="msg00084.html">Date Next</A>][<A HREF="msg00079.html">Thread Prev</A>][<A HREF="msg00082.html">Thread Next</A>][<A HREF="maillist.html#00083">Date Index</A>][<A HREF="threads.html#00083">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Sound Card</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Sound Card</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:jwt@example.com">jwt@example.com</A> (Jim Tittsler)</strong></LI>
+<LI>Date: Fri, 15 Mar 1996 19:07:45 +0900</LI>
+<LI>Newsgroups: <strong><A HREF="news:list.tlug">list.tlug</A></strong></LI>
+<LI>Organization: 7J1AJH/AI8A Tokyo</LI>
+<LI>References: &lt;<A HREF="msg00079.html">199603150220.LAA23348@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;I did make config etc.
+&gt;copied my zImage to /zImage
+
+To replace the first one you call it /vmlinuz and then rerun LILO
+so it can find the new one.  I generally want to keep the old kernels
+around until I learn to trust the new one, so I do give it a new name...
+generally something like /linux1.3.74.sound.
+
+&gt;Ran lilo etc .
+&gt;    cp /zImage to /dev/fd0 etc.
+&gt;
+&gt;When I`m booting up , I can see my Sound Card
+&gt;the
+&gt;  Kernel Panic : Can`t mount fs ( or something like this )
+
+We probably are going to need more information to answer this.  But
+here are some initial things to check:
+
+1. The kernel doesn't know where the root file system is.  Try
+   booting with LILO, giving it a command line argument like:
+     vmlinux root=/dev/sdb1
+   or for the name you gave it:
+     zImage root=/dev/sdb1
+
+   (Alternatively, double check the root= line which is in your
+   /etc/lilo.conf file... and/or use the "rdev" command which
+   can tell you what your kernel's default root is... and can
+   be used to set it to the right thing if it is wrong.  "rdev -h"
+   will give you short help.)
+
+2. You didn't include the right SCSI adapter support.  Since there
+   is no standard for SCSI host adapters, you need to make sure you
+   have included support for the correct one in your new kernel
+   when doing "make config".  (Did it find the SCSI host adapter
+   and your drive(s) before the panic?)
+
+3. You didn't include support for the file system that you used for
+   the root file system.  In 99% of the cases, this is the "ext2"
+   file system.  Make sure you said yes for this during "make config."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00079" HREF="msg00079.html">Sound Card</A></STRONG>
+<UL><LI><EM>From:</EM> Leo Glynn &lt;glynn@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00082.html">geo_comp_addr</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00084.html">re: geo_comp_addr</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00079.html">Sound Card</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00082.html">geo_comp_addr</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00083"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00083"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

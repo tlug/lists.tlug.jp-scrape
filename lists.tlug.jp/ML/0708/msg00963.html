@@ -1,0 +1,156 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Overloaded mail spool causing memory instability? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Sat, 18 Aug 2007 21:23:00 +0900 -->
+<!--X-Message-Id: Pine.NEB.4.64.0708182118200.22538@homeric.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46C695D2.2030402@articlass.org -->
+<!--X-Reference: 87fy2h2t4z.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00962.html">Date Prev</a>][<a href="msg00964.html">Date Next</a>][<a href="msg00946.html">Thread Prev</a>][<a href="msg00965.html">Thread Next</a>][<a href="maillist.html#00963">Date Index</a>][<a href="threads.html#00963">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Overloaded mail spool causing memory instability?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 18 Aug 2007 21:22:59 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Overloaded%20mail%20spool%20causing%20memory%20instability%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Overloaded mail spool causing memory instability?</strong></li>
+<li>References: &lt;<a href="msg00944.html">46C695D2.2030402@articlass.org</a>&gt;	&lt;<a href="msg00946.html">87fy2h2t4z.fsf@uwakimon.sk.tsukuba.ac.jp</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">On Sat, 18 Aug 2007, Stephen J. Turnbull wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">Thus, opening a file for append takes a millisecond at most, and only
+a few KB of memory, mostly for buffers.
+</pre></blockquote><pre style="margin: 0em;"><br>Assuming it does append that way. Which I'm guessing is the case, but if
+there were a local delivery agent using uwimap or something like that,
+it could well be different. (For example, there might be some sort of
+check to see what the format of the mail file is.)</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">By the way, if you don't need to preserve the spam, just stop the mail
+server (typically with something like &quot;sudo /etc/init.d/exim stop&quot;),
+rm the file, and restart the mail server.  If during those ten
+seconds a mail is presented for delivery (to any mailbox), you'll have
+to wait an about extra 15 minutes for it, until the remote MTA retries.</pre><br>
+<tt>If you do want to preserve the spam, use mv to rename the file.
+</tt></blockquote><pre style="margin: 0em;"><br>Why stop the server for rm but not mv? Both have the same effect on the
+source directory entry. If mv is fine without stopping, rm ought to be
+as well. After all, rm does an unlink on the original name, mv makes a
+hard link before doing an unlink on the original name (unless you're
+moving the file to a different filesystem).</pre><br>
+<pre style="margin: 0em;">(Note, I'm assuming FFS or one of its lookalikes (ext2fs, posixy-things,
+whatever) here.)</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>Both rm and rename are millisecond operations.
+</tt></blockquote><pre style="margin: 0em;"><br>In fact, the time doesn't matter, because they are both atomic. At
+worst, a few extra e-mail messages are appended to the file after it's
+deleted but before the disk storage space is freed, for which we're
+quite heiki in this situation.</pre><br>
+<pre style="margin: 0em;">cjs
+--
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a></pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00965" href="msg00965.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00944" href="msg00944.html">[tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00946" href="msg00946.html">[tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00962.html">RE: [tlug] Re: [CoLoCo] RESPECT MICROSOFT</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00964.html">RE: [tlug] Re: [CoLoCo] RESPECT MICROSOFT</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00946.html">[tlug] Overloaded mail spool causing memory instability?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00965.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00963"><strong>Date</strong></a></li>
+<li><a href="threads.html#00963"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] NAS and DHCP? -->
+<!--X-From-R13: "Rnavry O. Dnznyrl" <qnavry.enznyrlNqenxr.rqh> -->
+<!--X-Date: Thu, 05 Sep 2013 04:24:19 +0900 -->
+<!--X-Message-Id: 1823583.bcs2nzPteJ@dan -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 5226CC90.3050203@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00033.html">Date Prev</a>][<a href="msg00035.html">Date Next</a>][<a href="msg00032.html">Thread Prev</a>][<a href="msg00035.html">Thread Next</a>][<a href="maillist.html#00034">Date Index</a>][<a href="threads.html#00034">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] NAS and DHCP?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 04 Sep 2013 14:24:15 -0500</li>
+<li><strong>From</strong>: <strong>&quot;Daniel A. Ramaley&quot; &lt;<a href="mailto:daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20NAS%20and%20DHCP%3F">daniel.ramaley@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] NAS and DHCP?</strong></li>
+<li>References: &lt;<a href="msg00020.html">5226CC90.3050203@dcook.org</a>&gt;</li>
+<li>Organization: Drake University</li>
+<li>User-agent: KMail/4.10.5 (Linux/3.10-2-amd64; KDE/4.10.5; x86_64; ; )</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; (The router is a Buffalo AirStation, and it also acts as the DNS
+&gt; server for my network. So I'm thinking maybe there is a clever option
+&gt; to assign a DNS name based on the mac address, and all clients would
+&gt; use the name not the IP address. Where I got stuck was working out
+&gt; how, even if it was possible, that would be better than a static IP
+&gt; address...)
+
+What i do in my private network is have 1 machine with a truly static IP 
+(as in hard-configured on the machine rather than a static address 
+pulled from DHCP). That 1 machine acts as my DHCP and DNS server.
+
+On that machine, IPs are assigned in DNS. For example, i have a machine 
+in DNS like so:
+
+        anthracis               IN A    192.168.1.18
+
+Then in my DHCP configuration, i just use the name of the machine 
+instead of duplicating the IP:
+
+        host anthracis {
+                hardware ethernet 00:19:e3:35:50:2b;
+                fixed-address anthracis;
+        }
+
+Bind is smart enough to do a name lookup for &quot;anthracis&quot; to get the IP 
+that it should serve. This way DNS -&gt; IP mappings are only stored in one 
+place (the DNS configuration) and MAC addresses are also only stored in 
+one place.
+
+Now, you mentioned that you are using the device as a DNS server. That 
+might make this exact setup non-trivial; it would be difficult for the 
+DHCP server to do a DNS query to a DNS server that doesn't have an IP 
+yet. (Assuming DHCP is on a different server... if it is on the same 
+device, maybe it can work.) I'm not sure if this way of configuring 
+would work for you, but it is what i do and i'm just throwing it out in 
+case it helps someone else.
+
+__
+Daniel A. Ramaley
+Network Engineer 2
+
+Dial Center 112, Drake University
+2407 Carpenter Ave / Des Moines IA 50311 USA
+Tel: +1 515 271-4540
+Fax: +1 515 271-1938
+E-mail: daniel.ramaley@example.com
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00035" href="msg00035.html">Re: [tlug] NAS and DHCP?</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00020" href="msg00020.html">[tlug] NAS and DHCP?</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00033.html">Re: [tlug] Japanese Input - Kubuntu 12.04 LTS</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00035.html">Re: [tlug] NAS and DHCP?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00032.html">Re: [tlug] NAS and DHCP?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00035.html">Re: [tlug] NAS and DHCP?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00034"><strong>Date</strong></a></li>
+<li><a href="threads.html#00034"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

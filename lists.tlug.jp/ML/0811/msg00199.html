@@ -1,0 +1,194 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] SSH Issues -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Tue, 18 Nov 2008 20:34:21 +0900 -->
+<!--X-Message-Id: 20081118112601.GC2893@smtp.office.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081117161020.GB10314@lucky.cynic.net -->
+<!--X-Reference: 20081117193740.2d38af12@ronin.larsko.net -->
+<!--X-Reference: 20081117235804.GF10314@lucky.cynic.net -->
+<!--X-Reference: 871vx9o5b1.fsf@xemacs.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00198.html">Date Prev</a>][<a href="msg00200.html">Date Next</a>][<a href="msg00197.html">Thread Prev</a>][<a href="msg00202.html">Thread Next</a>][<a href="maillist.html#00199">Date Index</a>][<a href="threads.html#00199">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] SSH Issues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 18 Nov 2008 20:26:02 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20SSH%20Issues">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] SSH Issues</strong></li>
+<li>References: &lt;20081117161020.GB10314@lucky.cynic.net&gt;	&lt;20081117193740.2d38af12@ronin.larsko.net&gt;	&lt;<a href="msg00193.html">20081117235804.GF10314@lucky.cynic.net</a>&gt;	&lt;<a href="msg00197.html">871vx9o5b1.fsf@xemacs.org</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17+20080114 (2008-01-14)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-11-18 16:34 +0900 (Tue), Stephen J. Turnbull wrote:
+&gt; ...
+&gt; I assume the spew means that for some reason (probably linking against
+&gt; the BIND 8 resolver) dig is unable to authenticate, and so just
+&gt; returns all the resource records it received.
+
+I think you are confused about the authentication. Normally, the
+resolver doesn't authenticate the records (though you can ask dig to
+do so with the key I gave you, if you check the options carefully).
+It's your (trusted) resolving server that's normally doing the
+authentication, and the libc resolver just relays whether the server
+claims to have authenticated the records or not.
+
+&gt; But on Gentoo there doesn't even seem to be a USE flag for resolver v9
+&gt; for bind-tools (ie, the package that provides dig).
+
+I would think it's automatic; bind9 dig has always, for me, used the
+bind9 resolver library.
+
+&gt; Borrow enough of the OpenSSH code to get the host's public key, say
+&gt; &quot;thank you&quot;, maybe-replace the key into the known_hosts file, and call
+&gt; SSH for real, maybe?  That much of the protocol can't be all that hard
+&gt; to get &quot;good enough&quot;, can it?
+
+As I mentioned, that's pretty much exactly what we do. No need to borrow
+source: the ssh-keyscan will give you back the known_hosts entry. But
+it's a bit of a pain, no? And it's also not secure to rely on comparing
+the result against the SSHFP record unless you can authenticate the
+SSHFP record.
+
+&gt; Getting it fixed is hard enough, but forget about getting it deployed.
+&gt; A real fix would involve a full move to BIND 9 resolver in glibc....
+
+glibc is still using the BIND 8 resolver? Holy heck. Makes me wonder
+what other chunks of ancient and creaky software are kicking around in
+glibc.
+
+&gt; Geez, Curt, you of all people should know that that is presumably
+&gt; exactly the braindamaged process that led to the current impasse:
+&gt; people unwilling to wait for a full move to BIND 9 adding a few
+&gt; features *they* thought were &quot;critical bug fixes&quot; (because they'd been
+&gt; personally inconvenienced) to the resolver code....
+
+This is not just &quot;personal inconvenience;&quot; it's a security issue. The
+recent whole big brou-ha-ha over DNS spoofing attacks (which have been
+happening in the wild for some time) is something that is mitigated to a
+great degree, but not solved, by the patches. It was never a problem for
+any zones using secure DNS.
+
+&gt; But a move to BIND 9 is not the kind of thing you can do in a quickie
+&gt; patch, especially not if you want to claim the security stuff is going
+&gt; to work.
+
+Actually, the security stuff in the resolver is not nearly as tricky
+as you make it out. And while I understand that the move to the bind9
+resolver is non-trivial I would trust it to be correct much more than
+crufty-old bind8 code that has had patches piled on by folks who are
+incapable of upgrading the resolver to bind9.
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00202" href="msg00202.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00193" href="msg00193.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00197" href="msg00197.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00198.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00200.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00197.html">[tlug] SSH Issues</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00202.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00199"><strong>Date</strong></a></li>
+<li><a href="threads.html#00199"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

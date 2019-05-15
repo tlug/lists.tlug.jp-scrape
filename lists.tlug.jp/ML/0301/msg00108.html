@@ -1,0 +1,193 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Apache mod_auth_pam module -->
+<!--X-From-R13: Xbfu Uybire <wztybiNvapbtra.pbz> -->
+<!--X-Date: Tue, 14 Jan 2003 11:25:35 &#45;0500 -->
+<!--X-Message-Id: 20030114162535.GB17882@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20021126172927.GL5021@example.com -->
+<!--X-Reference: 761705BC&#45;016B&#45;11D7&#45;B7E6&#45;000393A75CF0@example.com -->
+<!--X-Derived: pgp00035.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00107.html">Date Prev</a>][<a href="msg00109.html">Date Next</a>][<a href="msg00129.html">Thread Prev</a>][<a href="msg00120.html">Thread Next</a>][<a href="maillist.html#00108">Date Index</a>][<a href="threads.html#00108">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Apache mod_auth_pam module</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 14 Jan 2003 11:25:35 -0500</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Apache%20mod_auth_pam%20module">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Apache mod_auth_pam module</strong></li>
+<li>References: &lt;20021126172927.GL5021@example.com&gt; &lt;761705BC-016B-11D7-B7E6-000393A75CF0@example.com&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Way back when, I asked how to make the Apache ModAuthPam module play nicely
+with the PAM pam_smb_auth module. I finally came up with a solution, but it
+is not for the faint of heart. In case anyone else would like to know how to
+make Apache authenticate off a Windows domain without a local account, dig
+this:
+
+Grab mod_auth_pam and pam_smb_auth, compile and install them. Verify that
+pam_smb_auth is working first. A simple test is editing your /etc/pam.d/su
+file to read:
+
+
+#%PAM-1.0
+
+auth       sufficient   /lib/security/pam_rootok.so
+auth       required     /lib/security/pam_wheel.so use_uid
+auth       required     /lib/security/pam_smb_auth debug
+
+
+Now, when you 'su foo', it should succeed when you enter foo's domain
+password (and foo has a local account).
+
+The next step is setting up mod_auth_pam to use pam_smb_auth. Your
+/etc/pam.d/httpd should read:
+
+
+#%PAM-1.0
+auth       required     /lib/security/pam_smb_auth.so nolocal
+account    required     /lib/security/pam_permit.so
+
+
+This will allow basic auth to succeed with mod_auth_pam. You must enable
+mod_auth_pam in your httpd.conf like this:
+
+
+LoadModule pam_auth_module    /usr/lib/apache/mod_auth_pam.so
+AddModule mod_auth_pam.c
+
+
+Then, something like this (again, an excerpt from an httpd.conf) should work:
+
+
+&lt;Directory /home/httpd/htdocs/pamtest&gt;
+  AuthType Basic
+  AuthName &quot;pamtest&quot;
+  require valid-user
+&lt;/Directory&gt;
+
+
+The reason that you have to use pam_permit.so in the /etc/pam.d/httpd PAM
+config file is that mod_auth_pam always checks for a valid account, even
+if you do *not* include an 'account    required' line in the config file.
+I consider this a bug, and coded up a patch that fixes that.
+
+My patch is available from and described at <A  HREF="http://www.jmglov.net/">http://www.jmglov.net/</A> if
+anyone is interested. It also adds a debug function to mod_auth_pam.
+
+
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+<A  HREF="http://www.incogen.com/">http://www.incogen.com/</A>
+
+GPG keyID 0x62386967 (7479 1A7A 46E6 041D 67AE  2546 A867 DBB1 6238 6967)
+gpg --keyserver pgp.mit.edu --recv-keys 62386967
+</pre>
+<p><strong>Attachment:
+<a href="pgp00035.pgp" ><tt>pgp00035.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00120" href="msg00120.html">Re: [tlug] Apache mod_auth_pam module</a></strong>
+<ul><li><em>From:</em> Mike Gauthier</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00107.html">Re: [tlug] Ugly OpenOffice Menu font</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00109.html">[tlug] Fwd: looking for Rob Bickel</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00129.html">Re: Ogg Decoding and Burning (was: Re: [tlug] QT 2.2.2 -- another lib question.)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00120.html">Re: [tlug] Apache mod_auth_pam module</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00108"><strong>Date</strong></a></li>
+<li><a href="threads.html#00108"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Cinnamon has crashed -->
+<!--X-From-R13: Xraf Ayvire Xbua <yvfgfN2vba.qr> -->
+<!--X-Date: Wed, 17 Sep 2014 19:02:18 +0900 -->
+<!--X-Message-Id: 20140917094710.GA21405@camelia.2ion.de -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 54191AC8.7010903@imaginatorium.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00084.html">Date Prev</a>][<a href="msg00086.html">Date Next</a>][<a href="msg00081.html">Thread Prev</a>][<a href="msg00087.html">Thread Next</a>][<a href="maillist.html#00085">Date Index</a>][<a href="threads.html#00085">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Cinnamon has crashed</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 17 Sep 2014 11:47:10 +0200</li>
+<li><strong>From</strong>: <strong>Jens Oliver John &lt;<a href="mailto:lists@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Cinnamon%20has%20crashed">lists@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Cinnamon has crashed</strong></li>
+<li>References: &lt;<a href="msg00078.html">54191AC8.7010903@imaginatorium.org</a>&gt;</li>
+<li>User-agent: Mutt/1.5.23 (2014-03-12)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Wed, Sep 17, 2014 at 02:23:20PM +0900, Brian Chandler wrote:
+&gt; (...)
+&gt; connect: network unreachable
+
+First: is the green led around the network port on? If yes, hardware link is ok.
+
+Second: &quot;ip link&quot; should list all interfaces on the machine, including eth0 or
+similar wired interfaces.
+
+Third, &quot;type dhclient&quot; should list a binary. If that program is installed, we
+can try bringing up the network with DHCP manually. As root/sudo:
+
+  service network-manager stop # getting rid of evil, fails if not installed but that's ok
+  dhclient -r ; # release stale dhclient instances brought up by scripts in /etc/network
+  pkill -SIGKILL dhclient ; # make sure all dhclients are dead
+  dhclient $your_wired_interface # eth0, often. Try to get a new DHCP lease
+
+route -n as suggested by Stephen should now return the routes common on your
+network. If you get errors about interfaces being down, do &quot;ifconfig $interface
+up&quot; before doing the above command sequence again. If not, inspect the output of
+
+  grep dhclient /var/log/syslog
+
+since dhclient is logging quite verbosely to the syslog. Any errors logged here
+should provide pointers to the underlying/actual network problem.
+
+Best regards
+Jens.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00087" href="msg00087.html">Re: [tlug] Cinnamon has crashed</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00078" href="msg00078.html">[tlug] Cinnamon has crashed</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00084.html">Re: [tlug] Cinnamon has crashed</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00086.html">[tlug] [CFP] Call for presenters - October　Technical Meeting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00081.html">Re: [tlug] Cinnamon has crashed</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00087.html">Re: [tlug] Cinnamon has crashed</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00085"><strong>Date</strong></a></li>
+<li><a href="threads.html#00085"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] [OT] [Job]  Ruby Developers in Tokyo -->
+<!--X-From-R13: "Lri Pyhg" <moN104.pbz> -->
+<!--X-Date: Wed, 09 Mar 2005 20:01:13 +0900 -->
+<!--X-Message-Id: opsnc98bcu4j0um6@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00186.html">Date Prev</a>][<a href="msg00188.html">Date Next</a>][<a href="msg00188.html">Thread Prev</a>][<a href="msg00192.html">Thread Next</a>][<a href="maillist.html#00187">Date Index</a>][<a href="threads.html#00187">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] [OT] [Job]  Ruby Developers in Tokyo</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 09 Mar 2005 20:01:13 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Zev Blut&quot; &lt;<A HREF="mailto:zb@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BOT%5D%20%5BJob%5D%20%20Ruby%20Developers%20in%20Tokyo">zb@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] [OT] [Job]  Ruby Developers in Tokyo</strong></li>
+<li>Organization: Ubiquitous Business Technology, Inc.</li>
+<li>User-agent: Opera M2(BETA1)/8.00 (Linux, build 913)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I am not sure if this is an abuse of my position or not, but here is a
+job posting that I made to the Ruby mailing list.  I figured it was
+more fun than a dry we are looking for developers post.  Anyway, if
+anyone is looking for a job feel free to apply, if not I hope you at
+least enjoy the idea.
+
+
+----------------------------------------------------------------------
+#!/usr/bin/env ruby
+
+# Warning this is a job announcement!
+# Run it/Read it if you are interested.
+# Lack of comments and robust input handling are intentional.
+
+class Company
+   attr_accessor :name, :location, :web_site, :description
+   attr_accessor :available_jobs
+
+   def initialize(name = nil, location = nil, web_site = nil)
+     self.name = name
+     self.location = location
+     self.web_site = web_site
+     self.available_jobs = Array.new
+   end
+
+   def ask_for_interview?(job_applicant)
+     available_jobs.each do |ajob|
+       return true if ajob.meets_requirements?(job_applicant)
+     end
+     false
+   end
+
+   def describe
+     puts &quot;Company  : #{name}&quot;
+     puts &quot;Location : #{location}&quot;
+     puts &quot;Web site : #{web_site}&quot;
+     puts &quot;&quot;,&quot;Brief description :&quot;
+     puts description, &quot;&quot;
+   end
+
+   def announce_job_availability(good_match, not_so_good_match)
+     return if available_jobs.empty?
+     describe
+     puts &quot;Available jobs:&quot;
+     available_jobs.each_with_index do |job, idx|
+       puts &quot;&quot;, &quot;#{idx + 1} ) #{job.name}&quot;, job.description, &quot;&quot;
+     end
+
+     job_applicant = ask_for_job_applicant_information
+     return if job_applicant.nil?
+
+     if ask_for_interview?( job_applicant )
+       puts good_match
+     else
+       puts not_so_good_match
+     end
+   end
+
+   def ask_for_job_applicant_information
+     job_applicant = nil
+     puts &quot;Would you like to apply for a job? Y/N&quot;
+     res = gets.chomp
+     if res =~ /Y/i
+       msg = &quot;Great!  Please follow the prompts to input your profile&quot;
+       msg&lt;&lt; &quot; to see if there if a job matches.&quot;
+       puts msg, &quot;&quot;
+       job_applicant = JobApplicant.new_from_interactive_shell
+     else
+       puts &quot;Well thanks for reading/running the program!  Good Bye!&quot;
+     end
+     job_applicant
+   end
+
+end
+
+class Job
+   attr_accessor :name, :description, :requirements, :threshold
+   def initialize(name = nil, description = nil,
+                  threshold = 100, requirements = [] )
+     self.name = name
+     self.description = description
+     self.requirements = requirements
+     self.threshold = threshold
+   end
+
+   def meets_requirements?(job_applicant)
+     points = 0
+     requirements.each do |req|
+       points += req.check_requirement(job_applicant)
+     end
+     points &gt;= threshold
+   end
+
+end
+
+class JobApplicant
+   attr_accessor :name, :resume, :location
+   attr_accessor :spoken_languages, :computer_languages_skills
+   def initialize
+     self.spoken_languages = Array.new
+     self.computer_languages_skills = Array.new
+   end
+
+   def JobApplicant.new_from_interactive_shell
+     applicant = JobApplicant.new
+     puts &quot;What is your name?&quot;
+     applicant.name = gets.chomp
+     puts &quot;Where do you live? (City, Country)&quot;
+     applicant.location = gets.chomp
+     note = &quot; [One entry per line.  Press CTRL-D to stop input] &quot;
+     puts &quot;What languages do you speak?&quot;, note
+     applicant.spoken_languages = readlines.map { |d| d.chomp }
+     cq1 = &quot;What computer languages are you proficient in?&quot;
+     cq2 = &quot;And what other computer skills do you have?&quot;
+     puts cq1, cq2, note
+     applicant.computer_languages_skills = readlines.map {|d| d.chomp }
+     puts &quot;&quot;
+     applicant
+   end
+
+end
+
+class Requirement
+
+   def initialize(points = 1, &amp;proc)
+     @example.com = points
+     if proc
+       @example.com = proc
+     else
+       @example.com = Proc.new { |x| true }
+     end
+   end
+
+   def check_requirement(job_applicant)
+     points = 0
+     if @example.com(job_applicant)
+       points = @example.com
+     end
+     points
+   end
+
+end
+
+
+
+ubit = Company.new(&quot;Ubit&quot;, &quot;Tokyo, Japan&quot;, &quot;<A  HREF="http://ubit.com&quot">http://ubit.com&quot</A>;)
+ubit.description =&lt;&lt;EOF
+Ubit is a Japanese company focusing on mobile phone services and
+content aggregation both in Japan and abroad.
+EOF
+
+developer = Job.new(&quot;Software Developer&quot;)
+developer.description =&lt;&lt;EOF
+Become knowledgeable in the inner workings of our
+product platform and work as a team with other developers to implement
+new features and improve our current capabilities.  Ideally, you are
+willing to work under dynamic conditions and communicate well with
+others.
+EOF
+
+
+loose_find = lambda do |data, reg_match|
+   data.find { |v| v =~ match }
+end
+
+reqs = Array.new
+reqs&lt;&lt; Requirement.new(25) do |ja|
+   ja.spoken_languages.include?(&quot;English&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(25) do |ja|
+   ja.spoken_languages.include?(&quot;Japanese&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(5) do |ja|
+   sub = [&quot;English&quot;, &quot;Japanese&quot;]
+   (ja.spoken_languages - sub).size &gt; 0
+end
+
+reqs&lt;&lt; Requirement.new(50) do |ja|
+   ja.computer_languages_skills.include?(&quot;Ruby&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(25) do |ja|
+   ja.computer_languages_skills.include?(&quot;Databases&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(10) do |ja|
+   ja.computer_languages_skills.include?(&quot;Mobile Technologies&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(5) do |ja|
+   ja.computer_languages_skills.include?(&quot;*NIX&quot;)
+end
+
+reqs&lt;&lt; Requirement.new(5) do |ja|
+   (ja.computer_languages_skills - [&quot;Ruby&quot;, &quot;Database&quot;]).size &gt; 0
+end
+
+reqs&lt;&lt; Requirement.new(25) do |ja|
+   ja.location =~ /Japan/i
+end
+
+developer.requirements = reqs
+developer.threshold = 125
+
+ubit.available_jobs&lt;&lt; developer
+
+good_match =&lt;&lt;EOF
+Your profile looks promising!
+If you are interested in working with us,
+please send your resume to Zev Blut at rubyzbibd@example.com
+EOF
+
+nsgm =&lt;&lt;EOF
+Sorry, at the moment we are in need of people who meet our specific
+needs.  But if you feel that you can meet them then go ahead and send
+your resume to Zev Blut at rubyzbibd@example.com
+EOF
+
+ubit.announce_job_availability(good_match,nsgm)
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00192" href="msg00192.html">Re: [tlug] [OT] [Job] Ruby Developers in Tokyo</a></strong>
+<ul><li><em>From:</em> Patrick Niessen</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00186.html">Re: [tlug] Peeling onions.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00188.html">Re: [tlug] [Annoucement] TLUG Technical Meeting 2005-03-12</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00188.html">Re: [tlug] [Annoucement] TLUG Technical Meeting 2005-03-12</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00192.html">Re: [tlug] [OT] [Job] Ruby Developers in Tokyo</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00187"><strong>Date</strong></a></li>
+<li><a href="threads.html#00187"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

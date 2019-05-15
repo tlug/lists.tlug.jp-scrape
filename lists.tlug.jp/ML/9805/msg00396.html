@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: /bin/mail -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Thu, 21 May 1998 18:41:29 +0900 -->
+<!--X-Message-Id: m167mxfjzc.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980521154811.16983Q&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00395.html">Date Prev</A>][<A HREF="msg00397.html">Date Next</A>][<A HREF="msg00386.html">Thread Prev</A>][<A HREF="msg00410.html">Thread Next</A>][<A HREF="maillist.html#00396">Date Index</A>][<A HREF="threads.html#00396">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: /bin/mail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: /bin/mail</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 03 Feb 1998 03:25:11 +0000</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: Scott Stone's message of "Thu, 21 May 1998 15:48:57 +0900 (JST)"</LI>
+<LI>References: &lt;<A HREF="msg00383.html">Pine.LNX.3.96LJ1.1b7.980521154811.16983Q-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+I've got a question about /bin/mail.  I've introduced a set of
+aliases on our system that track the group membership of account
+holders, using a Pretty Ordinary Script in Tcl, which is invoked
+in the /etc/aliases file like this:
+
+everyone:       "|/etc/runmailto group 200\\\|201\\\|202\\\|203\\\|204\\\|300\\\|400"
+kyokan:         "|/etc/runmailto group 200"
+ug:             "|/etc/runmailto group 201"
+ma:             "|/etc/runmailto group 202"
+pg:             "|/etc/runmailto group 203"
+sma:            "|/etc/runmailto group 204"
+jimu:           "|/etc/runmailto group 300"
+expiring:       "|/etc/runmailto group 400"
+
+The idea is to save time and error by linking alias membership
+with the group or groups to which a user is assigned when their
+account is set up.
+
+The script is doing the job of cloning mail to group members, but
+with one snag: I haven't been able to figure out how to get the
+subject header and sender information that the mailer provides to
+merge into the actual message headers.  So every message ends up
+with a standard subject header that I provide when the script is
+invoked.  Mail is invoked in the script like this:
+
+     exec echo $message | mail -s "Note from Nomolog" $name
+
+And the message comes out looking like this (other messages
+provided for comparison purposes):
+
+E  [  14: John Faulkner       ] Chelsea Flower Show
+R  [  32: mail                ] Note from Nomolog
+   [  50: Scott Stone         ] Re: tlug: good news &amp; better news
+       &lt;  19: Jonathan Byrne - 3We&gt; 
+
+Has anyone had experience with using scripts with mail aliases?
+There's got to be a way to fix this, but I can't fingure out what
+it is.  For info, here's what the headers come through looking
+like:
+
+*****
+
+From: mail &lt;mail&gt;
+Subject: Note from Nomolog
+To: bennett
+Date: Thu, 21 May 1998 06:48:51 +0900
+X-POP3-Rcpt: bennett@example.com
+Return-Path: &lt;mail&gt;
+Received: (from mail@example.com)
+	by nomolog.nagoya-u.ac.jp (8.8.8/8.8.5) id GAA31063
+	for bennett; Thu, 21 May 1998 06:48:51 +0900
+Message-Id: &lt;199805202148.GAA31063@example.com&gt;
+Status: RO
+Lines: 32
+Xref: lilliputer.nomolog.nagoya-u.ac.jp Inbox:2766 other:874
+
+&gt;From dean@example.com  Thu May 21 06:48:50 1998
+Received: from [133.6.33.109] ([133.6.33.109])
+	by nomolog.nagoya-u.ac.jp (8.8.8/8.8.5) with SMTP id GAA31057
+	for &lt;kyokan&gt;; Thu, 21 May 1998 06:48:49 +0900
+Message-Id: &lt;199805202148.GAA31057@example.com&gt;
+Date: Thu, 21 May 1998 15:48:42 +0900
+To: kyokan
+From: dean@example.com (=?ISO-2022-JP?B?GyRCPHIwZiEhOlpKZjtSGyhC?=)
+Subject: =?ISO-2022-JP?B?GyRCO0pLIUxkQmo4JjVmMnEkTj1QQEokSyREJCQkRhsoQg==?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+X-Mailer: Eudora-J(1.3.8.5-J13)
+
+*****
+
+Anyone have any idea how to improve on this?
+
+Cheers,
+-- 
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: (?) July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00410" HREF="msg00410.html">Re: tlug: /bin/mail</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00383" HREF="msg00383.html">Re: tlug: good news &amp; better news</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00395.html">Re: tlug: statistics first try</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00397.html">Re: tlug: statistics first try</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00386.html">Re: tlug: good news &amp; better news</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00410.html">Re: tlug: /bin/mail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00396"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00396"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

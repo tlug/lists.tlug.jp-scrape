@@ -1,0 +1,215 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Server shows strange load and memory spikes -->
+<!--X-From-R13: "Xrna&#45;Quevfgvna Wzornhyg" <wrna_puevfgvnaNubgznvy.pbz> -->
+<!--X-Date: Tue, 27 Aug 2002 13:00:15 +0900 (JST) -->
+<!--X-Message-Id: F153l8jcgC63xUbYuw500003b8a@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00360.html">Date Prev</a>][<a href="msg00362.html">Date Next</a>][<a href="msg00355.html">Thread Prev</a>][<a href="msg00362.html">Thread Next</a>][<a href="maillist.html#00361">Date Index</a>][<a href="threads.html#00361">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Server shows strange load and memory spikes</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 27 Aug 2002 13:01:54 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Jean-Christian Imbeault&quot; &lt;<A HREF="mailto:jean_christian@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Server%20shows%20strange%20load%20and%20memory%20spikes">jean_christian@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Server shows strange load and memory spikes</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;From: B0Ti &lt;9915104t@example.com&gt;
+&gt;
+&gt;Check out if/what cron was running in /var/log/cron or similar depending
+&gt;on your distro. Logrotate comes to mind.
+&gt;If you can't find out, then just extend that script to capture the process
+&gt;list every second or so.
+
+Yesterday I stopped anacron, since it runs logrotate, hoping that would 
+solve the problem of my load average going at weird times. The load on my 
+machine did go down a little but I thinks that only becuase yesterday was a 
+Monday and not as many people were accessing the web server.
+
+I did extend my script to capture which jobs were running when the load 
+average was high but I can't see any &quot;unusual&quot; jobs running. Here is a 
+sample output (minus the http procs):
+
+
+10:37:31 CPU load: 1.46 #http procs: 218
+
+USER       PID %CPU %MEM   VSZ  RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0  1416   76 ?        S    May31   0:06 init [3]
+root         2  0.0  0.0     0    0 ?        SW   May31   0:00 [keventd]
+root         3  0.0  0.0     0    0 ?        SWN  May31   0:22 
+[ksoftirqd_CPU0]
+root         4  0.0  0.0     0    0 ?        SW   May31  11:50 [kswapd]
+root         5  0.0  0.0     0    0 ?        SW   May31   0:00 [bdflush]
+root         6  0.0  0.0     0    0 ?        SW   May31   0:02 [kupdated]
+root       128  0.0  0.0     0    0 ?        SW   May31   0:00 [kjournald]
+root       129  0.0  0.0     0    0 ?        SW   May31   0:06 [kjournald]
+root       130  0.0  0.0     0    0 ?        SW   May31   0:00 [kjournald]
+root       131  0.0  0.0     0    0 ?        SW   May31   0:00 [kjournald]
+root       132  0.0  0.0     0    0 ?        SW   May31   0:09 [kjournald]
+root       133  0.0  0.0     0    0 ?        SW   May31   0:05 [kjournald]
+root       134  0.0  0.0     0    0 ?        SW   May31   8:14 [kjournald]
+root       467  0.0  0.0  1476  320 ?        S    May31   0:01 syslogd -m 0
+root       472  0.0  0.0  1892  108 ?        S    May31   0:00 klogd -2
+root       631  0.0  0.0  5196  412 ?        S    May31   0:00 sendmail: 
+accepting connections
+root       650  0.0  0.0  1604  444 ?        S    May31   0:00 crond
+daemon     686  0.0  0.0  1448   52 ?        S    May31   0:00 /usr/sbin/atd
+root       714  0.0  0.0  1388   16 tty3     S    May31   0:00 
+/sbin/mingetty tty3
+root       715  0.0  0.0  1388   16 tty4     S    May31   0:00 
+/sbin/mingetty tty4
+root       716  0.0  0.0  1388   16 tty5     S    May31   0:00 
+/sbin/mingetty tty5
+root       717  0.0  0.0  1388   16 tty6     S    May31   0:00 
+/sbin/mingetty tty6
+root       877  0.0  0.0  1388   16 tty2     S    May31   0:00 
+/sbin/mingetty tty2
+root     29555  0.0  0.0  2968  416 ?        S    Jun14   0:03 
+/usr/local/sbin/sshd
+root     16604  0.0  0.0  1388   32 tty1     S    Jul08   0:00 
+/sbin/mingetty tty1
+root     30597  0.0  0.1  3100  920 ?        S    Aug16   0:04 snmpd -c 
+/usr/src/net-snmp-5.0.3/snmpd.conf
+root      5062  0.0  0.2  2856 1320 ?        SN   Aug26   0:00 /usr/bin/perl 
+-w ./t2.pl
+root     24107  0.0  0.0  1512  352 ?        S    Aug26   0:01 
+/usr/local/sbin/cronolog /www/logs/%Y/%m/%d/error.log
+root     24108  0.1  0.0  1516  364 ?        S    Aug26   0:57 
+/usr/local/sbin/cronolog /www/logs/%Y/%m/%d/access.log
+root     13755  0.0  0.2  2844 1368 ?        SN   09:56   0:00 /usr/bin/perl 
+-w ./mem.pl
+root     14708  0.0  0.2  2860 1380 ?        SN   10:19   0:00 /usr/bin/perl 
+-w ./load.pl
+root     14834  0.0  0.2  2856 1380 ?        SN   10:20   0:00 /usr/bin/perl 
+-w ./load60.pl
+root     16543  0.0  0.2  3028 1052 ?        RN   10:37   0:00 ps -auwx
+
+
+Thre three perl scripts are what I use to monitor theload and memory usage 
+at 1, 30, and 60 second intervals (the basically loop forever and sleep 1,30 
+or 60 seconds). The load was high at strange time even before I ran these 
+scripts.
+
+Can anyone see anything strange in the ps output? The output is pretty much 
+always the same as this is a barebones apache server.
+
+There are always about the same 30 (+/- 2) non-http processes running on the 
+machine. Yet the load somthing spikes as high as 3.0 at strange time like 
+10:30am and 15:30.
+
+I really don't know what to make of it. Any advice on how I can pinpoint 
+what is making the load shoot so high?
+
+Thanks,
+
+Jc
+
+PS I still get that strange ~40Mb memory spike at 4am too ...
+
+_________________________________________________________________
+MSN Photos is the easiest way to share and print your photos: 
+<A  HREF="http://photos.msn.com/support/worldwide.aspx">http://photos.msn.com/support/worldwide.aspx</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00362" href="msg00362.html">Re: [tlug] Server shows strange load and memory spikes</a></strong>
+<ul><li><em>From:</em> Jim Tittsler</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00360.html">Re: [tlug] recommendations for a good pc shop in tokyo</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00362.html">Re: [tlug] Server shows strange load and memory spikes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00355.html">Re: [tlug] Server shows strange load and memory spikes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00362.html">Re: [tlug] Server shows strange load and memory spikes</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00361"><strong>Date</strong></a></li>
+<li><a href="threads.html#00361"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

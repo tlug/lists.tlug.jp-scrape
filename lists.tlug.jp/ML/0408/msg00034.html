@@ -1,0 +1,190 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] "Interesting" printing issue. -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Fri, 6 Aug 2004 11:24:42 +0200 -->
+<!--X-Message-Id: 20040806112442.046c6f0e.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00007.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00033.html">Date Prev</a>][<a href="msg00035.html">Date Next</a>][<a href="msg00033.html">Thread Prev</a>][<a href="msg00036.html">Thread Next</a>][<a href="maillist.html#00034">Date Index</a>][<a href="threads.html#00034">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] &quot;Interesting&quot; printing issue.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 6 Aug 2004 11:24:42 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%22Interesting%22%20printing%20issue.">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] &quot;Interesting&quot; printing issue.</strong></li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+This is YAOTCHTNBM[1].
+
+I have a server providing print services for 2 workstations.
+
+The (Linux, Slackware 8.0) server is running the stock BSD line printer
+daemon - and before you all throw your arms up in despair, it works
+perfectly well except for this weirdness. The clients are spooling using
+LPRng, which hands the job off to apsfilter, which in turn pumps it through
+GhostScript/hpijs and then spits the raster over to the server's &quot;lp&quot; queue.
+An example entry of a client-site printcap is:
+
+lp|ijs/DESKJET_5600;r=600x600;q=high;c=gray;p=a4;m=auto:\
+    :lp=:\
+    :rm=192.168.1.1:\
+    :rp=lp:\
+    :if=/etc/apsfilter/basedir/bin/apsfilter:\
+    :sd=/var/spool/lpd/lp:\
+    :lf=/var/spool/lpd/lp/log:\
+    :af=/var/spool/lpd/lp/acct:\
+    :mx#0:\
+    :sh:
+
+The entry in the server's printcap file is:
+
+# Generic printer:
+lp:lp=/dev/lp0:sd=/var/spool/lpd:sh:ff=
+
+For every print job, lpd mails off not one, but THREE identical mails to the
+originator of the job, saying &quot;Your printer job ((STDIN)) was not printed
+because it was not linked to the original file&quot;.
+
+There I was thinking that unhelpful error messages were the domain of
+Windows...
+
+Despite what the message says, the job *was* printed! Perfectly!
+
+The problem used not to occur when I was using SAMBA as the print server
+(there used to be Windows machines in the network but there aren't any
+more), so it's definitely network related. Samba accepts the inbound data,
+spools it locally in a temp directory and hands it off to lpr locally.
+
+So far what I've done is to /dev/null via procmailrc all mail coming from
+halt@example.com but that's probably not a solution. I'd like to get to the
+bottom of this if possible.
+
+Searching on google I find a bucketload of people getting the same &quot;not
+linked to the original file&quot; message, but their print jobs do fail, whereas
+mine don't.
+
+Any ideas (other than &quot;don't use LPR&quot;)?
+
+
+
+
+
+
+[1] - Yet Another Oddity That Could Happen To Nobody But Me
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.7-em8300)
+--------------------------------------------------------------
+Health nuts are going to feel stupid someday, lying
+in hospitals dying of nothing.
+</pre>
+<p><strong>Attachment:
+<a href="pgp00007.pgp" ><tt>pgp00007.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00036" href="msg00036.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+<ul><li><em>From:</em> Edward Wright</li></ul></li>
+<li><strong><a name="00041" href="msg00041.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00033.html">Re: [tlug] skype Free P2P for phone calls on Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00035.html">Re: [tlug] ImageMagic</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00033.html">Re: [tlug] skype Free P2P for phone calls on Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00036.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00034"><strong>Date</strong></a></li>
+<li><a href="threads.html#00034"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

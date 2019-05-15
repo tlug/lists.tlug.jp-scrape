@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Debian installation &#45; scsi problem -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Mon, 17 Apr 2000 18:15:12 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000417163458.17040C&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000417060119.6CC2115779@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00096.html">Date Prev</A>][<A HREF="msg00098.html">Date Next</A>][<A HREF="msg00095.html">Thread Prev</A>][<A HREF="msg00098.html">Thread Next</A>][<A HREF="maillist.html#00097">Date Index</A>][<A HREF="threads.html#00097">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Debian installation - scsi problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Debian installation - scsi problem</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 17 Apr 2000 18:06:30 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00091.html">20000417060119.6CC2115779@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Mon, 17 Apr 2000 ulrike@example.com wrote:
+
+&gt;  
+&gt;  &gt; OK, your CD-ROM is NOT being recognized.  This could be due to faulty
+&gt;  &gt; termination.  Or it might just not be hooked up.  
+&gt;  
+&gt;  It worked with Windows with the same settings ("automatic") when I used the CD 
+&gt;  to make the install floppies ... 
+
+Dont know much abt scsi termination, but I think automatic should be
+okay. I use the same card (AHA-2940) with auto termination and have only
+one external device (a scanner).
+
+&gt;  
+&gt;  &gt;     Ulrike&gt; know what the proper settings are. The Adaptec menu for
+&gt;  &gt;     Ulrike&gt; "Host Adapter SCSI Termination" gives three options:
+&gt;  &gt;     Ulrike&gt; automatic, enabled, disabled. Which is the correct
+&gt;  &gt;     Ulrike&gt; setting?
+&gt;  &gt; 
+&gt;  &gt; "Automatic" should work.  If you have _both_ external and internal SCSI
+&gt;  &gt; devices hooked up, you could try "disabled".  If you have only
+&gt;  &gt; internal, or only external, devices hooked up, you could try enabled.
+
+What Stephen wrote  agrees exactly with what my aha2940 japanese manual
+says.
+
+&gt;  scsi0 : Adaptec AHA274x/284x/294x (EISA/VLB/PCI-Fast SCSI) 5.1.11/3.2.4
+&gt;         &lt;Adaptec AHA-294X Ultra SCSI host adapter&gt;
+&gt;  scsi : 1 host.
+&gt;  scsi : detected total.
+
+No attached devices detected ...
+
+&gt;  
+&gt;  &gt; If all cables are OK and the power is on, it could be termination.  If
+&gt;  &gt; the CD-ROM is the ONLY device hooked to the SCSI adaptor, then both
+&gt;  &gt; the adaptor (set "enabled" in the BIOS") and the CD-ROM (sorry, dunno
+&gt;  &gt; 'bout this one but it's probably a jumper, you'll have to read the
+&gt;  &gt; docs or call in the vendor if they didn't supply docs) should have
+&gt;  &gt; termination.
+&gt;  
+&gt;  Can I assume this is ok since it used to work with Windows? The docs, if I find 
+&gt;  them, are in Japanese and my Japanese is still ma-ma, but I will get a 
+&gt;  translator if neccessary ...
+
+The cabling is probably  okay if it works under windows...  Still note
+that a device may appear to "work" even without proper termination
+but it will be unreliable/flaky.  
+
+Anyway your cd is not getting detected. Have you checked the termination
+on the cd-drive itself? 
+
+Even after booting you can probe for a scsi device. For example if your
+cdrom has SCSI id = 5, issue the command
+
+echo "scsi add-single-device  0 0 5 0" &gt; /proc/proc/scsi
+
+Then 'cat /proc/scsi/scsi' or 'dmesg' to see whether the device got
+detected. I use this often to take my scanner in and out of the bus
+(remove-single-device and add-single-device) and to rescan the bus when
+new external devices are connected. 
+
+By the way, what is the make of your cd drive?
+
+&gt;  hda: QUANTUM LIGHTNING 730A, 696MB w/96kB Cache, CHS=708/32/63
+&gt;  hdb: QUANTUM FIREBALL540A, 519MB w/83kB Cache, CHS=528/32/63
+&gt;  hdc: WDC AC32500H, 2441MB w/128kB Cache, CHS=4960/16/63
+&gt;  ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+&gt;  ide1 at 0x170-0x177,0x376 on irq 15
+&gt;  Floppy drive(s): fd0 is 1.44M
+&gt;  FDC 0 is a post-1991 82077
+&gt;  md driver 0.36.3 MAX_MD_DEV=4, MAX_REAL=8
+&gt;  
+&gt;  Why is there only ide0 and ide1 when there are three hard drives? Shouldn't 
+&gt;  there be ide2 as well? (Or maybe not?) And what this md driver? 
+
+That's okay -- ide0 and ide1 are the primary and secondary interfaces--- 
+each can have two disks (hda &amp; hdb on ide0 and hdc &amp; hdd on ide1 as
+master and slave).
+
+md is to support more than 2 ide interfaces, is it? dont know actually..
+
+Selva
+
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00091" HREF="msg00091.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00096.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00098.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00095.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00098.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00097"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00097"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

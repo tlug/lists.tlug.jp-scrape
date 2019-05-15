@@ -1,0 +1,331 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] about sanitize_e820_map() -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Sun, 15 Jan 2006 20:28:27 +0900 -->
+<!--X-Message-Id: d8fcc0800601150328g1e2d7e99q@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060114.174541.46101935.psbfan@example.com -->
+<!--X-Reference: 87zmlx7un1.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00162.html">Date Prev</a>][<a href="msg00164.html">Date Next</a>][<a href="msg00157.html">Thread Prev</a>][<a href="msg00178.html">Thread Next</a>][<a href="maillist.html#00163">Date Index</a>][<a href="threads.html#00163">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] about sanitize_e820_map()</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 15 Jan 2006 20:28:27 +0900</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20about%20sanitize_e820_map%28%29">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] about sanitize_e820_map()</strong></li>
+<li>References: &lt;<a href="msg00140.html">20060114.174541.46101935.psbfan@example.com</a>&gt; &lt;<a href="msg00157.html">87zmlx7un1.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On 15/01/06, Stephen J. Turnbull &lt;stephen@example.com&gt; wrote:
+
+&gt; &gt;&gt;&gt;&gt;&gt; &quot;Toshiyuki&quot; == Toshiyuki Ishii &lt;psbfan@example.com&gt; writes:
+&gt;
+&gt;     Toshiyuki&gt; I am a beginner of kernel source code, so sorry if I am
+&gt;     Toshiyuki&gt; misunderstanding.
+&gt;
+&gt; This isn't exactly a kernel hackers group.  There are a few such here,
+&gt; but it's unlikely that they're familiar with every little bit.
+
+I for one would like to see more hardcore C questions on this list, so
+I will endeavor to help you out here.
+
+You should, however, take Steve's advise about what info you need to
+provide so that we can help you.
+
+I will assume that you are concerned with the 2.6 kernel.
+
+I first made an identifier search on LXR against the 2.6.11 source
+tree to find the relevant code:
+
+<A  HREF="http://lxr.linux.no/ident?i=sanitize_e820_map">http://lxr.linux.no/ident?i=sanitize_e820_map</A>
+
+Then I performed a search on Safari[1] for 'e820', which led me to an
+excellent section in &quot;Understanding the Linux Kernel (3rd
+Edition)&quot;[2]: &quot;A.3. Middle Ages: the setup( ) Function&quot;. I promptly
+added the book to my Safari bookshelf so that I could read the whole
+section (don't worry, I wanted to evaluate this book before buying
+it[2] anyway).
+
+A-ha! Now I know that sanitize_e820_map() has something to do with
+ACPI, for the BIOS e820 map is a table describing the layout of a
+system's physical memory, according to UtLK3e:
+
+&quot;setup( ) performs essentially the following operations:
+
+   1.
+
+      In ACPI -compliant systems, it invokes a BIOS routine that
+builds a table in RAM describing the layout of the system's physical
+memory (the table can be seen in the boot kernel messages by looking
+for the &quot;BIOS-e820&quot; label). In older systems, it invokes a BIOS
+routine that just returns the amount of RAM available in the system.&quot;
+
+OK, back to the code. arch/i386/kernel/setup.c looks like the logical
+place to start, based on the results of my LXR identifier search. It
+looks like the section that you are referring to in your email starts
+at line 517, right?
+
+<A  HREF="http://lxr.linux.no/source/arch/i386/kernel/setup.c#L517">http://lxr.linux.no/source/arch/i386/kernel/setup.c#L517</A>
+
+Again, as Steve pointed out, tell us *where*: version of code, source
+filename, line! And if there exists online a browseable version of the
+code, link to it.
+
+OK, for a little context, the BIOS e820 map (which is a map of
+physical memory locations as reported by an ACPI-compliant BIOS) may
+contain overlapping entries. The Linux kernel hates this, so it wants
+to reconfigure the map as shown by the comment at lines 446-480[3]:
+
+446         /*
+447                 Visually we're performing the following (1,2,3,4 =
+memory types)...
+448
+449                 Sample memory map (w/overlaps):
+450                    ____22__________________
+451                    ______________________4_
+452                    ____1111________________
+453                    _44_____________________
+454                    11111111________________
+455                    ____________________33__
+456                    ___________44___________
+457                    __________33333_________
+458                    ______________22________
+459                    ___________________2222_
+460                    _________111111111______
+461                    _____________________11_
+462                    _________________4______
+463
+464                 Sanitized equivalent (no overlap):
+465                    1_______________________
+466                    _44_____________________
+467                    ___1____________________
+468                    ____22__________________
+469                    ______11________________
+470                    _________1______________
+471                    __________3_____________
+472                    ___________44___________
+473                    _____________33_________
+474                    _______________2________
+475                    ________________1_______
+476                    _________________4______
+477                    ___________________2____
+478                    ____________________33__
+479                    ______________________4_
+480         */
+
+OK, so the section of code relevant to your question is:
+
+514                 for (i=1; i &lt; chg_nr; i++)  {
+515                         /* if &lt;current_addr&gt; &gt; &lt;last_addr&gt;, swap */
+516                         /* or, if current=&lt;start_addr&gt; &amp;
+last=&lt;end_addr&gt;, swap */
+517                         if ((change_point[i]-&gt;addr &lt;
+change_point[i-1]-&gt;addr) ||
+518                                 ((change_point[i]-&gt;addr ==
+change_point[i-1]-&gt;addr) &amp;&amp;
+519                                  (change_point[i]-&gt;addr ==
+change_point[i]-&gt;pbios-&gt;addr) &amp;&amp;
+520                                  (change_point[i-1]-&gt;addr !=
+change_point[i-1]-&gt;pbios-&gt;addr))
+521                            )
+522                         {
+523                                 change_tmp = change_point[i];
+524                                 change_point[i] = change_point[i-1];
+525                                 change_point[i-1] = change_tmp;
+526                                 still_changing=1;
+527                         }
+528                 }
+
+We also need to know a little about the structures contained in the
+change_point[] array[4]:
+
+426 struct change_member {
+427         struct e820entry *pbios; /* pointer to original bios entry */
+428         unsigned long long addr; /* address for this change point */
+429 };
+
+So the 'addr' field of the struct refers to the address in our new
+map, and pbios-&gt;addr is the address in the original e820 map.
+
+I read this conditional as follows:
+
+1) Line 517 checks to see if the address at the current index in our
+map is less than the address at the previous index in our map. This
+would be the most obvious way to detect an overlap. Short circuit,
+jump to lines 523-526, where the overlap is repaired.
+2a) Line 518 is the beginning of a logical condition with three parts;
+the first part being: is the address (new) at the current index of the
+map the same as the address (new) at the previous part? If not,
+short-circuit, move to the next iteration of the for loop.
+2b) Line 519 is the second part of the three-part condition. Is the
+address (new) at the current index of the map the same as the address
+(*old*; in the original e820 BIOS map) at the *current index*? If not,
+short-circuit, move to the next iteration of the for loop.
+2c) Line 520 is the third and final part of the condition. Is the
+address (new) at the previous index different from the address (old)
+at the previous index? If so, repair the overlap in the body of the if
+condition.
+
+So, let me try to show this in some sort of visual way. Note that
+memory addresses are obviously wrong (I wanted a simple example, not
+an accurate one). :)
+
+Case 1 (covered by line 517):
+
+change_point[]
+                                    0        1        ...        i-1  
+     i        ...        n
+addr                                                           0x81    0x80
+pbios-&gt;addr                                             ???      ???
+
+In this case, we don't care what the addresses in the original e820
+map are, since the address at index [i] is lower than the address at
+index [i-1] (an obvious overlap).
+
+But what if the addresses are the same? That is why we need case 2
+(lines 518-520):
+
+change_point[]
+                                    0        1        ...        i-1  
+     i        ...        n
+addr                                                           0x80   
+0x80                  &lt;== (2a)
+pbios-&gt;addr                                                         
+0x80                  &lt;== (2b)
+
+The addresses at [i] and [i-1] in the current map are the same (2a),
+so we have to look at the second line. Sure enough, the address at [i]
+in the current map is the same as the address in the original BIOS map
+(2b). And now to reveal the final bit of the diagram to evaluate
+condition (2c):
+
+change_point[]
+                                    0        1        ...        i-1  
+     i        ...        n
+addr                                                           0x80    0x80
+pbios-&gt;addr                            (2c) ==&gt;  0x79    0x80
+
+The address at [i-1] in the current map is *not* the same as the
+address at [i-1] in the original BIOS map, so we have detected an
+overlap and must repair it.
+
+I hope this helped to answer your question.
+
+Cheers,
+Josh
+
+[1] <A  HREF="http://safari.oreilly.com/">http://safari.oreilly.com/</A>
+[2] <A  HREF="http://www.amazon.com/gp/product/0596005652/ref=wl_it_dp/103-0893130-9345430?%5Fencoding=UTF8&amp;colid=220Z673P6NRWV&amp;coliid=I38BV9O3U0AU2Y&amp;v=glance&amp;n=283155">http://www.amazon.com/gp/product/0596005652/ref=wl_it_dp/103-0893130-9345430?%5Fencoding=UTF8&amp;colid=220Z673P6NRWV&amp;coliid=I38BV9O3U0AU2Y&amp;v=glance&amp;n=283155</A>
+[3] <A  HREF="http://lxr.linux.no/source/arch/i386/kernel/setup.c#L446">http://lxr.linux.no/source/arch/i386/kernel/setup.c#L446</A>
+[4] <A  HREF="http://lxr.linux.no/source/arch/i386/kernel/setup.c#L426">http://lxr.linux.no/source/arch/i386/kernel/setup.c#L426</A>
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00178" href="msg00178.html">Re: [tlug] about sanitize_e820_map()</a></strong>
+<ul><li><em>From:</em> Toshiyuki Ishii</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00140" href="msg00140.html">[tlug] about sanitize_e820_map()</a></strong>
+<ul><li><em>From:</em> Toshiyuki Ishii</li></ul></li>
+<li><strong><a name="00157" href="msg00157.html">Re: [tlug] about sanitize_e820_map()</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00162.html">Re: [tlug] Following Threads in Email</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00164.html">Re: [tlug] Japanese Charactersets: In the commandline and in Samba(aka. mounting a japanese windows drive)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00157.html">Re: [tlug] about sanitize_e820_map()</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00178.html">Re: [tlug] about sanitize_e820_map()</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00163"><strong>Date</strong></a></li>
+<li><a href="threads.html#00163"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

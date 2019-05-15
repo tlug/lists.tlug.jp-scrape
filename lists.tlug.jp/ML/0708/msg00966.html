@@ -1,0 +1,217 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Overloaded mail spool causing memory instability? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 18 Aug 2007 22:15:23 +0900 -->
+<!--X-Message-Id: 874pix2dcl.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46C695D2.2030402@articlass.org -->
+<!--X-Reference: 20070818093406.d9cefde4.gstewart@bonivet.net -->
+<!--X-Reference: 46C6BA2D.3070005@articlass.org -->
+<!--X-Reference: 20070818115859.a5c39b60.gstewart@bonivet.net -->
+<!--X-Reference: 46C6C6BA.9020401@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00965.html">Date Prev</a>][<a href="msg00967.html">Date Next</a>][<a href="msg00960.html">Thread Prev</a>][<a href="msg00968.html">Thread Next</a>][<a href="maillist.html#00966">Date Index</a>][<a href="threads.html#00966">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Overloaded mail spool causing memory instability?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 18 Aug 2007 22:15:22 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Overloaded%20mail%20spool%20causing%20memory%20instability%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Overloaded mail spool causing memory instability?</strong></li>
+<li>References: &lt;<a href="msg00944.html">46C695D2.2030402@articlass.org</a>&gt;	&lt;<a href="msg00947.html">20070818093406.d9cefde4.gstewart@bonivet.net</a>&gt;	&lt;<a href="msg00956.html">46C6BA2D.3070005@articlass.org</a>&gt;	&lt;<a href="msg00959.html">20070818115859.a5c39b60.gstewart@bonivet.net</a>&gt;	&lt;<a href="msg00960.html">46C6C6BA.9020401@articlass.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+
+ &gt; The question was if a large amount of email stored on the system can 
+ &gt; create instability.
+
+The question I answered was the one you asked explicitly: &quot;does having
+a large mailbox use up memory?&quot;  The answer is no, for the reasons I
+gave.  [Curt points out that the append may be more complicated, but
+AFAICS it still takes extra memory in proportion to the size of the
+message, not in proportion to the size of the mbox on disk.]
+
+Obviously it uses up space on the hard drive, but except in *really*
+demanding applications (the kind of application where you care about a
+handful of nanoseconds from matching disk requests to rotation speed),
+that doesn't matter either, until you actually run out of allocatable
+space.
+
+ &gt; If I leave a domain open to receive un-routed email, is it possible for 
+ &gt; some maximum amount of incoming email to cause instability? Like if I 
+ &gt; get few dozen, hundred, or thousand all at once?
+
+The following resources allocated on demand are involved in receiving
+mail:
+
+1.  Network bandwidth
+2.  Memory for the TCP/IP connection structures and transfer buffers
+3.  TCP ports
+4.  Interprocess communication sockets (I don't know if these are
+    separate from 2 in Linux, but in theory they could be)
+5.  CPU in interrupts kernel time slices for processing TCP
+6.  Processes or threads for the MTA, milters, delivery agents (like
+    procmail) and other stuff (spam &amp; virus filters)
+7.  &quot;User-space&quot; memory and CPU for the MTA and MDA-related processes
+8.  Storage for the spooled mail
+
+Maybe there are others, or people would like divide things up
+differently, but that gives you an idea of the variety.
+
+Shortage of any of them could result in delays or instability.
+
+There are about 50,000 TCP ports available; you shouldn't run out of
+those before something else brings the system to its knees.
+
+Memory is almost always in short supply; if the rate of connections
+causes you to start swapping virtual memory, you will experience
+slowdowns and if it persists for more than a few seconds, instability.
+
+I'm not sure about CPU, but it seems to me that performance generally
+degrades gracefully if it's only CPU that's in contention (not RAM or
+net bandwidth).
+
+Storage for spooled mail is generally not a problem, but if you have
+/var/mail on the same partition as say /tmp or /var/log, you can run
+out of space, and serious trouble can break loose as your applications
+start to fail to be able to log informational message or even errors,
+etc.
+
+ &gt; I'm trying to find out what would be the root cause of the email 
+ &gt; instability I've seen recently. It seems potentially tied to the issue 
+ &gt; of un-routed email, but I can't quite grasp how.
+
+The problem that I've seen is that you have a spammer hammering on
+your server.  If you accept the message, you may need to wake up or
+(much worse) start a dozen processes besides the MTA itself (virus
+filters, spam checkers, the final delivery agent).  This uses up lots
+of CPU, some memory, etc.  Worse, if you have a spam filter that
+checks the source, you may need to make network connections, at least
+to the DNS, perhaps several times.  I've seen greylisted spammers come
+back once a second until you *do* accept the mail.  (I don't know
+whether this is bad implementation, they just don't care, or a
+deliberate retaliation for greylisting.)  That's a lot of load for
+something you're going to unable to do anything useful with.
+
+But if you refuse mail you can't route, you can save all those context
+switches and other resources used by actually reading and processing
+the mail text.
+
+I don't know if this would lead to instability that a human could
+percieve without log analysis, but why accept it at all?
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00968" href="msg00968.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00944" href="msg00944.html">[tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00947" href="msg00947.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00956" href="msg00956.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00959" href="msg00959.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00960" href="msg00960.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00965.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00967.html">RE: [tlug] RE: Subject: Windows Is Free - article now public</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00960.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00968.html">Re: [tlug] Overloaded mail spool causing memory instability?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00966"><strong>Date</strong></a></li>
+<li><a href="threads.html#00966"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

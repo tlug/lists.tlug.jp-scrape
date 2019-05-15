@@ -1,0 +1,211 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: [tlug] timing for geeks :) -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Sat, 03 Dec 2005 00:46:23 +0900 -->
+<!--X-Message-Id: 20051202154627.GB4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00015.html">Date Prev</a>][<a href="msg00017.html">Date Next</a>][<a href="msg00021.html">Thread Prev</a>][<a href="msg00018.html">Thread Next</a>][<a href="maillist.html#00016">Date Index</a>][<a href="threads.html#00016">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] timing for geeks :)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 2 Dec 2005 16:46:27 +0100</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<a href="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20timing%20for%20geeks%20:%29">hajek1@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] timing for geeks :)</strong></li>
+<li>User-agent: Mutt/1.5.9i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello :) 
+
+I need a time mark in my experiments, so I have used ftime() function.
+But what was my surprise, when I discovered, that time mark for the
+_later_ measurements are actually more recent than _sooner_
+measurements. 
+
+Ok, I thought to myself, I am a poor programmer, most probubly I made a
+mystake. So I have written a very simple program and used it to test.  I
+do not understand the result and here I come to the allmighty TLUGers
+[1] with a humble request for help....
+
+So what I did exactly: 
+
+1. write a simple c program - see
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/clocks.c">http://material.karlov.mff.cuni.cz/people/hajek/timetest/clocks.c</a>
+
+2. compile
+$:~/testcasu$ gcc -Wall -o cas clocks.c 
+clocks.c:6: warning: return type defaults to 'int'
+clocks.c: In function 'main':
+clocks.c:11: warning: format '%d' expects type 'int', but argument 2 has
+type 'time_t'
+$:~/testcasu$ 
+
+3. well, only warnings, so let's see if it works :)
+
+3. run it. 
+$ cas &gt; cas.txt
+
+here is the head of the file:
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+1133531643.784   
+
+This beast writes to my disk with cca 21MB/s, so be carefull!
+
+4. since many of the lines are same, lets uniq it :)
+uniq cas.txt &gt; uniq.txt
+(I suspect the reason for all trobles comes in the above line)
+
+5. produce time diferences between unique lines
+awk '{print $1, $1 - 1133531643.784}' uniq.txt &gt; graf.dat
+
+6. use gnuplot to produce graph. It graphse line number vs. time diff. 
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/uniq.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/uniq.png</a>
+with detail on one peak:
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/detail.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/detail.png</a>
+
+Can anyone please tell me why these peaks appear? Why there are three or
+more different slopes? How exactly does the program work than?  
+
+More general question : is there other accurate time marker available in
+c-libraries? 
+
+Above shown data were produced on debian amd64 pc with  AMD Athlon(tm)
+64 Processor 3000+
+cpu MHz         : 1872.184
+bogomips        : 3710.97
+
+using distribution kernel:
+Linux  2.6.12-1-amd64-k8 #1 Wed Sep 28 02:31:26 CEST 2005 x86_64 GNU/Linux
+
+For me the practical impact right now is quite low or none at all, since
+for the actual measurement I can live with a bit slower rates, but ...
+once the question came to live, I cannot get rid of it ... 
+
+So if someone is interested in this brain riddle, I would be quite
+interested in the answer :) Hmm, .. a good situation for a time 
+contest.... so I offer a beer [2] for the first person who commes out with a
+solution :)
+
+[1] well, more precisely, to those who were allmighty enought to
+subscribe to this list :)
+
+[2] and perhaps you know that Czech beer [3] is the best beer in the world.
+
+[3] prize is to be taken in Prague, or wherever I would be at the
+particular moment [4]
+
+[4] recursion is not healthy!
+
+
+Best regards
+Michal
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00015.html">Re: [tlug] Aki Day???</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00017.html">Re: [tlug] Mea Culpa</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00021.html">Re: [tlug] Video Clips</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00018.html">Re: [tlug] timing for geeks</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00016"><strong>Date</strong></a></li>
+<li><a href="threads.html#00016"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

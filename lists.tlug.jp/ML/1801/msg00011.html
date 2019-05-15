@@ -1,0 +1,247 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Iptables trouble -->
+<!--X-From-R13: Ynyva YALVGVODAH <zr.xnyvaNtznvy.pbz> -->
+<!--X-Date: Thu, 11 Jan 2018 18:44:42 +0900 -->
+<!--X-Message-Id: CAKXLc7fAj2nTwx4L8mPLznGEp2&#45;xT6UawMhsUKLMym8zfy4MWw@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1515641488.1593636.1231426376.22933952@webmail.messagingengine.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00010.html">Date Prev</a>][<a href="msg00012.html">Date Next</a>][<a href="msg00009.html">Thread Prev</a>][<a href="msg00012.html">Thread Next</a>][<a href="maillist.html#00011">Date Index</a>][<a href="threads.html#00011">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Iptables trouble</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 11 Jan 2018 09:51:43 +0100</li>
+<li><strong>From</strong>: <strong>Kalin KOZHUHAROV &lt;<a href="mailto:me.kalin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Iptables%20trouble">me.kalin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Iptables trouble</strong></li>
+<li>References: &lt;<a href="msg00007.html">1515641488.1593636.1231426376.22933952@webmail.messagingengine.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello David,
+
+I see a few potential issues here, though nothing really serious may be.
+
+You need a clarification on &quot;communicate&quot;:
+
+On Thu, Jan 11, 2018 at 4:31 AM, David J Iannucci
+&lt;jlinux@example.com&gt; wrote:
+&gt; The problem is that the IT dept cannot communicate with this box over
+&gt; the private subnet when these rules are in place, and I don't know why.
+&gt;
+What protocols, ports are they using, for what?
+
+I never edit the output of `iptables save` or whatever produced the
+output below, I write a bash script that clears/resets everything and
+then sets it properly, but let me try inline...
+If you get syntax error or some other error, you'll need to figure it out:
+
+&gt; ## Default policy: allow nothing coming in, everything going out
+&gt; :INPUT DROP [150:10296]
+&gt; :FORWARD DROP [0:0]
+&gt; :OUTPUT ACCEPT [42178:3090645]
+&gt;
+For OUTPUT, I usually also list only permitted traffic (related and
+some new), but let's leave that for later, once it works.
+You might need to delete (edit?) the &quot;[]&quot; above to get it working?
+
+Also, I find it useful to add inline comments with `-m comment` that
+you can see with `iptables -L -nv` later.
+BTW, you/IT is not using IPv6, right? Do you have any IPv6 addresses
+at all (`ip addr`)?
+
+&gt; ## Accept anything over the loopback i/f
+&gt; -A INPUT -i lo -j ACCEPT
+&gt;
+OK, but I'd add OUTPUT as well.
+-A OUTPUT -i lo -j ACCEPT
+
+&gt; ## Accept any packets that are part of an already ESTABLISHED
+&gt; ## connection, or RELATED(?) to something? Not sure about
+&gt; ## RELATED, but I don't think it's hurting me :=)
+&gt; -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+&gt;
+OK.
+Here I'll generally accept some ICMP, like ping.
+-A INPUT -p icmp --icmp-type echo-request -j ACCEPT -m comment
+--comment &quot;Accept ping from everywhere&quot;
+
+&gt; ## Accept all TCP connection packets whose origin IP is in the
+&gt; ## given range. This is SUPPOSED to allow the IT dept to talk to me.
+&gt; -A INPUT -p tcp -m tcp --source 172.16.0.0/12 -j ACCEPT
+&gt;
+Only TCP? What about ICMP (ping) and/or UDP?
+
+BTW, I don't think you need '-m tcp', '-p tcp' defaults to it, IMHO.
+For a start I'd say you need:
+-A INPUT --source 172.16.0.0/12 -j ACCEPT -m comment --comment &quot;Accept
+all incoming IT dept. communication&quot;
+-A OUTPUT --destination 172.16.0.0/12 -j ACCEPT -m comment --comment
+&quot;Accept all outgoing IT dept. communication&quot;
+
+
+&gt; ## Accept all TCP connection packets to ports 80 and 443. I suppose
+&gt; ## this is only needed on initial establishment, as the ESTABLISHED
+&gt; ## rule should then take over, no?
+&gt; -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+&gt; -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+&gt;
+so add NEW then (and below):
+-A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT -m comment
+--comment &quot;Accept inbound HTTP&quot;
+-A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT -m comment
+--comment &quot;Accept inbound HTTPS&quot;
+
+
+&gt; ## Accept all TCP connection packets to port 22 only if the origin
+&gt; ## is in the given IP range.
+&gt; -A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 22 -j ACCEPT
+&gt; -A INPUT -s 112.160.0.0/16 -p tcp -m tcp --dport 22 -j ACCEPT
+&gt;
+-A INPUT -s 133.171.0.0/16 -p tcp --dport 22 -m state --state NEW -j
+ACCEPT -m comment --comment &quot;Accept inbound SSH from
+WHATEVER_YOU_DESCRIBE&quot;
+-A INPUT -s 112.160.0.0/16 -p tcp --dport 22 -m state --state NEW -j
+ACCEPT -m comment --comment &quot;Accept inbound SSH from
+WHATEVER_YOU_DESCRIBE&quot;
+
+
+&gt; ## More like the ones above for SSH, but for different ports
+&gt; -A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 3000 -j ACCEPT
+&gt; -A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 3030 -j ACCEPT
+&gt; -A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 4040 -j ACCEPT
+&gt; -A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 4200 -j ACCEPT
+&gt;
+If those are logically connected, i.e. you can describe them as one
+system, org, whatever, use a single rule like:
+
+-A INPUT -s 133.171.0.0/16 -p tcp -m mutiport --dports
+3000,3030,4040,4200 -m state --state NEW -j ACCEPT -m comment
+--comment &quot;Accept inbound SSH FROM/FOR WHATEVER_YOU_DESCRIBE&quot;
+
+
+and some touch-up, to separate (for debugging or accounting)
+reply-to-incoming traffic from outgoing:
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT -m comment
+--comment &quot;Accept replies to incoming traffic&quot;
+-A OUTPUT -j ACCEPT -m comment --comment &quot;Accept all other outgoing traffic&quot;
+
+
+And you can add some logging here (temporary, don't forget to turn it
+off in production, if this systems faces the Net).
+
+-A INPUT -j LOG --log-prefix &quot;IPv4:INPUT_before_DROP: &quot;
+-A FORWARD -j LOG --log-prefix &quot;IPv4:FORWARD_before_DROP: &quot;
+-A OUTPUT -j LOG --log-prefix &quot;IPv4:OUTPUT_before_ACCEPT: &quot;
+
+&gt; COMMIT
+&gt;
+OK, I guess that is part of the format, just leave it there.
+
+&gt; [*] Note that I've changed the IP addresses in an attempt at obscurity
+&gt;       security, though against what I'm not sure.
+&gt;
+LoL
+
+Cheers,
+Kalin.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00007" href="msg00007.html">[tlug] Iptables trouble</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00010.html">[tlug] [announcement] *Shinnenkai* Saturday Jan 13.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00012.html">Re: [tlug] Iptables trouble</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00009.html">Re: [tlug] Iptables trouble</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00012.html">Re: [tlug] Iptables trouble</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00011"><strong>Date</strong></a></li>
+<li><a href="threads.html#00011"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

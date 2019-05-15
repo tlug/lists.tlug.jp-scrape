@@ -1,0 +1,220 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Help Bash Help You -->
+<!--X-From-R13: [nfngb PWFA <ovgbNyvzr.bpa.ar.wc> -->
+<!--X-Date: Thu, 27 Nov 2003 12:46:09 +0900 -->
+<!--X-Message-Id: m3he0qpj7i.wl@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: W160678369313601068816242@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00103.html">Date Prev</a>][<a href="msg00106.html">Date Next</a>][<a href="msg00091.html">Thread Prev</a>][<a href="msg00105.html">Thread Next</a>][<a href="maillist.html#00104">Date Index</a>][<a href="threads.html#00104">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Help Bash Help You</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Nov 2003 12:46:09 +0900</li>
+<li><strong>From</strong>: <strong>Masato BITO &lt;<A HREF="mailto:bito@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Help%20Bash%20Help%20You">bito@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Help Bash Help You</strong></li>
+<li>References: &lt;<a href="msg00091.html">W160678369313601068816242@example.com</a>&gt;</li>
+<li>User-agent: Wanderlust/2.8.1 (Something) SEMI/1.14.3($B5m%NC+(B
+) FLIM/1.14.4 (Kashiharajingþ-mae) APEL/10.3 MULE XEmacs/21.1 (patch 14)(Cuyahoga Valley) (i386-vine-linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+What I use as my shell is not bash, I use zsh, but I think my
+technique is quite useful for bash users so I'm gonna tell my zsh's
+configuration files.
+
+First of all, .zlogin which is read as it's a login shell has the
+simple stuff as following:
+
+  for x in ~/.profile.d*; do
+    if [ -d $x ]; then
+      for i in $x/*.sh; do
+        if [ -f $i ]; then
+          source $i
+        fi
+      done
+    fi
+  done
+
+In ~/.profile.d you can put any files that you want to configure. If
+you used sh, bash, or any other shells which has a sh syntax
+compatibility like ksh, zsh, whatever, you would put files end with
+&quot;.sh&quot; suffix. In csh or tcsh you would put &quot;.csh&quot; suffixed files. For
+example java.sh for java, mysql.sh for MySQL.
+
+For instance I have two important files which are &quot;AA_functions.sh&quot;
+and &quot;ENV.sh&quot;.
+
+AA_functions.sh which has useful functions that are used in
+other files in ~/.profile.d is as following:
+
+  add_env(){
+    env_name=$1
+    shift
+
+    for i in $@; do
+      if ! dirs=`eval echo $i` &gt; /dev/null 2&gt;&amp;1; then
+        continue
+      fi
+
+      for i in `eval echo $dirs`; do
+        if eval echo \$$env_name | egrep '(\:|^)'$i'(\:|$)' &gt;/dev/null 2&gt;&amp;1; then
+          continue
+        fi
+
+        if [ -d $i ]; then
+          eval $env_name=\$$env_name:$i
+        fi
+      done
+    done
+  }
+
+  clean_env(){
+    for i in $@; do
+      eval clean_env_tmp=\$$i
+      clean_env_tmp=`echo $clean_env_tmp | sed -e &quot;s/^\://&quot; -e &quot;s/\:\:/:/g&quot;`
+      eval $i=$clean_env_tmp
+    done
+  }
+
+add_env can add elements to an environment variable like PATH or
+something like that.
+
+clean_env is a function clean environment variables.
+
+And a part of ENV.sh setting up the PATH environment variable is as
+following:
+
+  PATH=
+  add_env PATH &quot;${HOME}/bin&quot;
+  add_env PATH &quot;/usr/local/bin&quot; &quot;/usr/local/sbin&quot;
+  add_env PATH &quot;/usr/local/*/bin&quot; &quot;/usr/local/*/sbin&quot;
+  add_env PATH &quot;/opt/local/bin&quot; &quot;/opt/local/sbin&quot;
+  add_env PATH &quot;/opt/local/*/bin&quot; &quot;/opt/local/*/sbin&quot;
+  add_env PATH &quot;/usr/ucb&quot;
+  add_env PATH &quot;/bin&quot; &quot;/sbin&quot;
+  add_env PATH &quot;/usr/bin&quot; &quot;/usr/sbin&quot; &quot;/usr/*/bin&quot; &quot;/usr/*/sbin&quot;
+  add_env PATH &quot;/opt/*/bin&quot; &quot;/opt/*/sbin&quot;
+  clean_env PATH
+  export PATH
+
+What is a benefit of that system is that add_env can evaluate meta
+characters of arguments. If you have /usr/local/apache/bin,
+/usr/local/sendmain/bin and /usr/local/squid/bin, you even needn't
+change ENV.sh. add_env can add the PATH environment variable these
+directories automatically.
+
+In case you want to override configurations you can create a new
+~/.profile.d directory. For example ~/.profile.d-solaris for Solaris
+environment. In ~/.profile.d you should write common settings.
+
+--
+Masato
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00105" href="msg00105.html">[tlug] Japanese patch for Wine</a></strong>
+<ul><li><em>From:</em> Tony Laszlo</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00091" href="msg00091.html">[tlug] Help Bash Help You</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00103.html">[tlug] Japanese Word processor for linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00106.html">Re: [tlug] Japanese Word processor for linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00091.html">[tlug] Help Bash Help You</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00105.html">[tlug] Japanese patch for Wine</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00104"><strong>Date</strong></a></li>
+<li><a href="threads.html#00104"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: "boot partition too big" while installing RH6.1j &#45; part 2 -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Sat, 4 Mar 2000 18:49:52 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000304181913.17222B&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 004001bf85ac$eaaae280$13110185@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00047.html">Date Prev</A>][<A HREF="msg00049.html">Date Next</A>][<A HREF="msg00046.html">Thread Prev</A>][<A HREF="msg00049.html">Thread Next</A>][<A HREF="maillist.html#00048">Date Index</A>][<A HREF="threads.html#00048">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: "boot partition too big" while installing RH6.1j - part 2</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: "boot partition too big" while installing RH6.1j - part 2</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 4 Mar 2000 18:43:39 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00045.html">004001bf85ac$eaaae280$13110185@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Sat, 4 Mar 2000, Hector Akamine wrote:
+
+&gt;  I don't know what happened. But my machine stopped freezing during the
+&gt;  installation. Linux installed and can run (although I still have some
+&gt;  problems).
+&gt;  
+&gt;  &gt; It is possible that at boot up linux has not sensed the correct values
+&gt;  &gt; for cylinders, heads and sectors of your disk. Comparing the linux
+&gt;  &gt; fdisk o/p with the specs in your hard disk manual or (printed on your
+&gt;  &gt; hard disk itself) may help in diagnosing this.
+&gt;  
+&gt;  fdisk reports this (when I run it during the installation)
+&gt;  
+&gt;  disk /tmp/hda: 255 heads, 63 sectors, 2482 cylinders
+&gt;  units = cylinder of 16065 * 512 bytes
+&gt;  
+&gt;  device        boot        start                 end        blocks    id
+&gt;  system
+&gt;  /tmp/hda1    *          1    1334            10715323+ c    win 95 FAT32
+&gt;  (LBA)
+&gt;  /tmp/hda2                1335    1351    136552+    82    linux swap
+&gt;  /tmp/hda3                1352    1989    5124735     82    linux
+ 
+I guess that is 82 and not 83 (ie linux native)
+                                                        
+&gt;  /tmp/hda4                1990    2372    3076447+    83    linux
+&gt;  
+&gt;  ( why fdisk reports /tmp instead of /dev ? )
+
+Do you have the device files in /tmp (shudder !) by any chance ?
+Which distribution are you using?
+
+&gt;  
+&gt;  my PC has a WDC WD204BA hard disk (20.4 GB). I went to the wdc web page and
+&gt;  the closest model I found was WD205BA that has the following specs:
+&gt;  cyls 16383        &lt;---------- DIFFERENT!
+&gt;  heads 16
+&gt;  sec/track    63
+&gt;  
+&gt;  the cyl numbers don't match. Is it necessary to correct this?
+
+Better not change it as the kernel has recognised 255 x 63 x 2482 x 512
+= 20.4 GB.
+
+&gt;  
+&gt;  Also, lilo wasn't installed (to boot linux I need to use the floppy).
+
+You can't install lilo as your first linux partition starts at cylinder
+1352 (&gt; 1024). As others have suggested you can load linux from dos. 
+
+There is another trick that uses lilo and avoids booting
+dos. Mount your dos or windows partition /dev/hda1 on, say, /dos and
+copy /boot to /dos/boot (use cp -a). Then rm -rf /boot. Copy your kernel
+image vmlinuz to /dos/boot if it is not already there. Now make a
+symbolic link
+
+# ln -s /dos/boot /boot 
+
+and set up lilo as if your kernel image is in /boot. ie set /boot/vmliuz
+as the boot image and /dev/hda as boot device in lilo.conf. Run
+/sbin/lilo as usual, and I think you will be able to boot linux now. 
+
+This idea is taken from  /usr/src/linux/Documentation/ide.txt  
+I haven't tried it myself, so no guarantees. 
+
+
+Selva
+
+--------------------------------------------------------------------
+Next Technical Meeting: March 11 (Sat) 13:00 Temple University Japan
+* Topic: "What's new in Perl 5.6"
+Guest speaker: Simon Cozens (TLUG Perl guru)
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00049" HREF="msg00049.html">Re: tlug: "boot partition too big" while installing RH6.1j - part 2</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00045" HREF="msg00045.html">Re: tlug: "boot partition too big" while installing RH6.1j - part 2</A></STRONG>
+<UL><LI><EM>From:</EM> "Hector Akamine" &lt;akamine@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00047.html">Re: tlug: again:a simple but annoying prob.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00049.html">Re: tlug: "boot partition too big" while installing RH6.1j - part 2</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00046.html">Re: tlug: "boot partition too big" while installing RH6.1j - part 2</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00049.html">Re: tlug: "boot partition too big" while installing RH6.1j - part 2</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00048"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00048"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

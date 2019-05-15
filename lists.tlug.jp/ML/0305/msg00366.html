@@ -1,0 +1,192 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [OT] Terrific &#45; was: [tlug] email programs -->
+<!--X-From-R13: Fbq [pChvyyva <qrivaNfcnzpbc.arg> -->
+<!--X-Date: Tue, 27 May 2003 00:43:22 +0900 (JST) -->
+<!--X-Message-Id: 20030527002601.L48601@example.com&#45;pun.prv -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 5.2.1.1.0.20030526232739.009e7730@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00365.html">Date Prev</a>][<a href="msg00368.html">Date Next</a>][<a href="msg00365.html">Thread Prev</a>][<a href="msg00369.html">Thread Next</a>][<a href="maillist.html#00366">Date Index</a>][<a href="threads.html#00366">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [OT] Terrific - was: [tlug] email programs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 27 May 2003 00:43:22 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Tod McQuillin &lt;<A HREF="mailto:devin@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5BOT%5D%20Terrific%20-%20was%3A%20%5Btlug%5D%20email%20programs">devin@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [OT] Terrific - was: [tlug] email programs</strong></li>
+<li>References: &lt;<a href="msg00364.html">5.2.1.1.0.20030526232739.009e7730@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, 27 May 2003, John Limouze wrote:
+
+&gt; I have an  external ISDN TA that the people at NTT and
+&gt; SuSE support (my distro) tell me won't work because there are no
+&gt; drivers.
+
+This is the standard answer you will get from large companies.  It may in
+fact be true, but it so often isn't that I would ignore it straight off.
+
+&gt; But elsewhere (on SuSE's site for instance), I have read that no
+&gt; drivers are necessary for external TAs, just the correct init strings,
+&gt; which I took from the .inf files for windows.
+
+In general this is 100% true.  In fact, often you don't need any
+special init strings at all -- you can just treat the device as a generic
+modem with a Hayes AT command set.  A lot of the hayes AT commands have to
+do with things specific to modems, like error correction mode, tone vs.
+pulse dial, blind dialing, etc.  Flow control is still important, but many
+TAs default to the correct settings.
+
+&gt; No success though; with wvdial and kppp it stalls out waiting for an OK
+&gt; response to the initial AT command.
+
+This could be because the TA is not in the right mode to allow access from
+the serial port, or because the port speed is wrong, or maybe the TA is
+not doing full duplex echoing so your dialer doesn't see any response.  Or
+you could have a bad cable, the TA could be broken, kppp could be
+broken (or misconfigured), etc.
+
+&gt; Kinternet tells me it's connected to an IP address that I later
+&gt; saw listed as an example in one of the Kinternet config files.
+
+I've never used Kinternet so I can't comment on whether that's useful
+information or not -- sorry.
+
+What you need to do is start ruling out potential sources of the problem.
+
+Start with big categories that can rule out one or more entire lines of
+inquiry.  For example, if the same hardware works on the same machine with
+windows, then you know everthing at least works at the hardware level and
+can avoid doing things like swapping out cables.
+
+Try talking to the TA using a communications program like tip, cu or
+kermit (I particularly recommend kermit; it is a joy to use compared to
+tip or cu which require editing config files which can only be understood
+by careful reading of the man pages.  Of course you will also need to read
+docs for kermit, but it's pretty straightforward and there is built-in
+help.)
+
+Look at the manual for your TA (or search the web for a manual).  There
+should be a section describing the AT commands it accepts.  If it is at
+all vaguely hayes compatible then ATE1 should enable echoing and
+ATDT####-#### should initiate a call.  Type at the modem in your
+communications program and see if you get a response.  If you don't, try a
+different cable or a different port speed.  (you should use 8 data bits, 1
+stop bit, no parity)
+
+If you can talk to the TA, figure out how to initiate a call with it.
+Read the documentation for your dialer and make sure it's set up to use
+that method.
+
+It could also be a problem with Kinternet or kppp.  Read the docs for your
+pppd and chat programs and try using a ppp HOWTO to set it up without
+kppp.  This will involve reading docs and editing config files, but hey,
+that's what unix is about.  It won't be the last time you have to do it.
+
+I used pppd (and 'chat' as a dialer) on linux with an NTT TA for more than
+a year and I never had a problem with it (except my phone bills).
+-- 
+Tod McQuillin
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00364" href="msg00364.html">Re: [OT] Terrific - was: [tlug] email programs</a></strong>
+<ul><li><em>From:</em> John Limouze</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00365.html">Re: [OT] Terrific - was: [tlug] email programs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00368.html">Re: [tlug] email programs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00365.html">Re: [OT] Terrific - was: [tlug] email programs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00369.html">Re: [OT] Terrific - was: [tlug] email programs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00366"><strong>Date</strong></a></li>
+<li><a href="threads.html#00366"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

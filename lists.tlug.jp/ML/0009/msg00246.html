@@ -1,0 +1,185 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Network time protocol -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Wed, 20 Sep 2000 09:20:11 +0900 (JST) -->
+<!--X-Message-Id: 14792.699.789144.807704@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000919111115.A592@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: XFMail.20000919140739.s&#45;luppescu@example.com -->
+<!--X-Reference-Id: 20000920082335.A4701@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00245.html">Date Prev</A>][<A HREF="msg00247.html">Date Next</A>][<A HREF="msg00245.html">Thread Prev</A>][<A HREF="msg00247.html">Thread Next</A>][<A HREF="maillist.html#00246">Date Index</A>][<A HREF="threads.html#00246">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Network time protocol</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Network time protocol</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 20 Sep 2000 09:20:11 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00245.html">20000920082335.A4701@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00239.html">20000919111115.A592@example.com</A>&gt;&lt;<A HREF="msg00244.html">XFMail.20000919140739.s-luppescu@example.com</A>&gt;&lt;<A HREF="msg00245.html">20000920082335.A4701@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;FB53-C.A.DJ.DXAy5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "FB" == Frank BENNETT &lt;bennett@example.com&gt; writes:
+
+    FB&gt; On Tue, Sep 19, 2000 at 02:07:39PM -0500, s-luppescu@example.com wrote:
+
+    &gt;&gt; Theorically there is a problem when opening the NTP
+    &gt;&gt; server. Many of the cryptographic systems use the system time
+    &gt;&gt; to generate random numbers, and if 'attackers' can have access
+    &gt;&gt; to your exactly system time, they theorically can break your
+    &gt;&gt; cryptographic messages, etc. I recomment
+
+Let's get serious; the attackers cannot get the exact system time.
+What they can get is going to be plus/minus a few jiffies, and this is
+going to be random unless (a) they own your kernel scheduler or (b)
+you're using a coarse-grained time measure like Unix time.
+
+But this is very bad, anyway.  The reason is that as a source of
+randomness, time has none: it's a perfectly monotonic sequence.  As
+long as your system runs close to UTC the attacker can cut down the
+amount of "randomness" to _three_ bits (8 seconds) and even if you're
+15 minutes off that's only 10 bits of randomness.  Even using personal
+names for passwords has more security than that!
+
+Conclusion: replace any crypto[sic] that depends on system time.
+
+Kernel jiffies are another matter; they are much more fine-grained.
+Still, I wouldn't use the current jiffie counter as a random seed.
+
+    &gt;&gt; to close this to the internet, but if you don't run any
+    &gt;&gt; PGP/GPG/SSL big programs or/and don't have big concern about
+    &gt;&gt; your cryptography, it's okay to leave it open.
+
+    FB&gt; Wow again.  Reminds me of what Chuck Yaeger said about the
+    FB&gt; ejection seat in test aircraft: "A way of committing suicide
+    FB&gt; to keep from getting killed." I wonder what folks do about
+    FB&gt; this.
+
+See linux/drivers/char/random.c.
+
+    FB&gt; I remember seeing a note recently about using some facility
+    FB&gt; other than the time for the entropy pool in encryption on
+    FB&gt; Linux systems.  Maybe this is only a concern if your
+    FB&gt; particular setup draws on the time.
+
+The executive summary is that every time certain interrupts come in,
+the kernel mixes in the time in jiffies since the last such interrupt.
+The number of such additions to the entropy pool is monitored, and the
+kernel refuses requests for random numbers unless the estimate of the
+number of bits of entropy in the pool is greater than the number of
+random bits requested.
+
+Ted T'so believes "these numbers should be useful for the vast
+majority of purposes."  That's good enough for me ;-)
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00247" HREF="msg00247.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00239" HREF="msg00239.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00244" HREF="msg00244.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> s-luppescu@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00245" HREF="msg00245.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00245.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00247.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00245.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00247.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00246"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00246"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

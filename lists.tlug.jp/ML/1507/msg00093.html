@@ -1,0 +1,118 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] procfs pseudo&#45;file without a module load? -->
+<!--X-From-R13: Oxven Yhebtnar <nxven.xhebtnarNtznvy.pbz> -->
+<!--X-Date: Mon, 20 Jul 2015 10:07:40 +0900 -->
+<!--X-Message-Id: CAJMSLH7CPOJjdbwYVgE_n=XgDLa7ijxNa0Qj9L5TJ8EQx0&#45;_ow@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00092.html">Date Prev</a>][<a href="msg00094.html">Date Next</a>][<a href="msg00092.html">Thread Prev</a>][<a href="msg00094.html">Thread Next</a>][<a href="maillist.html#00093">Date Index</a>][<a href="threads.html#00093">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] procfs pseudo-file without a module load?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 20 Jul 2015 11:07:18 +1000</li>
+<li><strong>From</strong>: <strong>Akira Kurogane &lt;<a href="mailto:akira.kurogane@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20procfs%20pseudo-file%20without%20a%20module%20load%3F">akira.kurogane@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] procfs pseudo-file without a module load?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr">Hi TLUG&#39;ers. Long time no see. Things go well at MongoDB @ Sydney. I&#39;ll be back in Tokyo for a short visit in Sep too.<div><br></div><div>I have some discretionary time at the office for the next few days to hack whatever I like. I had an idea to add a procfs entry underneath the /proc/&lt;pid&gt; directory for my program.</div><div><br></div><div>E.g. </div><div><br></div><blockquote style="margin:0px 0px 0px 40px;border:none;padding:0px"><div><font face="monospace, monospace">~]$ nohup my_prog &gt; /tmp/my_prog.log 2&gt;&amp;1 </font></div><div><font face="monospace, monospace">[1] 2876</font></div><div><font face="monospace, monospace">~]$ ls /proc/2876</font></div><div><div><font face="monospace, monospace">total 0</font></div></div><div><div><font face="monospace, monospace">dr-xr-xr-x  2 akira akira 0 Jul 20 10:40 attr</font></div></div><div><div><font face="monospace, monospace">-rw-r--r--  1 akira akira 0 Jul 20 10:40 autogroup</font></div></div><div><div><font face="monospace, monospace">...</font></div></div><div><font face="monospace, monospace">...</font></div><div><div><font face="monospace, monospace">-r--r--r--  1 akira akira 0 Jul 20 10:40 statm</font></div></div><div><div><font face="monospace, monospace">-r--r--r--  1 akira akira 0 Jul 20 09:47 status</font></div></div><div><div><font face="monospace, monospace">-r--------  1 akira akira 0 Jul 20 10:40 syscall</font></div></div><div><div><font face="monospace, monospace">dr-xr-xr-x 35 akira akira 0 Jul 20 09:49 task</font></div></div><div><div><font face="monospace, monospace">-r--r--r--  1 akira akira 0 Jul 20 10:40 wchan</font></div></div></blockquote><div><br></div><div>I want to add my own entry in here, only under the /proc/&lt;pid&gt; directory of my program&#39;s process. E.g. a &quot;merged_conf&quot; pseudo-file which will reflect the config settings in effect.</div><div><br></div><blockquote style="margin:0px 0px 0px 40px;border:none;padding:0px"><div><font face="monospace, monospace">~]$ cat /proc/2876/merged_conf</font></div><div><font face="monospace, monospace">threads: 8</font></div><div><font face="monospace, monospace">bind_ports: 3401 3402</font></div><div><span style="font-family:monospace,monospace">~]$ </span></div></blockquote><div><br></div><div>I can make this, but the way I&#39;ve learnt takes the whole linux module building environment. And I don&#39;t feel I can add that prerequisite for others building the same project.</div><div><br></div><div>If anyone knows of an open source project that can use the procfs API without needing module loading could you please let me know? Or alternatively point me to an another project that did with kernel module loading- it could be effective enough proof that it&#39;s unavoidable.</div><div><br></div><div>Regards,</div><div><br></div><div>Akira</div></div>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00094" href="msg00094.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+<ul><li><em>From:</em> Akira Kurogane</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00092.html">Re: [tlug] apache vhosts logging</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00094.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00092.html">Re: [tlug] apache vhosts logging</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00094.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00093"><strong>Date</strong></a></li>
+<li><a href="threads.html#00093"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

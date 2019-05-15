@@ -1,0 +1,383 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: stripping HTML tags with Perl -->
+<!--X-From: Jake Morrison <jacob.morrison@example.com> -->
+<!--X-Date: Tue, 05 Dec 2000 11:47:34 +0800 -->
+<!--X-Message-Id: 3A2C6556.1B2D6F31@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20001204133053G.poulin@example.com -->
+<!--X-Reference-Id: 3A2C33F7.FA683194@example.com -->
+<!--X-Reference-Id: 20001204175106Q.poulin@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00057.html">Date Prev</A>][<A HREF="msg00058.html">Date Next</A>][<A HREF="msg00052.html">Thread Prev</A>][<A HREF="msg00053.html">Thread Next</A>][<A HREF="maillist.html#00059">Date Index</A>][<A HREF="threads.html#00059">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: stripping HTML tags with Perl</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: stripping HTML tags with Perl</strong></LI>
+<LI><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jacob.morrison@example.com">jacob.morrison@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 05 Dec 2000 11:47:34 +0800</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: Syntegra Asia</LI>
+<LI>References: &lt;<A HREF="msg00049.html">20001204133053G.poulin@example.com</A>&gt;	&lt;<A HREF="msg00050.html">3A2C33F7.FA683194@example.com</A>&gt; &lt;<A HREF="msg00052.html">20001204175106Q.poulin@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;GW1TZB.A.2iC.OiGL6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+This is answered in the FAQ that comes with Perl:
+
+----------------------------------------------
+How do I remove HTML from a string?
+
+The most correct way (albeit not the fastest) is to use HTML::Parser from CPAN. Another
+mostly correct way is to use HTML::FormatText which not only removes HTML but also attempts
+to do a little simple formatting of the resulting plain text.
+
+Many folks attempt a simple-minded regular expression approach, like s/&lt;.*?&gt;//g, but that
+fails in many cases because the tags may continue over line breaks, they may contain quoted
+angle-brackets, or HTML comment may be present. Plus folks forget to convert entities, like
+&amp;lt; for example.
+
+Here's one ``simple-minded'' approach, that works for most files:
+
+    #!/usr/bin/perl -p0777
+    s/&lt;(?:[^&gt;'"]*|(['"]).*?\1)*&gt;//gs
+
+If you want a more complete solution, see the 3-stage striphtml program in
+<A TARGET="_top" HREF="http://www.perl.com/CPAN/authors/Tom_Christiansen/scripts/striphtml.gz">http://www.perl.com/CPAN/authors/Tom_Christiansen/scripts/striphtml.gz</A> .
+
+Here are some tricky cases that you should think about when picking a solution:
+
+    &lt;IMG SRC = "foo.gif" ALT = "A &gt; B"&gt;
+
+    &lt;IMG SRC = "foo.gif"
+         ALT = "A &gt; B"&gt;
+
+    &lt;!-- &lt;A comment&gt; --&gt;
+
+    &lt;script&gt;if (a&lt;b &amp;&amp; a&gt;c)&lt;/script&gt;
+
+    &lt;# Just data #&gt;
+
+    &lt;![INCLUDE CDATA [ &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; ]]&gt;
+
+If HTML comments include other tags, those solutions would also break on text like this:
+
+    &lt;!-- This section commented out.
+        &lt;B&gt;You can't see me!&lt;/B&gt;
+    --&gt;
+
+---------------------------------------------------------
+I had to do this a while back, but without having perl
+availible on the target machine. So I used the Perl 
+Compatible Regular Expressions C library 
+(<A TARGET="_top" HREF="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/">ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/</A>).
+
+Pretty handy. But still considerably more painful than 
+the real thing. 
+
+Just for fun, here is the resulting program:
+
+#include &lt;stdio.h&gt;
+#include &lt;malloc.h&gt;
+#include &lt;assert.h&gt;
+
+#include &lt;pcre.h&gt;
+
+#define VECSIZE 60 
+#define BUFLEN 10000
+
+int debugMode = 0;
+
+void 
+print_re_error(int pairs) 
+{
+	switch (pairs) {
+	case PCRE_ERROR_NOMATCH:
+		fprintf(stderr, "No match.\n");
+		break;
+	case PCRE_ERROR_NULL:
+		fprintf(stderr, "One or more NULL input params.\n");
+		break;
+	case PCRE_ERROR_BADOPTION:
+		fprintf(stderr, "Invalid option specified.\n");
+		break;
+	case PCRE_ERROR_BADMAGIC:
+		fprintf(stderr, "Bad magic.\n");
+		break;
+	case PCRE_ERROR_UNKNOWN_NODE:
+		fprintf(stderr, "Unknown node.\n");
+		break;
+	case PCRE_ERROR_NOMEMORY:
+		fprintf(stderr, "Out of memory.\n");
+		break;
+	default:
+		fprintf(stderr, "Unknown error %d.\n", pairs);
+	}
+}
+
+pcre*
+re_compile(const char* re_str, int options) 
+{
+	pcre* re = NULL;
+	const char *errptr = NULL;
+	int erroffset = 0;
+
+#ifdef RE_DEBUG
+	printf("re_compile&gt; re_str: %s\n", re_str);
+#endif
+	re = pcre_compile(re_str, options, &amp;errptr, &amp;erroffset, NULL);
+	if (re == NULL) {
+		fprintf(stderr, "pcre_compile: error at offset %d: %s\n", erroffset, errptr);
+		return ((pcre*)NULL);
+	}
+#ifdef RE_DEBUG
+	printf("re_compile&gt; pcre_compile succeeded\n");
+#endif
+	return (re); 
+}
+
+int 
+strip_html(char* dest, const char* src, size_t src_len, 
+		   pcre *re, pcre_extra *extra, int debug);
+
+int 
+main (int argc, char *argv[])
+{
+	pcre_extra *extra = NULL;
+	const char* study_error = NULL;
+	pcre *html_re = NULL;
+
+	const char* html_re_str =  "&lt;(?:[^&gt;'\"]*|(['\"]).*?\\1)*&gt;";
+	int rc;
+
+	char source[BUFLEN]; 
+	char dest[BUFLEN]; 
+
+	html_re = re_compile(html_re_str, 0);
+	if (html_re == NULL) {
+		exit (3);
+	}
+	extra = pcre_study(html_re, 0, &amp;study_error);
+	if (study_error != NULL) {
+		fprintf(stderr, "pcre_study: %s\n", study_error);
+	}
+
+	while ( (fgets(source, BUFLEN, stdin)) != NULL) { 
+		rc = strip_html(dest, source, strlen(source), 
+						html_re, extra, debugMode);
+		if (rc != 0) {
+			fprintf(stderr, "Problem parsing string %s\n", source);
+			continue;
+		}
+		printf("%s", dest);
+	} 
+
+	pcre_free(extra);
+	pcre_free(html_re);
+
+	exit (0);
+}
+
+/* Strip HTML tags from source, copying to dest buffer */
+int
+strip_html(char* dest, const char* src, size_t src_len, 
+		   pcre *re, pcre_extra *extra, int debug)
+{
+	int ovector[VECSIZE];  /* List of matches */
+	int pairs = 0;         /* Number of matches */
+	int start_offset = 0; /* Point in src string to start searching */
+	int flags = 0; /* Regex matching flags */
+	char* dest_cur = dest; /* Pointer to current location in dest buffer */
+
+#ifdef DEBUG
+	int i; /* Utility counter */
+	char buf[BUFLEN]; /* buffer used for debugging */
+#endif
+
+	assert(re);
+
+#ifdef DEBUG
+		fprintf(stderr, "strip_html&gt; parsing string %s\n", src); 
+#endif
+
+	if (!src &amp;&amp; src[0]) {
+#ifdef DEBUG
+		fprintf(stderr, "strip_html&gt; Null input string\n"); 
+#endif
+		return (0);
+	}
+
+	while (1) {
+		pairs = pcre_exec(re, extra, src, src_len, start_offset, 
+						  flags, ovector, VECSIZE);  
+		if (pairs &lt; 0) {
+			if (pairs == PCRE_ERROR_NOMATCH) {
+#ifdef DEBUG
+				fprintf(stderr, 
+						"strip_html&gt; No match for string '%s'.\n", 
+						src + start_offset);
+#endif
+
+				/* No HTML found in remainder of string, 
+				   just copy input to output */
+				strcpy(dest_cur, src + start_offset);
+				return (0);
+			}
+			else {
+				if (debug) {
+					fprintf(stderr, 
+						"strip_html: Problem running regex for string %s: ", 
+						src);
+					print_re_error(pairs);
+				}
+				return (1);
+			}
+		}
+		else if (pairs == 0) {
+			/* This should not happen */
+#ifdef DEBUG
+				fprintf(stderr, 
+					"strip_html&gt; More than %d matches for string %s\n", 
+					VECSIZE / 3, src);
+#endif
+			pairs = VECSIZE / 3;
+		}
+		else {
+			/* This should always be 1 for this regex */
+#ifdef DEBUG
+			fprintf(stderr, "strip_html&gt; Matched %d pair(s)\n", pairs); 
+#endif
+		}
+
+#ifdef DEBUG
+		fprintf(stderr, "strip_html&gt; ovector[0]: %d\n", ovector[0]);
+		fprintf(stderr, "strip_html&gt; ovector[1]: %d\n", ovector[1]);
+
+		for (i = 0; i &lt; pairs; i++) {
+			int len;
+			fprintf(stderr, "strip_html&gt; pair: %d\n", i);
+			len = pcre_copy_substring(src, ovector, pairs, i, 
+									  buf, sizeof(buf));
+			if (len &lt; 0) {
+				fprintf(stderr, 
+						"strip_html&gt; Problem getting substring %d: %d\n", i, len);
+			}
+			else {
+				fprintf(stderr, 
+						"strip_html&gt; Matched string %d: %s\n", i, buf);
+			}
+		}
+#endif
+
+		/* Copy part before the match */
+		memcpy(dest_cur, src + start_offset, ovector[0] - start_offset); 
+
+		/* Update current location in destination buffer */
+		dest_cur += ovector[0] - start_offset;
+
+#ifdef DEBUG
+		fprintf(stderr, "dest: %s\n", dest);
+#endif
+
+		/* Update offset to point after data */
+		start_offset = ovector[1];
+	}
+  
+	return (0);
+}
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00049" HREF="msg00049.html">stripping HTML tags with Perl</A></STRONG>
+<UL><LI><EM>From:</EM> "Drew C. Poulin" &lt;poulin@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00050" HREF="msg00050.html">Re: stripping HTML tags with Perl</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;fredric.fredriksson@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00052" HREF="msg00052.html">Re: stripping HTML tags with Perl</A></STRONG>
+<UL><LI><EM>From:</EM> "Drew C. Poulin" &lt;poulin@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00057.html">Re: stripping HTML tags with Perl</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00058.html">Re: stripping HTML tags with Perl</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00052.html">Re: stripping HTML tags with Perl</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00053.html">stripping HTML tags with Perl</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00059"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00059"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

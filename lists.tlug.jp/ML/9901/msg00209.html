@@ -1,0 +1,229 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Acrobat reader and libXt -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Sun, 17 Jan 1999 18:04:42 +0900 -->
+<!--X-Message-Id: 13985.42897.529312.82809@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.990117010900.563I&#45;100000@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.990117015730.2365B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00208.html">Date Prev</A>][<A HREF="msg00210.html">Date Next</A>][<A HREF="msg00206.html">Thread Prev</A>][<A HREF="msg00256.html">Thread Next</A>][<A HREF="maillist.html#00209">Date Index</A>][<A HREF="threads.html#00209">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Acrobat reader and libXt</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG mailing list &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Acrobat reader and libXt</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 17 Jan 1999 18:04:17 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00206.html">Pine.LNX.3.96.990117015730.2365B-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00205.html">Pine.LNX.3.96LJ1.1b7.990117010900.563I-100000@example.com</A>&gt;&lt;<A HREF="msg00206.html">Pine.LNX.3.96.990117015730.2365B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "kyomu" writes:
+
+    kyomu&gt; On Sun, 17 Jan 1999, Jonathan Byrne wrote:
+
+    &gt;&gt; I just installed Acrobat reaader for Linux 3.01, and when I run
+    &gt;&gt; it, it says "can't load libary 'libXt.s0.6' and dies.  Can
+    &gt;&gt; somebody clue me in as to what libXt.so.6 is, where it should
+    &gt;&gt; be, and if it's normal for that to not be in TurboLinux
+    &gt;&gt; (3.0-J)?
+
+Just blow off the libXt stuff and wait for Adobe to get its shit
+together and put out a glibc version of Acrobat is my advice.  There
+may already be one on the server, go look.
+
+Or use gv over Aladdin Ghostscript &gt;= 5.10.
+
+If you really want to know, "read on, MacDuff".
+
+    &gt;&gt; Oh, and what to do about getting libXt.so.6, too :-)
+
+    kyomu&gt;         i am not really sure but....  but it should be in
+    kyomu&gt; your /usr/X11R6/lib/ or in your /usr/ix86-linuxaout/lib/.
+
+    kyomu&gt;         It usually gos in /usr/ix86-linuxaout/lib, and it is
+    kyomu&gt; used to provide backwards compatibility for dynamically
+    kyomu&gt; linked a.out format X binaries.  (i think...)
+
+I beg to differ :-)  First of all, it has nothing to do with a.out
+format.  There probably is a backwards-compatibility issue here, but
+it's H.J.Liu libc5 against the forces of Good and Light, aka Uli
+Drepper's GNU libc "ta da!" Version Two-point-X.
+
+(1) Where do libraries live?
+
+Libraries can live almost anywhere.  Fortunately, the ones that do
+live in arbitrary places are either statically linked or come with
+wrapper scripts to load them up (eg the original liblocale.so for
+muriyari Netscrap).
+
+DLLs (.so) live where the dynamic linker ld.so can find them.  This is
+configured via /etc/ld.so.conf.  `cat /etc/ld.so.conf' will give you a
+list of the standard directories where .so's are found.  `man ld.so'
+should (and does on Debian systems) give you details about hairy
+options and environment variables to modify this basic behavior, but
+probably will not (TurboLinux should be taken out behind the woodshed
+about its documentation, /usr/doc is populated with all sorts of
+wonderful information about window managers I don't use, but nothing
+about ld.so, and `man' and `info' often come up empty...).
+
+To find out if ld.so knows about a particular library, and if so where
+the versions it will use live, use `ldconfig -p' (a non-root user may
+need to do `/sbin/ldconfig -p'):
+
+		     ldconfig -p | fgrep libXt.so
+
+Output is omitted to encourage you to try this out at home.  It's not
+dangerous, really.
+
+(2) What does "can't load library ..." mean?
+
+It means "I can't find a file with the name ... that matches the
+object format (a.out DLL or ELF) and version information (major should
+match exactly, IIRC, and minor should be no smaller) requested by the
+executable being loaded."  This is particularly confusing with respect
+to the X11 libraries, since the major number of the .so did not get
+incremented when the shift to glibc was made.  It is often the case
+that an apparently appropriate library exists but does not satisfy
+version information.
+
+(3) What is libXt.so?
+
+This is the library implementing the Xt "X toolkit" library, the
+granddaddy of all X toolkits.  Most X toolkits are built either on top
+of Xt (the MIT Athena widgets) or on a modified version of Xt (Motif).
+Without this library, your mouse won't point, your events won't
+happen, and in general you may as well give up, or you're stuck
+programming in Xlib calls (the GUI equivalent of assembly language).
+
+(4) Where does libXt.so live?
+
+Normally in /usr/X11R6/lib/.  Possibly in /usr/lib/libc5-compat (IIRC,
+I know the theory, not the practice, and that may be a Debianism) if
+you have a system which is primarily glibc but is supporting binaries
+linked with libc5.
+
+(5) Is it normal for that not to be in TL-3.0J?
+
+No, that's very abnormal.  However, the message didn't say it couldn't 
+_find_ libXt.so, it said it couldn't _load_ it.  Probably due to the
+libc5 vs. glibc conflict.  TL-3.x systems are glibc through-and-through;
+(since I accidentally got dropped from the J-beta list) I don't have
+one to check how (if) it supports libc5 backward compatibility,
+which is especially difficult for X.
+
+But Scott will be by shortly to explain and/or fix all this, I'm sure.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: 14 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+*** it will will be Jan 14 (Thu), as Jan 15 (Fri) is a natl holiday
+Next Technical Meeting: Feb 13 (Sat), 12:30    ace: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00256" HREF="msg00256.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00205" HREF="msg00205.html">tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00206" HREF="msg00206.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> =?iso-2022-jp?Q?=1B$B5uL5=1B=28B?= &lt;kyomu@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00208.html">Re: tlug: 2.2.0-pre? kernels on Sparc</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00210.html">tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00206.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00256.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00209"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00209"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

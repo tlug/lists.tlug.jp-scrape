@@ -1,0 +1,180 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: On bug reporting style [was: Re: Netscape 3.0] -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 17 Sep 1996 05:32:35 GMT -->
+<!--X-Message-Id: m0v2sdG&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.95.960917131307.820A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00039.html">Date Prev</A>][<A HREF="msg00041.html">Date Next</A>][<A HREF="msg00045.html">Thread Prev</A>][<A HREF="msg00041.html">Thread Next</A>][<A HREF="maillist.html#00040">Date Index</A>][<A HREF="threads.html#00040">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: On bug reporting style [was: Re: Netscape 3.0]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: On bug reporting style [was: Re: Netscape 3.0]</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 17 Sep 96 14:23 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00036.html">Pine.LNX.3.95.960917131307.820A-100000@example.com</A>&gt; (message from Shige Abe on Tue, 17 Sep 1996 13:14:03 +0900 (JST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Shige" == Shige Abe &lt;sabe@example.com&gt; writes:
+
+    Shige&gt; On Tue, 17 Sep 1996, Stephen J. Turnbull wrote:
+
+    &gt;&gt; Hmm.  I don't know of any pages where the buttons are labelled
+    &gt;&gt; in Japanese.  I can't check my proposed solution or the bug
+
+    Shige&gt; Ok, please try:
+
+    Shige&gt;   <A TARGET="_top" HREF="http://www.bekkoame.or.jp/~mizukawa/etc/o-search.html">http://www.bekkoame.or.jp/~mizukawa/etc/o-search.html</A>
+ 
+Arigatou.  We got good news, and we got bad news.  The good news is
+that I've reproduced the problem, although with Netscape 2.02, and
+futzing with the Japanese fonts does *not* change the bottons, so they 
+must use resources elsewhere even though they appear within the
+document display area.
+
+Looking in Netscape.ad for 3.0beta4, we have
+
+! ============================================================================
+! Fonts in the widgets.
+! These fonts are all down in Motif land, and thus are not controlled by the
+! font selector on the Preferences dialog.  That applies only to fonts in
+! the document display area.
+! ============================================================================
+
+which is even better news, I was RIGHT!!  :-)  Some more possibly
+relevant pieces---
+
+*fontList:			-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-*
+
+Probably irrelevant, since the buttons seem to be Courier font.
+
+*XmTextField.fontList:		-*-courier-medium-r-*-*-*-120-*-*-*-*-iso8859-*
+*XmText.fontList:		-*-courier-medium-r-*-*-*-120-*-*-*-*-iso8859-*
+*XmList*fontList:		-*-courier-medium-r-*-*-*-120-*-*-*-*-iso8859-*
+
+* popup*fontList:		-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-*
+*docinfoButton.fontList:      -*-helvetica-medium-r-*-*-*-120-*-*-*-*-iso8859-*
+*fontSize.XmPushButtonGadget.labelType: STRING
+
+You could try the *XmTextField.fontList resource, but probably the
+resource name ought to have Button in it.  So *XmPushButton.labelFont
+or *XmPushButtonGadget.labelFont, or either of those with "fontList"
+instead of "labelFont".  (Anybody have the Motif docs and know what
+the font resource for a XmPushButton is?)  *docinfoButton.fontList is
+helvetica by default, so I don't think that's right.  Lots of cut and
+try here, I'm afraid, and I haven't got time for it.
+
+As for what font you want to put in there, try
+-*-*-*-*-*-*-*-120-*-*-*-*-jisx0208-* for starters.  Or fire up
+xlsfonts and look around for jisx0208 fonts.
+
+I don't know that this will work, unfortunately.  One would hope that
+Buttons can have labels in any character set, but I don't know if it's 
+true (I think it is).  Good luck.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00036" HREF="msg00036.html">Re: On bug reporting style [was: Re: Netscape 3.0]</A></STRONG>
+<UL><LI><EM>From:</EM> Shige Abe &lt;sabe@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00039.html">Re: On bug reporting style [was: Re: Netscape 3.0]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00041.html">Re: On bug reporting style [was: Re: Netscape 3.0]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00045.html">Re: On bug reporting style [was: Re: Netscape 3.0]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00041.html">Re: On bug reporting style [was: Re: Netscape 3.0]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00040"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00040"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: A couple of questions about Unicode -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Sun, 18 Jan 1998 23:45:40 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xu8sG&#45;00012bC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.95.980112000142.2645C&#45;100000@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.980115112345.186A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00201.html">Date Prev</A>][<A HREF="msg00203.html">Date Next</A>][<A HREF="msg00148.html">Thread Prev</A>][<A HREF="msg00203.html">Thread Next</A>][<A HREF="maillist.html#00202">Date Index</A>][<A HREF="threads.html#00202">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: A couple of questions about Unicode</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: A couple of questions about Unicode</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 19 Jan 1998 13:31:48 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00148.html">Pine.LNX.3.96.980115112345.186A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00089.html">Pine.LNX.3.95.980112000142.2645C-100000@example.com</A>&gt;&lt;<A HREF="msg00148.html">Pine.LNX.3.96.980115112345.186A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "David" == J David Beutel &lt;jdb@example.com&gt; writes:
+
+    David&gt; On Mon, 12 Jan 1998, Gaspar Sinai wrote:
+&gt;   o there is a codespace where two 16-bit characters are used to map a 
+&gt;     portion of the UCS4 space into UCS2.
+&gt;   o if you want to process  some Indian or Arabic scripts you need to
+&gt;     combine two 16-bit unicode character to form a single glyph.
+
+Don't forget that various scripts, even Latin (and certainly the voice
+marks used in half-width katakana are available), have accents and so
+on that can be used to compose characters (I imagine it's possible to
+write French using "ASCII" plus accents, though noone would want to),
+and that there are all those Hangul jamo.  These are optional from the 
+point of view of composing or transliterating documents for storage or 
+transmission as Unicode without semantic loss, but essential for
+roundtripping.
+
+    David&gt; I still have difficulty believing that such a nasty hack
+    David&gt; was done.  Can we pretend that it wasn't?
+
+_You_ can _do_ anything you want.  You just can't say you're
+supporting Unicode.  You can get rid of a lot of the functionality you
+wish would go away by refusing to support UCS-2 level 2 or 3.
+
+You can call it a "nasty hack" if that makes you feel better.  But I
+find it very difficult to imagine that at this stage of linguistic
+science we know enough to create a single Unicode that handles all
+natural languages without some nasty hacks.  And remember, Unicode is
+not just for display, but also for input and transmission, which have
+problems of their own.
+
+For example, suppose you implement a French input method for US
+keyboards with the internal code being Unicode.  Then it makes sense
+for an &lt;accented a&gt; to be represented in the input stream as &lt;'a&gt;.  It 
+may make sense for that accent to be a separate code point so that
+both &lt;accented a&gt; and "'a" can be typed in two keystrokes.  I don't
+know, I'm not a specialist.  I don't want to restrict what specialists 
+can do, however, especially in these complicated scripts like Hangul
+and Devanagari.  Watching Devanagari be input reminds me of ants at a
+picnic, the way the characters go back and forth in the display while
+there is a definite sense of forward progress.
+
+Unicodes V.1 and V.2 do very well at handling almost everything that
+is useful to a systems programmer in a two-byte widechar format, and
+adds some escape clauses that allow Unicode to be useful in 99% of the
+rest of linguistic situations at the expense of admitting multi-byte
+representations.
+
+&gt; o Unicode is not consistent to the rules it set to itself. You would 
+&gt;   expect that the wide ASCII characters would have the ASCII values just
+&gt;   like wide Cyrillic or Greek but this is not the case. For some strange 
+&gt;   reason they kept the wide ASCII.
+
+As David says, I believe this is due to the "source separation rule".
+Source separation does not apply to Cyrillic and Greek because there's
+only one copy of each in JIS X 0208.
+
+    David&gt; I agree that wide ASCII does not deserve its own
+    David&gt; encoding--it should be a font thing.  I don't know about
+    David&gt; wide Cyrillic nor Greek, but my understanding about the
+    David&gt; wide ASCII is that Unicode includes distinct encodings for
+    David&gt; all chars of all national character sets, including JIS X
+    David&gt; 0208, which has both normal and wide ASCII.  No chars
+    David&gt; within a single national char set were unified, so that
+    David&gt; encoding translations of any such set to Unicode and back
+    David&gt; will be identical.  I think it's a good rule.  Of course,
+    David&gt; Shift-JIS is not a national char set.
+
+Be careful.  Shift-JIS is an encoding which contains code points for
+several national character sets.  As far as I know, round-tripping to
+Unicode and back to SJIS is possible.
+
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00148" HREF="msg00148.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+<UL><LI><EM>From:</EM> "J. David Beutel" &lt;jdb@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00201.html">Re: tlug: SCSI Configuration</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00203.html">UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00148.html">Re: tlug: A couple of questions about Unicode</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00203.html">UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00202"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00202"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] iptables and port&#45;forwarding concerns -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Thu, 22 Apr 2004 00:19:00 +0200 -->
+<!--X-Message-Id: 20040422001900.130cfff5.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00053.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00176.html">Date Prev</a>][<a href="msg00178.html">Date Next</a>][<a href="msg00176.html">Thread Prev</a>][<a href="msg00178.html">Thread Next</a>][<a href="maillist.html#00177">Date Index</a>][<a href="threads.html#00177">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] iptables and port-forwarding concerns</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 22 Apr 2004 00:19:00 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20iptables%20and%20port-forwarding%20concerns">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] iptables and port-forwarding concerns</strong></li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hi again,
+
+OK, here's another excuse for Josh to have a good laugh while someone points
+out what an idiot I am :)
+
+First a bit of background info.
+
+The IP range I've assigned to my LAN is 192.168.0.0/23. The local IP address
+of the box facing the 'net is 192.168.1.1, it's doing IP masquerading for
+the other boxen in the LAN, its 'net-facing interface is ppp0 and the
+LAN-facing interface is eth0. Its name is 'spider'.
+
+The box on the LAN which needs ports facing the 'net is the laptop with
+local IP address 192.168.0.3 and it's called 'fly'. It's running KPhone
+(VoIP SIP phone to screw France Telecom out of as much cash as possible
+while talking with a client in Paris over the 'net for free-as-in-beer) and
+needs to be reachable from the outside on TCP (or UDP, I forget which but it
+doesn't matter for now, let's assume TCP) ports 10000 through 10100.
+
+The following assumptions are what I've already tried - unsuccessfully - so
+I must be missing something somewhere, and I hope I'll be set straight.
+
+There are no rules at all in the nat table except:
+
+iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+
+ ...which, with a few other things elsewhere, gets the IP masquerading
+working.
+
+Spider needs to be told that anything coming in through ppp0 on tcp ports
+10000 through 10100 needs to be relayed directly to the corresponding ports
+on fly, so I'd have to insert this rule in spider's nat table:
+
+iptables -t nat -I POSTROUTING 1 -i ppp0 -p tcp --dports 10000:10100 \ 
+  -j DNAT --to-destination 192.168.0.3
+
+Also, spider needs to know that anything coming from tcp ports 10000-10100
+on fly and going outside needs to go out from the same ports on spider:
+
+iptables -t nat -I PREROUTING 1 -i eth0 -p tcp -s 192.168.0.3 \
+  -d ! 192.168.0.0/23 --dports 10000:10100 \
+  -j SNAT --from-destination my.pub.lic.ip
+
+
+Four questions:
+
+1) Does this look right so far?
+
+2) How is this going to interact with IP masquerading and should the
+   &quot;-j DNAT&quot; rule appear before the &quot;-j MASQUERADE&quot; rule or after?
+
+3) spider runs its own software, including Apache, an MTA, BIND and a few
+   other odds and ends. What happens if one of these applications tries to
+   open a connection with a remote host from a TCP port in the range
+   forwarded to fly, are packets coming back going to be directed to fly or
+   is the IP routing in the Linux kernel (2.4.25) smarter than that?
+
+4) Given that I have a static public IP address, is IP masquerading the
+   right solution for distributing the Internet connection to the LAN or
+   should I be looking at full NAT instead in the first place?
+
+Thanks in advance.
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.5)
+--------------------------------------------------------------
+In most countries selling harmful things like drugs is punishable.
+Then how come people can sell Microsoft software and go unpunished?
+        -- Hasse Skrifvars
+</pre>
+<p><strong>Attachment:
+<a href="pgp00053.pgp" ><tt>pgp00053.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00178" href="msg00178.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> David Santinoli</li></ul></li>
+<li><strong><a name="00180" href="msg00180.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00200" href="msg00200.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00176.html">[tlug] Dell Axim X5</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00178.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00176.html">[tlug] Dell Axim X5</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00178.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00177"><strong>Date</strong></a></li>
+<li><a href="threads.html#00177"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

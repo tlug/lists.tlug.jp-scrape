@@ -1,0 +1,205 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RPM standalone, xv 3.10a, and DLLs -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 29 Aug 1996 04:51:09 GMT -->
+<!--X-Message-Id: m0uvz21&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00118.html">Date Prev</A>][<A HREF="msg00120.html">Date Next</A>][<A HREF="msg00114.html">Thread Prev</A>][<A HREF="msg00121.html">Thread Next</A>][<A HREF="maillist.html#00119">Date Index</A>][<A HREF="threads.html#00119">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RPM standalone, xv 3.10a, and DLLs</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>RPM standalone, xv 3.10a, and DLLs</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 29 Aug 96 13:48 JST</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+... that was Cool! it ran on Linux ...
+
+After a bit of pulling and tugging, I got 'rpm' (the RedHat package
+manager) to run on my Slackware/JE/miscellaneous system.  Sorry, I
+forget exactly what pulling and tugging was involved; I seem to recall 
+that I grabbed rpm-cpio, then had to get a newer version of cpio.  A
+good place for GETTING-GNU-SOFTWARE (at least from Kanto and Tohoku
+.ac.jp sites) is
+
+     file://sunsite.sut.ac.jp/pub/archives/gnu/cpio-2.4.2.tar.gz
+
+SunSite.SUT is not a particularly good place for Linux stuff, it only
+mirrors sunsite.unc.edu, and seems to lag that by a bit (I seem to
+recall that kernels 2.0.14 and 2.0.15 are out already, but SunSite.SUT
+only has 2.0.13).  But the connection is FAST.
+
+Next I grabbed a bunch of RPMs off the RedHat mirror on
+ftp.lab.kdd.co.jp.  "This is great," I thought.  But then...
+KA-CHUNGK:  xv barfed up
+
+xv: can't load library 'libjpeg.so.5'
+
+OK, so I need another DLL.  Hah!  Go ahead, find one.  (JWT is in fine
+shape, maybe, there's a Czech site distributing Sparc libjpeg.sos in
+RPM format).  I couldn't find it on either ftp.lab.kdd or even
+ftp.redhat.com.  Archie didn't know nothing, neither did InfoSeek or
+Alta Vista.  Alright, that Czech site had SRPMs for JPEG-6a (I've
+already built the JPEG libs for Ghostscript, but I never built a
+*shared* lib---supposed to be TAIhen).  But apparently the comments
+are in Czech or something, and RPM didnae laik i' wan bit, Captan.
+
+So I went to my source, and did "cp Makefile Makefile.so".  I added
+
+libjpeg.so: $(LIBOBJS)
+	$(RM) libjpeg.so
+	$(LN) -o libjpeg.so -shared $(LIBOBJS)
+
+and did "make -f Makefile.so libjpeg.so".  Then "cp libjpeg.so
+/lib/libjpeg.so.6.1;ldconfig;xv" and xv barfed again.  OK, so I did
+"ln -s libjpeg.so.6.1 /lib/libjpeg.so.5", and xv loaded!!!  And xv
+displayed GIFs!!! and xv displayed XBMs!!! and xv exited with a fatal
+error on a JPEG.  All my genki drained out.  But wait, here's a Clue.
+
+xv: can't resolve symbol 'jpeg_create_decompress'
+
+Trying nm on the .so, I got a reference to 'jpeg_CreateDecompress'.
+That's right, JPEG-6 is not backward compatible; I remember that!  But
+I don't have a copy of JPEG-5, so I gotta go get one.  ftp ... 
+./configure ... mule Makefile.so ... make ... cp ... ldconfig ... xv
+---and xv barfed again on the ld.so.  OK, so "ln -s libjpeg.so.5.1
+/lib/libjpeg.so.5; ldconfig; xv" and Viola!
+
+Does anybody know anything about making jump tables for ELF shared
+libraries?  :-)
+
+Hmm ... let's see, since nm works, maybe ...
+
+Good grief, if the usual invocation to link 'djpeg' is
+
+gcc  -o djpeg djpeg.o wrppm.o wrgif.o wrtarga.o wrrle.o wrbmp.o \
+        rdcolmap.o cdjpeg.o libjpeg.a
+
+then
+
+gcc  -o djpeg djpeg.o wrppm.o wrgif.o wrtarga.o wrrle.o wrbmp.o \
+        rdcolmap.o cdjpeg.o /lib/libjpeg.so.6
+
+gives a working executable!  This is like magic!!!!  Note:
+
+bash# ls -l djpeg*
+-rwxr-xr-x   1 root     root        23520 Aug 29 13:35 djpeg
+-rwxr-xr-x   1 root     root        93724 Aug 29 13:33 djpeg-static
+-rw-r--r--   1 301      20          18736 Jan  8  1996 djpeg.c
+-rw-r--r--   1 root     root        10656 Aug 29 13:30 djpeg.o
+
+So libxxx.so can function as its own jump table.
+
+What's the big deal about shared libs?  Did the move from COFF to ELF
+really make it that easy, or is it something to do with making a
+shared lib that you can distribute to other people?  I'm going to have
+to see if I can build Ghostscript with shared JPEG, PNG, and Zlib
+libs....
+
+... Cool!  Linux works on anything! ....
+
+Oh, by the way, xv 3.10a is neat, a big improvement in user interface
+over 3.0.  :-)  If you're using a previous version of xv, it's worth
+an upgrade.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00118.html">Re: Zaurus</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00120.html">Re: MO SCSI Drive problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00114.html">Re: Community</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00121.html">Swapping over Ethernet?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00119"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00119"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

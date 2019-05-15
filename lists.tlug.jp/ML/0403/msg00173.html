@@ -1,0 +1,238 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Fwd:  Re: Suse blues&#45;progress? -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNtzk.ng> -->
+<!--X-Date: Mon, 8 Mar 2004 23:12:59 +0100 -->
+<!--X-Message-Id: 20040308221259.GC9269@example.com&#45;a&#45;geek.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200403090003.28622.paul@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00172.html">Date Prev</a>][<a href="msg00175.html">Date Next</a>][<a href="msg00169.html">Thread Prev</a>][<a href="msg00175.html">Thread Next</a>][<a href="maillist.html#00173">Date Index</a>][<a href="threads.html#00173">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Fwd:  Re: Suse blues-progress?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 8 Mar 2004 23:12:59 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Fwd%3A%20%20Re%3A%20Suse%20blues-progress%3F">ranma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Fwd:  Re: Suse blues-progress?</strong></li>
+<li>References: &lt;<a href="msg00169.html">200403090003.28622.paul@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.5.1+cvs20040105i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+paul arenson wrote:
+
+&gt; arenson@example.com:~&gt; strace -econnect cannastat
+&gt; connect(3, {sa_family=AF_UNIX, path=&quot;/tmp/.iroha_unix/IROHA&quot;}, 24) = 0
+&gt; connect(4, {sa_family=AF_UNIX, path=&quot;/var/run/.nscd_socket&quot;}, 110) = 0
+&gt; connect(3, {sa_family=AF_UNIX, path=&quot;/tmp/.iroha_unix/IROHA&quot;}, 24) = 0
+&gt; connect(3, {sa_family=AF_UNIX, path=&quot;/tmp/.iroha_unix/IROHA&quot;}, 24) = 0
+&gt; Error Disconnected
+&gt; arenson@example.com:~&gt;
+
+This is weird.  The connect to the socket works just fine, so it does
+'talk' to the cannaserver, but still says &quot;Error Disconnected&quot;.
+I am unable to get my cannaserver into a state where it does this.
+
+My guess is that something in the early handshake between client and
+server fails.
+
+To get more info I'd suggest the following:
+
+Open Konsole.
+Use su to get root (Enter su in Konsole, hit return, enter root
+password, hit return).
+Use &quot;cannakill&quot; to stop the running cannaserver.
+Use &quot;/usr/sbin/cannaserver -d -u wnn&quot; to start cannaserver in debug mode.
+Open another Konsole.
+Run &quot;strace -econnect cannastat&quot;.
+(Should be the same as above, but lets expect the worst for now)
+Have a look at the debug output in the Konsole running cannaserver.
+
+This is what I get:
+|辞書ホームディレクトリィ = /var/lib/canna/dic
+|My name is melchior
+|今からソケットを作る
+|ファイル名:[/tmp/.iroha_unix/IROHA]
+|ＵＮＩＸドメインはできた
+|ソケットの準備はできた
+|
+|select()で待ちを開始
+|select() returned 1
+|クライアントとの接続に成功, fd=4
+|
+|select()で待ちを開始
+|select() returned 1
+|EUCプロトコルのリクエストを解析, 長さ=18
+|Client: &lt;@&gt; [1]
+|Now Call ir_initialize
+|セッションを開く
+|UserName:[ranma]
+|client:hi[3],lo[3]
+|server:hi[3],lo[3]
+|PROTOCOL.Version[3:3]
+|辞書ホームディレクトリィ：user/ranma:canna
+|セッションの開始に成功
+|
+|select()で待ちを開始
+|select() returned 1
+|クライアントへの返信が完了, fd=4
+|
+|select()で待ちを開始
+|select() returned 1
+|ワイドプロトコルのリクエストを解析, 長さ=16
+|Client: &lt;ranma@example.com(UNIX)&gt; [0x22:0x0]
+|Now Call irw_notice_group_name
+|group name = &quot;users&quot;
+|辞書ホームディレクトリィ：user/ranma:group/users:canna
+|
+|select()で待ちを開始
+|select() returned 1
+|クライアントへの返信が完了, fd=4
+|
+|select()で待ちを開始
+|select() returned 1
+|ワイドプロトコルのリクエストを解析, 長さ=4
+|Client: &lt;ranma@example.com(UNIX)&gt; [0x1:0x1]
+|Now Call GetServerInfo
+|
+|select()で待ちを開始
+|select() returned 1
+|クライアントへの返信が完了, fd=4
+|
+|select()で待ちを開始
+|select() returned 1
+|ワイドプロトコルのリクエストを解析, 長さ=4
+|Client: &lt;ranma@example.com(UNIX)&gt; [0x2:0x0]
+|Now Call irw_finalize
+|セッションを閉じる
+|
+|select()で待ちを開始
+|select() returned 1
+|クライアントへの返信が完了, fd=4
+|クライアントとの接続を切る, fd=4
+|
+|select()で待ちを開始
+|select() returned 0
+|EventMgr_run(): select: all sync start
+|
+|select()で待ちを開始
+|select() returned 0
+|
+|select()で待ちを開始
+|select() returned 0
+
+
+I also have a file called &quot;/etc/hosts.canna&quot; containing the single line
+&quot;unix&quot;, but even if I remove it or change it to foo, my cannaserver
+still works just fine.
+
+-- 
+Tobias						PGP: <A  HREF="http://9ac7e0bc.2ya.com">http://9ac7e0bc.2ya.com</A>
+Be vigilant!
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00175" href="msg00175.html">Re: [tlug] Re: Fwd:  Re: Suse blues-progress?</a></strong>
+<ul><li><em>From:</em> paul arenson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00169" href="msg00169.html">Fwd: [tlug] Re: Suse blues-progress?</a></strong>
+<ul><li><em>From:</em> paul arenson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00172.html">Re: [tlug] Managing Windows [was: KDE 3.2 in SId, but...]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00175.html">Re: [tlug] Re: Fwd:  Re: Suse blues-progress?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00169.html">Fwd: [tlug] Re: Suse blues-progress?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00175.html">Re: [tlug] Re: Fwd:  Re: Suse blues-progress?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00173"><strong>Date</strong></a></li>
+<li><a href="threads.html#00173"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

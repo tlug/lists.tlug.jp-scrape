@@ -1,0 +1,188 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] state of the art filtering -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNgqvrqevpu.qr> -->
+<!--X-Date: Tue, 16 Mar 2010 19:42:11 +0900 -->
+<!--X-Message-Id: 20100316103455.GG24804@yumi.tdiedrich.de -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100316092524.c153a4a9.attila@kinali.ch -->
+<!--X-Reference: 4B9F4C11.90806@run.sh -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00087.html">Date Prev</a>][<a href="msg00108.html">Date Next</a>][<a href="msg00086.html">Thread Prev</a>][<a href="msg00089.html">Thread Next</a>][<a href="maillist.html#00088">Date Index</a>][<a href="threads.html#00088">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] state of the art filtering</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 16 Mar 2010 11:34:55 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<a href="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">ranma@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] state of the art filtering</strong></li>
+<li>References: &lt;<a href="mailto:20100316092524.c153a4a9.attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">20100316092524.c153a4a9.attila@example.com</a>&gt; &lt;<a href="mailto:4B9F4C11.90806@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">4B9F4C11.90806@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Lewske Wada wrote:
+&gt; Attila Kinali wrote:
+&gt; &gt; I don't use grey listing or TMDA as i deem their
+&gt; &gt; disadvantages higher than their benefit.
+
+I stopped using greylisting on my personal domain as it annoys me
+when I sign up for some forum or something and then have to wait for
+the mail server retry.
+
+On another server I'm still using greylisting, but that one is
+mostly mailing lists and no personal mail accounts.
+
+Would be interesting to check the logs and see how big the
+percentage of mail servers that didn't come back after being denied
+by greylisting really is...
+
+Traffic is rather small though:
+
+date          received  delivered   deferred    bounced     rejected
+--------------------------------------------------------------------
+Mar 15 2010        91         44         15          3       2431 
+Mar 16 2010        17          2          6          1       1352 
+
+Rejection percentage is about 98%.
+
+Compared to that on my personal domain its 58%:
+
+date          received  delivered   deferred    bounced     rejected
+Mar 14 2010       402        271          2          0        263 
+Mar 15 2010       829        413          1          0        701 
+Mar 16 2010       256        127          0          0        215 
+
+&gt; &gt; What do you guys use? And do you have any recomendations
+&gt; &gt; to improve the setup above?
+&gt; &gt;   
+&gt; It depends on the kind of your SMTP server.
+&gt; When I was using Postfix, I used to be directly editing
+&gt; &quot;/etc/postfix/header_checks&quot; file to add addresses and subjects
+&gt; that are suspicious using regular expressions and it worked great.
+&gt; 
+&gt; For some malicious cases, you need to also add an expression
+&gt; matching the body part in &quot;/etc/postfix/body_checks&quot;.
+
+body_checks is also neat to catch spam backscatter to mailing lists.
+There shouldn't be any valid use of the ml address as envelope
+sender.
+
+/^[ |&gt;]*Return-[pP]ath: &lt;?(list1|list2|list3)@(domain1|domain2)\.tld&gt;?/ REJECT Faked Return-Path in message body
+/^[ |&gt;]*From: .*&lt;?(list1|list2|list3)@(domain1|domain2)\.tld&gt;?/ REJECT Faked From in message body
+
+and in header_checks I have
+
+## must be last two matches
+/^Message-ID: &lt;..*@example.com&gt;/ DUNNO
+/^Message-ID: .*/ REJECT Invalid Message-ID
+
+
+-- 
+Tobias						PGP: <a  rel="nofollow" href="http://8ef7ddba.uguu.de">http://8ef7ddba.uguu.de</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00089" href="msg00089.html">Re: [tlug] state of the art filtering</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00085" href="msg00085.html">[tlug] state of the art spam filtering</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+<li><strong><a name="00086" href="msg00086.html">Re: [tlug] state of the art spam filtering</a></strong>
+<ul><li><em>From:</em> Lewske Wada</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00087.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00108.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00086.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00089.html">Re: [tlug] state of the art filtering</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00088"><strong>Date</strong></a></li>
+<li><a href="threads.html#00088"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

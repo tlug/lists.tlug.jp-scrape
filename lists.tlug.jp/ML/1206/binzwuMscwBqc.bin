@@ -1,0 +1,56 @@
+#!/bin/bash
+# br, sept 2007 - Dec 2010
+# 
+# NAME
+#	backup.sh - a remote backup over ssh using specific rsync facilities.
+#
+# SYNOPSIS
+#	backup.sh [-ymwd] datafile
+#	-ymwd: performs yearly/monthly/weekly/daily backup
+#	datafile: datafile :-)
+#
+#	More than one argument can be given.
+#	If no argument is given, the script will decide by itself:
+#		- everytime invoked, daily backup
+#		- if invoked on Monday, weekly backup
+#		- if invoked on 1st of current month, monthly backup
+#		- if invoked on Jan 1st, yearly backup
+#
+# HOWTO
+#	Just change the script name if you need more than one (recommended anyway).
+#	Ensure your ssh setup is correct: You must be able to ssh the target machine
+#	without password.
+#	Change variables in setup section just below. They are self explanatory.
+#	
+# BUGS
+#	Many. Especially: This works on a "terastation" server, which is a kind of light Linux.
+#
+# TODO
+#	week/month/year should be moved in an unique loop.
+#	Setup section to be moved in a config file.
+#	
+
+SOURCEDIR=/home/br		# full path
+SERVER=terastation		# could also be user@hostname
+DESTDIR=/mnt/array1/br		# full path, or relative to home directory on target machine
+
+NYEARS=3
+NMONTHS=12
+NWEEKS=4
+NDAYS=7
+
+EXCLUDE="	--exclude .adobe \
+		--exclude .cache \
+		--exclude .gvfs \
+		--exclude .dvdcss \
+		--exclude .local \
+		--exclude Cache \
+		--exclude .thumbnails \
+		--exclude gnutella \
+		--exclude bittorent \
+		--exclude .macromedia/* \
+		--exclude perso \
+		--exclude Private \
+		--exclude mnt \
+		--exclude tera
+"

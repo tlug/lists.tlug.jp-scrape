@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: namazu -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 7 Feb 2000 17:00:07 +0900 -->
+<!--X-Message-Id: 14494.31511.32558.48998@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14494.19709.87713.38966@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.95.1000207141226.11974A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00059.html">Date Prev</A>][<A HREF="msg00061.html">Date Next</A>][<A HREF="msg00057.html">Thread Prev</A>][<A HREF="msg00052.html">Thread Next</A>][<A HREF="maillist.html#00060">Date Index</A>][<A HREF="threads.html#00060">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: namazu</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: namazu</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 7 Feb 2000 16:58:15 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00057.html">Pine.LNX.3.95.1000207141226.11974A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00054.html">14494.19709.87713.38966@example.com</A>&gt;&lt;<A HREF="msg00057.html">Pine.LNX.3.95.1000207141226.11974A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Selva" == Selva Nair &lt;selva@example.com&gt; writes:
+
+    Selva&gt;     Yeah, inclusion of data for partial matches could be
+    Selva&gt; why the number of key words is that huge.
+
+Oh, yeah, Frank said something about kakasi.  I bet a lot of that bulk
+comes from yomi, which are indexed along with the kanji.
+
+    Selva&gt; Of course. That's why I thought it can't be 386K, but,
+    Selva&gt; IMHO, 386M is a bloated index. Almost 450 bytes per
+    Selva&gt; keyword, it is !
+
+A lot of applications I've used have several times the text content in
+the indicies.  Often stripping a binary will halve its size ;-)  See
+the calculation below.
+
+    Selva&gt; But why to store phrases. Strorage of a reference each to
+    Selva&gt; the preceding and following words should be enough to
+    Selva&gt; construct phrase info. No?
+
+This only works for phrases &lt;= 3 words.  Remember, every word is
+likely to be included in multiple phrases.
+
+    Selva&gt; Info like file names shouldn't take much space at all, as
+    Selva&gt; 2000 odd filenames can be indexed by a two byte word. I
+    Selva&gt; would buy 100 bytes per keyword, but not 400.
+
+This is true.  I would say that a very compact representation might
+have 8 bytes (two unsigned ints) per reference, one an index into a
+table of file names and one a byte index into the file itself.  (If
+you expect lots of multiple references in files you could get more
+compact by keeping lists of byte indicies for each file.)  It seems
+unlikely that there would be an average of 50 references per key, but
+it could be.  Eg, if you indexed every (2-byte) character that way,
+you'd end up with an index 4X as big as the source text, plus a
+couple of extra kB for the individual characters themselves.
+
+Also, if you index by line number as well as byte count, you could
+imagine a 12-byte-per-reference format.
+
+    Selva&gt; Or am I underestimating the information content of an
+    Selva&gt; index? Or is it that tightly stored indices wont give good
+    Selva&gt; performance at the search time?
+
+I don't see why this would be a problem.  The index should be
+hierarchically structured, so you search a b-tree or so, pulling in
+100kB blocks of nodes as needed.  One-time reading in a 100kB block
+containing the path name table (50 bytes per path is probably about
+6-7 directories deep) is cheap in that context.  Negligible for
+multiple searches.  Since it's an array, all the cost is in reading it
+in from disk.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00054" HREF="msg00054.html">Re: tlug: namazu</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00057" HREF="msg00057.html">Re: tlug: namazu</A></STRONG>
+<UL><LI><EM>From:</EM> Selva Nair &lt;selva@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00059.html">RE: tlug: namazu</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00061.html">tlug: Big uptime</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00057.html">Re: tlug: namazu</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00052.html">RE: tlug: namazu</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00060"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00060"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

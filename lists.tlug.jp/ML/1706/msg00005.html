@@ -1,0 +1,187 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] remote access to server -->
+<!--X-From-R13: Oggvyn Yvanyv <nggvynNxvanyv.pu> -->
+<!--X-Date: Sat, 03 Jun 2017 18:46:52 +0900 -->
+<!--X-Message-Id: 20170603114647.e033610ef29dfe694db55b34@kinali.ch -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1a3aa51d&#45;c95d&#45;a22e&#45;3d3d&#45;4e931f4bfd38@me.scn&#45;net.ne.jp -->
+<!--X-Reference: 44b3dcf48ba9ae82094aebbdf1cd2229@jp.sometwo.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00004.html">Date Prev</a>][<a href="msg00006.html">Date Next</a>][<a href="msg00004.html">Thread Prev</a>][<a href="msg00002.html">Thread Next</a>][<a href="maillist.html#00005">Date Index</a>][<a href="threads.html#00005">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] remote access to server</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 3 Jun 2017 11:46:47 +0200</li>
+<li><strong>From</strong>: <strong>Attila Kinali &lt;<a href="mailto:attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20remote%20access%20to%20server">attila@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] remote access to server</strong></li>
+<li>References: &lt;<a href="msg00000.html">1a3aa51d-c95d-a22e-3d3d-4e931f4bfd38@me.scn-net.ne.jp</a>&gt;	&lt;<a href="msg00001.html">44b3dcf48ba9ae82094aebbdf1cd2229@jp.sometwo.net</a>&gt;</li>
+<li>Organization: NERV</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Moin/今日は/Merhaba,
+
+On Sat, 03 Jun 2017 14:59:49 +0900
+Furkan Mustafa &lt;furkan@example.com&gt; wrote:
+
+&gt; * Disable password login from /etc/ssh/sshd_config and use only public
+&gt; key authentication.
+
+/etc/ssh/sshd_config:
+
+PasswordAuthentication no
+UsePAM no
+
+PAM needs to be disabled as well, becaues in most configurations
+it allows password authentication.
+
+
+&gt; * Install fail2ban
+
+Does not help as much as I hoped it would.
+A lot of the password scans today are distributed from whole
+subnets, which fail2ban doesn't really capture (even though
+it has an option for this). I usually periodically grep 
+through my /var/log/auth.log and see which of the subbnets
+pop up often:
+
+grep AllowUsers /var/log/auth.log.1|awk '{print $9}'|awk -F\. '{print $1&quot;.&quot;$2&quot;.&quot;$3}' | sort |uniq -c|sort -g
+
+grep &quot;Received disconnect&quot; /var/log/auth.log.1|awk '{print $9}'|awk -F\. '{print $1&quot;.&quot;$2&quot;.&quot;$3}' | sort |uniq -c|sort -g
+
+Yes, this is not optimal, and it could be automated a bit by matching
+IP adresses to asigned ranges using whois or even to AS. But it works
+well enough for me :-)
+
+
+&gt; * They won't be guessing your username/password. These kids try this
+&gt; forever. No need to worry IMHO.
+
+They are also trying to exploit known bugs in ssh. There are still
+many systems out there that have not seen an update in years and
+are vulerable. Keep your system up to date!
+
+&gt; * Also, changing your ssh port from 22 to something else reduces this
+&gt; almost down to zero.
+
+Not anymore. Script kiddies started to run nmap and port authentification
+a couple of years ago.
+ 
+&gt; * Also, some people install tor to their servers, and publish their ssh
+&gt; access as a tor hidden service, and connect to their servers over tor.
+&gt; Only if you need to go extreme I guess.
+
+Now that's an interesting approach.
+I have to look into that :-)
+
+
+			Attila Kinali
+
+-- 
+You know, the very powerful and the very stupid have one thing in common.
+They don't alters their views to fit the facts, they alter the facts to
+fit the views, which can be uncomfortable if you happen to be one of the
+facts that needs altering.  -- The Doctor
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00000" href="msg00000.html">[tlug] remote access to server</a></strong>
+<ul><li><em>From:</em> Kevin Sullivan</li></ul></li>
+<li><strong><a name="00001" href="msg00001.html">Re: [tlug] remote access to server</a></strong>
+<ul><li><em>From:</em> Furkan Mustafa</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00004.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00006.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00004.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00002.html">[tlug]  remote access to server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00005"><strong>Date</strong></a></li>
+<li><a href="threads.html#00005"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

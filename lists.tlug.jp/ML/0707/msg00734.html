@@ -1,0 +1,180 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Tip of the Day: "ghosting" a machine with nc and dd -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Tue, 17 Jul 2007 20:29:19 +0900 -->
+<!--X-Message-Id: 20070717132915.e455fb49.gstewart@bonivet.net -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: d8fcc0800707162334w4c694ba2yd2b9b296e7964f94@mail.gmail.com -->
+<!--X-Reference: 200707172001.36863.tlug@extellisys.net -->
+<!--X-Derived: pgp6pdm1u14Pl.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00733.html">Date Prev</a>][<a href="msg00735.html">Date Next</a>][<a href="msg00732.html">Thread Prev</a>][<a href="msg00735.html">Thread Next</a>][<a href="maillist.html#00734">Date Index</a>][<a href="threads.html#00734">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Jul 2007 13:29:15 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<a href="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Tip%20of%20the%20Day:%20%22ghosting%22%20a%20machine%20with%20nc%20and%20dd">gstewart@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</strong></li>
+<li>References: &lt;<a href="msg00708.html">d8fcc0800707162334w4c694ba2yd2b9b296e7964f94@mail.gmail.com</a>&gt;	&lt;<a href="msg00732.html">200707172001.36863.tlug@extellisys.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tue, 17 Jul 2007 20:01:36 +0900, tlug@example.com wrote:
+
+&gt; Note that the command above runs the fdisk program, which lets you type
+&gt; in fdisk commands, so it does not give the partition information
+&gt; immediately. You will get a prompt such as &quot;Command (m for help):&quot; where
+&gt; you can type &quot;p&quot; to print the partition table (like above) and then &quot;q&quot;
+&gt; to exit fdisk.
+
+I think you'll find that Josh meant to tell people to run:
+
+sudo /sbin/fdisk -l /dev/(h|s)da
+
+fdisk, being in /sbin usually, is not in a regular user's $PATH and
+therefore needs to be invoked with a fully qualified pathname:
+
+godwin@example.com:~ $ sudo fdisk -l /dev/hda
+sudo: fdisk: command not found
+godwin@example.com:~ $ sudo /sbin/fdisk -l /dev/hda
+
+Disk /dev/hda: 120.0 GB, 120034123776 bytes
+255 heads, 63 sectors/track, 14593 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/hda1   *           1        1020     8193118+   c  W95 FAT32 (LBA)
+/dev/hda2            1021        1028       64260   83  Linux
+/dev/hda3            1029        1637     4891792+  83  Linux
+/dev/hda4            1638       14593   104069070    5  Extended
+/dev/hda5            1638        1701      514048+  83  Linux
+/dev/hda6            1702        1765      514048+  83  Linux
+/dev/hda7            1766        1900     1084356   83  Linux
+/dev/hda8            1901        3117     9775521   83  Linux
+/dev/hda9            3118        3181      514048+  82  Linux swap
+/dev/hda10           3182       13500    82887336   83  Linux
+/dev/hda11          13501       14593     8779491   83  Linux
+
+The &quot;-l&quot; (that's a lowercase &quot;L&quot;) option does the same as the &quot;p&quot; command in
+the interactive version but just spits the information out and quits
+immediately.
+
+-- 
+G. Stewart - gstewart@example.com
+
+&quot;A reputation for releasing inferior software will make it more
+ difficult for a software vendor to induce customers to pay for
+ new products or new versions of existing products.&quot;
+              -- Microsoft
+</pre><p><strong>Attachment:
+<a href="pgp6pdm1u14Pl.pgp" ><tt>pgp6pdm1u14Pl.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00735" href="msg00735.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Sigurd Urdahl</li></ul></li>
+<li><strong><a name="00736" href="msg00736.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00708" href="msg00708.html">[tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00732" href="msg00732.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> tlug</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00733.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00735.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00732.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00735.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00734"><strong>Date</strong></a></li>
+<li><a href="threads.html#00734"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

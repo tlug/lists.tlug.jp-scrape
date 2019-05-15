@@ -1,0 +1,191 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Imagemaps -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 26 Sep 1996 23:03:16 GMT -->
+<!--X-Message-Id: m0v66zh&#45;000025C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00079.html">Date Prev</A>][<A HREF="msg00081.html">Date Next</A>][<A HREF="msg00078.html">Thread Prev</A>][<A HREF="msg00081.html">Thread Next</A>][<A HREF="maillist.html#00080">Date Index</A>][<A HREF="threads.html#00080">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Imagemaps</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Imagemaps</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 26 Sep 96 12:20 JST</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+To Jim S., and anybody else who's mucking about with imagemaps.
+
+I have successfully made imagemaps work (locally, haven't tried from a
+foreign machine yet) with both the NCSA (1.3; 1.5.2 is a-building as I
+type) and Apache (1.1.1) httpds.  To test the NCSA imagemap, go to
+
+		  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+
+and the imagemap is the "skinny boy" GIF at the bottom of the first
+screen or so.  Click on the left side, and you get a little screaming
+alien (from Adams's Hitchhiker books' covers).  Click on the right
+side and you end up at "InfoShako", my institute's home page.  Not
+very useful, but who cares?  Here's the relevant parts of various
+files.  The *Root variables are from httpd.conf.  The variables are of
+course substituted in place; the imagemap routine doesn't know
+anything about the variables $ServerRoot or $DocumentRoot.  The 
+&lt;! ... &gt; tag is a comment; compare with apache-map.html below.
+
+$DocumentRoot/index.html (ll. 33-36):
+&lt;! A HREF="/maps/index-map.map"&gt;
+&lt;A HREF="/cgi-bin/imagemap/maps/index-map.map"&gt;
+&lt;IMG ISMAP ALT="" SRC="/gadgets/skinny.gif"&gt;
+&lt;/A&gt;
+
+$DocumentRoot/maps/index-map.map (all):
+# This map file was created with mapedit 2.25.  The HREFs were *not*
+# created using mapedit, as mapedit munges Japanese.
+#
+# The location below $DocumentRoot is a coincidence as far as NCSA is
+# concerned; it makes life easier for Apache.
+default /gadgets/gaijin.gif
+#To InfoShako
+rect <A TARGET="_top" HREF="http://www.sk.tsukuba.ac.jp/">http://www.sk.tsukuba.ac.jp/</A> 56,30 163,176
+
+/usr/local/etc/httpd/conf/imagemap.conf (all):
+# This file is used only by the imagemap CGI script (and possibly
+# recent NCSA HTTPds' internal imagemap function; the Apache HTTPd's
+# internal imagemap facility apparently ignores it, and certainly
+# doesn't need it).  The $ServerRoot is hard-coded in the NCSA
+# imagemap binary to /usr/local/etc/httpd.
+#
+# Note that the leading '/' of PATH_INFO is stripped by the imagemap
+# CGI script, so the map path must be relative.  On the other hand,
+# CGI scripts live in Unix space (HTTPds normally do *not* chroot), so 
+# the reference must be absolute.
+maps/index-map.map: /WWW/htdocs/maps/index-map.map
+
+To try the Apache httpd, use the URL
+
+	   <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/apache-map.html">http://turnbull.sk.tsukuba.ac.jp/apache-map.html</A>
+
+which is just a copy of index.html with the imagemap as follows:
+
+$DocumentRoot/apache-map.html (ll. 33-36):
+&lt;A HREF="/maps/index-map.map"&gt;
+&lt;! A HREF="/cgi-bin/imagemap/maps/index-map.map"&gt;
+&lt;IMG ISMAP ALT="" SRC="/gadgets/skinny.gif"&gt;
+&lt;/A&gt;
+
+It uses the *identical* $DocumentRoot/maps/index-map.map, and ignores
+the /usr/local/etc/httpd/imagemap.conf file.
+
+Tokoro de, there is also a client-side imagemap in 
+
+	   <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/index-map.html">http://turnbull.sk.tsukuba.ac.jp/index-map.html</A>
+
+(with munged Japanese and different functionality for the map; I
+didn't know how to use mapedit when it was created---jump to the end
+of the document source to see the client side map).
+
+If this still doesn't get you going, Jim, why don't you post the
+relevant files?
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+TLUG September 28th meeting is sponsored by Fusion Systems Japan, Inc.,
+a global professional services firm.  <A TARGET="_top" HREF="http://www.fsj.co.jp">http://www.fsj.co.jp</A>
+No. 2 Toshin Aobadai Building 9F, 3-17-13 Aobadai,
+Meguro-ku, Tokyo 153, Japan
+Tel: (03)5456-7561   Fax: (03)5458-4422   info@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00079.html">Re: September 28 meeting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00081.html">qustions about Apache setup</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00078.html">RSVP for meeting (and partial de-lurk)--PLEASE SEND ME A NOTE</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00081.html">qustions about Apache setup</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00080"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00080"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

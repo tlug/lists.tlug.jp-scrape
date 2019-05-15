@@ -1,0 +1,171 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] funny error msg -->
+<!--X-From-R13: Hvxgbe Bniyraxb <iicNebtref.pbz> -->
+<!--X-Date: Sat, 28 Aug 2004 01:46:13 &#45;0400 -->
+<!--X-Message-Id: 16688.7205.58241.745940@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20040827104928.4FCC.B&#45;ROBSON@example.com -->
+<!--X-Reference: 16686.41061.55299.488682@example.com -->
+<!--X-Reference: 20040827200802.GT4141@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00103.html">Date Prev</a>][<a href="msg00105.html">Date Next</a>][<a href="msg00102.html">Thread Prev</a>][<a href="msg00112.html">Thread Next</a>][<a href="maillist.html#00104">Date Index</a>][<a href="threads.html#00104">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] funny error msg</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 28 Aug 2004 01:46:13 -0400</li>
+<li><strong>From</strong>: <strong>Viktor Pavlenko &lt;<A HREF="mailto:vvp@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20funny%20error%20msg">vvp@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] funny error msg</strong></li>
+<li>References: &lt;<a href="msg00097.html">20040827104928.4FCC.B-ROBSON@example.com</a>&gt;&lt;<a href="msg00099.html">16686.41061.55299.488682@example.com</a>&gt;&lt;<a href="msg00102.html">20040827200802.GT4141@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;MB&quot; == hr  &lt;Martin&gt; writes:
+
+    MB&gt; On Thu, Aug 26, 2004 at 10:45:57PM -0400, Viktor Pavlenko wrote:
+    &gt;&gt; Sometimes simplicity of UNIX doesn't mix well with logic... If I
+    &gt;&gt; change to /tmp/a/ in one shell and then remove it from another, the
+    &gt;&gt; former shell, strangely enough, will not notice that the directory
+    &gt;&gt; is gone:
+
+    MB&gt; of course not.
+    MB&gt; it is logical too. the same happens if you remove a file. any process
+    MB&gt; that has the file open, will not notice that it is gone.
+
+    MB&gt; only the entries in the directory are gone because they are removed
+    MB&gt; before the directory is removed itself.
+
+Logical? bash runs ls(1) which will try to open(2) the directory and
+read its content, _every time you run it_. strace shows that
+open(2) fails:
+
+    open(&quot;.&quot;, O_RDONLY|O_NONBLOCK|O_LARGEFILE|O_DIRECTORY) = 3
+
+but ls(1) returns 0 for success anyway:
+
+    fstat64(3, {st_mode=S_IFDIR|0755, st_size=48, ...}) = 0
+    fcntl64(3, F_SETFD, FD_CLOEXEC)         = 0
+    mmap2(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40212000
+    getdents64(3, 0x40212038, 131072)       = -1 ENOENT (No such file or directory)
+    munmap(0x40212000, 135168)              = 0
+    close(3)                                = 0
+    _exit(0)                                = ?
+
+The behavior is different if the directory is not `.' (you get an
+error message and 1 as return status).
+
+Doesn't look logical to me...
+
+-- 
+Viktor
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00112" href="msg00112.html">Re: [tlug] funny error msg</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00097" href="msg00097.html">[tlug] funny error msg</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+<li><strong><a name="00099" href="msg00099.html">Re: [tlug] funny error msg</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+<li><strong><a name="00102" href="msg00102.html">Re: [tlug] funny error msg</a></strong>
+<ul><li><em>From:</em> Martin Bähr</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00103.html">Re: [tlug]  Sub: best thing on the internet</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00105.html">Re: [tlug] stdin/stderr redirection under Solaris</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00102.html">Re: [tlug] funny error msg</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00112.html">Re: [tlug] funny error msg</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00104"><strong>Date</strong></a></li>
+<li><a href="threads.html#00104"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

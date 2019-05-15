@@ -1,0 +1,214 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: syslog messages...? -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 7 Oct 1998 22:17:34 +0900 -->
+<!--X-Message-Id: 19981007221716.A12974@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981007195840.621V&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00228.html">Date Prev</A>][<A HREF="msg00230.html">Date Next</A>][<A HREF="msg00228.html">Thread Prev</A>][<A HREF="msg00231.html">Thread Next</A>][<A HREF="maillist.html#00229">Date Index</A>][<A HREF="threads.html#00229">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: syslog messages...?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Users' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: syslog messages...?</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Oct 1998 22:17:16 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00228.html">Pine.LNX.3.96LJ1.1b7.981007195840.621V-100000@example.com</A>&gt;; from Scott Stone on Wed, Oct 07, 1998 at 07:59:40PM +0900</LI>
+<LI>Mail-Followup-To: Tokyo Linux Users' Group &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00228.html">Pine.LNX.3.96LJ1.1b7.981007195840.621V-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Scott Stone writes:  (on 07 Oct 98)
+
+&gt; 
+&gt; What the heck is this:
+&gt; 
+&gt; Oct  7 19:44:15 porcupine -- MARK --
+&gt; 
+&gt; I have tons of these -- MARK -- things in /var/log/messages.
+&gt; /var/log/messages is set up to receive:
+&gt; 
+&gt; *.info;mail.none;authpriv.none
+
+Interesting.  Assuming that above line is from /etc/syslog.conf on host
+porcupine (and that it is the only applicable line in the file) it
+appears that "*" now matches the "mark" facility in syslog.  It used to
+be that "*" matched everything *except* mark.
+
+Probably more than you wanted to know, but I've a long association with
+syslog:
+
+"Facilities" in syslog are like channels on your TV.  Messages are
+logged to syslog over "facilities" with a given "priority".  In
+/etc/syslog.conf you specify what actions to take when a message at a
+given priority or higher arrives over a given "facility" (channel).
+
+If /etc/syslog.conf on porcupine contains *ONLY* the line:
+
+    *.info; mail.none; authpriv.none	/var/log/messages
+
+(unclear from your post) then it means that:
+
+    1) Any message over any (*) channel at priority "info" or higher is
+       sent to /var/log/messages (on porcupine).  (i.e. only messages
+       with a priority of "debug" are ignored; in order, the priorities
+       are debug, info, notice, warning, error, crit, alert, panic).
+
+    2) Except messages over the "mail" facility, which are ignored.  
+       ("none" is a special "priority" meaning nothing should match.)
+
+    3) Except messages over the "authpriv" facility, which are ignored..
+
+In this case you are logging messages over the "mark" facility.  This is
+a special facility to provide a kind of "deadman's switch" for logging.
+The kernel (or is it syslogd itself?) issues a message over the mark
+facility at priority info (I believe) every 20 (?) minutes by default.
+
+The idea is that sometimes you just want to know that everything is
+okay.
+
+Say, for example, that you have a server that once every few weeks, for
+no apparent reason, just crashes hard.  There is nothing in the logs
+indicating a panic or anything, just -blip- away she goes.  Because no
+messages are being logged you can't even tell *when* the machine went
+down, only when it came back up again.  
+
+On an idle machine, you might not log any syslog messages for hours or
+even days.  In this case the logs might show a normal syslog message,
+nothing for a few days, then the machine crashes and no more messages
+until you notice it's down and boot it back up.  Not very helpful.
+
+To get *some* clue about what's going on, it's useful to explicitly add
+a line like:
+
+    mark.*	/var/log/messages
+
+in /etc/syslog.conf.  This will log a timestamp (--MARK--) in the
+messages file every twenty minutes.
+
+Syslog is flexible and useful, but it's a security hole, uses a baroque
+configuration syntax, isn't well understood by almost anybody, is a
+performance pig, and it kinda glosses over important corner cases (like
+rotating logs without losing messages).  
+
+Hey!  Whaddaya know!  It was written by Eric Allman!  
+
+(Not fair, of course, sendmail and syslog were both *VERY* important
+milestones in the history of Unix -- it's just that their time is just
+past IMHO.)
+
+If you want fast reliable logging, I strongly recommend looking at
+cyclog (part of the daemontools package at
+"<A TARGET="_top" HREF="http://pobox.com/~djb/daemontools.html">http://pobox.com/~djb/daemontools.html</A>").  Not as flexible as syslog,
+but a whole lot faster and MUCH more reliable.
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00231" HREF="msg00231.html">Re: tlug: syslog messages...?</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00239" HREF="msg00239.html">Re: tlug: syslog messages...?</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00228" HREF="msg00228.html">tlug: syslog messages...?</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00228.html">tlug: syslog messages...?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00230.html">tlug: linbot results for http://tlug.pht.co.jp</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00228.html">tlug: syslog messages...?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00231.html">Re: tlug: syslog messages...?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00229"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00229"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] TLUG Site with Hakyll Update -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Wed, 20 Mar 2019 12:20:31 +0900 -->
+<!--X-Message-Id: 20190320032027.GA19014@elliptic -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20190319153025.anqd7eevml3uecdi@logarithmic.cjs.cynic.net -->
+<!--X-Reference: 09ac13c9&#45;9d78&#45;0e6e&#45;0f19&#45;e7922aef06f0@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00054.html">Date Prev</a>][<a href="msg00056.html">Date Next</a>][<a href="msg00054.html">Thread Prev</a>][<a href="msg00056.html">Thread Next</a>][<a href="maillist.html#00055">Date Index</a>][<a href="threads.html#00055">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] TLUG Site with Hakyll Update</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Mar 2019 12:20:27 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20TLUG%20Site%20with%20Hakyll%20Update">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] TLUG Site with Hakyll Update</strong></li>
+<li>References: &lt;<a href="msg00053.html">20190319153025.anqd7eevml3uecdi@logarithmic.cjs.cynic.net</a>&gt;	&lt;<a href="msg00054.html">09ac13c9-9d78-0e6e-0f19-e7922aef06f0@gmail.com</a>&gt;</li>
+<li>User-agent: Mutt/1.9.4 (2018-02-28)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2019-03-20 00:03 +0800 (Wed), Raymond Wan wrote:
+
+&gt; ...I previously kept notes for myself on a Mediawiki site.  Every
+&gt; time Ubuntu went through an upgrade, I'd have to update MySQL and
+&gt; every 2-3 updates, there would be some problem and I'd have to
+&gt; re-install some module.
+
+Well, TLUG appears to have solved that problem. Nothing's been
+upgraded since 2006! :-)
+
+&gt; If I remember correctly, I ran some plugin to Mediawiki and it did a
+&gt; dump of every page into a markdown file (I guess that is what you
+&gt; did, Curt?).
+
+No, I don't have access to the server. All I've got at the moment is
+HTML scrapes of all the pages. But Edward has started working on
+getting the stuff out.
+
+&gt; I then gave up and realised (as was mentioned earlier) that the
+&gt; database was overkill.  I switched over to markdown and mkdocs [1]....
+&gt; As an aside, I also had an intranet work site using mkdocs. It
+&gt; doesn't look fancy, but I found it easy to set up.
+
+Mkdocs looks pretty cool, actually. Though I've found things like even
+that to be overkill if your repo is stored on a GitHub or GitLab
+server: the server itself will happily render things (even images and
+SVGs!) for you. I've even done a blog post with a comments section[1]
+using this technique.
+
+&gt; I have this feeling it doesn't matter the static generator
+&gt; used.  Hugo is supposed to be based on Go, but unless you do
+&gt; something advance, I guess we don't use Go directly?
+
+Basically that depends on whether they use an external or internal DSL
+(domain-specific language) for the configuration. A language like Go
+isn't so suited to build nice-looking DSLs embedded in the language
+itself, which is why Hugo uses YAML or similar configuration files.[2]
+
+Haskell tends to be fairly decent for embedded DSLs, so the
+&quot;configuration file&quot; for Hakyll is just a Haskell program. It has
+configuration statements that look like this:
+
+    match &quot;docroot/**&quot; $ do
+        route   dropInitialComponent  -- Remove /docroot from front of ouptut filename
+        compile copyFileCompiler      -- Just copy the file as-is
+
+    match &quot;example/css/*&quot; $ do
+        route   idRoute               -- &quot;Identity&quot; route: ouput file has same name as input file
+        compile compressCssCompiler   -- Compress CSS
+
+You can see a bit of Haskell syntax leaking in (`$`, `do`) but overall
+I think it's pretty near as readable as a designed-from-scratch
+configuration language. (And much more readable than many
+jammed-into-JSON-or-XML configuration languages!)
+
+The real power of the embedded DSL is that your configuration language
+is a real, full programming langauge, giving you all the power of that
+when you need it. So, if your config file is embedded in, say, Python,
+you can turn the rather tedious:
+
+    site['foo'].name        = 'The Foo Site'
+    site['foo'].icon        = 'icons/foo.png'
+    site['bar'].name        = 'The Bar Site'
+    site['foo'].icon        = 'icons/bar.png'
+    site['baz'].name        = 'The Baz Site'
+    site['foo'].icon        = 'icons/baz.png'
+    site['quux'].name       = 'The Quux Site'
+    site['foo'].icon        = 'icons/quux.png'
+
+into:
+
+    SITELIST = ['foo', 'bar', 'baz', 'quux', ]
+
+    for s in SITELIST:
+        site[s].name = 'The {} Site'.format(s.capitalize())
+        site[s].icon = 'icons/{}.png'.format(s)
+
+&gt; Despite having a Github account with actual code, I've had little
+&gt; experience working with others.  I'm happy to pitch in and help a
+&gt; bit with the tlug web site, but prefer to be quiet at first out of
+&gt; fear of driving those of you who *have* worked with others on Github
+&gt; nuts...  :-)  Using Github or gitolite all by yourself is quite
+&gt; different!
+
+Quiet is easy. Pull the repo but don't push anything back off your
+development machine; nobody will even know you've ever made a change.
+
+But at some point you're likely to want to be able to show someone
+your changes, in which case you need to take the next step: forking
+the repo.[3] That gives you your own copy, entirely separate from (but
+related to) the official TLUG copy, so you can do basically anything
+you want in there without fear of &quot;polluting&quot; or otherwise hindering
+anybody else's work. If you do come up with a change you want to
+propose for committing to the `master` branch of the main repo, you
+just put that change in your repo and do a pull request[4] and, after
+discussion or review, hopefully you have now contributed something!
+
+(For developers familiar with the whole Git and branching process,
+it's probably easier just to ask to join the TLUG Website team[5],
+giving you the ability to push to the tlug/tlug.jp repo, and then just
+work on branches directly in that.)
+
+[1]: <a  rel="nofollow" href="https://github.com/0cjs/py-allthesame">https://github.com/0cjs/py-allthesame</a>
+[2]: <a  rel="nofollow" href="https://gohugo.io/getting-started/configuration/">https://gohugo.io/getting-started/configuration/</a>
+[3]: <a  rel="nofollow" href="https://guides.github.com/activities/forking/">https://guides.github.com/activities/forking/</a>
+[4]: <a  rel="nofollow" href="https://guides.github.com/activities/forking/#making-a-pull-request">https://guides.github.com/activities/forking/#making-a-pull-request</a>
+[5]: <a  rel="nofollow" href="https://github.com/orgs/tlug/teams/website">https://github.com/orgs/tlug/teams/website</a>
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00056" href="msg00056.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+<ul><li><em>From:</em> Raymond Wan</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00053" href="msg00053.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00054" href="msg00054.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+<ul><li><em>From:</em> Raymond Wan</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00054.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00056.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00054.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00056.html">Re: [tlug] TLUG Site with Hakyll Update</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00055"><strong>Date</strong></a></li>
+<li><a href="threads.html#00055"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

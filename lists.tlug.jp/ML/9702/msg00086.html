@@ -1,0 +1,281 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: PPP connection script for GOL. -->
+<!--X-From: Dave Heffernan <dave@example.com> -->
+<!--X-Date:  Mon, 24 Feb 1997 11:16:27 GMT -->
+<!--X-Message-Id: 331266D4.7272@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 9702190129.AA15891@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00085.html">Date Prev</A>][<A HREF="msg00087.html">Date Next</A>][<A HREF="msg00084.html">Thread Prev</A>][<A HREF="msg00087.html">Thread Next</A>][<A HREF="maillist.html#00086">Date Index</A>][<A HREF="threads.html#00086">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: PPP connection script for GOL.</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: PPP connection script for GOL.</strong></LI>
+<LI><strong>From</strong>: <strong>Dave Heffernan &lt;<A HREF="mailto:dave@example.com">dave@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 24 Feb 1997 20:13:08 -0800</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>References: &lt;<A HREF="msg00082.html">9702190129.AA15891@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Dave Heffernan &lt;dave@example.com&gt;
+--------------------------------------------------------
+I was wondering if anyone has successfully connected to Global OnLine 
+using Linux (2.0.18 ) and pppd (2.2.0)
+
+Here's the info from an attempt I just made. As shown, it was done
+at 17:05 on Feb 23rd. I asked GOL's systems people to check the logs
+to see whay the attempt failed and their reply was that ppp_sync failed. 
+
+My /etc/ppp/options is empty so that this script declares everything.
+Any ideas on what is going wrong???
+
+Thanks in advance,
+Dave 
+
+&gt;
+&gt; :r /etc/ppp/ppp-gol
+&gt;
+#!/bin/sh
+#
+# Dialing script (full-path)
+#
+DIALER_SCRIPT=/etc/ppp/ppp-on-dialer
+#
+# Login Configuration
+#
+TELEPHONE=0353417000    # The telephone number for the connection
+ACCOUNT=dave            # The account name for logon
+PASSWORD=?????????      # The password for this account
+LOCAL_IP=0.0.0.0        # Local IP address if known. Dynamic = 0.0.0.0
+REMOTE_IP=0.0.0.0       # Remote IP address if desired. Normally 0.0.0.0
+NETMASK=255.255.255.0   # The proper netmask if needed
+#
+# Configuration of modem
+#
+MODEM=/dev/modem       # The modem device
+SPEED=57600             # The modem speed
+DIALTYPE=DT             # The dialing style (TONE DIAL)
+
+#
+export TELEPHONE ACCOUNT PASSWORD  DIALTYPE
+#
+# Initiate the connection
+#
+
+exec /usr/sbin/pppd debug kdebug 7 lock modem crtscts $MODEM $SPEED \
+        $LOCAL_IP:$REMOTE_IP \
+        netmask $NETMASK defaultroute connect $DIALER_SCRIPT
+
+
+&gt;
+&gt; :r /etc/ppp/ppp-on-dialer
+&gt;
+
+#!/bin/sh
+#
+# This is part 2 of the ppp-on script. It will perform the connection
+# protocol for the desired connection.
+#
+exec /usr/sbin/chat -v                          \
+        TIMEOUT         10                              \
+        ABORT           '\nBUSY\r'                      \
+        ABORT           '\nNO ANSWER\r'                 \
+        ABORT           '\nRINGING\r\n\r\nRINGING\r'    \
+        ''              AT                              \
+        'OK-+++\c-OK'   ATH0                            \
+        TIMEOUT         30                              \
+        OK              AT$DIALTYPE$TELEPHONE           \
+        CONNECT         ''                              \
+        ogin:--ogin:    $ACCOUNT                        \
+        assword:        $PASSWORD
+
+&gt;
+&gt;
+&gt; tail -64 /var/log/messages
+&gt;
+
+Feb 23 17:02:51 localhost kernel: PPP: version 2.2.0 (dynamic channel
+allocation)
+Feb 23 17:02:51 localhost kernel: PPP Dynamic channel allocation code
+copyright 1995 Caldera, Inc.
+Feb 23 17:02:51 localhost kernel: PPP line discipline registered.
+Feb 23 17:02:51 localhost kernel: registered device ppp0
+Feb 23 17:02:51 localhost pppd[861]: pppd 2.2.0 started by root, uid 0
+Feb 23 17:02:52 localhost chat[862]: timeout set to 10 seconds
+Feb 23 17:02:52 localhost chat[862]: abort on (\nBUSY\r) 
+Feb 23 17:02:52 localhost chat[862]: abort on (\nNO ANSWER\r) 
+Feb 23 17:02:52 localhost chat[862]: abort on
+(\nRINGING\r\n\r\nRINGING\r) 
+Feb 23 17:02:52 localhost chat[862]: send (AT^M) 
+Feb 23 17:02:52 localhost chat[862]: expect (OK) 
+Feb 23 17:03:02 localhost chat[862]: alarm
+Feb 23 17:03:02 localhost chat[862]: send (+++) 
+Feb 23 17:03:02 localhost chat[862]: expect (OK) 
+Feb 23 17:03:11 localhost chat[862]: ^M 
+Feb 23 17:03:11 localhost chat[862]: OK -- got it 
+Feb 23 17:03:11 localhost chat[862]: send (ATH0^M) 
+Feb 23 17:03:11 localhost chat[862]: timeout set to 30 seconds
+Feb 23 17:03:11 localhost chat[862]: expect (OK) 
+Feb 23 17:03:11 localhost chat[862]: ^M 
+Feb 23 17:03:31 localhost chat[862]: ^M 
+Feb 23 17:03:31 localhost chat[862]: OK -- got it 
+Feb 23 17:03:31 localhost chat[862]: send (ATDT0353417000^M) 
+Feb 23 17:03:31 localhost chat[862]: expect (CONNECT) 
+Feb 23 17:03:31 localhost chat[862]: ^M 
+Feb 23 17:04:01 localhost chat[862]:  
+Feb 23 17:04:01 localhost chat[862]: CONNECT -- got it 
+Feb 23 17:04:01 localhost chat[862]: send (^M) 
+Feb 23 17:04:01 localhost chat[862]: expect (ogin:) 
+Feb 23 17:04:21 localhost chat[862]:  26400/elcome to Globa^M 
+Feb 23 17:04:21 localhost chat[862]: login: -- got it 
+Feb 23 17:04:21 localhost chat[862]: send (dave^M) 
+Feb 23 17:04:21 localhost chat[862]: expect (assword:) 
+Feb 23 17:04:41 localhost chat[862]:  dave^M 
+Feb 23 17:04:41 localhost chat[862]: Password: -- got it 
+Feb 23 17:04:41 localhost chat[862]: send (???????^M) 
+Feb 23 17:04:41 localhost pppd[861]: Serial connection established.
+Feb 23 17:04:51 localhost kernel: PPP: ppp line discipline successfully
+unregistered
+Feb 23 17:04:51 localhost kernel: PPP: version 2.2.0 (dynamic channel
+allocation)
+Feb 23 17:04:51 localhost kernel: PPP Dynamic channel allocation code
+copyright 1995 Caldera, Inc.
+Feb 23 17:04:51 localhost kernel: PPP line discipline registered.
+Feb 23 17:04:51 localhost kernel: registered device ppp0
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set flags to 70000
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set flags to 70000
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set xasyncmap
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set xmit asyncmap
+ffffffff
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set flags to 70000
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set mru to 5dc
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set rcv asyncmap 0
+Feb 23 17:04:51 localhost kernel: ppp_tty_ioctl: set flags to 70010
+Feb 23 17:04:51 localhost pppd[861]: Using interface ppp0
+Feb 23 17:04:51 localhost pppd[861]: Connect: ppp0 &lt;--&gt; /dev/modem
+Feb 23 17:05:09 localhost kernel: Appletalk 0.17 for Linux NET3.035
+Feb 23 17:05:09 localhost kernel: ppp_dev_stats called&lt;7&gt;ppp: write
+frame, count = 22
+Feb 23 17:05:18 localhost kernel: ppp_dev_stats called&lt;7&gt;ppp: write
+frame, count = 22
+Feb 23 17:05:21 localhost kernel: ppp_dev_stats called&lt;7&gt;ppp_tty_read:
+called buf=0805b5a2 nr=1504
+Feb 23 17:05:21 localhost kernel: ppp_tty_ioctl: get debug level 7
+Feb 23 17:05:21 localhost kernel: ppp_tty_ioctl: set flags to f000010
+Feb 23 17:05:21 localhost pppd[861]: LCP: timeout sending
+Config-Requests
+Feb 23 17:05:21 localhost pppd[861]: Connection terminated.
+Feb 23 17:06:01 localhost pppd[861]: Hangup (SIGHUP)
+Feb 23 17:06:01 localhost pppd[861]: ioctl(TIOCNXCL): I/O error
+Feb 23 17:06:01 localhost pppd[861]: Exit.
+Feb 23 17:07:21 localhost kernel: PPP: ppp line discipline successfully
+unregistered
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00087" HREF="msg00087.html">Re: tlug: PPP connection script for GOL.</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00088" HREF="msg00088.html">Re: tlug: PPP connection script for GOL.</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00082" HREF="msg00082.html">Re: tlug: How to screw up your new kernel....</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00085.html">tlug: Tkdic and edict.el</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00087.html">Re: tlug: PPP connection script for GOL.</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00084.html">Re: tlug: How to screw up your new kernel....</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00087.html">Re: tlug: PPP connection script for GOL.</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00086"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00086"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

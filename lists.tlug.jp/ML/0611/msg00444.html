@@ -1,0 +1,192 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Subdirectory of /home on separate volume? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyyNfx.gfhxhon.np.wc> -->
+<!--X-Date: Fri, 17 Nov 2006 14:04:05 +0900 -->
+<!--X-Message-Id: 8764deirnz.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20061117130134.37588f53@example.com&#45;minamiogi -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00443.html">Date Prev</a>][<a href="msg00445.html">Date Next</a>][<a href="msg00442.html">Thread Prev</a>][<a href="msg00482.html">Thread Next</a>][<a href="maillist.html#00444">Date Index</a>][<a href="threads.html#00444">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Subdirectory of /home on separate volume?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 17 Nov 2006 14:11:12 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Subdirectory%20of%20%2Fhome%20on%20separate%20volume%3F">turnbull@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Subdirectory of /home on separate volume?</strong></li>
+<li>References: &lt;<a href="msg00437.html">20061117130134.37588f53@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Tenga Wataru writes:
+
+ &gt; On one volume, I have my /, /home, /usr and /swap directories taking up
+ &gt; the entire disk. I would like to create another Linux partition on a
+ &gt; separate disk, for music files.
+
+ &gt; Can I designate that partition as a subdirectory of my /home,
+ &gt; e.g., /home/music?
+
+Yes.
+
+ &gt; If so, when setting up that partition, should I name
+ &gt; its directory as /home/music, or should it be simply /music, and
+ &gt; defined as a /home subdirectory in some other way??
+
+No.  You don't do anything special at all about naming its
+directories.  Instead of that, you simply &quot;attach&quot; the partition to
+the global file system at /home/music, and ordinary copy, move, etc
+operations &quot;just work&quot;.  The Linux kernel does the work of &quot;hiding&quot;
+all this complexity, and just presents a single file system starting
+at &quot;/&quot;.
+
+ &gt; Or is there a better way to tackle this issue?
+
+Each partition contains its own directory hierarchy, which can be
+&quot;attached&quot; to the file system anywhere there is a directory.  The
+process of binding a name in the Unix directory hierarchy to the root
+of the directory hierarchy in the partition's filesystem is called
+&quot;mounting&quot; the partition.
+
+So what you would do is 
+
+1. su
+2. telinit s
+   (optional but safer) Don't do this in an X session, you'll kill it
+   out from under you!
+3. fdisk /dev/hdX
+   for whatever X is for the hard disk you're partitioning
+   fdisk is dangerous; explaining it is beyond the scope of this post
+4. mke3fs /dev/hdXN
+   or whatever kind of filesystem you're creating)
+5. mkdir /home/music
+   this is the &quot;mount point&quot;
+6. mount -t ext2 /dev/hdXN /home/music
+
+At this point, as far as any user utility or application is concerned,
+/home/music is just part of the global filesystem.  You can chown it,
+chmod it, etc as usual.
+
+You will then want to edit /etc/fstab so that the partition will be
+automatically mounted on a normal boot.
+
+ &gt; If I decide to create a partition for music files that any user can
+ &gt; access, what directory name should I use?
+
+If you are going to create a user account named &quot;music&quot; to own the
+music files, then /home/music may be good.  Other possibilities would
+include /usr/local/share/music or /var/db/music.
+
+The /home/music option may be best if users are going to be managing
+the files with generic tools like nautilus or cp.  The latter, less
+user-friendly, options are more appropriate if you want to have the
+users use some particular application to access the music, and that
+application can be configured to look there without the user knowing
+or caring what the actual filesystem structure it.
+
+HTH
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00482" href="msg00482.html">Re: [tlug] Subdirectory of /home on separate volume?</a></strong>
+<ul><li><em>From:</em> Tenga Wataru</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00437" href="msg00437.html">[tlug] Subdirectory of /home on separate volume?</a></strong>
+<ul><li><em>From:</em> Tenga Wataru</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00443.html">Re: [tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00445.html">[tlug] Text recommendations for AJAX, Javascript, and CSS</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00442.html">Re: [tlug] Subdirectory of /home on separate volume?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00482.html">Re: [tlug] Subdirectory of /home on separate volume?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00444"><strong>Date</strong></a></li>
+<li><a href="threads.html#00444"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] VNC and security -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Wed, 20 Dec 2006 18:41:16 +0900 -->
+<!--X-Message-Id: 20061220094113.GA8775@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4585E281.7020401@example.com -->
+<!--X-Reference: 20061218010051.GA96659@example.com -->
+<!--X-Reference: 87wt4pq5mw.fsf@example.com -->
+<!--X-Reference: 4588F5D4.8030009@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00345.html">Date Prev</a>][<a href="msg00347.html">Date Next</a>][<a href="msg00355.html">Thread Prev</a>][<a href="msg00315.html">Thread Next</a>][<a href="maillist.html#00346">Date Index</a>][<a href="threads.html#00346">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] VNC and security</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Dec 2006 04:41:13 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20VNC%20and%20security">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] VNC and security</strong></li>
+<li>References: &lt;<a href="msg00312.html">4585E281.7020401@example.com</a>&gt;	&lt;<a href="msg00314.html">20061218010051.GA96659@example.com</a>&gt;	&lt;<a href="msg00316.html">87wt4pq5mw.fsf@example.com</a>&gt;	&lt;<a href="msg00342.html">4588F5D4.8030009@example.com</a>&gt;</li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Wed, Dec 20, 2006 at 05:35:32PM +0900, Dave M G wrote:
+&gt; Scott, Stephen, Edward,
+&gt; 
+&gt; Thank you for your replies.
+
+You're welcome.  :)
+
+
+&gt; 
+&gt; What I've done is change my Router and Firestarter firewall to use a 
+&gt; non-standard port for VNC connections. Security through obscurity. And of 
+&gt; course I have my VNC server password protected.
+&gt; 
+&gt; Next I wanted to set up SSH port forwarding. I think I have set it up with the 
+&gt; potential to work, but because of my limited understanding, I'm not using it 
+&gt; right. I'm hoping the kind folks at TLUG will nudge me in the right direction 
+&gt; in the places I've deviated.
+&gt; 
+&gt; 
+&gt; On the Windows side, I fire up Putty, and log into my Ubuntu machine on port 
+&gt; 8443. I log in successfully, my &quot;fingerprint&quot; matches. It all looks good, and I 
+&gt; see a command prompt.
+
+You just blew the security by obscurity.  :)  Change the port now.  
+
+(Not that much of a major issue, though I wouldn't put the port on a
+publicly accessible mailing list--the main thing though is avoid
+automated ssh probes.)
+
+
+&gt; 
+&gt; But, then, this is where I think I'm missing something about the concept. I 
+&gt; start up the VNC viewer, type in my Ubuntu machine's IP address and VNC port, 
+&gt; and attempt to log in. It says &quot;connection refused&quot;.
+&gt; 
+&gt; First, I don't understand how having the SSH connection up is controlling or 
+&gt; affecting the VNC viewer.
+
+I don't either.  VNC should be listening on whatever port you've
+determined, lets say port 5555.  As I use BSD's packet filter, I'm not
+sure what you would want to do, but, let's say I was using port 5555 for
+VNC, my firewall rule (remember--different syntax, but just to give you
+the idea)
+
+I've already given port 555 the variable name vnc so my rule would be
+pass in quick proto tcp from any to port $vnc keep state
+
+On the Linksys router, (I don't know what router you use, or if you do)
+in their port forwarding, I would have
+
+port 5555 To 5555  and check off tcp and then have the machine's IP
+address--that is, if this machine has a static IP in my internal network
+of 192.168.1.55, in the Linksys forwarding section, I would put in
+192.168.1.55 for the forwarding address.  
+
+This works for me on FreeBSD.  
+
+I'm assuming the obvious, that when you set up VNC server you set up a
+password and that you're definitely not mistyping the password.  I don't
+know if you tested VNC server on your internal network first, which is
+always a good thing to do.  
+&gt; 
+It shouldn't have anything to do with the ssh connection.  They're
+really two separate things (as Stephen stated, my first reply on this
+thread should have not even mentioned that part).  The ssh connection is
+just getting you in to start up VNC.
+
+
+Hope some of this gives you hints, if nothing else.  My guess is the
+firewall, but it's only a guess, assuming you've set up forwarding for
+the VNC port.
+
+
+-- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Joyce: You belong in a good old fashioned college with keg 
+parties and boys. Not here with Hellmouths and vampires. 
+Buffy: Not really seeing the distinction. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00312" href="msg00312.html">[tlug] VNC and security</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00314" href="msg00314.html">Re: [tlug] VNC and security</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+<li><strong><a name="00316" href="msg00316.html">Re: [tlug] VNC and security</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00342" href="msg00342.html">Re: [tlug] VNC and security</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00345.html">[tlug] dhcp.conf</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00347.html">Re: [tlug] dhcp.conf --nevermind</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00355.html">Re: [tlug] VNC and security</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00315.html">Re: [tlug] VNC and security</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00346"><strong>Date</strong></a></li>
+<li><a href="threads.html#00346"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

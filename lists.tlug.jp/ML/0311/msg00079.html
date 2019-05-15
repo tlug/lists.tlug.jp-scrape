@@ -1,0 +1,185 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Question on RAID -->
+<!--X-From-R13: Xrsserl Yrnlf <wxrnlf73Nznp.pbz> -->
+<!--X-Date: Thu, 13 Nov 2003 15:28:59 +0900 -->
+<!--X-Message-Id: AA56F9F4&#45;15A2&#45;11D8&#45;B3AE&#45;0003937B6A72@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: OFBEA56C1D.5CD9BF64&#45;ON65256DDD.001F54D2@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00078.html">Date Prev</a>][<a href="msg00080.html">Date Next</a>][<a href="msg00078.html">Thread Prev</a>][<a href="msg00081.html">Thread Next</a>][<a href="maillist.html#00079">Date Index</a>][<a href="threads.html#00079">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Question on RAID</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 13 Nov 2003 15:28:59 +0900</li>
+<li><strong>From</strong>: <strong>Jeffrey Keays &lt;<A HREF="mailto:jkeays73@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Question%20on%20RAID">jkeays73@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Question on RAID</strong></li>
+<li>References: &lt;<a href="msg00078.html">OFBEA56C1D.5CD9BF64-ON65256DDD.001F54D2@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+On 2003/11/13, at 14:42, Sanjay Chigurupati wrote:
+
+&gt; Hi,
+&gt;  I am implementing a Software RAID (level 1 -mirroring)  for a server,
+&gt; using two hard disks. Is it necessary that we put boot partition on  a 
+&gt; RAID
+&gt; partition?
+
+I would advise it, if you want the system to come up with one of the 
+disks broken.  /boot on RAID-1 does work fine on RH9, but you do need 
+to do an interactive song-and-dance to get GRUB set up properly for 
+this.  The grub-install script does not work properly for boot on 
+software RAID-1.
+
+&gt; I have currently set /home, / and /var on raid partitions.  Purpose is 
+&gt; to
+&gt; provide availability for, ftp documents uploaded for users,  ftp 
+&gt; software
+&gt; as test setup.
+&gt;
+&gt; All suggestions welcome.
+
+If this is the OS drive, I would recommend making the two drives exact 
+partition clones of each other, down to the cylinder numbers, then set 
+them all up as RAID-1 (md0, md1, md2, etc) during the installation on 
+RH. (it is a bit trickier to retrofit but possible).  Make sure if 
+these are ATA disks that there are no slave drives (each on its own 
+controller).
+
+Once you do the manual grub install on the second drive, you can bring 
+the machine up with either drive missing to test, (be sure to resync/ 
+re-add them when you reconnect the 'failed' drive)
+
+&gt; Sanjay
+&gt;
+&gt;
+&gt;
+&gt;
+&gt;
+&gt;
+&gt; This email may contain confidential or privileged information for
+&gt; theintended recipient(s).  If you are not the intended recipient, 
+&gt; please do
+&gt; not use or disseminate the information, notify the sender and delete it
+&gt; from your system.  Thanks
+&gt;
+&gt;
+&gt;
+&gt; -- 
+&gt; **********************************************************
+&gt; TLUG server is hosted by Open Source Development Lab Japan
+&gt; <A  HREF="http://www.osdl.jp/">http://www.osdl.jp/</A>
+&gt; **********************************************************
+&gt;
+&gt; To unsubscribe from this mailing list,
+&gt; please see the instructions at &lt;<A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>&gt;
+&gt;
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00081" href="msg00081.html">Re: [tlug] Question on RAID</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00078" href="msg00078.html">[tlug] Question on RAID</a></strong>
+<ul><li><em>From:</em> Sanjay Chigurupati</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00078.html">[tlug] Question on RAID</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00080.html">[tlug] Mike Fabian still in Japan?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00078.html">[tlug] Question on RAID</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00081.html">Re: [tlug] Question on RAID</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00079"><strong>Date</strong></a></li>
+<li><a href="threads.html#00079"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

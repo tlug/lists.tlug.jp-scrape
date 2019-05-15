@@ -1,0 +1,239 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Japanese TeX: if you're really macho... -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Wed, 16 Oct 1996 15:56:11 GMT -->
+<!--X-Message-Id: 9610161554.AA15090@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0vDWEj&#45;000010C@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00085.html">Date Prev</A>][<A HREF="msg00087.html">Date Next</A>][<A HREF="msg00084.html">Thread Prev</A>][<A HREF="msg00089.html">Thread Next</A>][<A HREF="maillist.html#00086">Date Index</A>][<A HREF="threads.html#00086">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Japanese TeX: if you're really macho...</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Japanese TeX: if you're really macho... </strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 Oct 1996 00:54:46 JST</LI>
+<LI>In-Reply-To: Your message of "Wed, 16 Oct 1996 22:42:00 JST."            &lt;<A HREF="msg00084.html">m0vDWEj-000010C@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen J Turnbull &lt;turnbull@example.com&gt; writes:
+
+
+    Stephen&gt; Yow!  OK, for all you folks who wish you had a Japanese
+    Stephen&gt; TeX you could integrate with Ghostscript, here's the
+    Stephen&gt; short synopsis.  I dunno when I'll get around to writing
+    Stephen&gt; up the whole thing in accurate detail with config files.
+    Stephen&gt; Sorry, but I left the apartment today at 8:00am and
+    Stephen&gt; tomorrow will start just as early and go just as late....
+
+So what do you do when you a lot of time? :) 
+
+Thanks.
+
+I just recently got Ghostscript to work with wadalab fonts. It was one
+hell of a battle and I now know quite a bit more about composite
+postscript fonts, which are used for Kanji. I could not get the EUC or
+sjis encodings to work at all, initialy. I won't bore you with the
+details, but I finaly noticed that there was an extra PS file in the
+tools directy called:
+
+	Wadalab-mincho-0-12.ps 
+
+from ftp.ipl.t.u-tokyo.ac.jp/Font/tools
+
+Anyway, you take that file, put in the font path ( gs
+--version will tell you the font path ) and make entries in the
+Fontmap like:
+
+/Wadalab-mincho-0-8		(Wadalab-mincho-0-8.ps) ;
+/Wadalab-mincho-0-8-RKSJ	(Wadalab-mincho-0-8.ps) ;
+/Wadalab-mincho-0-8-EUC		(Wadalab-mincho-0-8.ps) ;
+/Wadalab-mincho-0-8-V		(Wadalab-mincho-0-8.ps) ;
+
+The individual files for /Wadalab-mincho-0-8 have entries like
+
+/Wadalab-mincho-0-8.r21		(jis-21.pfa)  ;
+/Wadalab-mincho-0-8.r22		(jis-22.pfa)  ;
+/Wadalab-mincho-0-8.r23		(jis-23.pfa)  ;
+/Wadalab-mincho-0-8.r26		(jis-26.pfa)  ;
+/Wadalab-mincho-0-8.r27		(jis-27.pfa)  ;
+/Wadalab-mincho-0-8.r28		(jis-28.pfa)  ;
+
+/Wadalab-mincho-0-8.r24		(min-0-8-24.pfa)  ;
+/Wadalab-mincho-0-8.r25		(min-0-8-25.pfa)  ;
+/Wadalab-mincho-0-8.r30		(min-0-8-30.pfa)  ;
+
+When you use a font by doing something like:
+
+/Wadalab-mincho-0-8 findfont 40 scalefont setfont
+100 100 moveto &lt;3021&gt; show showpage
+
+Ghostscript looks up the font Wadalab-mincho-0-8 in the Fontmap file
+and finds that that it needs to run Wadalab-mincho-0-8.ps when it
+needs a character from that font. Wadalab-mincho-0-8.ps. When GS
+executes the second line above, Wadalab-mincho-0-8.ps figures out the
+this is a JIS code and translates the character code such that it
+knows which of Wadalab-mincho-0-8.rxx files the character lives in. It
+then loads that font by consulting the Fontmap again by looking for
+( in this example ) /Wadalab-mincho-0-8.r30. It finds (min-0-8-30.pfa)
+and loads the all the characters in that file. It this sounds like it
+is a sloow process, it is, but it does work. This same file
+( Wadalab-mincho-0-12.ps ) works with jis-x208, but not with 212, I
+think.
+
+To use the Wadalab-mincho-0-12.ps for other fonts, such as I did in
+the exaple, you need to change an number of lines that look like:
+
+/Wadalab-mincho-0-12 CompNF
+/Wadalab-mincho-0-12 VCompNF
+/Wadalab-mincho-0-12 CompSJNF
+/Wadalab-mincho-0-12 CompEUCNF
+
+To be the Wadalab font you want.
+
+You can make aliases for other font names and encodings like:
+
+% Aliases for wadalab fonts
+
+/Ryumin-Light-EUC-H		/Wadalab-mincho-0-8-EUC ;
+/Ryumin-Light-Ext-RKSJ-H	/Wadalab-mincho-0-8-RKSJ ;
+/GothicBBB-Medium-EUC-H		/Wadalab-gothic-0-13-EUC ;
+/GothicBBB-Medium-RKSJ-H	/Wadalab-gothic-0-13-RKSJ ;
+
+The other option is to concatinate all the min-0-8-*.pfs files into
+one and load them all at once. This works, though I could not get one
+of the fonts to work, GS barfed on it.
+
+I could not get this to work for sjis. From my notes:
+
+gs_kanji.ps and gs_ksb_e.ps are used by wftopfa.ps to produce a a
+single font file that is then accessed like:
+
+/Wadalab-SaiMincho (wmin0.ps) ;
+
+Looks like gs_kanji should produce encodings for JIS and ??
+
+jis  3441 kan in kanji - displays ok
+sjis 8abf              - displays as /
+euc  b4c1	       - displays OK !
+
+Hope this adds a few more pieces to the puzzle.
+
+One bit of hope for future. Adobe has come up with a new method,
+called CID, if memory serves, for handling various encodings that is
+supposed to be much faster, and as a demonstration, to used the
+Wadalab fonts.  Ghostscript does not yet support this, though someone
+has. See gs_cidfn.ps in the gs distribution if your interested.
+
+Andy
+
+
+
+
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00084" HREF="msg00084.html">Japanese TeX:  if you're really macho...</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00085.html">Re: kinput2 HOWTO</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00087.html">Revision to Linux-Nihongo Doc</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00084.html">Japanese TeX:  if you're really macho...</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00089.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00086"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00086"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

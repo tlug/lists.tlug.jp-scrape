@@ -1,0 +1,216 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Running multiple web development environments on one machine -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 17 May 2006 03:01:05 +0900 -->
+<!--X-Message-Id: 87ejytx31m.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4469EAFD.50303@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00121.html">Date Prev</a>][<a href="msg00123.html">Date Next</a>][<a href="msg00121.html">Thread Prev</a>][<a href="msg00123.html">Thread Next</a>][<a href="maillist.html#00122">Date Index</a>][<a href="threads.html#00122">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Running multiple web development environments on one machine</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 17 May 2006 03:00:53 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Running%20multiple%20web%20development%20environments%20on%20one%20machine">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Running multiple web development environments on one machine</strong></li>
+<li>References: &lt;<a href="msg00120.html">4469EAFD.50303@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b26 (linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; &quot;Dave&quot; writes:
+
+    Dave&gt; What I would like to do is simultaneously run different
+    Dave&gt; versions of MySQL/PHP on my home system so that I can
+    Dave&gt; simulate as closely as possible the web hosting conditions
+    Dave&gt; for each site I develop.
+
+This is not something that you want a package manager anywhere near.
+That's not what they're designed for.  If you're going to do this, the
+first thing to do is uninstall all packages you're going to run
+multiple versions of.
+
+If you're not prepared to do that, take Godwin's advice.  However, I
+really don't think &quot;portable coding&quot; is going to be easy, with two
+major version bump for MySQL, and any version of PHP &lt;shudder&gt;.
+
+    Dave&gt; What particularly confuses me, and the issue I most need
+    Dave&gt; explained in simple terms, is to do with how the database
+    Dave&gt; gets called from within a PHP script. I simply run a command
+    Dave&gt; that says: mysql_pconnect('localhost', 'user', 'password')
+
+It seems likely that the syntax
+
+    mysql_pconnect('localhost:PORT_NO', 'user', 'password')
+
+will work, where PORT_NO is a non-standard TCP port for mysql's
+server.  See the PHP docs.  There may also be a way to config PHP to
+look for mysql on some specific port.  If possible the latter is what
+you want (it means that your program will run the same way on both
+your home box and on the hosting service).  If not, you'd have to
+translate those parts (learn to program sed!) from port-specific to
+default-port versions.
+
+The other possibility would be to only run one of the test
+environments at a time.  Then the MySQL servers won't conflict with
+each other.
+
+    Dave&gt; Ditto for PHP.
+
+IIRC, PHP runs as a module inside of Apache, so you'll need to run
+multiple instances of Apache.  As long as all internal references to
+your website are relative to $DOCUMENT_ROOT, you will not need to
+refer to the non-standard port from inside a web document.
+
+    Dave&gt; But, before I even get to that point, how can I install the
+    Dave&gt; different versions?
+
+Manually.&lt;wink&gt;
+
+    Dave&gt; Then, after that how would I be able to specify for each web
+    Dave&gt; site I am developing which version to use? It would be nice
+    Dave&gt; to be able to bundle installations of PHP/MySQL and anything
+    Dave&gt; else under one directory, or in some conceptual way, so that
+    Dave&gt; in my home environment I could make my web sites adhere to
+    Dave&gt; the system that matches their web hosting service.
+
+It would be nice, but it's not going to work that way, unless you're
+willing to have a separate Apache installation for each one.
+
+What I would do in your situation is to configure my webgalaxy like
+this:
+
+Sources:
+
+/usr/local/src/apache/$VERSION
+/usr/local/src/mysql/$VERSION
+/usr/local/src/php/$VERSION
+
+If you have multiple versions of a program, you'd have separate
+sources.  Configure the program to install into /var/galaxy (see
+below).  *You also must configure the program to install its
+configuration files there, not in /etc.*  Then build and install it.
+
+Installation for customer 1:
+
+/var/galaxy/customer1/apache/$VERSION    # probably the PHP mod is here
+/var/galaxy/customer1/mysql/$VERSION
+/var/galaxy/customer1/htdocs/            # the actual website data
+
+Each app (mysql and apache) would run on a non-standard port,
+different for each customer.
+
+Apache being an industrial-quality program, I'd be willing to bet you
+could have only one instance installed, keep the customer-specific
+configuration files only in /var/galaxy, and use a command line option
+to pick the appropriate config for each instance.  MySQL might also
+work that way, but since you're likely to have a bunch of versions
+anyway, why bother?
+
+-- 
+School of Systems and Information Engineering <a  rel="nofollow" href="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</a>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00120" href="msg00120.html">[tlug] Running multiple web development environments on one machine</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00121.html">Re: [tlug] Running multiple web development environments on one machine</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00123.html">Re: [tlug] Running multiple web development environments on one machine</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00121.html">Re: [tlug] Running multiple web development environments on one machine</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00123.html">Re: [tlug] Running multiple web development environments on one machine</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00122"><strong>Date</strong></a></li>
+<li><a href="threads.html#00122"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: compiling xemacs with wnn support -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 14 Apr 2000 14:38:51 +0900 -->
+<!--X-Message-Id: 14582.44753.280045.995520@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 00a901bf9d1f$aae14420$13110185@example.com -->
+<!--X-Reference-Id: 14577.22301.536959.744995@example.com -->
+<!--X-Reference-Id: 002301bfa5ac$07b31cc0$13110185@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00074.html">Date Prev</A>][<A HREF="msg00076.html">Date Next</A>][<A HREF="msg00071.html">Thread Prev</A>][<A HREF="msg00026.html">Thread Next</A>][<A HREF="maillist.html#00075">Date Index</A>][<A HREF="threads.html#00075">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: compiling xemacs with wnn support</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: compiling xemacs with wnn support</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 14 Apr 2000 14:38:25 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00071.html">002301bfa5ac$07b31cc0$13110185@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00023.html">00a901bf9d1f$aae14420$13110185@example.com</A>&gt;&lt;<A HREF="msg00056.html">14577.22301.536959.744995@example.com</A>&gt;&lt;<A HREF="msg00071.html">002301bfa5ac$07b31cc0$13110185@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Hector" == Hector Akamine &lt;akamine@example.com&gt; writes:
+
+    Hector&gt; I'm trying to compile xemacs (21.1.9) to work with wnn.
+    Hector&gt; Before running make I run:
+
+    Hector&gt; ./configure --with-wnn6 --with-canna --with-xim
+    Hector&gt; --with-mule --with-xpm
+
+    Hector&gt; [... But no luck! ...]
+
+Contact Steve Baur &lt;steve@example.com&gt;.  He did the original work on
+integrating Wnn6 and XEmacs.  Warning: he is moving (o-hikkoshi)
+_today_ so he may or may not respond (in real time or at all).
+
+    Hector&gt; Meanwhile I'm working with the emacs version (20.4.1) that
+    Hector&gt; came with RH6.1J.  I can input Japanese using skk, but the
+
+The FSF's GNU Emacs 20.4, not XEmacs 20.4, right?  Try using
+quail-japanese, which should be substantially better than SKK but not
+as good as Wnn4, let alone Wnn6.
+
+Why not try XEmacs, XIM, xwnmo (should come with Wnn6), and Wnn?  Just
+build XEmacs with --xim=xlib.  Run XEmacs with XMODIFIERS="@example.com=xwnmo"
+exported to your environment (or something like that, see the xwnmo
+docs for the correct TAG for the XMODIFIERS="@example.com=$TAG" setting).
+
+    Hector&gt; conversion is not so good (it's awkward but what I'm doing
+    Hector&gt; now is opening kterm, writing Japanese there since it runs
+    Hector&gt; with wnn6 and then pasting to emacs). Can I make emacs
+    Hector&gt; work with wnn6 easily (without recompiling)?
+
+Mainline FSFmacs does not support built-in Wnn or Canna.  You're
+supposed to use XIM (kinput2).  Unfortunately, XIM tends to make
+FSFmacs coredump on Linux, so YMMBZ (Your Mileage May Be Zero).
+
+If you have the emacs-dl .rpm available, use that instead of straight
+FSFmacs.  This will allow you to connect to Wnn.  I don't know if it
+works with Wnn6, though.  (The idea of emacs-dl is that instead of
+having code for all sorts of extra functionality in the Emacs source,
+Emacs uses the dlopen(3) functions to load separate .so modules.  I
+know there are modules for Canna and FreeWnn, but I don't know whether
+there is one for Wnn6.  If there is, it would be contrib and probably
+distributed separatedly, as rms would never permit distribution with
+Emacs.)
+
+Another possibility would be Tamago-4, which allows communication with
+Wnn with _no_ compiled-in support (all Wnn interactions are written in
+Emacs Lisp).  But since Tamago-4 is free software, it's oriented
+toward supporting FreeWnn, and may not have an Wnn6 binding.
+
+Good luck.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00023" HREF="msg00023.html">tlug: compiling xemacs with wnn support</A></STRONG>
+<UL><LI><EM>From:</EM> "Hector Akamine" &lt;akamine@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00056" HREF="msg00056.html">tlug: compiling xemacs with wnn support</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00071" HREF="msg00071.html">Re: tlug: compiling xemacs with wnn support</A></STRONG>
+<UL><LI><EM>From:</EM> "Hector Akamine" &lt;akamine@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00074.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00076.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00071.html">Re: tlug: compiling xemacs with wnn support</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00026.html">tlug: status of NFS stability in linux...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00075"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00075"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

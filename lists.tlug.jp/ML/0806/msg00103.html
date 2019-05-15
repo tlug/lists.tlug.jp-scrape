@@ -1,0 +1,158 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] iptables -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 09 Jun 2008 06:53:15 +0900 -->
+<!--X-Message-Id: 87d4mrr39e.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: c0f4e2b00806071001q5d5eb76em2078c066a8f45aac@mail.gmail.com -->
+<!--X-Reference: eee698730806072219p8908badi686409c9497ac24c@mail.gmail.com -->
+<!--X-Reference: c0f4e2b00806080204q22864e41r46d29ff0dad787ab@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00102.html">Date Prev</a>][<a href="msg00104.html">Date Next</a>][<a href="msg00097.html">Thread Prev</a>][<a href="msg00082.html">Thread Next</a>][<a href="maillist.html#00103">Date Index</a>][<a href="threads.html#00103">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptables</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 09 Jun 2008 07:05:49 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20iptables">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptables</strong></li>
+<li>References: &lt;<a href="msg00079.html">c0f4e2b00806071001q5d5eb76em2078c066a8f45aac@mail.gmail.com</a>&gt;	&lt;<a href="msg00090.html">eee698730806072219p8908badi686409c9497ac24c@mail.gmail.com</a>&gt;	&lt;<a href="msg00093.html">c0f4e2b00806080204q22864e41r46d29ff0dad787ab@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Bruno Raoult writes:
+ &gt; On Sun, Jun 8, 2008 at 2:19 PM, Jedidiah Israel
+ &gt; &lt;jedidiah.israel@example.com&gt; wrote:
+ &gt; &gt; Firstly,  are your network interfaces initialised before iptables is called?
+ &gt; 
+ &gt; This is a good question, I had the same thinking...
+
+The answer is &quot;no&quot;.  That's what &quot;pre-up&quot; means: do this before
+configuring the interface.
+
+ &gt; None, this is in /etc/network.
+
+Actually, no.  The script /etc/init.d/network is symlinked from the
+appropriate /etc/rc#.d directory (probably rcS.d).  It should call
+ifup and ifdown for starting and stopping the network.  (These read
+the configuration files in /etc/network.)  Possibly ifup is called
+once with argument lo and once with flag -a.  Your non-loopback
+interfaces should all be activated with -a (ie, their stanzas in
+/etc/network/interfaces should have the 'auto' property) in the
+default configuration.
+
+Try shutting down the network, then running &quot;ifup IFACE&quot; from the
+command line.  Do you get any joy then?
+
+I'm not sure whether ifup does any logging itself, except that it is
+supposed to write state to /etc/network/run/ifstate.  On Debian I
+think that iptables probably writes its messages to /var/log/syslog.
+
+I don't use ifup/ifdown; I found them to be a real pain in the neck
+because they now have a syntax as complex as the underlying tools, but
+are not as well-documented.  C'est la Debian.  And so it goes.  42.
+Whatever.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00079" href="msg00079.html">[tlug] iptables</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+<li><strong><a name="00090" href="msg00090.html">Re: [tlug] iptables</a></strong>
+<ul><li><em>From:</em> Jedidiah Israel</li></ul></li>
+<li><strong><a name="00093" href="msg00093.html">Re: [tlug] iptables</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00102.html">Re: [tlug] Now, this is getting out of hand!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00104.html">Re: [tlug] State of &quot;Linux&quot; documentation [was: Books]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00097.html">Re: [tlug] iptables</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00082.html">[tlug] Geeks and Hackers, Uncle Sam's Cyber Force Wants You!</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00103"><strong>Date</strong></a></li>
+<li><a href="threads.html#00103"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

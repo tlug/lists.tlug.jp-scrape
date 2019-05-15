@@ -1,0 +1,170 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Non&#45;standard Perl Module Locations -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Wed, 12 Mar 2008 12:48:38 +0900 -->
+<!--X-Message-Id: 20080312033943.GF2019@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00140.html">Date Prev</a>][<a href="msg00142.html">Date Next</a>][<a href="msg00138.html">Thread Prev</a>][<a href="msg00143.html">Thread Next</a>][<a href="maillist.html#00141">Date Index</a>][<a href="threads.html#00141">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Non-standard Perl Module Locations</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 12 Mar 2008 12:39:43 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Non-standard%20Perl%20Module%20Locations">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Non-standard Perl Module Locations</strong></li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I need some advice from folks with a fair amount of knowledge of perl
+workings.
+
+Here at Starling we have an build/install/test framework called QAM
+(<a  href="http://www.starling-software.com/en/qam.html">http://www.starling-software.com/en/qam.html</a>) that we use for our
+projects. A particular goal of it is to let us include sources for
+things such as libraries, modules for scripting languages, and so on
+within a project, and have the project build its own local copies of
+these so that we don't have to worry about what is or isn't installed
+(or what versions are installed) on development and production servers.
+(Anybody who's ever seen an entire web application break due to someone
+changing a system php.ini file setting will understand where I'm coming
+from here.)
+
+We're all set up for Ruby use already; you just make sure you, e.g.,
+
+    require File.expand_path(__FILE__ + &quot;/../../qam&quot;)
+
+where the argument to expand_path is the release directory for this
+particular installation of the project, and now you're all set up to
+use the usual stuff under that release directory, release/lib/ruby/1.8,
+release/lib/ruby/site_ruby/1.8, linking against shared libraries in
+release/lib, etc. etc.
+
+Now we need to do something similar with perl, and I'm wondering what
+the standard structure for perl library directories is, and what the
+best way is to tack the directories from our release dir (the structure
+of which generally resembles /usr/local as much as possible) on to the
+front of search paths and so on. For example, the ruby code is pretty
+simple:
+
+    d = QAM.dirs
+    $LOAD_PATH.unshift(d.rubylib_sitearch)
+    $LOAD_PATH.unshift(d.rubylib_site)
+    $LOAD_PATH.unshift(d.rubylib_arch)
+    $LOAD_PATH.unshift(d.rubylib)
+    ENV['PATH'] = d.release('bin') + ':' + ENV['PATH']
+
+where the QAM object is set up with a dirs method that returns a
+dirs object that knows, among other things, about all of the various
+locations of stuff under our release directory (e.g., d.rubylib is
+/.../release/lib/ruby/1.8/).
+
+Thoughts and opinions?
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00143" href="msg00143.html">Re: [tlug] Non-standard Perl Module Locations</a></strong>
+<ul><li><em>From:</em> David Shanahan</li></ul></li>
+<li><strong><a name="00190" href="msg00190.html">Re: [tlug] Non-standard Perl Module Locations</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00140.html">Re: [tlug] Freely distributable Japanese capable utf8 font?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00142.html">Re: [tlug] Freely distributable Japanese capable utf8 font?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00138.html">Re: [tlug] Expect: looping until there is no more input from spawn</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00143.html">Re: [tlug] Non-standard Perl Module Locations</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00141"><strong>Date</strong></a></li>
+<li><a href="threads.html#00141"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

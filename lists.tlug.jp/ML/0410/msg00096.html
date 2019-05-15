@@ -1,0 +1,207 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] USB mounting problems in newest Debian Sarge -->
+<!--X-From-R13: Quneyrf [hyyre <npzhyyreNtby.pbz> -->
+<!--X-Date: Sun, 31 Oct 2004 14:57:47 +0900 (JST) -->
+<!--X-Message-Id: 20041031.145747.85416990.acmuller@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00095.html">Date Prev</a>][<a href="msg00097.html">Date Next</a>][<a href="msg00095.html">Thread Prev</a>][<a href="msg00097.html">Thread Next</a>][<a href="maillist.html#00096">Date Index</a>][<a href="threads.html#00096">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] USB mounting problems in newest Debian Sarge</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 31 Oct 2004 14:57:47 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Charles Muller &lt;<A HREF="mailto:acmuller@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20USB%20mounting%20problems%20in%20newest%20Debian%20Sarge">acmuller@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] USB mounting problems in newest Debian Sarge</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+I don't know if anyone has done any very recent Sarge installations,
+but they've slightly altered the device naming / mounting of the
+external drives in a way that the prior methods for mounting don't
+seem to work. I'll sign onto the Debian-user list for a while if
+necessary, but figured I'd check with TLUG'ers first.
+
+I have two 20 GB exernal drives, one SCSI and one USB. With prior
+installations, I used to end up with an arrangement like this in my
+FSTAB, wherein I was able to mount either drive as I liked in the
+normal way:
+
+    /dev/sda1 /mnt/scsi vfat noauto,users,exec,umask=000 0 0
+    /dev/sdb1 /mnt/usbdrv vfat noauto,users,exec,umask=000 0 0
+
+But the new Sarge installer sets me up with something like this (I am
+just dealing with the USB drive at the moment--I haven't tried to
+figure out the SCSI drive), where the last line refers
+to my external USB drive:
+
+    # /etc/fstab: static file system information.
+    #
+    # &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+    proc            /proc           proc    defaults        0       0
+    /dev/hda8       /               ext3    defaults,errors=remount-ro 0       1
+    /dev/hda9       none            swap    sw              0       0
+   /dev/hdc        /media/cdrom0   iso9660 ro,user,noauto  0       0
+   /dev/fd0        /media/floppy0  auto    rw,user,noauto  0       0
+   /dev/sdb        /media/usb0     auto    rw,user,noauto  0       0
+
+
+When I tried to mount it, first I got this:
+
+     chuck@example.com:~$ mount /media/usb0
+     mount: I could not determine the filesystem type, and none was specified
+
+I Googled this error message, and found the expected recommendation to
+supply a filesystem type. I added vfat to FSTAB instead of AUTO, but
+got the same error message. I then tried to do it on the command line:
+
+       chuck@example.com:~$ mount vfat /media/usb0
+       mount: only root can do that
+
+OK, so,
+
+      chuck@example.com:~$ su
+       Password: *******
+       
+       xps8250:/home/chuck# mount vfat /media/usb0
+       mount: special device vfat does not exist
+
+Then,
+
+      xps8250:/home/chuck# mount /media/usb0 vfat
+      mount: mount point vfat does not exist
+
+Then again,
+
+       xps8250:/home/chuck# mount /media/usb0
+      mount: you must specify the filesystem type
+
+Then,
+
+      xps8250:/home/chuck# mount -t vfat /dev/sdb /media/usb0
+      mount: wrong fs type, bad option, bad superblock on /dev/s                   db,
+       or too many mounted file systems
+
+Any ideas?
+
+Regards,
+
+Chuck
+
+---------------------------
+Charles Muller  
+
+Toyo Gakuen University
+Faculty of Humanities  
+1660 Hiregasaki, Nagareyama-shi
+Chiba 270-0161 JAPAN
+Mobile Phone: 090-9310-1787
+
+Web Site: Resources for East Asian Language and Thought
+<A  HREF="http://www.acmuller.net">http://www.acmuller.net</A>
+
+&lt;acmuller_@example.com&gt;   
+(remove underscores before using)
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00097" href="msg00097.html">Re: [tlug] USB mounting problems in newest Debian Sarge</a></strong>
+<ul><li><em>From:</em> Tsutomu Miyashita</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00095.html">[tlug] FYI - SUSE LINUX Professional 9.2 is available</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00097.html">Re: [tlug] USB mounting problems in newest Debian Sarge</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00095.html">[tlug] FYI - SUSE LINUX Professional 9.2 is available</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00097.html">Re: [tlug] USB mounting problems in newest Debian Sarge</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00096"><strong>Date</strong></a></li>
+<li><a href="threads.html#00096"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

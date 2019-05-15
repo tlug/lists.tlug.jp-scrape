@@ -1,0 +1,271 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Mucked up my kterm fonts -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 26 Feb 1997 07:46:01 GMT -->
+<!--X-Message-Id: m0vzdvY&#45;00001gC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199702252252.JAA08200@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00101.html">Date Prev</A>][<A HREF="msg00103.html">Date Next</A>][<A HREF="msg00094.html">Thread Prev</A>][<A HREF="msg00104.html">Thread Next</A>][<A HREF="maillist.html#00102">Date Index</A>][<A HREF="threads.html#00102">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Mucked up my kterm fonts</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Mucked up my kterm fonts </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 26 Feb 1997 16:37:24 +0900</LI>
+<LI>In-reply-to: Your message of "Wed, 26 Feb 1997 09:52:46 EST."            &lt;<A HREF="msg00094.html">199702252252.JAA08200@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    &gt;&gt;&gt; It seems to me that you must have edited either your .
+    &gt;&gt;&gt; Xresources or /usr/X11R6/lib/X11/app-defaults/KTerm.
+
+    Jim&gt; I didn't touch either. Neither had the time/date changed. The
+    Jim&gt; latter was, of course, reset when I originally did the "make
+    Jim&gt; install" for the kterm.  I suspect there is some other file
+    Jim&gt; in an obscure place known to the server.
+
+Unfortunately, there are lots of them.  This is an Xt application, so
+you can probably pretty well figure them out.  In order of increasing
+priority:
+(1) Hard-coded fall-back values in the source
+(2) The application defaults file, which should set everything set in
+    (1).  Usually, but not necessarily, the same as (1) in the
+    distribution version.
+(3) An assortment of user .Xdefaults files.  These are only read if
+    the RESOURCE_MANAGER property is not set on the root window.
+(4) The root window's RESOURCE_MANAGER property.
+
+The RESOURCE_MANAGER property is set using xrdb.  This can be invoked
+in all sorts of places.  Normally it's done in .xinitrc or .xsession.
+Look there to see what you've got.  The user resource database lives
+in ~/.Xresources.  But there is also at least one, and sometimes
+several, system resource databases.
+
+    &gt;&gt;&gt; you're in TRUH-BULL and can only get out by deleting the
+    &gt;&gt;&gt; server-generated font.  You'll have to find it first....
+
+    Jim&gt; Which I was never able to do! I'm pretty sure that the server
+    Jim&gt; rebuilt it each time I started X, but I could never find from
+
+Well, in that case you wouldn't be able to find a font stored on disk.
+
+    Jim&gt; where. As I mentioned, none of the resource files had been
+    Jim&gt; changed.
+
+"None" is a strong word here :-).  If you are using a session or
+desktop manager that restarts you in more or less the same state you
+were in when you shut down, then it probably writes a session resource 
+file.  Then there are the system files I mentioned.
+
+    Jim&gt; Well, being a purist, I use the 1990 sets (those last two
+    Jim&gt; jinmeiyoukanji are *SO* important 8-)}
+
+One of these days I'll upgrade :-).
+
+    Jim&gt; Anyway, it's fixed, and this is how it happened.
+
+    Jim&gt; (a) Jason asked me if I still had the problem if I ran X as
+    Jim&gt; another user.  I tried this, and yes it still occurred.
+
+This sort of eliminates the session manager theory, as well as your
+personal resource database.
+
+    Jim&gt; (b) I tried both the old JE kterm and the patched version,
+    Jim&gt; noticed that they pick up different fonts, and looked (again)
+    Jim&gt; at the app.defaults. The newer kterm has a general XLFD mask
+
+I assume you are referring to the "*fontList*" resources.  These are
+specifiers for XFontSets.  Basically, an XFontSet contains one font
+for every character set encoding in the current locale.  You can find
+out what character sets are requested by looking in
+/usr/X11R6/lib/X11/locale/&lt;LOCALE&gt;/XLC_LOCALE.  kterm, I believe,
+hardcodes the locale to ja_JP.EUC, which is translated to "ja" by an
+alias file.  I imagine that the algorithm works character set by
+character set on a "first-fit" basis from the list of fonts generated
+by applying XListFonts() to the mask(s).
+
+I note that on my machine, at least, .../ja/XLC_LOCALE does not admit
+JISX0208.1990 character sets.  The JISX0212.1990 character set
+information is commented out.  You might want to check and see what
+your locale database does for this, to avoid future problems.
+
+BTW, what version of kterm are you using?
+
+    Jim&gt; (c) I (re)visited my font.dir file and found that the XLFD of
+    Jim&gt; the 24x24 JIS212 font didn't match the mask. 'mkfontdir'
+    Jim&gt; extracts this from the header of the .bdf, and I hadn't
+    Jim&gt; previously twigged that a mask was operating with the newer
+    Jim&gt; kterm.
+
+Ah, and there is no provision for setting the font directly with a
+"*VT100*kanji0212Font3" type of resource; the ones that remain are for 
+backward compatibility.
+
+    Jim&gt; (d) I edited the .bdf header to make the XLFD conform to what
+    Jim&gt; kterm wanted ("--misc-fixed-r- etc etc."), ran mkfontdir,
+    Jim&gt; restarted X and crossed my fingers.
+
+Since this is a unique font (its proper name should probably something
+like "-Jim_Breen's_Secret_Santa_font_foundry-gothic-*-jisx0212.1990-0"
+:-), this is OK.  More portable would be to put it at the head of the
+fontList resource.
+
+By the way, the XFree86 3.1.2 server is in general _not_ happy with
+the format of the resources as specified in the KTerm.ad file.  When I 
+used the model "-adobe-courier-medium-r-normal--14-*" it did not find
+the scaleable font, even though it is on my path.  With 
+"-adobe-courier-medium-r-normal--14-*-*-*-*-*-*-*" (14 hyphens) it did 
+find it.  Whether this is related to your bogus scaling problem I can't 
+say.
+
+    Jim&gt; 	A. The 24x24 font now works correctly, so now I can
+    Jim&gt; select "Large" for text containing both JIS X 212 and JIS X
+    Jim&gt; 208 characters.
+
+What kind of text is this?  I'm not sure I've ever seen a JIS X 212
+character in the wild, only captive in Ghostscript fonts and the like.
+
+    Jim&gt; 	B. somewhere along the line the bogus scalings of the
+    Jim&gt; 16x16 font fell off. It has reverted to the ones I wanted.
+
+I think you're just funnin' us yokels.  Are you really a writer for
+"The X Files" in disguise?
+
+I'm beginning to see some method in the madness, though.  There is no
+"best fit" algorithm for fonts (at least not today), so as I mentioned 
+above the server uses a first fit approach.  You are guaranteed to a
+list which is sorted at a gross level according to the list of fonts
+in the XFontSet specifier, and within those according to the
+fontpath.  But within each directory on the fontpath there is no
+guaranteed order.  I bet you reran mkfontdir several times, and each
+time the ordering changed.
+
+Since the server is allowed to be _really_ lazy about how it
+constructs the list of names with partially specified (less than 14
+hyphens) XLFDs, I bet that this in combination with the fact that you
+were changing the fonts available is what made it seem like Friday the 
+13th on Monday.
+
+    Jim&gt; BTW, I have mentioned a 24x24 bdf for JIS212. This is NOT
+    Jim&gt; publicly available. A friend who shall be nameless, but who,
+    Jim&gt; er, works in fonts slipped me a copy for personal use. For
+    Jim&gt; all sorts of labyrinthine commercial reasons his company
+    Jim&gt; cannot release bitmapped versions of this font.
+
+Scalable fonts are fine by me.  XFree86 is quite happy with both
+"Speedo" and "Type 1" fonts (although they are a bit slower to start
+up; I suppose it could take _forever_ to scale kanji fonts).
+
+Ho ho ho.  I imagine the company probably doesn't want to give away
+its scalable outlines, either.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00094" HREF="msg00094.html">Re: tlug: Mucked up my kterm fonts</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00101.html">Re: MD Disks - Re: tlug: Thrashed to death</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00103.html">tlug: SparcLinux Memory</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00094.html">Re: tlug: Mucked up my kterm fonts</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00104.html">Re: tlug: Mucked up my kterm fonts</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00102"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00102"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

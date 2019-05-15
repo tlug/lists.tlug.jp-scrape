@@ -1,0 +1,214 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Linux on IBM Thinkpad 230Cs? -->
+<!--X-From: Yong&#45;Ming Hua <yhua@example.com> -->
+<!--X-Date:  Mon, 8 Sep 1997 14:48:16 GMT -->
+<!--X-Message-Id: 34141088.1454@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3413FDD6@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00009.html">Date Prev</A>][<A HREF="msg00011.html">Date Next</A>][<A HREF="msg00009.html">Thread Prev</A>][<A HREF="msg00011.html">Thread Next</A>][<A HREF="maillist.html#00010">Date Index</A>][<A HREF="threads.html#00010">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Linux on IBM Thinkpad 230Cs?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Linux on IBM Thinkpad 230Cs?</strong></LI>
+<LI><strong>From</strong>: <strong>Yong-Ming Hua &lt;<A HREF="mailto:yhua@example.com">yhua@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 08 Sep 1997 23:49:45 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: UEC</LI>
+<LI>References: &lt;<A HREF="msg00009.html">3413FDD6@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Yong-Ming Hua &lt;yhua@example.com&gt;
+--------------------------------------------------------
+Hi, I am Yong-Ming enjoying Linux with ThinkPad230Cs.
+
+Francks Trane (Tokyo PO) wrote:
+&gt; * HDD parms are properly specified/detected
+
+the result of fdisk was 32 heads, 63 sectors, 525 cylinders.
+you should use this geometry to boot Linux wih loadlin. Without
+this(perhaps this is only for certain IBM machines) you never
+get loadlin work all right.
+
+&gt; * PCMCIA cards work (MegaHurts[sic] XJ-3288P and Planet Ethernet)
+
+I am using Accton, and that works quite all rihgt. You can check card
+options in hardware option files.. I guess there should be no problem
+with your card. 
+
+&gt; * X runs at 640x480, 8 bpp
+
+ThinkPad230Cs is a funny machine. It never runs X all right without
+a bit of work.
+
+     1)Install XF86_SVGA as usual.
+     2)Make XF86Config as usual.
+     3)Make sure X doesn't run all right by startx.
+               * You have a nice ghost on the display.
+                 It will never disappear whatever setting you make.
+     4)Customize XF86_SVGA as follows,
+     a) patch /usr/X11R6/lib/Server/drivers/vga256/cirrus/cir_driver.c
+    &lt;               new-&gt;std.MiscOutReg |= 0x0c;
+   ----
+    &gt;               new-&gt;std.MiscOutReg &amp;= 0xF3;
+     b) get rid of useless video chip items from
+             /usr/X11R6/lib/Server/site.def
+        and just leave cirrus and generic.
+        (it looks like
+     /*  
+     #define XF86SvgaDrivers    cirrus   generic
+     /* The SVGA colour server */
+     #define XF86SVGAServer     YES
+     /* The 16-colour VGA server */
+     #define XF86SVGAServer     NO
+
+          and NO for the rest.)
+     c)Make a backup file of the orinigal XF86_SVGA just in case.
+     d)cd /usr/X11R6/lib/Server
+     e)mkmf
+     f)make
+     g)make install
+     h)make clean
+and not startx.
+     but still you have a problem. X window has a black belt uderneath.
+Set the virtual display 800x570 instead of 800x600.
+Now you should be all right. You can use X with virtual 800x570 with 250
+colours.
+
+But if you want to fix X window to 640x480 only, there is a way.
+There is a XF86_VGA made by some one I cannot remember but I have
+the file. If you want that way, drop me a line. Yeah, might be better
+than virtual 800x570. MInd you, you never be able to make X run with
+normal way with ThinkPad230Cs.
+
+&gt; * Gimme sound for Xdoom and/or Sdoom
+
+I am so sorry I never play games and doesn't use sound. You need
+someone else to fix the problem.
+
+&gt; FWIW, the unit has 20MB RAM, 540MB HDD, and a
+&gt; i486DX2-50 CPU. If I can get it working, that'd make a
+&gt; dandy play toy on the on road. It'd be lovely to get rid of
+&gt; Windows 95.
+
+Good News. You have 2GB harddisk for ThinkPad230Cs. You can
+get it from IBM as well as Toshiba. But to install a sardine tin
+into a lunch box is not so simple. FYI, the harddisk is 31,000yen.
+If you have the disk installed by PCKoubou at T-Zone Minamikan
+at Akihabara, it will cost you 67,800yen. But mind you, don't
+buy the IBM disk. The location of screw slots is different. I
+bought IBM but had an awful difficulty installing it without
+fixing it not with screws but with bluetac!  
+
+Good Luck,
+Yong-Ming.
+ 
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+_/Yong-Ming Hua: 1)yhua@example.com  2)yhua@example.com/
+_/Tamagawa University and  University of Electro-Communications   _/
+_/Tel:Japan-0427-39-8132 Fax:Japan-0427-39-8845(Tamagawa)         _/
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00011" HREF="msg00011.html">Re: tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+<UL><LI><EM>From:</EM> Yong-Ming Hua &lt;yhua@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00009" HREF="msg00009.html">tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+<UL><LI><EM>From:</EM> "Francks Trane (Tokyo PO)" &lt;Francks@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00009.html">tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00011.html">Re: tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00009.html">tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00011.html">Re: tlug: Linux on IBM Thinkpad 230Cs?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00010"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00010"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

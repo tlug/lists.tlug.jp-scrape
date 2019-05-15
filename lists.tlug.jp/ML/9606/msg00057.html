@@ -1,0 +1,178 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Problems with ppp -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 25 Jun 1996 05:38:33 GMT -->
+<!--X-Message-Id: m0uYQaN&#45;00000SC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 1.5.4.32.19960624144741.00672994@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00056.html">Date Prev</A>][<A HREF="msg00058.html">Date Next</A>][<A HREF="msg00056.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00057">Date Index</A>][<A HREF="threads.html#00057">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Problems with ppp</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Problems with ppp</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 25 Jun 96 14:22 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00055.html">1.5.4.32.19960624144741.00672994@example.com</A>&gt; (tsle@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+    Tan&gt; I can't get ppp started when i listed the file, it is as
+    Tan&gt; follows: can you tell me why is there the dummy:No statistics
+    Tan&gt; available.  I am using kernel 1.3.30, ppp ver 2.2d.  What is
+    Tan&gt; eth0?  Thanks, tsle
+
+I'll second Leo's motion that you should upgrade the kernel from
+1.3.30 to 2.0.0, and if you do so you *must* upgrade the ppp to
+2.2.0f.
+
+You also need to tell us what you mean by "can't get started".  That
+covers a whole host of problems, including things that have nothing to 
+do with ppp, like whether the modem answers the phone or not.
+
+An "interface" is a "program" that communicates in a standard way
+between applications and a device driver, which is specialized to
+particular hardware.  The reason why it is not integrated into the
+device driver is that it is useful to separate code which handles
+categories of similar (or identical) devices, such as "ethernet
+boards" or "PPP" which require specific packet formats which are
+wrapped around the IP packet, from the specific code that actually
+manipulates the hardware.
+
+tsle:~# cat /proc/net/dev
+     Inter-|   Receive                  |  Transmit
+      face |packets errs drop fifo frame|packets errs drop fifo colls carrier
+         lo:      0    0    0    0    0        0    0    0    0     0    0
+
+This is the "localhost" or "loopback" (strictly speaking this is
+incorrect) interface.  It is a convenient way to communicate between
+independent processes on the same host, which uses the same
+application-level functions as TCP/IP communication with a remote
+host.  This is how X Windows programs communicate with the server on
+the same host, I believe, or Netscape communicates with the httpd on
+your same host.
+
+      dummy:No statistics available.
+
+Dummy is a placeholder.  The device driver may need to think it's
+talking to something (for example, when addresses are allocated
+dynamically), and in those cases a "dummy" interface that goes nowhere
+can be used.  Since it doesn't do anything, and you probably aren't
+using it, there won't be any statistics available.
+
+       ppp0:      0    0    0    0    0        0    0    0    0     0    0
+       ppp1:      0    0    0    0    0        0    0    0    0     0    0
+       ppp2:      0    0    0    0    0        0    0    0    0     0    0
+       ppp3:      0    0    0    0    0        0    0    0    0     0    0
+
+The usual ppp device driver (which is not the same as the pppd daemon) 
+has four channels available.  If you had four modems, each one could
+use a separate interface and communicate to a separate remote machine
+via ppp.
+
+       eth0:No statistics available.
+       eth1:No statistics available.
+       eth2:No statistics available.
+       eth3:No statistics available.
+
+These are ethernet interfaces.  Again, there are several channels,
+each of which will be allocated in turn when a device decides to talk
+to the kernel.  Apparently you have no ethernet board installed.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00055" HREF="msg00055.html">Problems with ppp</A></STRONG>
+<UL><LI><EM>From:</EM> tsle@example.com (Tan Siong Lim)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00056.html">Re: Problems with ppp</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00058.html">Targetting sparc</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00056.html">Re: Problems with ppp</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">Targetting sparc</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00057"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00057"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

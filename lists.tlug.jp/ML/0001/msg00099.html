@@ -1,0 +1,297 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: OpenSSH -->
+<!--X-From: John Seebach <jseebach@example.com> -->
+<!--X-Date:  Thu, 20 Jan 2000 23:03:14 +0900 -->
+<!--X-Message-Id: E12BIHL&#45;0008KC&#45;00@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000120080305.A22220@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00098.html">Date Prev</A>][<A HREF="msg00100.html">Date Next</A>][<A HREF="msg00097.html">Thread Prev</A>][<A HREF="msg00102.html">Thread Next</A>][<A HREF="maillist.html#00099">Date Index</A>][<A HREF="threads.html#00099">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: OpenSSH</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: OpenSSH</strong></LI>
+<LI><strong>From</strong>: <strong>John Seebach &lt;<A HREF="mailto:jseebach@example.com">jseebach@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 20 Jan 2000 23:09:39 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00097.html">20000120080305.A22220@example.com</A>&gt;; from Subba Rao on Thu, Jan 20, 2000 at 08:03:05AM -0500</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00097.html">20000120080305.A22220@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+
+
+I have no ideas re: NT because I've never had the (dis?)pleasure of using
+NT.
+
+Here's the way it works on my laptop, with the Debian OpenSSH package
+installed and the default setup. With apologies to Hikaru Utada, it's
+automatic...
+
+The sshd daemon is started by init when I boot.
+ 
+&gt; The instance of ssh-agent seem to be valid only for that xterm. Once the
+&gt; xterm is terminated, the ssh-agent is terminated too.
+ 
+I'm not at all an expert in how this works, hopefully someone will set me
+straight, but that seems like a good thing to me. When the shell that the
+agent was started in is terminated, it goes, too. I don't think I'd want
+little ssh-agent processes floating around out there.
+
+The ssh-agent gets started for me automatically when I start an X session.
+Basically, as I understand it, my xsession is a child of the ssh-agent
+process. When I kill my xsession, the ssh-agent process is terminated, too.
+Like this:
+
+&lt;jseebach@example.com: /etc/X11&gt; ps wux | grep ssh-agent
+jseebach 30622  0.0  0.6  2252   808  ?  S    17:16   0:00 /usr/bin/ssh-agent sh /home/jseebach/.xsession
+
+Might be easier to see what's happening if you look at the
+/etc/X11/Xsession, where this gets set up. I'm going to include the entire
+thing here because it's late and I'm too lazy to go through it and cut out
+the sections that might be relevant. So, my apologies for the long post
+that will result:
+
+-------------------------------
+#!/bin/sh
+#
+# /etc/X11/Xsession
+#
+# global Xsession file -- used by both xdm and xinit (startx)
+
+# If /etc/environment is present, source it. It's useful to put default
+# environment settings in this file, and then source it both here and in
+# /etc/profile.
+if [ -f /etc/environment ]; then
+  . /etc/environment
+fi
+
+optionfile=/etc/X11/Xsession.options
+
+sysmodmap=/etc/X11/Xmodmap
+usrmodmap=$HOME/.Xmodmap
+sysresources=/etc/X11/Xresources
+usrresources=$HOME/.Xresources
+
+startup=$HOME/.xsession
+
+startssh=
+sshagent=/usr/bin/ssh-agent
+
+if [ -x $sshagent -a -z "$SSH_AUTH_SOCK" ]; then
+  startssh=yes
+fi
+
+for errfile in "$HOME/.xsession-errors" "${TMPDIR:-/tmp}/xses-$USER" "/tmp/xses-$USER"; do
+  if ( cp /dev/null "$errfile" 2&gt; /dev/null ); then
+    chmod 600 "$errfile"
+    exec &gt; "$errfile" 2&gt;&amp;1
+    break
+  fi
+done
+
+case $# in
+  0)
+    ;;
+  1)
+    case "$1" in
+      failsafe)
+        if grep -qs ^allow-failsafe $optionfile; then
+          if [ -x /usr/bin/X11/xterm ]; then
+            exec xterm -geometry +1+1
+          else
+            echo "Xsession: unable to launch failsafe X session: xterm not found."
+            exit
+          fi
+        fi
+        ;;
+      default)
+        ;;
+      *)
+        program=$(which $1)
+        if [ -x $program ]; then
+          startup=$program
+        else
+          echo "Xsession: unable to launch $1 X session: $1 not found."
+        fi
+        ;;
+    esac
+    ;;
+  *)
+    echo "Xsession: unsupported number of arguments ($#)."
+    ;;
+esac
+
+if [ -d $sysresources ]; then
+  xrdb -load /dev/null # work around wdm brain damage
+  if [ "$(echo $sysresources/*)" != "$sysresources/*" ]; then
+    for resourcefile in $(ls $sysresources/* 2&gt; /dev/null | egrep '^[-/_[:alnum:]]*$'); do
+      xrdb -merge $resourcefile
+    done
+  fi
+fi
+
+if [ -x /usr/bin/X11/xmodmap ]; then
+  if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+  fi
+fi
+
+if grep -qs ^allow-user-resources $optionfile; then
+  if [ -f $usrresources ]; then
+    xrdb -merge $usrresources
+  fi
+fi
+
+if [ -x /usr/bin/X11/xmodmap ]; then
+  if grep -qs ^allow-user-modmap $optionfile; then
+    if [ -f $usrmodmap ]; then
+      xmodmap $usrmodmap
+    fi
+  fi
+fi
+
+if [ -e $startup ] &amp;&amp; grep -qs ^allow-user-xsession $optionfile; then
+  if [ -x $startup ]; then
+    realstartup=$startup
+  else
+    realstartup="sh $startup"
+  fi
+elif [ -e /etc/X11/window-managers ]; then
+  for i in `sed 's/#.*//' /etc/X11/window-managers`; do
+    if [ -x $i ]; then
+      realstartup=$i
+      break
+    fi
+  done
+fi
+
+if [ -z "$realstartup" ]; then
+  if [ -x /usr/bin/X11/twm ]; then
+    realstartup=twm
+  elif [ -x /usr/bin/X11/xterm ]; then
+    realstartup=xterm
+  else
+    echo -n "Xsession: unable to start X session: "
+    if grep -qs ^allow-user-xsession $optionfile; then
+      echo -n "no $startup found, "
+    fi
+    echo "no registered window managers, twm not found, and xterm not found."
+  fi
+fi
+
+if [ "$startssh" ]; then
+  exec $sshagent $realstartup
+else
+  exec $realstartup
+fi
+-------------------------------
+
+Hope this helps.
+
+John
+-- 
+jseebach@example.com
+--
+      Grandfather fingers
+a bough of whitepink rice cakes
+     on a northbound train
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00097" HREF="msg00097.html">tlug: OpenSSH</A></STRONG>
+<UL><LI><EM>From:</EM> Subba Rao &lt;subb3@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00098.html">Re: tlug: ls colorful</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00100.html">tlug: ppa</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00097.html">tlug: OpenSSH</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00102.html">Re: tlug: OpenSSH</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00099"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00099"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

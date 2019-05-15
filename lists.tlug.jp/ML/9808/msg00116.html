@@ -1,0 +1,216 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re:MO & SCSI Logitec LMO&#45;640E / Fujitsu + Mouse Problem -->
+<!--X-From: Yuval <yuval@example.com> -->
+<!--X-Date:  Sat, 8 Aug 1998 11:35:23 +0900 -->
+<!--X-Message-Id: 35CBB918.96BE8239@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.980807172024.366S&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00114.html">Date Prev</A>][<A HREF="msg00117.html">Date Next</A>][<A HREF="msg00111.html">Thread Prev</A>][<A HREF="msg00123.html">Thread Next</A>][<A HREF="maillist.html#00116">Date Index</A>][<A HREF="threads.html#00116">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</strong></LI>
+<LI><strong>From</strong>: <strong>Yuval &lt;<A HREF="mailto:yuval@example.com">yuval@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 08 Aug 1998 11:34:00 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>References: &lt;<A HREF="msg00111.html">Pine.LNX.3.96.980807172024.366S-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi Again,
+
+&gt;I am trying to get my Linux 2.0.0 / 2.0.34 versions to
+&gt;read the following MO/SCSI combination.
+&gt;Logitec LMO-640E / Fujitsu M2513EL (MO - Magento Optical Disk )
+&gt;SYMBIOS 53C8XX  ID7
+&gt;
+&gt;
+
+Question 1:
+
+I used these options in make config:
+
+NCR53C8XX SCSI support
+(CONFIG_SCSI_NCR53C8XX) [Y/m/n/?]
+ detect and read serial NVRAMs (CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT) [Y/n/?]
+
+  enable tagged command queueing (CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE)
+[Y/n/?]
+  use normal IO
+(CONFIG_SCSI_NCR53C8XX_IOMAPPED) [Y/n/?]
+  maximum number of queued commands
+(CONFIG_SCSI_NCR53C8XX_MAX_TAGS) [4]
+synchronous transfers frequency in MHz
+(CONFIG_SCSI_NCR53C8XX_SYNC) [5]
+ assume boards are SYMBIOS compatible
+(CONFIG_SCSI_NCR53C8XX_SYMBIOS_COMPAT) [Y/n/?]
+
+------------------------------------------------
+At boot time, this is the message I get :
+(The serial driver information is for Question #2)
+
+kernel:
+Serial driver version 4.13 with no serial options enabled
+tty00 at 0x03f8 (irq = 4) is a 16550A
+ tty01 at 0x02f8 (irq = 3) is a 16550A
+lp1 at 0x0378, (polling)
+PS/2 auxiliary pointing device detected -- driver installed.
+Floppy drive(s): fd0 is 1.44M
+FDC 0 is a National Semiconductor PC87306
+ncr53c8xx: at PCI bus 0, device 13, function 0
+ncr53c8xx: 53c875 detected with Symbios NVRAM
+ncr53c875-0: rev=0x03, base=0xfffbff00, io_port=0xfc00, irq=9
+ncr53c875-0: Symbios format NVRAM, ID 7, Fast-20, Parity Checking
+ncr53c875-0: on-board RAM at 0xfffbe000
+ncr53c875-0: restart (scsi reset). kernel: ncr53c875-0-&lt;5,0&gt;:
+FAST-10 SCSI 10.0 MB/s (100 ns, offset 15)
+ ------------------------------------------------------
+However I could not find an assigned device name ,,so I tried
+to mount /dev/sda1 :
+mount -t vfat /dev/sda1 /mo
+
+I get:
+mount: /dev/sda1 is not a valid block device
+ ------------------------------------------------------
+Quesiton 2:
+In addition, when I start the X11 window manager (startx), the mouse is
+frozen.  Using 2.0.0, I get the same messages in the boot stage
+but the mouse is not frozen.
+Any clues ?
+
+These are the make config settings
+(My mouse is a three button PS/2 type (psaux) according to my working
+2.0.0)
+ *
+* Character devices
+*
+Standard/generic serial support (CONFIG_SERIAL) [Y/m/n/?]
+Digiboard PC/Xx Support (CONFIG_DIGI) [N/y/?]
+Cyclades async mux support (CONFIG_CYCLADES) [N/y/m/?]
+Stallion multiport serial support (CONFIG_STALDRV) [N/y/?]
+SDL RISCom/8 card support (CONFIG_RISCOM8) [N/y/m/?]
+Parallel printer support (CONFIG_PRINTER) [Y/m/n/?]
+Specialix IO8+ card support (CONFIG_SPECIALIX) [N/y/m/?]
+Mouse Support (not serial mice) (CONFIG_MOUSE) [Y/n/?]
+ATIXL busmouse support (CONFIG_ATIXL_BUSMOUSE) [Y/m/n/?]
+Logitech busmouse support (CONFIG_BUSMOUSE) [Y/m/n/?]
+Microsoft busmouse support (CONFIG_MS_BUSMOUSE) [Y/m/n/?]
+PS/2 mouse (aka "auxiliary device") support (CONFIG_PSMOUSE) [Y/m/n/?]
+C&amp;T 82C710 mouse port support (as on TI Travelmate) (CONFIG_82C710_MOUSE)
+[Y/n/?]
+
+&gt; --------------------------------------------------------------
+&gt; Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+&gt; featuring Linux on multiple platforms:
+&gt; i386, Sparc, PA-Risc, Amiga, SGI, Alpha, PalmPilot, ...
+&gt; Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+&gt; --------------------------------------------------------------
+&gt; Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+
+
+--------------------------------------------------------------
+Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+featuring Linux on multiple platforms:
+i386, Sparc, PA-Risc, Amiga, SGI, Alpha, PalmPilot, ...
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00123" HREF="msg00123.html">Re: tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: tlug: MO SCSI Drivers-Logitec LMO-640E / Fujitsu</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;chris@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00114.html">Re: tlug: Japanese extensions on Sparc</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00117.html">Re: tlug: SCO package format</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00111.html">Re: tlug: MO SCSI Drivers-Logitec LMO-640E / Fujitsu</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00123.html">Re: tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00116"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00116"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

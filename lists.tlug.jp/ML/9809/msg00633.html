@@ -1,0 +1,157 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Web browsing from a batch file? -->
+<!--X-From: Jim Tittsler <jwt&#45;tlug@example.com> -->
+<!--X-Date:  Tue, 22 Sep 1998 17:00:09 +0900 -->
+<!--X-Message-Id: 19980922165947.A7770@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980922115542.9183B&#45;100000@example.com -->
+<!--X-Reference-Id: 36072221236.7353WASHI@example.com -->
+<!--X-Reference-Id: 3.0.6.32.19980922143212.009ca9b0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00632.html">Date Prev</A>][<A HREF="msg00634.html">Date Next</A>][<A HREF="msg00617.html">Thread Prev</A>][<A HREF="msg00634.html">Thread Next</A>][<A HREF="maillist.html#00633">Date Index</A>][<A HREF="threads.html#00633">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Web browsing from a batch file?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Web browsing from a batch file?</strong></LI>
+<LI><strong>From</strong>: <strong>Jim Tittsler &lt;<A HREF="mailto:jwt-tlug@example.com">jwt-tlug@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 22 Sep 1998 16:59:47 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00613.html">3.0.6.32.19980922143212.009ca9b0@example.com</A>&gt;; from Darren Cook on Tue, Sep 22, 1998 at 02:32:12PM +0000</LI>
+<LI>Organization: 7J1AJH/AI8A Tokyo</LI>
+<LI>References: &lt;<A HREF="msg00599.html">Pine.LNX.3.96LJ1.1b7.980922115542.9183B-100000@example.com</A>&gt; &lt;<A HREF="msg00599.html">Pine.LNX.3.96LJ1.1b7.980922115542.9183B-100000@example.com</A>&gt; &lt;<A HREF="msg00605.html">36072221236.7353WASHI@example.com</A>&gt; &lt;<A HREF="msg00613.html">3.0.6.32.19980922143212.009ca9b0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, Sep 22, 1998 at 02:32:12PM +0000, Darren Cook wrote:
+&gt; Is it possible to have a batch file (started by cron each night) access a
+&gt; web server and then email the resulting HTML page? Is this something best
+&gt; done in perl? Can it be done with perl -e do you think?
+
+Do you want a text rendering of the page?
+lynx -dump "<A TARGET="_top" HREF="http://www.tpc.ml.org/">http://www.tpc.ml.org/</A>" -auth=jwt:bubba
+(the -post_data switch can also be handy for filling in forms)
+
+I rarely want the whole page, so I use Python to fetch a number of things
+and build up a couple of custom pages every morning.  urllib will do the
+fetching.  htmllib can be used for parsing... or just use regular
+expressions to pick out the data of interest and generate your own
+summary.
+
+&gt;&gt;&gt; import urllib, string, smtplib
+&gt;&gt;&gt; uo = urllib.urlopen("<A TARGET="_top" HREF="http://www.tpc.ml.org/">http://www.tpc.ml.org/</A>")
+&gt;&gt;&gt; page = uo.readlines()
+(Here you can use regular expressions to single out just the
+comic^H^H^H^H^Hdata you are interested in on each source page.
+I normally just leave the pages lying on the machine that I
+create them on... but you could mail them...)
+&gt;&gt;&gt; page = "From: webber\nTo: jwt\nSubject: TPC\n\n" + string.join(page)
+&gt;&gt;&gt; s = smtplib.SMTP("mail.dskk.co.jp")
+&gt;&gt;&gt; result = s.sendmail("jwt-tlug@example.com", ["jwt-tlug@example.com"], page)
+
+(On the Windows platform you can also use Python to control MSIE through
+COM, but I won't mention that on the TLUG forum.)
+
+-- 
+Jim Tittsler, Tokyo   ICQ: 5981586
+
+
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00599" HREF="msg00599.html">tlug: Hustling NT 5 out the door</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00605" HREF="msg00605.html">Re: tlug: Hustling NT 5 out the door</A></STRONG>
+<UL><LI><EM>From:</EM> John De Hoog &lt;washi@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00613" HREF="msg00613.html">tlug: Web browsing from a batch file?</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00632.html">Re: tlug: e-Mailers [was:Mew on (X)Emacs the way to go?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00634.html">Re: tlug: Web browsing from a batch file?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00617.html">tlug: Web browsing from a batch file?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00634.html">Re: tlug: Web browsing from a batch file?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00633"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00633"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

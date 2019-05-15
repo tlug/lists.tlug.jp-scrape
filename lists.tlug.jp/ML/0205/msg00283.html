@@ -1,0 +1,170 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Apache running as root? -->
+<!--X-From-R13: Fbq [pChvyyva <qrivaNfcnzpbc.arg> -->
+<!--X-Date: Tue, 28 May 2002 18:21:28 +0900 (JST) -->
+<!--X-Message-Id: 20020528181308.B424&#45;100000@example.com&#45;pun.prv -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200205280856.g4S8ugn27816@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00282.html">Date Prev</a>][<a href="msg00284.html">Date Next</a>][<a href="msg00280.html">Thread Prev</a>][<a href="msg00289.html">Thread Next</a>][<a href="maillist.html#00283">Date Index</a>][<a href="threads.html#00283">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Apache running as root?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 28 May 2002 18:22:13 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Tod McQuillin &lt;<A HREF="mailto:devin@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Apache%20running%20as%20root%3F">devin@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Apache running as root?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, 28 May 2002, Christopher SEKIYA wrote:
+
+&gt; &gt; However I still have the one process running as root.
+&gt;
+&gt; ... because the parent process, once forked, cannot exit without killing
+&gt; its children.
+
+No.  The parent can exit without killing its children.  For example:
+
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+
+int main()
+{
+  int i;
+
+  switch (fork()) {
+  case 0:			/* child */
+    for (i = 1; i &lt;= 5; ++i) {
+      sleep(1);
+      printf(&quot;child alive for %d seconds\n&quot;, i);
+    }
+    return 0;
+  case -1:			/* error */
+    perror(&quot;fork&quot;);
+    return 1;
+  default:			/* parent */
+    printf(&quot;parent exiting\n&quot;);
+    return 0;
+  }
+}
+
+The reason the root process stays around is to accomodate the
+'MaxRequestsPerChild' httpd.conf option, which causes the child processes
+to exit after a certain number of requests (as a workaround for memory
+leaks on some OS's).  When a child exits, the parent process restarts it.
+(There may be other reasons for the root-owned httpd also; this was just
+the first that came to mind.)
+
+Anyway, the root-owned httpd is normal, and does not actually service any
+incoming http requests.
+-- 
+Tod McQuillin
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00289" href="msg00289.html">Re: [tlug] Apache running as root?</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00280" href="msg00280.html">Re: [tlug] Apache running as root?</a></strong>
+<ul><li><em>From:</em> Christopher SEKIYA</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00282.html">[tlug] GCC 3.1</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00284.html">Re: [tlug] Apache running as root?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00280.html">Re: [tlug] Apache running as root?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00289.html">Re: [tlug] Apache running as root?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00283"><strong>Date</strong></a></li>
+<li><a href="threads.html#00283"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

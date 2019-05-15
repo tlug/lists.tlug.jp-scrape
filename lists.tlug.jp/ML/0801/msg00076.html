@@ -1,0 +1,178 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] database design idea... what do you think? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Sat, 12 Jan 2008 18:29:22 +0900 -->
+<!--X-Message-Id: 20080112092921.GS6329@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: f91aa3d0801102138m5bee573t4bb1ba09eca30edd@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00072.html">Date Prev</a>][<a href="msg00073.html">Date Next</a>][<a href="msg00059.html">Thread Prev</a>][<a href="msg00077.html">Thread Next</a>][<a href="maillist.html#00076">Date Index</a>][<a href="threads.html#00076">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] database design idea... what do you think?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 12 Jan 2008 18:29:21 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20database%20design%20idea...%20what%20do%20you%20think%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] database design idea... what do you think?</strong></li>
+<li>References: &lt;<a href="msg00057.html">f91aa3d0801102138m5bee573t4bb1ba09eca30edd@mail.gmail.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-01-11 14:38 +0900 (Fri), Micheal Cooper wrote:
+
+&gt; What do you think of the following idea for a way to introduce ad-hoc
+&gt; attributes for users:
+&gt; 
+&gt; Make table &quot;attributes&quot; in a many-to-many relationship with table
+&gt; students.
+
+This sort of thing, when taken to excess, is a standard novice mistake
+with relational database design. In its most extreme form, you end
+up with a couple of tables storing everything in the database in
+attribute-value form.
+
+That's not to say it might not be the right thing to do in this
+circumstance, but keep in mind that it tends to make a big mess of your
+data. Just think about the sort of constraints you'd like to put on your
+database, and that will probably lead you to the places where you might
+use this and the places where you might not.
+
+&gt; (2) an Update_Attrs() function which analyzes student data to give and
+&gt; remove attributes according to the results of certain checks (i.e. if
+&gt; (current GPA &lt; 2.5) student.give_attr(attributes.assign(&quot;probation&quot;),
+&gt; date.today()))
+
+That's just data duplication that's going to lead to inconsistencies. If
+the rule is, &quot;the student is on probation at all times when his GPA &lt;
+2.5, you don't need to store whether or not he's on probation, since you
+can simply directly check the GPA for the date in question and find out.
+To store separately that he's on probation or not can only allow you to
+let him have a GPA &lt; 2.5 and yet not be on probation (according to that
+flag), or let him have a GPA &gt;= 2.5 and have him be on probation.
+
+Remember, a database is really an inference engine: you give it a set
+of facts, and then ask it questions about other facts that are not
+(directly) stated. So there should be no way of asking a particular
+question that would give a different answer from any other.
+
+As an implementation point, views can be very handy for giving easy
+access to calculated data.
+
+&gt; In textbook database design, if you are told to add the ability to
+&gt; track scholarship students, you need a scholarship table, and if you
+&gt; are asked to track computer lab assistants, you make a campus_jobs
+&gt; tables.
+
+I've never seen a textbook that states this particular thing explicitly.
+I think you're probably drawing unwarranted inferences. :-)
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00077" href="msg00077.html">Re: [tlug] database design idea... what do you think?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00057" href="msg00057.html">[tlug] database design idea... what do you think?</a></strong>
+<ul><li><em>From:</em> Micheal Cooper</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00072.html">Re: [tlug] database design idea... what do you think?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00073.html">Re: [tlug] [Announcement] TLUG Technical Meeting 2008-01-12 streamcast</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00059.html">Re: [tlug] database design idea... what do you think?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00077.html">Re: [tlug] database design idea... what do you think?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00076"><strong>Date</strong></a></li>
+<li><a href="threads.html#00076"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

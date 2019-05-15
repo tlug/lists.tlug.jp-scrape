@@ -1,0 +1,182 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: ftape with Trakker parallel port (fwd) -->
+<!--X-From: Tony Laszlo <laszlo@example.com> -->
+<!--X-Date:  Tue, 13 Jun 2000 19:06:00 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.10.10006131748340.18715&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00213.html">Date Prev</A>][<A HREF="msg00215.html">Date Next</A>][<A HREF="msg00213.html">Thread Prev</A>][<A HREF="msg00217.html">Thread Next</A>][<A HREF="maillist.html#00214">Date Index</A>][<A HREF="threads.html#00214">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: ftape with Trakker parallel port (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: ftape with Trakker parallel port (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>Tony Laszlo &lt;<A HREF="mailto:laszlo@example.com">laszlo@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 13 Jun 2000 17:49:15 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+TLuggers, 
+
+I attached an IOMEGA parallel zip drive to the parallel port 
+and insmod-ed ppa . I wasn't able to mount the thing (not 
+going to use it, so am not worried about it), but could tell 
+from the lines in /var/log/messages that it was being recognized. 
+Hence, I think the problems I am having with the Trakker 
+is a result of something other than parport and parport_pc.  
+
+cat /proc/parport/0/irq  gives "7". 
+
+cat /proc/parport/0/hardware gives :
+base:   0x378
+irq:    7
+dma:    none
+modes:  SPP
+(want to change to EPP, but forgot which function key brings 
+up the bios settings on this Aptiva 486DX ...)
+
+ 
+/dev/ftape is linked to rft0
+is this correct? 
+
+I used ftape's default lines for Trakker in MCONFIG. 
+Is this correct? 
+ 
+TRAKKER_DEV=0
+FDC_OPT +=      -DCONFIG_FT_FDC_PARPORT_$(TRAKKER_DEV)=-1 \
+                -DCONFIG_FT_PAR_$(TRAKKER_DEV)=1 \
+                -DCONFIG_FT_TRAKKER_$(TRAKKER_DEV)=1
+
+
+After testing the zip drive, switching back to the 
+tape drive (unplugging and plugging in the latter), 
+I got different error messages in /var/log/messages . 
+I thought it might work, but no such luck.
+
+Any advice appreciated. 
+
+Tony Laszlo
+Jiyugaoka, Tokyo
+
+
+
+Jun 13 16:35:00 net kernel: [001]   zftape-init.c (zft_init) - installing zftape VFS interface for ftape driver .... 
+Jun 13 16:35:10 net kernel: trakker.c: trakker_register @ 0xc485dde0 
+Jun 13 16:35:10 net kernel: [002]    fdc-io.c (fdc_register_R7d7204fe) - Probing for trakker tape drive slot 0. 
+Jun 13 16:35:10 net kernel: [003] 0   fdc-parport.h (ft_parport_probe_one) - base: 0x0378, irq: -1. 
+Jun 13 16:35:10 net kernel: [004] 0       trakker.c (read_mem_ps2) - checksum error. 
+Jun 13 16:35:10 net kernel: [005] 0     trakker.c (trakker_speedtest) - delay: 1. 
+Jun 13 16:35:10 net kernel: [006] 0  ftape-buffer.c (add_one_buffer) - buffer nr #1 @ c3956800, dma area @ c4860000. 
+Jun 13 16:35:10 net kernel: [007] 0  ftape-buffer.c (add_one_buffer) - buffer nr #2 @ c39560b0, dma area @ c4860000. 
+Jun 13 16:35:10 net kernel: [008] 0  ftape-buffer.c (add_one_buffer) - buffer nr #3 @ c3956d10, dma area @ c4860000. 
+Jun 13 16:35:10 net kernel: [009] 0  ftape-buffer.c (add_one_buffer) - buffer nr #4 @ c3956ec0, dma area @ c4860000. 
+
+&lt;&lt;after trying to tar something to /dev/ftape &gt;&gt;
+
+Jun 13 16:55:50 net kernel: [010]    trakker.c (trakker_interrupt) - BUG: Wrong IRQ number (7/-1). 
+Jun 13 16:55:50 net kernel: [011] 0     trakker.c (trakker_grab) - Check IRQ settings.. 
+Jun 13 16:55:50 net kernel: [012] 0     ftape-calibr.c (ftape_calibrate) - calibr_count: 777, calibr_time: 9973 us. 
+Jun 13 16:55:50 net kernel: [013] 0     ftape-calibr.c (ftape_calibrate) - TC for `fdc_wait()' = 12835 nsec (at 777 counts). 
+Jun 13 16:55:50 net kernel: [014]    trakker.c (trakker_interrupt) - BUG: Wrong IRQ number (7/-1). 
+Jun 13 16:55:50 net kernel: [015]    trakker.c (trakker_interrupt) - BUG: Wrong IRQ number (7/-1). 
+Jun 13 16:55:51 net kernel: [016] 0     fdc-io.c (fdc_reset) - no drive polling interrupt!. 
+Jun 13 16:55:51 net kernel: [017] 0     fdc-io.c (fdc_probe) - Type 82077AA FDC found. 
+
+
+
+-----------------------------------------------------------------------
+Next Meeting (w/ YLUG): June 16 (Fri) 19:00 Mizonoguchi Marui Family 12F
+Next Technical Meeting: July 8 (Sat)  13:30 Topic: TBA
+-----------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00217" HREF="msg00217.html">tlug: Re: ftape with Trakker parallel port (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00213.html">tlug: Re: ftape with Trakker parallel port</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00215.html">tlug: Information of nomikai party on 16th June with YLUG.</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00213.html">tlug: Re: ftape with Trakker parallel port</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00217.html">tlug: Re: ftape with Trakker parallel port (fwd)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00214"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00214"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

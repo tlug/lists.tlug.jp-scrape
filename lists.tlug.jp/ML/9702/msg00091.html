@@ -1,0 +1,203 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Mucked up my kterm fonts -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 25 Feb 1997 09:32:09 GMT -->
+<!--X-Message-Id: m0vzJ6i&#45;00001RC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199702250501.QAA04791@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00090.html">Date Prev</A>][<A HREF="msg00092.html">Date Next</A>][<A HREF="msg00089.html">Thread Prev</A>][<A HREF="msg00094.html">Thread Next</A>][<A HREF="maillist.html#00091">Date Index</A>][<A HREF="threads.html#00091">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Mucked up my kterm fonts</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Mucked up my kterm fonts </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 25 Feb 1997 18:23:31 +0900</LI>
+<LI>In-reply-to: Your message of "Tue, 25 Feb 1997 16:01:49 EST."            &lt;<A HREF="msg00089.html">199702250501.QAA04791@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; This is a faint cry for help. I did something stupid, and I
+    Jim&gt; don't know how to get out of it.
+
+Easy enough to do in X Windows.  Easy enough to undo, usually, if you
+know how, unlike Microsoft products.
+
+    Jim&gt; I was having trouble getting the new font to work, so I was
+    Jim&gt; poking around with xfontsel. It displays the new font
+    Jim&gt; perfectly, but there was no way I could get it to work with
+    Jim&gt; kterm. Pity.
+
+?? This is strange.  I assume for xfontsel to work, you put the font
+in a directory on your X font path, did "mkfontdir", and "xset fp
+rehash".  Then you should be able to (if necessary) edit your
+~/.Xresources file and add "KTerm*VT100*...."  Ooops.  This is the
+KTerm you hacked up yourself.  Did you do the right things with
+putting the ability to select the JISX-0212 font in a resource and all
+that?  If not, if you just hard-coded that stuff, then it's not going
+to work....  You're going to have to rebuild KTerm-212 to use a
+different font.
+
+By the way, KTerm 6.2.0 advertises the ability to use JISX0212.1990-0
+fonts....  I don't have such a font, so I haven't tried it yet.  I
+guess I'll go fishing at ftp.monash....
+
+    Jim&gt; Next day, to my horror, I found the grotesque fonts were
+    Jim&gt; still there as my defaults.
+
+Yipe!
+
+    Jim&gt; I've done all the correct things like getting xfontsel to
+    Jim&gt; select the (kosher) font, highlighting the _select_ box, and
+    Jim&gt; selecting the "default" with Ctrl-Right_Button, but it never
+    Jim&gt; works.
+
+Try selecting "selection" in the Fonts menu?  The man page is not very
+specific about this, nor is OReilly's Vol. 3 "X Window System User's
+Guide."  If you don't have this book, the next best alternative is
+reading the source code, with reading man pages a distant third.  Get
+it!  But in this case it didn't help much.
+
+As far as I can tell from the documentation, you can't directly change 
+your defaults using xfontsel and the Fonts menu in X/KTerm.  Are you
+sure that's what you did?  It seems to me that you must have edited
+either your .Xresources or /usr/X11R6/lib/X11/app-defaults/KTerm.
+
+    Jim&gt; The matter has mystified our sysadmins here, who admit to
+    Jim&gt; being not up on Xfont matters. We haven't been able to find
+    Jim&gt; where all this scaling info is held.
+
+The information is in the XLFD name (that monstrously long thing with
+lots of hyphens and ending in a registered character set name).  A
+scalable-by-design font has zeros in the fields labelled
+"*-pxlsz-ptSz-resx-resy-*-avgWdth-*" in xfontsel.  In such a font the
+resx and resy (design resolution) fields are dummies and should be set
+to zero.  Setting any one of the others will generate a real font
+internal to the server.  A font that is not scalable by design can be
+rescaled by setting pxlsz and avgWdth to zero and specifying ptSz.
+Again this generates a font internal to the server.
+
+As far as I know, you have to edit the app-defaults file or the
+.Xresources file (preferably the one that was changed), get rid of the 
+offending scaled font, and put in a correct bitmap font.  You should
+only need to copy the entry for "*VT100*fontList4" to
+"*VT100*fontList" (be careful about backslash-newline combos at the
+end of the line).  In any case doing this should fix things.
+
+The other possibility is that I'm wrong about the font being internal
+(this wouldn't surprise me given that kanji fonts are huge).  If a new
+font has been written to a "cache file" *and* it matches an ambiguous
+(or -- horrors! -- unambiguous) XLFD better than the "real" font, then
+you're in TRUH-BULL and can only get out by deleting the server-
+generated font.  You'll have to find it first....
+
+Do "xlsfonts -fn '-*-*-*-*-*-*-16-*-*-*-*-*-jisx0208.1983-*'" and send
+me the output; I should be able to make a better guess with that info.
+
+    Jim&gt; Yours in eternal anticipation....
+
+Fixing this shouldn't take that long....
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">tlug: Mucked up my kterm fonts</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00090.html">Re: tlug: PPP connection script for GOL.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00092.html">tlug: Thashed to death</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00089.html">tlug: Mucked up my kterm fonts</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00094.html">Re: tlug: Mucked up my kterm fonts</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00091"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00091"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

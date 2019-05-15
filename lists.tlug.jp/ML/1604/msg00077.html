@@ -1,0 +1,171 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] genetic algorithm/optimization framework -->
+<!--X-From-R13: Znef Ybggubss <yvfgfNynefxb.bet> -->
+<!--X-Date: Fri, 29 Apr 2016 01:26:01 +0900 -->
+<!--X-Message-Id: 20160428092551.2c8ad2ee@sakura -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20160427222225.fcdb36d543326580f701d5a5@kinali.ch -->
+<!--X-Reference: 20160427133932.223654a7@sakura -->
+<!--X-Reference: 20160428094937.ec87240ac79f98bd60d86867@kinali.ch -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00076.html">Date Prev</a>][<a href="msg00078.html">Date Next</a>][<a href="msg00065.html">Thread Prev</a>][<a href="msg00081.html">Thread Next</a>][<a href="maillist.html#00077">Date Index</a>][<a href="threads.html#00077">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] genetic algorithm/optimization framework</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 28 Apr 2016 09:25:51 -0700</li>
+<li><strong>From</strong>: <strong>Lars Kotthoff &lt;<a href="mailto:lists@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20genetic%20algorithm%2Foptimization%20framework">lists@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] genetic algorithm/optimization framework</strong></li>
+<li>References: &lt;<a href="msg00057.html">20160427222225.fcdb36d543326580f701d5a5@kinali.ch</a>&gt;	&lt;20160427133932.223654a7@sakura&gt;	&lt;<a href="msg00065.html">20160428094937.ec87240ac79f98bd60d86867@kinali.ch</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; The goal is to optimize a multi-band, circular polarized antenna for
+&gt; bandwith, radiation pattern, axial ratio (over the whole sphere),
+&gt; stability against material change,... etc
+&gt; 
+&gt; I am not aware of any other optimization method that would work with
+&gt; such a setup as there is no easy way to describe (ie linear, polynomial
+&gt; or exponential...) relationship between the parameters of the antenna
+&gt; and its properties.
+
+Interesting! What comes to mind apart from GAs is stochastic local search
+(<a  rel="nofollow" href="https://en.wikipedia.org/wiki/Local_search_">https://en.wikipedia.org/wiki/Local_search_</a>(optimization)). It sounds like that
+would do quite well here and it's ridiculously easy to program.
+
+That said, the current state of the art in parameter tuning (black-box parameter
+optimisation, i.e. the algorithm fiddles with the parameters without knowing
+what they affect) it to use model-based methods. Roughly, the method builds a
+model of the parameter-response surface and uses that to determine where to
+evaluate next. This is a much more targeted exploration of the search space and
+uncertainty is taken into account as well (e.g. I may want to evaluate this set
+of parameters not necessarily because I think it'll be best, but because it will
+give me the most useful additional information for the parameter-response
+model).
+
+There are several packages that allow you to do this, e.g.
+- Hyperopt <a  rel="nofollow" href="https://jaberg.github.io/hyperopt/">https://jaberg.github.io/hyperopt/</a>
+- Spearmint <a  rel="nofollow" href="https://github.com/JasperSnoek/spearmint">https://github.com/JasperSnoek/spearmint</a>
+- SMAC <a  rel="nofollow" href="http://www.cs.ubc.ca/labs/beta/Projects/SMAC/">http://www.cs.ubc.ca/labs/beta/Projects/SMAC/</a>
+- irace <a  rel="nofollow" href="http://iridia.ulb.ac.be/irace/">http://iridia.ulb.ac.be/irace/</a> (ok, this isn't really model-based in the
+  same sense as the others...)
+
+Most of these will only optimize for a single objective, but you may be able to
+combine your multiple objectives into a single one. These methods have been
+applied with success to problems with difficult parameter spaces (most
+prominently optimising parameters of machine learning algorithms).
+
+I do work in this area and I'd be happy to answer any questions.
+
+Cheers,
+
+Lars
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00081" href="msg00081.html">Re: [tlug] genetic algorithm/optimization framework</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00057" href="msg00057.html">[tlug] genetic algorithm/optimization framework</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+<li><strong><a name="00058" href="msg00058.html">Re: [tlug] genetic algorithm/optimization framework</a></strong>
+<ul><li><em>From:</em> Lars Kotthoff</li></ul></li>
+<li><strong><a name="00065" href="msg00065.html">Re: [tlug] genetic algorithm/optimization framework</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00076.html">Re: [tlug] Running without Gnome/KDE/xfce/whatever. (was: Ubuntu 16.04-LTS Japanese Text Input)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00078.html">Re: [tlug] Running without Gnome/KDE/xfce/whatever. (was: Ubuntu 16.04-LTS Japanese Text Input)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00065.html">Re: [tlug] genetic algorithm/optimization framework</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00081.html">Re: [tlug] genetic algorithm/optimization framework</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00077"><strong>Date</strong></a></li>
+<li><a href="threads.html#00077"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] /dev/random is truly random? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 23 Feb 2007 15:50:11 +0900 -->
+<!--X-Message-Id: 87bqjll5qk.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com -->
+<!--X-Reference: 20070223044516.GD22296@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00194.html">Date Prev</a>][<a href="msg00196.html">Date Next</a>][<a href="msg00193.html">Thread Prev</a>][<a href="msg00196.html">Thread Next</a>][<a href="maillist.html#00195">Date Index</a>][<a href="threads.html#00195">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] /dev/random is truly random?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 23 Feb 2007 15:58:59 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%2Fdev%2Frandom%20is%20truly%20random%3F">stephen@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] /dev/random is truly random?</strong></li>
+<li>References: &lt;<a href="msg00187.html">78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com</a>&gt;	&lt;<a href="msg00193.html">20070223044516.GD22296@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Mauro D. Sauco writes:
+
+ &gt; On 2007/02/22@??:52, &lt;Hung Vu Nguyen&gt; wrote:
+
+ &gt;   &gt; Linux's /dev/random is made from &lt;kernel source&gt;/drivers/char/random.c
+ &gt;   &gt; The seed used there is system timer, and it adds more &quot;noise&quot; from
+ &gt;   &gt; divice drives like keyboard &quot;to have numbers which are not only
+ &gt;   &gt; random, but hard to * predict by an attacker.&quot; ( quote from the
+ &gt;   &gt; comment of the source code ) ( Yet, the seed is still timer! ).
+
+I have now skimmed the full comment.  It's actually quite informative,
+and tells exactly why the author believes that the random device is
+hard to predict.  If it's not clear to you, then you probably simply
+lack the specialized technical vocabulary to understand what is written.
+
+ &gt; It is interesting that random.c still generates a seed from predictable
+ &gt; sources only which make it fall in the category of &quot;pseudo random&quot;. 
+
+It's not &quot;pseudo-random&quot;, because the seed changes continuously.
+
+As for the initial seed, it's multisource, none of which are
+predictable, although they are measureable, generally with fairly poor
+accuracy.
+
+Source 1: previous state -- the attacker must have access to your
+          system at shutdown time, or it's not predictable.
+Source 2: uname -- an attacker without access your system can guess
+          this, but it changes with every kernel build.
+Source 3: system timer -- changes every microsecond.
+
+But this is still not the complete seed; we start adding more entropy
+immediately, effectively changing the seed continuously.  Then we stir
+with CRC-32 and a &quot;twisted GFSR generator&quot; (no, I don't know what that
+is, but I suspect it is effective), and on top of that, hash the state
+with SHA1 to generate the RNG output.  This is *not* atom bombs or
+government work: a &quot;six-sigma&quot; estimate of the state is not good
+enough.  *Exact-to-the-last-bit* is required to the best of anyone's
+knowledge, and within a few seconds, the attacker is out of luck.
+
+Yes, attacks are possible, most important the DoS attack I mentioned.
+
+But get real; if you have to worry about an attack on this system
+(other than entropy starvation), then you also need armed guards
+outside the machine room, and the walls better be 2m thick missile
+silo grade (and even so it's probably cheaper to penetrate the walls
+than the RNG).
+
+ &gt; topic. If I remember there was a true random (sorry I don have time to
+ &gt; google) generator based on a kaotic randomnes source from electron
+
+Yes, it would be nice if we could tap quantum randomness.  But quantum
+randomness is only a theory; it is no more proven than the
+&quot;difficulty&quot; (== cost of exhaustive search over the space of all
+strings) of inverting SHA1.  You would *still* need to treat it as an
+entropy pool and hash it to at least slow down an attack if the theory
+turns out to be wrong.
+
+The advantage to quantum randomness is not that it's &quot;truly random&quot;.
+It's that it's available in realtime, which system jitter is not.
+People regularly report problems with /dev/random because they run
+themselves out of entropy.
+
+BTW, &quot;chaotic randomness&quot; is an oxymoron.
+
+Mathematical chaos is *not* random.  Chaos is *precisely* the
+continuous analogue of discrete pseudo-randomness; it's just that
+the required precision is infinity, thus making accurate prediction
+difficult as the horizon increases.  However, by spending the effort
+to acquire more precise data, you can extend the horizon for which
+accurate prediction can be made.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00196" href="msg00196.html">Re: [tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> emiddleton@??</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00187" href="msg00187.html">[tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00193" href="msg00193.html">Re: [tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Mauro D. Sauco</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00194.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00196.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00193.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00196.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00195"><strong>Date</strong></a></li>
+<li><a href="threads.html#00195"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

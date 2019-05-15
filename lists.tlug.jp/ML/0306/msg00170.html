@@ -1,0 +1,263 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Tweaking the kernel -->
+<!--X-From-R13: Rna Zvaqsvryq <qna.yvaqsvryqNqvny.cvcrk.pbz> -->
+<!--X-Date: Fri, 20 Jun 2003 13:49:26 +0900 -->
+<!--X-Message-Id: 3EF29256.7080507@example.com -->
+<!--X-Content-Type: text/html -->
+<!--X-Reference: 3EF178E1.2020300@example.com -->
+<!--X-Reference: 20030619091632.GA20340@example.com -->
+<!--X-Reference: 3EF189A2.6060503@example.com -->
+<!--X-Reference: 20030619191339.GD22501@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00172.html">Date Prev</a>][<a href="msg00171.html">Date Next</a>][<a href="msg00162.html">Thread Prev</a>][<a href="msg00180.html">Thread Next</a>][<a href="maillist.html#00170">Date Index</a>][<a href="threads.html#00170">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Tweaking the kernel</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 20 Jun 2003 13:49:26 +0900</li>
+<li><strong>From</strong>: <strong>Dan Lindfield &lt;<A HREF="mailto:dan.lindfield@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Tweaking%20the%20kernel">dan.lindfield@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Tweaking the kernel</strong></li>
+<li>References: &lt;<a href="msg00148.html">3EF178E1.2020300@example.com</a>&gt; &lt;<a href="msg00149.html">20030619091632.GA20340@example.com</a>&gt; &lt;<a href="msg00150.html">3EF189A2.6060503@example.com</a>&gt; &lt;<a href="msg00162.html">20030619191339.GD22501@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i586; en-US; rv:1.3) Gecko/20030313</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+
+
+
+
+Jonathan,<br>
+<br>
+This is getting very interesting. The cause of my frustration with the
+notebook's speed under MDK9.1 is that I have 256Mb of RAM backed by
+512Kb of L2 cache. Both of which should ensure good performance (When I
+purchased the Notebook 4 years ago I primarily wanted to use it for
+running CAD software (Pro-Engineer) and CFD software both of which are
+memory thirsty, under Windows 98 speed was not an issue with this
+software). The speed issue is evident from boot as it takes 3 minutes
+to boot the system and 2 minutes to load KDE. Does this point to a non
+KDE problem?<br>
+<br>
+Anyway, thanks for the web site
+<a class="moz-txt-link-rfc2396E" href="http://www.penguin.cz/~stano/en/mtrr.html">"http://www.penguin.cz/~stano/en/mtrr.html"</a> pointer, it is a very
+interesting read. It gives a very good example on how to use mtrr and
+might have given me further insite into the root of my problems:<br>
+<br>
+cat /proc/mtrr on my system returned:<br>
+<br>
+reg00: base=0xfb800000 (4024MB), size=&nbsp;&nbsp; 4MB: write-combining, count=1<br>
+<br>
+There is only this one line and the above referenced web page suggests: <br>
+<ul>
+  <li>For example, the output for a machine with 96 MB of memory   the
+output is
+    <pre>  reg00: base=0x00000000 (   0MB), size=  64MB: write-back, count=1
+  reg01: base=0x04000000 (  64MB), size=  32MB: write-back, count=1</pre>
+  </li>
+</ul>
+I must therefore note:<br>
+<br>
+1. My /proc/mtrr does not reflect the 256Mb of RAM that my system has.<br>
+<br>
+2. My /proc/mtrr points to my VGA compatible controller Trident
+Cyberblade and has 4Mb of memory allocated to it when in fact it should
+have 8Mb.<br>
+<br>
+At this stage I'm not sure this is important or not and I need to
+investigate further.<br>
+<br>
+<br>
+To answer some of your additional questions: I have infact recompiled
+the Kernel to use the AMD-K6 2/3 CPU with the additional mtrr support.
+I have not included the 'AMD K6 Power Now Module' as this is supposed
+to manage a CPU slowdown to conserve battery power, I couldn't face
+working any slower!<br>
+I do work under KDE and unfortunately I'm also a fan of Mozilla (It is
+a dinosaur in more than just its name!). I've wanted to explore Icewin
+before, maybe now is the time to look into it.<br>
+<br>
+Well, thanks again,<br>
+<br>
+Dan<br>
+<br>
+<br>
+Jonathan Byrne wrote:<br>
+<blockquote type="cite" cite="mid20030619191339.GD22501@example.com">On
+Thu, Jun 19, 2003 at 07:00:02PM +0900, Dan Lindfield wrote: <br>
+  <br>
+  <blockquote type="cite">Thanks but I'm now even more confused, I also
+have a PC using an AMD <br>
+XP1800+ CPU and is loaded with Mandrake 9.1. My understanding is that <br>
+the XP1800 has 128KB of L1 cache and 256KB of L2 cache. <br>
+  </blockquote>
+  <br>
+Hmm, good point.&nbsp; That led me to go looking for documentation of <br>
+exactly what /proc/cpuinfo does to get that cache number, but <br>
+I have found nothing right.&nbsp; A read of the kernel source may be <br>
+the documentation for that.&nbsp; I know some people I can ask. <br>
+  <br>
+As Tobias mentions, perhaps it's just reporting the larger of <br>
+the two cache sizes.&nbsp; I got the same report on my Athlon <br>
+2200+.&nbsp; It would be nice if it would report either L1,L2 or <br>
+a unified total. <br>
+  <br>
+This is a good piece on mtrr, although not specific to the <br>
+K62: <br>
+  <br>
+<a class="moz-txt-link-freetext" href="http://www.penguin.cz/~stano/en/mtrr.html">http://www.penguin.cz/~stano/en/mtrr.html</a> <br>
+  <br>
+  <blockquote type="cite">Does that mean I'm stuck with what I've got?
+Is my only option to <br>
+improve speed to cut down on any services running in the background
+(I'm <br>
+not looking at gaming)? <br>
+  </blockquote>
+  <br>
+I don't think the system processes will make much difference to
+performance, although for security reasons you shouldn't run anything <br>
+you don't need. <br>
+  <br>
+A K62-400 running as a web server could saturate a T3, all it needs <br>
+is memory. <br>
+  <br>
+Speaking of memory, how much of it do you have?&nbsp; Insufficient memory <br>
+is the biggest single problem with performance on pretty much any <br>
+system.&nbsp; If your notebook has only 32 or 64 meg, bump that to 128 <br>
+and you'll see a big performance boost. <br>
+  <br>
+Are you running KDE or Gnome on it?&nbsp; If so, chucking that and moving <br>
+to a faster, lighter environment would help a lot.&nbsp; I hear a lot <br>
+of good things about IceWM and Fluxbox.&nbsp; Gnome and KDE both add a <br>
+lot of their own overhead. <br>
+  <br>
+Recompiling everything optimized for the K62 could help also.&nbsp; A <br>
+large undertaking to be sure, but can help you ring extra peformance <br>
+out of it.&nbsp; If you go this way, moving from Mandrake to Gentoo would <br>
+probably be a worthwhile move. <br>
+  <br>
+Also, keep in mind that a notebook old enough to have a K62 probably <br>
+has a slow disk and lackluster video.&nbsp; I used to use a Toshiba with <br>
+a K62-350 and it was fairly slow, but had 192 meg of memory, so that <br>
+kept it moving even when running XP (Linux was not an option b/c <br>
+nothing I tried - BSD included - could deal with the spastic cardbus <br>
+controller on that machine; only Windows worked, everything else <br>
+hung during the install). <br>
+  <br>
+Jonatha<br>
+n <br>
+</blockquote>
+
+
+
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00180" href="msg00180.html">[tlug] Re: Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+<li><strong><a name="00187" href="msg00187.html">Re: [tlug] Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00148" href="msg00148.html">[tlug] Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Dan Lindfield</li></ul></li>
+<li><strong><a name="00149" href="msg00149.html">Re: [tlug] Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+<li><strong><a name="00150" href="msg00150.html">Re: [tlug] Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Dan Lindfield</li></ul></li>
+<li><strong><a name="00162" href="msg00162.html">Re: [tlug] Tweaking the kernel</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00172.html">Re: [tlug] dualboot WinXP/Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00171.html">Re: [tlug] Re: kinput2 with Mozilla and Open Office Org</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00162.html">Re: [tlug] Tweaking the kernel</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00180.html">[tlug] Re: Tweaking the kernel</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00170"><strong>Date</strong></a></li>
+<li><a href="threads.html#00170"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

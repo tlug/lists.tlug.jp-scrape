@@ -1,0 +1,244 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Please Help with FVWM -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Mon, 13 Nov 1995 03:24:05 GMT -->
+<!--X-Message-Id: m0tEpPO&#45;0004PyC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199511130128.RAA08481@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00032.html">Date Prev</A>][<A HREF="msg00034.html">Date Next</A>][<A HREF="msg00030.html">Thread Prev</A>][<A HREF="msg00034.html">Thread Next</A>][<A HREF="maillist.html#00033">Date Index</A>][<A HREF="threads.html#00033">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Please Help with FVWM</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Please Help with FVWM</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Mon, 13 Nov 95 12:18 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00030.html">199511130128.RAA08481@example.com</A>&gt; (message from Shigeru Abe on Sun, 12 Nov 1995 17:28:30 -0800 (PST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Shige" == Shigeru Abe &lt;sabe@example.com&gt; writes:
+
+    Shige&gt; Yesterday, I started fooling around with nls and locale. I
+    Shige&gt; don't really know what they are for, but they have ja_JP
+    Shige&gt; files in there.  I started randomly copying the ja_JP.jis,
+    Shige&gt; etc files over the default and noticed some change.  On one
+    Shige&gt; particular file, you start getting random kanji instead of
+    Shige&gt; english, so that may be the key. I noticed there was no
+    Shige&gt; ja_JP.euc in either directories.. do they exist?
+
+This is deep, deep magic.  Apparently the wizards changed their minds
+about how to do these things between X11R5 and X11R6.  My XFree86
+hierarchy is pure X11R6, and there is no .../nls.  In the JE
+distribution, there is no .../locale.  (I always mv the package (ie,
+XFree86 in this case) hierarchy to a safe place, then test with a
+symbolic link.  If that's OK, I remove the *link*, and unpack the new
+distribution fresh.  That makes returning to a working configuration
+fairly painless as long as the new distribution doesn't make too many
+symlinks automagically.)
+
+I would suggest making sure there is a clean copy of the entire
+.../locale directory somewhere easily accessible.  Then look into the
+files in .../nls, and find the matching files in .../locale.  The
+name schemes are different, and there can be aliases in the .../locale
+scheme.  So you have to actually look at the first few lines of each
+file to figure out which ones correspond.
+
+There ought to be a way to have multiple files in each locale
+directory.  Probably the one named XLC_LOCALE is the one that gets
+used, so you could mv the X11R6 one to XLC_LOCALE.X11R6-dist, then the 
+JE .../nls/* file to XLC_LOCALE, and things would work out.
+
+The fact that you get random kanji suggests that your locale is being
+set improperly.  Try setting and exporting LANG=ja_JP with the
+original X11R6 locale files.  (This must be done *before* fvwm is
+started in the *shell which starts it*.  While you're playing with
+this kind of thing, I strongly suggest changing the end of .xinitrc to
+
+# fvwm
+kterm # note, the last program in .xinitrc is run in the foreground
+
+and starting fvwm by hand in that "console".  Remember that exiting
+that "console" will also exit X.)  If you copy the X11R5 .../nls/*
+files into the .../locale/*/ subdirectories, you will need to fix the
+locale.* index files in .../locale/ (I think, as I say this is deep
+magic).  Then you can try LANG=ja_JP.ujis.
+
+The locale documentation is pretty weird, and I don't have a recent
+version of Slackware installed so I don't know if it got any better.
+But you can try looking up locale(1), setlocale(1), setlocale(3), and
+locale(7).  The X documentation of locale related functions is
+non-existent in the man pages; presumably the Xlib manual is much more 
+detailed.
+
+Apparently in the JE distribution the EUC code is what is called
+".ujis"; I have no idea what ".pjis" might be good for.  In the X11R6
+distribution, the .../locale/ja/ subdirectory contains the EUC locale.
+Apparently the idea is to promote EUC as the most portable.  (The
+others are not compatible with mixing languages in the same document.
+Apparently Microsoft's shift-JIS is the worst of all.  At least the
+Mosaic L10N implementors hate it with passion.)
+
+    Shige&gt; Can it be my computer? "ujis.fvwmrc" was included with
+    Shige&gt; every JE I tried and has never worked, but I assume its
+    Shige&gt; possible to use otherwise it wouldn't be included in
+    Shige&gt; version after version.
+
+I doubt it's your computer, but it could be your environment as I
+mentioned above.  You could do a "grep -i 'locale'" on the entire JF
+tree....
+
+[The rest is more-or-less irrelevant to TLUG; I'm including it because 
+ I'm here already and think it's of somewhat general interest.  If you 
+ think it's really inappropriate, let me know.]
+
+    Shige&gt; Did Tsukuba ever turn out to become that "Science City"
+    Shige&gt; they were talking about in Expo '85 (in Tsukuba)?  I
+    Shige&gt; haven't here that much about it, so I was wondering.
+
+Well, as much as any place in Japan can be considered a "Science
+City," Tsukuba can |^P.  Don't get me wrong---there is a lot of really 
+good science being done here.  But the scientists are more like
+ordinary Japanese salarymen than like US scientists, and the culture
+is not like that surrounding Stanford, MIT, or even Ohio State.  I
+think that one of the reasons that Japan has so few Nobel laureates
+compared to the unquestionable talent and hard work of its people is
+that the most prominent scientists are all primarily engaged in "grant 
+grubbing" and "grovelling before bureaucrats," and really do very
+little science.  In fact, that's how you become a prominent scientist
+in Japan.  So younger, very talented, scientists also spend huge
+amounts of time grovelling (before their seniors as well as before the
+bureaucrats).
+
+This is an extreme portrait, of course, and highly skewed by my
+position as a *social* scientist, where the rewards to grovelling and
+grant-grubbing are proportionately higher, and the rewards to doing
+good, internationally recognized science are proportionately lower,
+than in the physical sciences.  But I think that there is definitely a
+strong bias in Japan toward social rather than scientific criteria of
+success, as compared to the American individual-directed, more apt
+to be science-oriented, criteria of success.
+
+This is changing, at least here in Tsukuba---as far as I can tell
+Todai gets ever more deeply mired in those attitudes, and Kyodai is
+nearly hopeless from the rumors I hear---and the recent (3 years ago)
+appointment of Leo Ezaki (Nobel laureate in physics---he's never done
+a single bit of research on Japanese soil, please note) as President
+of the University of Tsukuba helped a whole lot here on campus.  (He's
+bad for me personally---my institute is misplaced in the engineering
+college, and Ezaki-sensei wants to rationalize us into a new
+behavioral science college, where our base research funding will be
+lower.  But that's exactly the right attitude for the University as a
+whole, stop the continual reward of people for historical accident,
+and increase the rewards for doing current research.)
+
+So in my opinion, it's an uphill struggle, but we are making progress.
+Note that I *do* identify myself with this university, do support its
+efforts to improve, and do see definite progress.  But I believe that
+requires an honest, critical attitude toward certain unfortunate
+legacies, and careful consideration of how that goal may conflict with 
+Japanese culture as a whole.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00034" HREF="msg00034.html">Re: Please Help with FVWM</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeru Abe &lt;sabe@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: Please Help with FVWM</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00030" HREF="msg00030.html">Re: Please Help with FVWM</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeru Abe &lt;sabe@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00032.html">Re: Linus In Japan!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00034.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00030.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00034.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00033"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00033"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

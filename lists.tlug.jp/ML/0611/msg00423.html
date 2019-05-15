@@ -1,0 +1,186 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] 2GB miniSD card and 1024&#45;byte sectors &#45; cannot mount -->
+<!--X-From-R13: Ubqjva Egrjneg <tbqjva.fgrjnegNtznvy.pbz> -->
+<!--X-Date: Thu, 16 Nov 2006 22:04:29 +0900 -->
+<!--X-Message-Id: 20061116140422.1cf1b7fd.godwin.stewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgpsSKPwlIJAm.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00422.html">Date Prev</a>][<a href="msg00424.html">Date Next</a>][<a href="msg00478.html">Thread Prev</a>][<a href="msg00431.html">Thread Next</a>][<a href="maillist.html#00423">Date Index</a>][<a href="threads.html#00423">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 16 Nov 2006 14:04:22 +0100</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<a href="mailto:godwin.stewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%202GB%20miniSD%20card%20and%201024-byte%20sectors%20-%20cannot%20mount">godwin.stewart@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi,
+
+As mentioned in an earlier thread I've been busy playing with a new
+keitai, which has the particularity of being able to switch to &quot;data
+storage&quot; mode and thus behaves as a straightforward pen-drive when
+connected to the computer via a USB cable.
+
+I have 3 miniSD cards I use with it right now: a 64MB card that was in
+the sales package, a 1GB card I ordered at the same time as the phone
+and a 2GB card I ordered more recently.
+
+Both the 64MB and 1GB cards are no problem to use whatsoever. The fact
+that the phone formats cards as &quot;superdisks&quot; isn't a problem either, I
+can mount /dev/sda instead of /dev/sda1 no problem.
+
+What *is* a problem, however, is a wierdness with the 2GB card.
+
+Other than the obvious differences in geometry, the 2GB card shows as
+having 1024-byte sectors. Having run `strace fdisk` I ascertained that
+fdisk acquires this information with an ioctl call.
+
+Okay then. No problem. &quot;mkdosfs -S 1024&quot; should be able to tackle that.
+But it doesn't. Subsequently attempting to mount the newly formatted
+card results in &quot;mount: /dev/sda1: can't read superblock&quot;
+
+Yes, I did partition the card and format /dev/sda1.
+
+Yes, I get exactly the same results if I use it as a superdisk and try
+and mount /dev/sda instead.
+
+So, I got the phone to format the card and then took a look at the
+content of the bootsector to see if there was anything strange going on
+there.
+
+All is perfectly normal except that the bootsector contains 0x0200 at
+offset 0x0b meaning that it's claiming that the sectors are 512 bytes
+in length rather than the 1024 that fdisk found. Furthermore, the first
+FAT is indeed 512 bytes into the &quot;disk&quot;, supporting the content of the
+bootsector rather than what's being reported by ioctl.
+
+Regardless of how I format the card from my command line, and
+regardless of the type of filesystem I put on the partition, my Linux
+box is unable to use it - mount is unable to read the superblock.
+
+Interestingly enough, a partition formatted on the command line *is*
+usable by the keitai. It'll store audio and video on it no problem. I
+just can't mount it on the Linux box!
+
+My gut feeling says it has something to do with the 1024-byte sector
+size reported by fdisk. mount doesn't appear to call the same ioctl if
+the strace output is anything to go by, and the system call to mount(2)
+fails with an EIO error, which is odd since pulling data off the card
+with dd works fine.
+
+Googling for information about 1024-byte sectors threw up a few results
+about reformatting RAID arrays...
+
+Any ideas out there?
+
+--
+G. Stewart - godwin.stewart@example.com
+
+Which is worse: ignorance or apathy?  Who knows?  Who cares?
+</pre><p><strong>Attachment:
+<a href="pgpsSKPwlIJAm.pgp" ><tt>pgpsSKPwlIJAm.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00431" href="msg00431.html">Re: [tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00432" href="msg00432.html">Re: [tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</a></strong>
+<ul><li><em>From:</em> NOKUBI Takatsugu</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00422.html">Re: [tlug] antispam tricks</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00424.html">Monitor Protocol . . . . . . . . . . . . . . . . . . . . . . . . .	. . . . . (was Re: [tlug] Firefox font configuration)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00478.html">Re: [tlug] htaccess, rewritecond, and wildcards!! [help!]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00431.html">Re: [tlug] 2GB miniSD card and 1024-byte sectors - cannot mount</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00423"><strong>Date</strong></a></li>
+<li><a href="threads.html#00423"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Compile/load problem with graphics library -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Wed, 08 Aug 2018 18:58:58 +0900 -->
+<!--X-Message-Id: 720d44e0&#45;25ce&#45;6364&#45;652a&#45;0e45137eef6d@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: fe5a3e36&#45;1068&#45;ab9b&#45;e233&#45;66f92f81b522@imaginatorium.org -->
+<!--X-Reference: 32f9378d&#45;874e&#45;b475&#45;e35f&#45;fe10719cede8@gmail.com -->
+<!--X-Reference: a3dd8cfb&#45;f6bd&#45;f433&#45;c5db&#45;4b7bb8cab604@imaginatorium.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00007.html">Date Prev</a>][<a href="msg00009.html">Date Next</a>][<a href="msg00022.html">Thread Prev</a>][<a href="msg00009.html">Thread Next</a>][<a href="maillist.html#00008">Date Index</a>][<a href="threads.html#00008">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Compile/load problem with graphics library</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 8 Aug 2018 10:10:34 +0100</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Compile%2Fload%20problem%20with%20graphics%20library">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Compile/load problem with graphics library</strong></li>
+<li>References: &lt;<a href="msg00001.html">fe5a3e36-1068-ab9b-e233-66f92f81b522@imaginatorium.org</a>&gt;	&lt;<a href="msg00003.html">32f9378d-874e-b475-e35f-fe10719cede8@gmail.com</a>&gt;	&lt;<a href="msg00006.html">a3dd8cfb-f6bd-f433-c5db-4b7bb8cab604@imaginatorium.org</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101	Thunderbird/52.9.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Given your initial description of a small, specific, old C++ program, I
+would rewrite it in commandline calls, or PHP (which has a nice
+imagemagick wrapper, and from memory worked smoothly, and has lots of
+docs, e.g. <a  rel="nofollow" href="http://php.net/manual/en/book.imagick.php">http://php.net/manual/en/book.imagick.php</a> and
+<a  rel="nofollow" href="http://phpimagick.com/">http://phpimagick.com/</a> )
+
+(Having said that, I'm just skimming the manual, and the comments are
+all people struggling to get ImageMagick installed!)
+
+&gt; One big problem is that I simply cannot understand the mass of subtly 
+&gt; different library names involved. The configure script generates the 
+&gt; following for the libraries to be searched:
+&gt; 
+&gt; -L/usr/local/lib -lMagick++-6.Q16 -lMagickWand-6.Q16 -lMagickCore-6.Q16
+
+This is the horrible bit about C++ on unix.
+
+For the files you list, each of the *.so ones will link to one of the
+others; for the three you need (*) it looks like you have only one
+version installed. So that is easy. (And, also, the files you need are
+there.) For the others you'd expect the *.so to be linking to the most
+recent version, and you obviously have a lot of different versions
+installed.
+
+(*): GraphicsMagick is a branch; the branch was quite a while ago, and I
+think the projects have diverged a bit.
+
+So the -L tells it where to look at the -lXXX will expand out to libXXX.so.
+
+The last time I had to mess around with this I think I gave up and used
+static linking: E.g.
+<a  rel="nofollow" href="https://www.systutorials.com/5217/how-to-statically-link-c-and-c-programs-on-linux-with-gcc/">https://www.systutorials.com/5217/how-to-statically-link-c-and-c-programs-on-linux-with-gcc/</a>
+
+But there was also something about LD_LIBRARY_PATH, and then there are
+flags you can give to the gcc linker that makes it tell you more
+verbosely what it is doing.
+
+Like I said, unless your script is very complex, or is bringing in other
+libraries not available in your scripting language of choice, I would
+rather rewrite.
+
+In fact I would still rewrite, but in C++11 or later, and starting from
+the closest example C++ script that comes with imagemagick, to be sure I
+have the installation working.
+
+Darren
+
+&gt; libGraphicsMagick++.a           libGraphicsMagickWand.so.2.7.3
+&gt; libGraphicsMagick++.so          libGraphicsMagickWand.so.2.7.4
+&gt; libGraphicsMagick++.so.12       libGraphicsMagickWand.so.2.8.0
+&gt; libGraphicsMagick++.so.12.1.0   libGraphicsMagickWand.so.2.8.1
+&gt; libGraphicsMagick++.so.12.1.1   libGraphicsMagickWand.so.2.8.2
+&gt; libGraphicsMagick++.so.12.2.0   libGraphicsMagickWand.so.2.9.0
+&gt; libGraphicsMagick++.so.12.3.0   libMagick++-6.Q16.a
+&gt; libGraphicsMagick++.so.12.3.1   libMagick++-6.Q16.la
+&gt; libGraphicsMagick++.so.12.3.2   libMagick++-6.Q16.so
+&gt; libGraphicsMagick.a             libMagick++-6.Q16.so.6
+&gt; libGraphicsMagick.so            libMagick++-6.Q16.so.6.0.0
+&gt; libGraphicsMagick.so.3          libMagickCore-6.Q16.a
+&gt; libGraphicsMagick.so.3.15.0     libMagickCore-6.Q16.la
+&gt; libGraphicsMagick.so.3.15.1     libMagickCore-6.Q16.so
+&gt; libGraphicsMagick.so.3.16.0     libMagickCore-6.Q16.so.2
+&gt; libGraphicsMagick.so.3.17.0     libMagickCore-6.Q16.so.2.0.0
+&gt; libGraphicsMagick.so.3.17.2     libMagickWand-6.Q16.a
+&gt; libGraphicsMagick.so.3.18.0     libMagickWand-6.Q16.la
+&gt; libGraphicsMagickWand.a         libMagickWand-6.Q16.so
+&gt; libGraphicsMagickWand.so        libMagickWand-6.Q16.so.2
+&gt; libGraphicsMagickWand.so.2      libMagickWand-6.Q16.so.2.0.0
+&gt; 
+&gt; GraphicsMagick:
+&gt; config
+&gt; 
+&gt; ImageMagick-6.9.1:
+&gt; config-Q16
+&gt; 
+&gt; ImageMagick-6.9.4:
+&gt; config-Q16
+&gt; ------------------------------------------------------------------
+&gt; 
+&gt; ---- Latest error: with the library files after the .o files ----
+&gt; horigome@kulle% make imagetrim
+&gt; g++ imagetrim.o boundingbox.o `Magick++-config --ldflags --libs` -o 
+&gt; imagetrim
+&gt; imagetrim.o: In function `main':
+&gt; imagetrim.cpp:(.text+0x3c1): undefined reference to 
+&gt; `Magick::Image::read(std::__cxx11::basic_string&lt;char, 
+&gt; std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;)'
+&gt; imagetrim.cpp:(.text+0x783): undefined reference to 
+&gt; `Magick::Image::write(std::__cxx11::basic_string&lt;char, 
+&gt; std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;)'
+&gt; imagetrim.cpp:(.text+0xd55): undefined reference to 
+&gt; `Magick::Image::write(std::__cxx11::basic_string&lt;char, 
+&gt; std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;)'
+&gt; collect2: error: ld returned 1 exit status
+&gt; *** Error code 1
+&gt; 
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">[tlug]  Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+<li><strong><a name="00003" href="msg00003.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Joe Foran</li></ul></li>
+<li><strong><a name="00006" href="msg00006.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00007.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00009.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00022.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00009.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00008"><strong>Date</strong></a></li>
+<li><a href="threads.html#00008"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

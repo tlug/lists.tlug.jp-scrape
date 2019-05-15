@@ -1,0 +1,232 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: [tlug] Mounting an initrd file? -->
+<!--X-From-R13: Oy Vbnat <ubnatnNznp.pbz> -->
+<!--X-Date: Wed, 31 May 2006 15:03:36 +0900 -->
+<!--X-Message-Id: 447D2FF6.8000607@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00201.html">Date Prev</a>][<a href="msg00203.html">Date Next</a>][<a href="msg00201.html">Thread Prev</a>][<a href="msg00203.html">Thread Next</a>][<a href="maillist.html#00202">Date Index</a>][<a href="threads.html#00202">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Mounting an initrd file?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 31 May 2006 14:56:06 +0900</li>
+<li><strong>From</strong>: <strong>Al Hoang &lt;<a href="mailto:hoanga@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Mounting%20an%20initrd%20file%3F">hoanga@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Mounting an initrd file?</strong></li>
+<li>User-agent: Thunderbird 1.5.0.2 (X11/20060529)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+Hello all,
+
+</pre><tt>   I've been banging my head in frustration for a couple of hours on 
+</tt><tt>this....
+</tt><pre style="margin: 0em;">
+
+Problem Statement
+=============
+</pre><tt>I can't seem to properly mount an initrd file.  
+</tt><tt>The culprit file I'm looking at is the Ubuntu intird for Dapper 
+</tt><tt>(initrd.img-2.6.15-23-386).
+</tt><pre style="margin: 0em;">
+
+
+(Dumb) Assumptions
+==============
+</pre><tt>I thought it would be as simple as mount /path/to/initrd.img 
+</tt><tt>/your/mount/path but that definitely does not work.
+</tt><pre style="margin: 0em;">
+
+
+Things that I have tried
+===============
+1. Plain old mount and let the auto detector find out:
+# mount -t ext2 /boot/initrd.img-2.6.15-23-386 /mnt/foo
+</pre><tt>mount: /boot/initrd.img-2.6.15-23-386 is not a block device (maybe try 
+</tt><tt>`-o loop'?)
+</tt><pre style="margin: 0em;">
+
+2. Tried with some different filesystem types:
+# mount -t cramfs /boot/initrd.img-2.6.15-23-386 /mnt/foo
+</pre><tt>mount: /boot/initrd.img-2.6.15-23-386 is not a block device (maybe try 
+</tt><tt>`-o loop'?)
+</tt><pre style="margin: 0em;">
+# mount -t ext2 /boot/initrd.img-2.6.15-23-386 /mnt/foo
+</pre><tt>mount: /boot/initrd.img-2.6.15-23-386 is not a block device (maybe try 
+</tt><tt>`-o loop'?)
+</tt><pre style="margin: 0em;">
+# mount -t ext3 /boot/initrd.img-2.6.15-23-386 /mnt/foo
+</pre><tt>mount: /boot/initrd.img-2.6.15-23-386 is not a block device (maybe try 
+</tt><tt>`-o loop'?)
+</tt><pre style="margin: 0em;">
+
+3. Try using losetup (Gee would be nice to have a manpage):
+# losetup /dev/loop/1 /boot/initrd.img-2.6.15-23-386
+# losetup -a
+/dev/loop/0: [0304]:1880952 (/boot/initrd.img-2.6.15-23-386)
+# mount /dev/loop/1 /mnt/foo
+mount: you must specify the filesystem type
+# mount -t ext2 /dev/loop/1 /mnt/foo
+mount: wrong fs type, bad option, bad superblock on /dev/loop/1,
+      missing codepage or other error
+      In some cases useful info is found in syslog - try
+      dmesg | tail  or so
+#dmesg | tail
+&lt;snip&gt;
+VFS: Can't find an ext2 filesystem on dev loop1.
+# mount -t ext3 /boot/initrd.img-2.6.15-23-386 /mnt/foo
+mount: wrong fs type, bad option, bad superblock on /dev/loop/1,
+      missing codepage or other error
+      In some cases useful info is found in syslog - try
+      dmesg | tail  or so
+# dmesg | tail
+&lt;snip&gt;
+VFS: Can't find an ext3 filesystem on dev loop1.
+# mount -t cramfs /boot/initrd.img-2.6.15-23-386 /mnt/foo
+mount: wrong fs type, bad option, bad superblock on /dev/loop/1,
+      missing codepage or other error
+      In some cases useful info is found in syslog - try
+      dmesg | tail  or so
+# dmesg | tail
+&lt;snip&gt;
+cramfs: wrong magic
+
+4. gunzipping the file then trying 2 &amp; 3.  Same deal.
+
+
+Notes
+====
+</pre><tt>The only thing that seems to properly mount the filesystem is using 
+</tt><tt>mount -t ramfs however when I look in the directory I see nothing in 
+</tt><tt>there.  Which seems really improbable since the initrd is a few megs or 
+</tt><tt>so...
+</tt><pre style="margin: 0em;">
+# ls -lah initrd*
+-rw-r--r-- 1 root root 6.5M 2006-05-30 16:55 initrd.img-2.6.15-23-386
+
+</pre><tt>I've tried these commands on Ubuntu Dapper 
+</tt><tt>6.06-whatever-update-I-pulled-in-yesterday and a Gentoo system with 
+</tt><tt>2.6.15-suspend-r2  kernel that definitely has support for cramfs and 
+</tt><tt>loopback support since I know compiled these in myself.  And it's still 
+</tt><tt>giving me no love.
+</tt><pre style="margin: 0em;">
+
+
+Questions
+=======
+</pre><tt>1.  Am I missing something in order to mount the initrd file? 
+</tt><tt>2.  Will gunzip | cpio do the job?  'file' reports it's a cpio archive
+</tt><pre style="margin: 0em;">
+3.  I thought Linux could initrd files as a filesystem with ease?
+</pre><tt>across distros.4.  Auto-generation tools for creating (ex. mkinitrd) 
+</tt><tt>don't seem to be standardized.  What's the canonical way to do this?
+</tt><pre style="margin: 0em;">
+
+
+
+Alain
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] Mounting an initrd file?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00204" href="msg00204.html">Re: [tlug] Mounting an initrd file?</a></strong>
+<ul><li><em>From:</em> Niels Kobschaetzki</li></ul></li>
+<li><strong><a name="00205" href="msg00205.html">Re: [tlug] Mounting an initrd file</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00201.html">Re: [tlug] LinuxWorld Expo/Tokyo 2006</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00203.html">Re: [tlug] Mounting an initrd file?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00201.html">Re: [tlug] LinuxWorld Expo/Tokyo 2006</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00203.html">Re: [tlug] Mounting an initrd file?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00202"><strong>Date</strong></a></li>
+<li><a href="threads.html#00202"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

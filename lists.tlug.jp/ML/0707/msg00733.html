@@ -1,0 +1,176 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Tip of the Day: "ghosting" a machine with nc and dd -->
+<!--X-From-R13: gyhtNrkgryyvflf.arg -->
+<!--X-Date: Tue, 17 Jul 2007 20:23:02 +0900 -->
+<!--X-Message-Id: 200707172022.56133.tlug@extellisys.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: d8fcc0800707162334w4c694ba2yd2b9b296e7964f94@mail.gmail.com -->
+<!--X-Reference: 469C673B.20104@stoicviking.net -->
+<!--X-Reference: d8fcc0800707170018q1382f7a3me9d151ecc213aed5@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00732.html">Date Prev</a>][<a href="msg00734.html">Date Next</a>][<a href="msg00721.html">Thread Prev</a>][<a href="msg00744.html">Thread Next</a>][<a href="maillist.html#00733">Date Index</a>][<a href="threads.html#00733">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Jul 2007 20:22:56 +0900</li>
+<li><strong>From</strong>: <strong><a href="mailto:tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Tip%20of%20the%20Day:%20%22ghosting%22%20a%20machine%20with%20nc%20and%20dd">tlug@example.com</a></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</strong></li>
+<li>References: &lt;<a href="msg00708.html">d8fcc0800707162334w4c694ba2yd2b9b296e7964f94@mail.gmail.com</a>&gt;	&lt;<a href="msg00709.html">469C673B.20104@stoicviking.net</a>&gt;	&lt;<a href="msg00712.html">d8fcc0800707170018q1382f7a3me9d151ecc213aed5@mail.gmail.com</a>&gt;</li>
+<li>User-agent: KMail/1.9.6</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tuesday 17 July 2007 16:18:24 Josh Glover wrote:
+&gt; Thanks, and you just reminded me of something from the meeting:
+&gt;
+&gt; Travis advised running:
+&gt;
+&gt; dd if=/dev/zero of=/dev/hda
+&gt;
+&gt; on the target host before starting. I have updated the wiki to include
+&gt; that tip. He also suggested using bz2 or gzip if the network is the
+&gt; bottleneck.
+
+If you use gz/bz2 or other compression program to compress the disk images, 
+run the above command before you install and set up the source system so that 
+you do not waste time (and space) compressing unneeded data.
+
+I made use of this at a previous job where we had to support our software in a 
+number of window managers, with 16 possible language settings, for four 
+distributions of Linux.  I became involved because I was the only one on the 
+development team who could grok CJK, which were the most difficult languages 
+for people to work with.  (This was back in the days of kinput2, of course.)  
+With so many possible system configurations, I would store gz drive images of 
+fully configured systems on a network share.  When a tester reported a 
+significant CJK bug, it was then easy for the developer to transfer 
+and &quot;install&quot; the applicable system with a single Linux command.
+
+I have also used the /dev/zero and gz/bz2 combination to create backups of 
+(large) drives that easily fit on CD-R or DVD-R media.  If you want to roll 
+out a large number of identical systems &quot;ghost style,&quot; using DVDs allows you 
+to do many in parallel without flooding the LAN.
+
+One more note: I usually specify the block size when I use the dd command.
+	Example: dd bs=1MB if=/dev/zero of=/dev/hda
+Note that the MB multiplicative suffix is the hardware definition of megabtye 
+(1000*1000, not 1024*1024), which is what you want when you use dd on hard 
+disks.  See `man dd` for details.
+	<a  href="http://linux.die.net/man/1/dd">http://linux.die.net/man/1/dd</a>
+
+&gt; Travis, care to add that to the wiki as a note?
+
+I have to leave soon, but I will do so soon.
+
+Cheers,
+
+Travis
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00744" href="msg00744.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00708" href="msg00708.html">[tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00709" href="msg00709.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+<li><strong><a name="00712" href="msg00712.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00732.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00734.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00721.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00744.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00733"><strong>Date</strong></a></li>
+<li><a href="threads.html#00733"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

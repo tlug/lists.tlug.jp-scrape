@@ -1,0 +1,250 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Ghostscript 4.01 and Wadalab Kanji fonts -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Fri, 4 Oct 1996 03:41:29 GMT -->
+<!--X-Message-Id: m0v9153&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 9610031233.AA04715@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00007.html">Date Prev</A>][<A HREF="msg00009.html">Date Next</A>][<A HREF="msg00004.html">Thread Prev</A>][<A HREF="msg00009.html">Thread Next</A>][<A HREF="maillist.html#00008">Date Index</A>][<A HREF="threads.html#00008">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Ghostscript 4.01 and Wadalab Kanji fonts</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Ghostscript 4.01 and Wadalab Kanji fonts</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Fri, 4 Oct 96 12:37 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00004.html">9610031233.AA04715@example.com</A>&gt; (andy@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Andrew" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+    Andrew&gt; I have been trying to get the Wadalab fonts to work with
+    Andrew&gt; Ghostscript 4.01. First I tried jis encoding by defining:
+
+    Andrew&gt; /Wadalab-mincho-0-8 (Wadalab-mincho-0-8.gsf) ;
+
+    Andrew&gt; Gs cores dumps if I try the following:
+
+This is a known bug in 4.00 and 4.01, allegedly fixed in 4.03.  It has
+to do with the garbage collector.  Start gs with 'gs -dNOGC' plus any
+other switches you use.
+
+    Andrew&gt; /Wadalab-mincho-0-8 findfont 40 scalefont setfont 100 100
+    Andrew&gt; moveto &lt;3021&gt; show showpage
+
+    Andrew&gt; Maybe GS runs out out memmory, as it load the whole
+    Andrew&gt; font. I tried to understand the stack trace below, but I
+    Andrew&gt; didn't get very far.
+    ...
+    Andrew&gt; #5 0x806fff3 in gs_vmreclaim ()
+    ...
+
+That's a GC function.  I don't know what the GC problem was, but Peter
+Deutsch said it's fixed.  I haven't upgraded, so I don't know.  You
+can work around it by using the '-dNOGC' option.  This doesn't usually
+hurt for displaying text files; it increases memory usage drastically
+in "escher.ps", a recursive drawing.
+
+    Andrew&gt; Now, what I realy want to do is display EUC encoded files,
+    Andrew&gt; so I defined:
+
+    Andrew&gt; /Wadalab-mincho-0-8-EUC (Wadalab-mincho-0-8-EUC.gsf);
+
+    Andrew&gt; Which seem to work, but sometimes core dumps.
+
+    Andrew&gt; Any idea what I may be doing wrong?
+
+I don't think you're doing anything wrong.  You could be getting bit
+by the GC bug again.  It's also true that the Wadalab programs are
+garbage.  In particular, I seem to recall getting a Postscript
+"rangecheck" error in EUC files, which means that the EUC-to-JIS
+translation was done incorrectly.  They were written by people who do
+fonts, not Postscript programming.  Even the C programs aren't very
+well written.
+
+You seem to have gotten as far as I have, so I won't confuse the issue 
+by publishing my Fontmap etc at this point.  I'm trying to make
+something that (1) doesn't require an enormous complicated fontmap,
+and (2) is installable by script with reasonable defaults and some
+configurability for people with banana-flavored installations.  It's
+not easy since Aladdin's kanji-related programs were written as proof
+of concept, not as general-purpose tools, and I'm not a good
+Postscript programmer.
+
+However, if you use Mule, you can make any EUC-encoded PS file into a
+iso-2022-jp file using "M-X M-K f *iso-2022-jp*unix", resave it, then
+run the following filter on the result to strip out the kanji-in and
+kanji-out sequences.  As far as I know, there should normally be no
+non-printable characters in a Postscript file (it's possible to make
+binary images, and if you do that, you'll have to be more careful).
+So the program simply panics if the escape sequence is not recognized.
+Note also the escaping of the '\' and ')' characters when in JIS mode;
+there may be other characters that need to be escaped (I'm not a
+professional Postscript programmer :-).  If you have problems on a
+specific character, check to see what its JIS representation is as
+two-byte ASCII.  If it's punctuation, you probably need to fix my
+program.
+
+This method means that you have a readable PS file (the ISO-2022-JP
+version) and an automatic translation to something that works with the
+Wadalab fonts (I've used the JIS mode extensively).
+
+/*
+ * stripJIS.c
+ *
+ * standard stream filter
+ * strips JIS kanji-in and kanji-out escape sequences from a stream
+ *
+ * NO WARRANTY; in particular treatment of Postscript escape sequences
+ * is probably buggy.
+ *
+ * Copyright 1996 Yaseppochi-gumi
+ */
+
+#include &lt;stdio.h&gt; 
+#define ASCII 0
+#define JIS 1
+
+int main (int argc, char *argv[]) { /* command line args not used */
+
+  int c1, c2;
+  int state = ASCII;
+  while ((c1 = getchar()) &gt;= 0) {
+    if (c1 == 0x1b) {		/* process escape sequence */
+      c1 = getchar();
+      if (state &amp;&amp; c1 == '(') {  /* looks like end-JIS */
+        c2 = getchar();
+        if (c2 == 'B') {		/* not end-JIS */
+	  state = ASCII;
+	} else {
+	  printf ("\nPanic: expected end-JIS sequence, got ESC ( %c\n",
+                  c2);
+	  exit(1);
+	}
+      } else if (!state &amp;&amp; c1 == '$') {  /* looks like begin-JIS */
+        c2 = getchar();
+        if (c2 == 'B') {		/* begin-JIS */
+	  state = JIS;
+	} else {
+	  printf ("\nPanic: expected begin-JIS sequence, got ESC $ %c\n",
+                  c2);
+	  exit(1);
+	}
+      } else {
+	printf ("\nPanic: unrecognized escape sequence ESC %c\n", c1);
+	exit(1);
+      }
+    } else {			/* spit out text */
+      if ((c1 == '\\' || c1 == ')') &amp;&amp; state) putchar('\\');
+                                /* escape backslashes and parens in JIS */
+      putchar(c1);
+    }
+  }
+  exit(0);
+}
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00004" HREF="msg00004.html">Ghostscript 4.01 and Wadalab Kanji fonts</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00007.html">Re: setting up scsi drives and lilo</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00009.html">Re: Ghostscript 4.01 and Wadalab Kanji fonts</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00004.html">Ghostscript 4.01 and Wadalab Kanji fonts</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00009.html">Re: Ghostscript 4.01 and Wadalab Kanji fonts</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00008"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00008"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

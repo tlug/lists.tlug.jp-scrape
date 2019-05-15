@@ -1,0 +1,217 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: How to use Japanese True Type fonts? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 8 Aug 2000 20:40:11 +0900 (JST) -->
+<!--X-Message-Id: 14735.61851.781930.279432@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: s3t3dkgawe0.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00055.html">Date Prev</A>][<A HREF="msg00057.html">Date Next</A>][<A HREF="msg00055.html">Thread Prev</A>][<A HREF="msg00062.html">Thread Next</A>][<A HREF="maillist.html#00056">Date Index</A>][<A HREF="threads.html#00056">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>How to use Japanese True Type fonts?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>How to use Japanese True Type fonts?</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 8 Aug 2000 20:40:11 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00055.html">s3t3dkgawe0.fsf@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00055.html">s3t3dkgawe0.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;T95z5.A.4LB.YL_j5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Mike" == Mike Fabian &lt;mfabian@example.com&gt; writes:
+
+    Mike&gt; Has anybody tried to use Japanese True Type fonts with
+    Mike&gt; Linux?  What is the best way to do this? Which fontserver
+    Mike&gt; can be recommended for that purpose?
+
+I've had some success at various times in the past with VFlib and XTT
+versions of the X Server and/or X Font Server.  But they involve
+nonstandard and (IMO) poorly designed extensions.  In particular, they
+will not be upward compatible with OpenType, which addresses many of
+the same problems.
+
+    Mike&gt; <A TARGET="_top" HREF="http://www.linux.or.jp/~ishikawa/linux/dists/FreeType/xtt-fonts_0.19990222-3.tar.gz">http://www.linux.or.jp/~ishikawa/linux/dists/FreeType/xtt-fonts_0.19990222-3.tar.gz</A>
+
+    Mike&gt; Until now I tried to use these fonts with XFree86-4.0
+    Mike&gt; (should have support for True Type fonts already build in)
+    Mike&gt; and with the font server 'xfstt' but without any success.
+
+Yup.  Those are fonts intended for use with the XTT fork of XFree86.
+Parts of that were attempted to be merged into XFree86 4.0, but not
+entirely successful.  The differences between xfstt and xfs-xtt
+remained substantial as of January 2000.
+
+(I don't know any of this first hand, and I'm not using XFree86 4.0 yet.)
+
+    Mike&gt; First I tried it with XFree86-4.0.  I unpacked the tarball
+    Mike&gt; (which contains the fonts, fonts.dir, and fonts.alias
+    Mike&gt; files), and added the directory to X's fontpath with
+
+You might try mv'ing the fonts.* files out of the way and rewriting
+them to xfstt's satisfaction (by hand, I doubt whether ttmkfdir is
+capable of dealing with Japanese fonts).  They very likely use
+features of xfs-xtt which were either not merged into xfstt or are
+still unstable (if there have been recent successes on this front).
+
+    Mike&gt; Then I deleted the original fonts.dir and fonts.alias and
+    Mike&gt; created a new fonts.dir with the 'ttmkfdir' utility:
+
+    Mike&gt;     mfabian@example.com:~/xtt-fonts-0.19990222$ ttmkfdir &gt; fonts.dir
+    Mike&gt;     unknown font foundry code LYJS
+    Mike&gt;     unknown font foundry code LYJS
+
+Uh-oh....
+
+I noticed that you have 4 pairs of duplicate font names in the
+fonts.dir output.  Is this correct?
+
+    Mike&gt; Then I tried to use xfstt. I used the option '--unstrap'
+    Mike&gt; when starting 'xfstt' (according to the documentation this
+    Mike&gt; option is necessary to display more then the first 256
+    Mike&gt; characters in a font) and started the X-server with the
+    Mike&gt; option '-deferglyphs 16' (this is also recommended in the
+    Mike&gt; documentation of xfstt). But nevertheless, 'xfd' did never
+    Mike&gt; show me more than the first 256 characters.
+
+Are you sure the fontserver comes earlier in the fontpath?  It must be
+added explicitly.  You should also delete the directory from the
+fontpath so that you know for sure the font is coming from the font
+server and not the X server.
+
+Does the 4.0 version still have --encoding?  You probably need that to
+export jisx0208.1983 if it still does.  What is the UNSTRAPLIMIT
+(compile-time variable) for 4.0?  If it's below the kanji, you're not
+going to have a chance anyway.
+
+    Mike&gt; Maybe XFree86-4.0 and xfstt are not able to display Japanese
+    Mike&gt; True Type fonts?
+
+Dunno.  Wouldn't be surprised, although I thought this did work.
+
+    Mike&gt; Has anybody tried X-TT (<A TARGET="_top" HREF="http://x-tt.dsl.gr.jp/">http://x-tt.dsl.gr.jp/</A>)? Does this
+    Mike&gt; work better? According to the installation manual of X-TT it
+    Mike&gt; is distributed in form of patches against XFree86 3.3.5, so
+    Mike&gt; maybe this doesn't work with XFree86-4.0 at all?
+
+Build the font server separately.  I have no problems running both
+xfstt and xfs-xtt (but I don't have time to play with it and make sure
+they're actually working at the moment, although they have been
+simultaneously effective in the past).  (The TT fonts packages
+consistently broke my XF86Config, and XF86 upgrades consistently broke
+on existing TT fonts.  So I gave up....)
+
+Rumor had it XTT was in disarray from the attempt to merge with
+XFree86 (which failed).  Just a rumor, though.
+
+Those Watanabe fonts are available from the Ghostscript FTP site
+(ftp.cs.wisc.edu, and maybe SourceForge as well) in source form with
+utilities to translate them to BDF and Type 1 (actually Type 0)
+formats (and several others).  I occasionally use them in Type 1
+format, which works fine (but they're kinda klunky at &lt; 30pt; I prefer
+the bitmap fonts).
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">Re: How to use Japanese True Type fonts?</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00055" HREF="msg00055.html">How to use Japanese True Type fonts?</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00055.html">How to use Japanese True Type fonts?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00057.html">RE: How to use Japanese True Type fonts?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00055.html">How to use Japanese True Type fonts?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00062.html">Re: How to use Japanese True Type fonts?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00056"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00056"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

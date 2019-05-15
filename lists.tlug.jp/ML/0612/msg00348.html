@@ -1,0 +1,254 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] dhcp.conf -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Wed, 20 Dec 2006 19:03:09 +0900 -->
+<!--X-Message-Id: 20061220100306.GB8775@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1166604193.4594.59.camel@example.com&#45;224.rosenet.ne.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00347.html">Date Prev</a>][<a href="msg00349.html">Date Next</a>][<a href="msg00349.html">Thread Prev</a>][<a href="msg00356.html">Thread Next</a>][<a href="maillist.html#00348">Date Index</a>][<a href="threads.html#00348">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] dhcp.conf</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Dec 2006 05:03:06 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20dhcp.conf">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] dhcp.conf</strong></li>
+<li>References: &lt;<a href="msg00343.html">1166604193.4594.59.camel@example.com</a>&gt;</li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Wed, Dec 20, 2006 at 05:43:13PM +0900, Shawn wrote:
+&gt; Hi,
+&gt; 
+&gt; Please bear with my non-understanding
+&gt; 
+&gt; Trying to get dhcp to work in fc6, I would need a client right?  In fc3,
+&gt; lookup worked out of the box; but in my fc6 install I didn't have the
+&gt; rpm installed.
+
+Hrm.  
+
+Unless this Fedora box is working as a DHCP server, you don't need
+dhcpd.conf.  That is a configuration file that a DHCP server uses.  It
+gives information to the machines that get their addresses from the DHCP
+server. 
+
+dhclient is what we use in FreeBSD, I think it's called dhcpcd. 
+
+So, assuming that your Linux machine is getting an address from a DHCP
+server you would want to do something like
+
+dhcpcd eth0
+
+Which should get you an address.  
+
+There's a chance that you missed the step during installation where your
+firewall allows dhcp through--or perhaps, in configuring the network
+during installation.  
+
+I forget the name of the Fedora tool, but you can try that
+too--net-config or redhat-net-config?  Hopefully, you know it (or a
+Fedora user here can fill in that gap.)
+
+
+&gt; 
+&gt; 
+&gt; If I don't to request automatic lookup by dhcp as specified in the /usr/sbin/system-config-
+&gt; services gui, please let me know.
+
+See above.  Again, this is assuming that you simply want your card to
+get a dhcp address from something (router, ISP, etc) giving it. 
+
+&gt; 
+&gt; If I do need one, can I just ask a few questions.
+
+These might as well be answered for the archives. :)
+
+&gt; 
+&gt; # Sample dhcpd.conf
+&gt; 
+&gt; # option definitions common to all supported networks...
+&gt; #option domain-name &quot;linuxhelp.ca&quot;;
+&gt; ??I don't have a domain on this box so no need I think
+
+In general, those who set up a DHCP server would probably use one, even
+if it's just used locally, that is, on your internal LAN (Local Area
+Network.)
+&gt; 
+&gt; # Your name servers. You can normally find these in 
+&gt; # your /etc/resolv.conf file. These will be distributed to all DHCP 
+&gt; # clients.
+&gt; option domain-name-servers 10.1.1.1, 65.39.196.215, 65.39.192.130;
+&gt; 
+&gt; ?? what is 10.1.1.1????  I have two entries 210.230.70.2 210.230.70.3 plus a name &quot;rosenet.ne.jp&quot;
+
+This would have been a sample to show syntax.  You would have (were it
+necessary to set this up) change it to your DNS servers.  These are
+usually provided by an ISP, though one can also set up a Linux (or
+Windows|BSD|etc) machine to be the name server.
+often h 
+
+&gt; ??does rosenet.ne.jp translate into a number somehow using a command like host or um forgot the other reverse lookup
+&gt; 
+Explaining this should be another thread.  It concerns DNS.  The
+rosenet.ne.jp is probably the domain, or search domain line.
+
+
+&gt; default-lease-time 600;
+&gt; max-lease-time 7200;
+&gt; ??sure fine, copy and paste - values ok?
+
+Sort of short, 600 and 7200 are seconds, meaning clients would be 
+asking for leases every 5 minutes.  
+
+
+&gt; 
+&gt; # If this DHCP server is the official DHCP server for the local
+&gt; # network, the authoritative directive should be uncommented.
+&gt; authoritative;
+&gt; ??for the local network of one box yes. no?
+&gt; 
+Yes, but again, my answers are for the archives.  In this case, a one
+machine network wouldn't have a DHCP server.  Say I have 4 machines and
+one is the DHCP server.  It is the authoritive server for the 4 machines
+that are using it to get an IP address.
+
+
+
+&gt; 
+&gt; # Configuration for an internal subnet.
+&gt; subnet 10.1.1.0 netmask 255.255.255.0 {
+&gt;   range 10.1.1.2 10.1.1.25;
+&gt;   option domain-name-servers 10.1.1.1, 65.39.196.215, 65.39.192.130;
+&gt;   option domain-name &quot;linuxhelp.ca&quot;;
+&gt;   option routers 10.1.1.1;
+&gt;   option broadcast-address 10.1.1.255;
+&gt;   default-lease-time 600;
+&gt;   max-lease-time 7200;
+&gt; }
+&gt; 
+&gt; ?? um internal subnet.  again this is just one box.  Do I need to configure this.  Can I get the info from my fc3 box running dhcp fine somehow?
+&gt; 
+
+No, again, this was simply a sample to show syntax and options. 
+
+
+-- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Harmony: Why have you come to our lonely, small town, which
+has no post office and very few exports?
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00356" href="msg00356.html">Re: [tlug] dhcp.conf</a></strong>
+<ul><li><em>From:</em> Hector Akamine</li></ul></li>
+<li><strong><a name="00357" href="msg00357.html">[tlug] DNS [was: dhcp.conf]</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00343" href="msg00343.html">[tlug] dhcp.conf</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00347.html">Re: [tlug] dhcp.conf --nevermind</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00349.html">Re: [tlug] dhcp.conf --nevermind</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00349.html">Re: [tlug] dhcp.conf --nevermind</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00356.html">Re: [tlug] dhcp.conf</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00348"><strong>Date</strong></a></li>
+<li><a href="threads.html#00348"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

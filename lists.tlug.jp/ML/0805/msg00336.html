@@ -1,0 +1,205 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Raid5 box &#38; backup -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Mon, 26 May 2008 08:17:20 +0900 -->
+<!--X-Message-Id: 20080525231719.GA24519@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20080525040521.GK4030@lucky.cynic.net -->
+<!--X-Reference: 48389DF4.4050200@raoult.com -->
+<!--X-Reference: 48393595.5090202@raoult.com -->
+<!--X-Reference: b4d277190805242150u778a7e9x336055ccf64e9843@mail.gmail.com -->
+<!--X-Reference: 20080525133122.GT4030@lucky.cynic.net -->
+<!--X-Reference: c0f4e2b00805250746n2863f93bqd4dc2552ced6f284@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00335.html">Date Prev</a>][<a href="msg00337.html">Date Next</a>][<a href="msg00333.html">Thread Prev</a>][<a href="msg00338.html">Thread Next</a>][<a href="maillist.html#00336">Date Index</a>][<a href="threads.html#00336">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Raid5 box &amp; backup</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 26 May 2008 08:17:19 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Raid5%20box%20%26%20backup">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Raid5 box &amp; backup</strong></li>
+<li>References: &lt;<a href="msg00322.html">20080525040521.GK4030@lucky.cynic.net</a>&gt;	&lt;<a href="msg00321.html">48389DF4.4050200@raoult.com</a>&gt; &lt;<a href="msg00324.html">48393595.5090202@raoult.com</a>&gt;	&lt;<a href="msg00323.html">b4d277190805242150u778a7e9x336055ccf64e9843@mail.gmail.com</a>&gt;	&lt;<a href="msg00332.html">20080525133122.GT4030@lucky.cynic.net</a>&gt;	&lt;<a href="msg00333.html">c0f4e2b00805250746n2863f93bqd4dc2552ced6f284@mail.gmail.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-05-25 23:46 +0900 (Sun), Bruno wrote:
+
+&gt; On Sun, May 25, 2008 at 10:31 PM, Curt Sampson &lt;cjs@example.com&gt;
+&gt; wrote:
+&gt; 
+&gt; &gt; The only way you can hope to reasonably fast rsync or unison style
+&gt; &gt; syncing is if each local machine has unencrypted access to the
+&gt; &gt; filesystem. You might be able to do this livably by using encrypted
+&gt; &gt; files on top of unencrypted filesystems.
+&gt; &gt;
+&gt; 
+&gt; This was my first idea... I just hoped to get another solution, but I will
+&gt; not, apparently :-(
+
+Actually, that's where we go back to my original idea, come to think of
+it. You won't get bidirectional sharing (because it would corrupt the
+filesystems), but here's what you do:
+
+    1. At site A, set up a set of large files, a1, a2, ..., each of
+    which will hold a filesystem to be used locally at site A. Set up
+    rsync to sync these over to site B. Do the inverse for site B.
+
+    2. Export each of these files as a block device over the network.
+
+    3. Each owner than configures his own machine to attach this block
+    device to his computer, and then configures it as an encrypted
+    filesystem, using local keys etc. as you would with any local
+    filesystem. You may want to contemplate making this use hard
+    sync, to minimize the amount of time the filesystem has integrity
+    problems.
+
+Voila, everybody has his own encrypted filesystem, backed by encrypted
+blocks in a normal file on the server, which is sync'd regularly to the
+remote server.
+
+The disadvantages?
+
+    1. It's not usable remotely, at least not with any kind of reasonable
+    speed, and possibly not at all, depending on firewalls, etc.
+
+    2. Even on a GigE network, it's likely to be slower than a local
+    filesystem.
+
+    3. Unless it's a transactional filesystem, it's likely regularly to
+    be in an inconsistent state on a regular basis, and this inconsistent
+    state will be copied to the backup.
+
+    4. The CPU cost of the rsync is likely to be fairly high on both
+    ends, because the only way rsync has to know whether to copy a
+    particular block or not is to read it and calculate its hash.
+
+&gt; Even with these thousands, I guess you would not *guarantee* anything,
+&gt; would you?
+
+Not likely. I can make some guarantees, but if keep in mind that even
+seemingly simple guarantees might depend on me, for example, doing a
+complete analysis of whatever encrypted filesystem you're using and
+taking steps to make sure that you, e.g., never do a kernel upgrade.
+
+I can only tell you what level of resistance you have against various
+attacks. And even there, much of it is to do with you. If you decide to
+give your keys to someone, there's not much that *I* can do about that.
+(Other than perhaps suggest you should have just let the guy shoot you
+instead. :-))
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00322" href="msg00322.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00321" href="msg00321.html">[tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00324" href="msg00324.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00323" href="msg00323.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+<li><strong><a name="00332" href="msg00332.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00333" href="msg00333.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Bruno</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00335.html">Re: [tlug] OT: interesting NY times article:High-Tech Japanese,	Running Out of Engineers</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00337.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00333.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00338.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00336"><strong>Date</strong></a></li>
+<li><a href="threads.html#00336"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

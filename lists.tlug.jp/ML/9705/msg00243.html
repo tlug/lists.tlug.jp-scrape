@@ -1,0 +1,226 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Kanji cut & paste from Netscape -->
+<!--X-From: jwb@example.com (Jim Breen) -->
+<!--X-Date:  Mon, 26 May 1997 00:07:15 GMT -->
+<!--X-Message-Id: 199705260006.KAA13718@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: andy@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00242.html">Date Prev</A>][<A HREF="msg00244.html">Date Next</A>][<A HREF="msg00251.html">Thread Prev</A>][<A HREF="msg00242.html">Thread Next</A>][<A HREF="maillist.html#00243">Date Index</A>][<A HREF="threads.html#00243">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Kanji cut &amp; paste from Netscape</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Kanji cut &amp; paste from Netscape</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI>Date: Mon, 26 May 1997 10:06:57 -0500</LI>
+<LI>In-Reply-To: "Andrew S. Howell" &lt;andy@example.com&gt;      "tlug: Kanji cut &amp; paste from Netscape" (May 25,  5:13pm)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from jwb@example.com (Jim Breen)
+--------------------------------------------------------
+On May 25,  5:13pm, "Andrew S. Howell" wrote:
+} Subject: tlug: Kanji cut &amp; paste from Netscape
+&gt;&gt; 
+&gt;&gt; I'm not sure how I did it, but I broke something. I used to be able to
+&gt;&gt; cut and paste kanji from Netscape into xjdic. Any ideas?
+
+Sigh. I have *never* been able to do that. Some mismatch of cut-buffers
+between Netscape, which I run on a nearby Solaris box, and kterm on my
+Ultrix DECstation, means I can't cut &amp; paste between them. I *can* cut to
+an ordinary xterm, so I when I want to gloss Japanese from Netscape, I run
+a tiny program in an xterm window that copies each line entered to a
+certain file. I put a "clip-board" mode into xjdic so it polls that file
+once a second in a sleep loop. A horrible hack, but it works.
+
+Jim
+
+PS: here is the little program, and the xjdic changes. They will turn up
+in V2.3 someday.....
+
+++++++++++++clipit.c+++++++++++++++++++++++++++++++++++++
+#include &lt;stdio.h&gt;
+#include &lt;ctype.h&gt;
+
+unsigned char ss[51];
+
+FILE *ff,*fopen();
+
+main()
+{
+	while(1)
+	{
+		printf("Next: ");
+		gets(ss);
+		ff = fopen("clipboard","w");
+		fprintf(ff,"%s",ss);
+		fclose(ff);
+		printf("\n");
+	}
+}
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Sorry these do not match the released version of xjdfrontend_old.c !
+
+Add some extra global variable:
+
+&gt; 	int clipmode=FALSE;
+&gt; 	unsigned char clipstring1[51];
+&gt; 	unsigned char clipstring2[51]={"XXXX"};
+&gt; 	FILE *fclip,*fopen();
+
+Add this just after the " for (i = 0; (c != 0xd) &amp;&amp; (c != 0xa); i++) "
+line in main()
+
+&gt; 			if (clipmode) break;
+
+Add an extra command character in the " if ((!escf) &amp;&amp; (!bit8) &amp;&amp; (strchr(".."
+line (I use "{").
+
+Add the following to the " if(cmdmode) " block
+
+&gt; 			if (c == '{')	/* } to balance {}  */
+&gt; 			{
+&gt; 				printf("\r                                      \r");
+&gt; 				printf("Now in Clipboard Mode\n");
+&gt; 				clipmode = TRUE;
+&gt; 				continue;
+&gt; 			}
+
+Add thie *after* the cmdmode block.
+
+&gt; 			}
+&gt; 		}
+&gt; 		if (clipmode)
+&gt; 		{
+&gt; 			while(TRUE)
+&gt; 			{
+&gt; 				sleep(2);
+&gt; 				fclip = fopen("clipboard","r");
+&gt; 				if (fclip == NULL)
+&gt; 				{
+&gt; 					printf("\nNo Clipboard file!\n");
+&gt; 					strcpy(clipstring1,"XXXX");
+&gt; 					strcpy(clipstring2,"XXXX");
+&gt; 					break;
+&gt; 				}
+&gt; 				fgets(clipstring1,50,fclip);
+&gt; 				fclose(fclip);
+&gt; 				if (clipstring1[strlen(clipstring1)-1] &lt; 32) clipstring1[strlen(clipstring1)-1] = 0;
+&gt; 				if (strcmp(clipstring1,"quit") == 0)
+&gt; 				{
+&gt; 					clipmode = FALSE;
+&gt; 					printf("\nLeaving Clipboard mode\n");
+&gt; 					break;
+&gt; 				}
+&gt; 				if (strcmp(clipstring1,clipstring2) == 0)
+&gt; 				{
+&gt; 					continue;
+&gt; 				}
+&gt; 				else
+&gt; 				{
+&gt; 					strcpy(clipstring2,clipstring1);
+&gt; 					strcpy(instr,clipstring1);
+&gt; 					break;
+&gt; 				}
+
+-- 
+Jim Breen          [$@%8%`!&amp;%V%j!&lt;%s(J@$@%b%J%7%eBg3X(J]
+Department of Digital Systems.                  Monash University, 
+Clayton VIC 3168 Australia (p) +61 3 9905 3298 (f) +61 3 9905 3574  
+j.breen@example.com   [<A TARGET="_top" HREF="http://www.dgs.monash.edu.au/~jwb/">http://www.dgs.monash.edu.au/~jwb/</A>]
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00242.html">tlug: ISDN - The search continues....</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00244.html">tlug: A little sendmail detail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00251.html">Re: tlug: Kanji cut &amp; paste from Netscape</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00242.html">tlug: ISDN - The search continues....</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00243"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00243"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

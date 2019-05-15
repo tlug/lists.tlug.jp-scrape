@@ -1,0 +1,198 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Apache Chunked vulnerability scanning tool -->
+<!--X-From-R13: Fvz Vhezna <xnab&#45;gyhtNxnab.bet.hx> -->
+<!--X-Date: Mon, 24 Jun 2002 22:19:58 +0900 (JST) -->
+<!--X-Message-Id: Pine.GSO.4.44.0206241417580.19444&#45;200000@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: F136CD40UzavtVHXZ6n00007bb1@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00525.html">Date Prev</a>][<a href="msg00527.html">Date Next</a>][<a href="msg00484.html">Thread Prev</a>][<a href="msg00496.html">Thread Next</a>][<a href="maillist.html#00526">Date Index</a>][<a href="threads.html#00526">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Apache Chunked vulnerability scanning tool</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 24 Jun 2002 14:21:04 +0100 (BST)</li>
+<li><strong>From</strong>: <strong>Tim Hurman &lt;<A HREF="mailto:kano-tlug@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Apache%20Chunked%20vulnerability%20scanning%20tool">kano-tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Apache Chunked vulnerability scanning tool</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+
+On Mon, 24 Jun 2002, Jean-Christian Imbeault wrote:
+
+&gt; Here's a nice tool (Windows only though) to scan you network to see if any
+&gt; chunked vulnerable Apache server are running on it. Found it useful as it
+&gt; pointed out an old Apache server I had forgotten about ...
+&gt;
+&gt; <A  HREF="http://www.eeye.com/html/Research/Tools/apachechunked.html">http://www.eeye.com/html/Research/Tools/apachechunked.html</A>
+&gt;
+&gt; If anyone know of a similar tool for Linux please let emknow.
+&gt;
+Attached is a neat little script that a friend of mine wrote.
+
+Tim.
+
+
+</pre>
+<pre>
+#!/bin/sh
+#
+# Amazingly shoddy httpd scanner thingy 0.5 (c) 2002 P.Mills
+
+# This assumes Gnu date, since I am too lazy to do it properly for now,
+# and am running it on linux.. I know it'll break on Solaris and
+# need some changes. 
+
+progname=`basename $0`
+
+# Make sure that we have a parameter, else exit.
+#
+if [ $# -lt 2 ]; then
+        echo &quot;Syntax: $progname &lt;nmap stylee ip range&gt; &lt;port to check&gt;&quot; 
+        exit 1
+fi
+
+outfile=/tmp/`date +%s`
+targets=$1
+port=$2
+
+echo ---------------------------------------------------------------------------
+echo Starting run on $targets at `date`, port $port
+echo ---------------------------------------------------------------------------
+
+# First phase, sweep the netblock for stuff that has port $port open.
+ 
+nmap -o $outfile -p$port $targets &amp;&gt;/dev/null
+arsema=`date +%s`
+
+cat $outfile | cut -f2 -d '(' | grep -v closed | grep ')' | cut -f1 -d ')' | grep -v map | grep -v host | grep -v closed &gt;/tmp/$arsema 
+rm $outfile
+
+# Second phase, grab some headers from the remote httpd, and record
+# the result 
+
+for wark in `cat /tmp/$arsema`
+do
+	dumpy=/tmp/`date +%s`
+        lynx -connect_timeout=15 -dump -head <A  HREF="http://$wark:$port">http://$wark:$port</A> 2&gt;/dev/null &gt;$dumpy
+	grep -q Server $dumpy; if [ $? -eq 0 ]; then
+		results=`fgrep Server $dumpy`
+		trumpy=/tmp/`date +%s`
+		echo `nslookup $wark 2&gt;/dev/null | fgrep Name` &gt;$trumpy
+		grep -q Name $trumpy; if [ $? -eq 0 ]; then
+			cat $trumpy | fgrep Name 	
+		else
+			echo &quot;(No reverse found for $wark)&quot;	
+		fi
+		rm -f $trumpy
+		echo &quot;$wark: $results&quot; 
+	fi
+	rm -f $dumpy 
+done
+rm -f /tmp/$arsema
+
+echo ---------------------------------------------------------------------------
+echo Ending run on $targets at `date`, port $port
+echo ---------------------------------------------------------------------------
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00484" href="msg00484.html">[tlug] Apache Chunked vulnerability scanning tool</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00525.html">Re: [tlug] Root - NO KDE</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00527.html">Re: [tlug] Root - NO KDE</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00484.html">[tlug] Apache Chunked vulnerability scanning tool</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00496.html">[tlug] TLUG meeting 07/06</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00526"><strong>Date</strong></a></li>
+<li><a href="threads.html#00526"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

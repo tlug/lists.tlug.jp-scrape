@@ -1,0 +1,239 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Japanese TeX: if you're really macho... -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 17 Oct 1996 02:26:39 GMT -->
+<!--X-Message-Id: m0vDi6S&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 9610161554.AA15090@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00088.html">Date Prev</A>][<A HREF="msg00090.html">Date Next</A>][<A HREF="msg00086.html">Thread Prev</A>][<A HREF="msg00087.html">Thread Next</A>][<A HREF="maillist.html#00089">Date Index</A>][<A HREF="threads.html#00089">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Japanese TeX: if you're really macho...</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Japanese TeX: if you're really macho...</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 17 Oct 96 11:22 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00086.html">9610161554.AA15090@example.com</A>&gt; (andy@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Andrew" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+    Andrew&gt; 	Wadalab-mincho-0-12.ps
+
+    Andrew&gt; from ftp.ipl.t.u-tokyo.ac.jp/Font/tools
+
+Yes, this appeared within the last couple of months (despite the date
+on the file; I know it wasn't there in August).  It's apparently a
+somewhat cleaned up version of the code in the USAGE.ghostscript.*
+files.  I still don't trust it; look at Peter Deutsch's code in
+wftopfa.ps.  Peter admits that his code is very skeletal, but it's
+much easier to understand than wftopfa.c and the USAGE.* files.  And
+there are some comments in it....  Wadalab-mincho-0-12.ps is just not
+well documented yet.
+
+    Andrew&gt; Anyway, you take that file, put in the font path ( gs --
+    Andrew&gt; version will tell you the font path ) and make entries in
+    Andrew&gt; the Fontmap like:
+
+    Andrew&gt; /Wadalab-mincho-0-8 (Wadalab-mincho-0-8.ps) ;
+
+    Andrew&gt; The individual files for /Wadalab-mincho-0-8 have entries
+    Andrew&gt; like
+
+    Andrew&gt; /Wadalab-mincho-0-8.r21 (jis-21.pfa) ;
+etc
+    Andrew&gt; /Wadalab-mincho-0-8.r24 (min-0-8-24.pfa) ;
+etc
+
+This is ugly and error prone.  But it works....  One note:  I prefer
+to have a common skeleton containing all of the necessary entries,
+with the following form:
+
+/Wadalab-FONT-SUIJUN-WEIGHT.r21 (symbol/jis-21.pfa) ;
+...
+/Wadalab-FONT-SUIJUN-WEIGHT.r24 (FONT-SUIJUN-WEIGHT/fontBase-24.pfa) ;
+...
+
+where I just leave fontBase to be whatever happened to come out of the 
+Wadalab tarfile.
+
+    Andrew&gt; It finds (min-0-8-30.pfa) and loads the all the characters
+    Andrew&gt; in that file. It this sounds like it is a sloow process,
+    Andrew&gt; it is, but it does work. This same file (
+    Andrew&gt; Wadalab-mincho-0-12.ps ) works with jis-x208, but not with
+    Andrew&gt; 212, I think.
+
+That's right.  The convention is "Foundry-Family-SuijunFlag-Weight".
+SuijunFlag is 0 for JISX-0208, and 1 for JISX-0212.  So you'd need a
+Wadalab-mincho-1-12.ps file, and the corresponding fonts.
+
+A couple of hints on "slo-o-ow":
+(1) When you send it to the printer, everything is in the background,
+    so usually no biggee.
+(2) Keep your gs process alive somehow (Ctrl-Z/fg or virtual consoles
+    or a separate xterm for the command interpreter); once the font is
+    loaded, it stays there, even through rescalings and the like.  The
+    gs interpreter is not very friendly about searching paths (in
+    particular, there's no notion of 'cd', although it's not hard to
+    write some postscript code to give the equivalent).
+
+    Andrew&gt; The other option is to concatinate all the min-0-8-*.pfs
+    Andrew&gt; files into one and load them all at once. This works,
+    Andrew&gt; though I could not get one of the fonts to work, GS barfed
+    Andrew&gt; on it.
+
+Again, beware of GS 4.0x, x &lt; 3.
+
+    Andrew&gt; I could not get this to work for sjis. From my notes:
+
+    Andrew&gt; gs_kanji.ps and gs_ksb_e.ps are used by wftopfa.ps to
+    Andrew&gt; produce a a single font file that is then accessed like:
+
+    Andrew&gt; /Wadalab-SaiMincho (wmin0.ps) ;
+
+    Andrew&gt; Looks like gs_kanji should produce encodings for JIS and ??
+
+I don't know; I didn't worry much about the encodings; as long as JIS
+worked (my TeXs barf on EUC and SJIS for some reason).  Peter Deutsch
+is not a Japanese encoding specialist.
+
+I got that huge file approach to work, sort of.  But there were a
+couple of oddities in the Wadalab encoding compared to the old
+ASCII-JTeX, so I went back to the separate file method to track them
+down.
+
+One thing that is useful about the separate file method is that by
+mucking with the dvipsk psfont.map file you should be able to arrange
+that the fonts be prepended as header files (the facility is there, I
+haven't tried it yet).  Then only the needed leaf fonts will get
+included, my guess is that many documents will only need 15 or so of
+the 77 leaf fonts.
+
+Andrew asked what I would do if I had a lot of free time.  Well, there
+are two projects I have in mind.  First, making a kanji font with Type
+4 leaf fonts.  The idea is that the Charstrings (the actual glyph
+definitions) would reside in a huge file, indexed through the Type 0
+-&gt; leaf font, but the leaf fonts would not actually contain any glyph
+information.  Instead, they would randomly access the database to get
+the information.
+
+The second is that once that was done, it shouldn't be too much harder 
+to write a program to generate a header containing only the glyphs
+that were actually used.
+
+Third, I wonder if Ghostscript could be patched to use Kpathsea....
+Peter Deutsch has probably thought of this; if he did, he would have
+rejected it because he has an unshakeable disagreement with rms over a 
+few points in the GPL, and it just wouldn't be possible to integrate
+Kpathsea (GPL) with Ghostscript without bringing the whole thing under 
+the GPL.  But that doesn't stop *us* as long as we don't distribute
+it.  Kpathsea would be much better than the current confusion in
+Ghostscript path searching.
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00086" HREF="msg00086.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00088.html">kinput2 HOWTO</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00090.html">3.1.2G success</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00086.html">Re: Japanese TeX: if you're really macho...</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00087.html">Revision to Linux-Nihongo Doc</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00089"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00089"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

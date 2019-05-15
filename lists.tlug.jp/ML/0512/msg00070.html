@@ -1,0 +1,219 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] timing for geeks II. -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Tue, 06 Dec 2005 17:28:16 +0900 -->
+<!--X-Message-Id: 20051206082734.GB4319@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20051202154627.GB4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051202152527.302e2f6f.jep200404@example.com -->
+<!--X-Reference: 20051203122655.GG4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051203092314.3118db01.jep200404@example.com -->
+<!--X-Reference: 20051204100726.GH4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 30ce84360512040313l351f16c4r1872cb4f6f34679e@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00069.html">Date Prev</a>][<a href="msg00071.html">Date Next</a>][<a href="msg00043.html">Thread Prev</a>][<a href="msg00072.html">Thread Next</a>][<a href="maillist.html#00070">Date Index</a>][<a href="threads.html#00070">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] timing for geeks II.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 6 Dec 2005 09:27:34 +0100</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<a href="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20timing%20for%20geeks%20II.">hajek1@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] timing for geeks II.</strong></li>
+<li>References: &lt;<a href="msg00016.html">20051202154627.GB4348@example.com</a>&gt;	&lt;<a href="msg00018.html">20051202152527.302e2f6f.jep200404@example.com</a>&gt;	&lt;<a href="msg00025.html">20051203122655.GG4348@example.com</a>&gt;	&lt;<a href="msg00031.html">20051203092314.3118db01.jep200404@example.com</a>&gt;	&lt;<a href="msg00042.html">20051204100726.GH4348@example.com</a>&gt;	&lt;<a href="msg00043.html">30ce84360512040313l351f16c4r1872cb4f6f34679e@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.9i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello :)
+
+Having cleared the issue with printf() :) and ftime() vs. gettimeofday(),
+I would like to make a step further and address the problem of
+gettimeofday() vs. clock_gettime() and, perhaps separately, clock_getres(). 
+
+Of course, Ian Wells was writing about this all the time, unfortunatly,
+I was bussy with printf() (sorry). : 
+
+* Ian Wells (ijw@example.com) [051203 14:50]:
+&gt;Reading the man pages, the CLOCK_MONOTONIC clock seems best suited to
+&gt;what you're doing.  The other one can, in theory, get changed during
+&gt;your process's execution.  Ditto gettimeofday.  This would be bad if
+&gt;you're running NTP...
+
+
+* Ian Wells (ijw@example.com) [051204 12:28]:
+&gt; The 'right', if less portable, answer, is the CLOCK_MONOTONIC clock, as ntp
+&gt; (for example) will screw up gettimeofday.  gettimeofday can go backwards if
+&gt; something tampers at the wrong moment.
+
+So to test CLOCK_MONOTONIC vs. CLOCK_REALTIME with clock_getres(), I
+used this code (called rolex later on):
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+main(int argc, char *argv[])
+{
+struct timespec ts;
+
+clock_getres(CLOCK_MONOTONIC, &amp;ts);
+printf(&quot;Clock resolution with CLOCK_MONOTONIC: %d.%09ld\n&quot;,
+(int)ts.tv_sec, (long int)ts.tv_nsec);
+
+clock_getres(CLOCK_REALTIME, &amp;ts);
+printf(&quot;Clock resolution with CLOCK_REALTIME:  %d.%09ld\n&quot;,
+(int)ts.tv_sec, (long int)ts.tv_nsec);
+
+return EXIT_SUCCESS;
+}
+
+Compiled with:
+gcc -Wall -o rolex rolex.c -lrt
+
+The output on gentoo (Gentoo Base System version 1.6.13):
+$ ./rolex
+Clock resolution with CLOCK_MONOTONIC: 715918496.2147481924
+Clock resolution with CLOCK_REALTIME:  0.010000000
+$ gcc --version
+gcc (GCC) 3.3.6 (Gentoo 3.3.6, ssp-3.3.6-1.0, pie-8.7.8)
+
+The output on i386 debian (stable):
+$ ./rolex
+Clock resolution with CLOCK_MONOTONIC: 1073833280.-1073744028
+Clock resolution with CLOCK_REALTIME:  0.010000000
+$ gcc --version
+gcc (GCC) 3.3.5 (Debian 1:3.3.5-13)
+
+BUT:
+The output on amd64 debian (testing):
+$ ./rolex
+Clock resolution with CLOCK_MONOTONIC: 0.000999848
+Clock resolution with CLOCK_REALTIME:  0.000999848
+$ gcc --version
+gcc (GCC) 4.0.2 (Debian 4.0.2-2)
+
+I am going to make more tests in a few days and post it here. 
+I plan to use clock_gettime() to write time for a moment and than
+compare the results for CLOCK_MONOTONIC and CLOCK_REALTIME. 
+
+Best regards
+Michal :)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00072" href="msg00072.html">Re: [tlug] timing for geeks II.</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00075" href="msg00075.html">Re: [tlug] It's time_t to Party!</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00423" href="msg00423.html">Re: [tlug] timing for geeks II.</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00016" href="msg00016.html">[tlug] timing for geeks :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00031" href="msg00031.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00042" href="msg00042.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00043" href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00069.html">Re: [tlug] &quot;UTF-8 &amp; ISO-2022-JP&quot;</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00071.html">Re: [tlug] TLUG List Archives</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00072.html">Re: [tlug] timing for geeks II.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00070"><strong>Date</strong></a></li>
+<li><a href="threads.html#00070"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

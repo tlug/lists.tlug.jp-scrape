@@ -1,0 +1,184 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] My first JSON object -->
+<!--X-From-R13: Rnir [ U <qnirNnegvpynff.bet> -->
+<!--X-Date: Sat, 19 Jun 2010 12:02:34 +0900 -->
+<!--X-Message-Id: 4C1C3348.90506@articlass.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00181.html">Date Prev</a>][<a href="msg00183.html">Date Next</a>][<a href="msg00177.html">Thread Prev</a>][<a href="msg00184.html">Thread Next</a>][<a href="maillist.html#00182">Date Index</a>][<a href="threads.html#00182">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] My first JSON object</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 19 Jun 2010 12:02:32 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:dave@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20My%20first%20JSON%20object">dave@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] My first JSON object</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US;	rv:1.9.1.9) Gecko/20100423 Thunderbird/3.0.4</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+TLUG,
+
+</pre><tt>I'm trying to create my first JSON object, and I'm a bit fuzzy. I've 
+</tt><tt>managed to work out just about all the steps, except the last.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Specifically, what I need to do is have Javascript running on the client 
+</tt><tt>create a JSON object, send that to the server, have PHP on the server 
+</tt><tt>accept that JSON and parse it to put into a MySQL database. Finally, the 
+</tt><tt>server needs to muck about with the data and send a revised JSON - 
+</tt><tt>pretty much the same data, but verified - back to the client.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Note that I haven't actually tried implementing any of the steps below 
+</tt><tt>yet, as this time I'm trying to get a complete blueprint instead of 
+</tt><tt>doing what I usually do which is stumble around in the dark bumping into 
+</tt><tt>things.
+</tt><pre style="margin: 0em;">
+
+Okay, so, I think I can create a JSON in Javascript in the following manner.
+
+var myJSON = {&quot;pet&quot; = &quot;dog&quot;,
+        &quot;car&quot; = &quot;hybrid&quot;};
+
+Cool. Nice and easy. Now I've got &quot;myJSON&quot; ready to go.
+
+</pre><tt>JSONrequest = JSONRequest.post(&quot;<a  rel="nofollow" href="http://myserver.com/jsonhandler.php&quot">http://myserver.com/jsonhandler.php&quot</a>;, 
+</tt><tt>myJSON);
+</tt><pre style="margin: 0em;">
+
+On the server, jsonhandler.pho decodes the JSON object into a PHP array.
+
+$JSONarray = json_decode($_POST['myJSON']);
+
+</pre><tt>Assuming I've succeeded in geting a PHP array built, then I'm in 
+</tt><tt>familiar ground, dealing with just PHP and MySQL. I take the PHP array 
+</tt><tt>and put data in the database, get new data from the database, and 
+</tt><tt>construct a new, revised array with appropriate updated values. Then I 
+</tt><tt>turn around and construct a JSON object from that new array.
+</tt><pre style="margin: 0em;">
+
+$JSONarrayRevised = json_encode($dataFromMySQL);
+
+Okay, now we hit where I'm fuzzy.
+
+</pre><tt>I want to output that JSON data in such a way so that the client will 
+</tt><tt>pick it up.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>If I just output it, will the client be able to and parse that data? If 
+</tt><tt>so, how, exactly?
+</tt><pre style="margin: 0em;">
+
+</pre><tt>I know that a number gets stored in that JSONrequest variable I created 
+</tt><tt>at the start. But I don't think that number is useful to me in this 
+</tt><tt>case... or is it?
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Can anyone help me get that last step of sending the PHP created JSON 
+</tt><tt>object to the client?
+</tt><pre style="margin: 0em;">
+
+--
+Dave M G
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00184" href="msg00184.html">Re: [tlug] My first JSON object</a></strong>
+<ul><li><em>From:</em> Mattia Dongili</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00181.html">Re: [tlug] [OT] What's	up	with	online	Japanese&lt;-&gt;Japanese	dictionaries?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00183.html">Re: [tlug] [OT] What's up with online Japanese&lt;-&gt;Japanese dictionaries? [SOLVED]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00177.html">[tlug] (test) please ignore me</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00184.html">Re: [tlug] My first JSON object</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00182"><strong>Date</strong></a></li>
+<li><a href="threads.html#00182"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

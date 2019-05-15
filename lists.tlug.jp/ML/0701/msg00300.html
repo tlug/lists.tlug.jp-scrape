@@ -1,0 +1,169 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Host Blocking and Logfile Parsing -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Sun, 21 Jan 2007 10:56:26 +0900 -->
+<!--X-Message-Id: Pine.NEB.4.64.0701211038210.1314@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: Pine.NEB.4.64.0701201053020.1314@example.com -->
+<!--X-Reference: 1169300108.24083.7.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00299.html">Date Prev</a>][<a href="msg00301.html">Date Next</a>][<a href="msg00299.html">Thread Prev</a>][<a href="msg00301.html">Thread Next</a>][<a href="maillist.html#00300">Date Index</a>][<a href="threads.html#00300">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Host Blocking and Logfile Parsing</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 21 Jan 2007 10:55:55 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Host%20Blocking%20and%20Logfile%20Parsing">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Host Blocking and Logfile Parsing</strong></li>
+<li>References: &lt;<a href="msg00288.html">Pine.NEB.4.64.0701201053020.1314@example.com</a>&gt;	&lt;<a href="msg00299.html">1169300108.24083.7.camel@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">On Sat, 20 Jan 2007, scott wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">Sure, but last time I was hacked it was remote php inclusion not brute
+force ssh attempts, so my thinking is drop all traffic from *all*
+suspicious machines. I agree that not allowing password authentication
+for ssh is a good idea, but I also think blacklisting the bad guys seems
+like a proactive measure as well.
+</pre></blockquote><pre style="margin: 0em;"><br>Well, assuming, as I pointed out, that you're not using a script that
+makes the problem worse. And even there, it provides no protection
+against someone who tries the PHP attack *before* the ssh attack.</pre><br>
+<pre style="margin: 0em;">There are lots of things you can do to make your system more secure, and
+you due to limited time (human lifetimes, and so on) you can implement
+very few of them. So you need to analyze what you'll get the most
+benefit from spending your time on.</pre><br>
+<pre style="margin: 0em;">Web applications, especially PHP ones, are notorious for for all sorts
+of hacks; you'd probably get more advantage from sandboxing the apps to
+the greatest degree possible. Here are some ideas.</pre><br>
+<pre style="margin: 0em;">Chroot the web servers running your applications, and give the minimal
+set of tools they need to run. If there's no shell available, for
+example, an attack that relies on eval'd code that then executes a shell
+is not going to work.</pre><br>
+<pre style="margin: 0em;">If you've got multiple applications, run a separate web server for each
+one, and then use a web server running in front of these to proxy the
+requests to the application web servers based on host and/or path. If
+the application web servers are running chrooted as different users,
+it further limits the access of an attacker who gains control of the
+application.</pre><br>
+<pre style="margin: 0em;">Use separate unix users and database logins for each web application,
+so that getting control of one does not give you access to the data of
+others.</pre><br>
+<pre style="margin: 0em;">Ensure that your web servers' database users have only the minimum
+access necessary to carry out their work. There's usually never any
+reason that an application running on a web server would need to be
+able to add and drop tables for example. If it's your own application,
+you can go quite far with this, and even disallow read access to things
+such as user names, passwords and credit card numbers. For login, for
+example, you can use a stored procedure in the database that takes
+a user name and password and validates it, returning a user id; the
+application then no longer has to be able to read user names and
+passwords.</pre><br>
+<pre style="margin: 0em;">cjs
+--
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974</pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00301" href="msg00301.html">Security Hardening . . . . . . . (was Re: [tlug] Host Blocking and	Logfile Parsing)</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00288" href="msg00288.html">[tlug] Host Blocking and Logfile Parsing</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00299" href="msg00299.html">Re: [tlug] Host Blocking and Logfile Parsing</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00299.html">Re: [tlug] Host Blocking and Logfile Parsing</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00301.html">Security Hardening . . . . . . . (was Re: [tlug] Host Blocking and	Logfile Parsing)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00299.html">Re: [tlug] Host Blocking and Logfile Parsing</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00301.html">Security Hardening . . . . . . . (was Re: [tlug] Host Blocking and	Logfile Parsing)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00300"><strong>Date</strong></a></li>
+<li><a href="threads.html#00300"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

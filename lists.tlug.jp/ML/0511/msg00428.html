@@ -1,0 +1,604 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: [tlug] How to read / modify unified diffs -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Mon, 28 Nov 2005 21:11:28 +0900 -->
+<!--X-Message-Id: d8fcc0800511280410j672e91dboc6bbf7f3679fe666@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 20050104201323.GH8879@example.com -->
+<!--X-Derived: pgpMMz0wgmUWI.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00427.html">Date Prev</a>][<a href="msg00429.html">Date Next</a>][<a href="msg00444.html">Thread Prev</a>][<a href="msg00432.html">Thread Next</a>][<a href="maillist.html#00428">Date Index</a>][<a href="threads.html#00428">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] How to read / modify unified diffs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 28 Nov 2005 21:10:58 +0900</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20How%20to%20read%20%2F%20modify%20unified%20diffs">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] How to read / modify unified diffs</strong></li>
+<li>References: &lt;20050104201323.GH8879@example.com&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I mentioned at the last tech meeting that I had once written a
+document on how to modify unified diffs. I found it whilst doing an
+unrelated Gmail search, and decided (probably against my better
+judgement) to provide it to TLUG.
+
+It is probably of no actual use, but it might be an interesting case
+study on how to reverse-engineer file formats... or not. :)
+
+Here goes (don't worry about all the copyright notices scrolling
+by--they are just from example code):
+
+The unified diff format is the most common type of patch used in the Open
+Source world, and also happens to be the output of the 'cvs diff' and
+'svn diff' commands.
+
+The easiest way to understand the unified diff format is an example. Let's
+say that your nephew, who idolises his cool coder aunt / uncle (i.e. you)
+tries his hand at a Perl version of Hello World. Trying to impress you, he
+makes it a bit more complex than is truly necessary and thus his final
+script (hello1.pl) contains a few bugs:
+
+
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use subs qw(helloWorld);
+
+
+hlloWorld;
+exit
+
+sub helloWorld {
+
+  prnt &quot;hell ,werl\\n&quot;;
+} # helloWerld()
+
+
+You quickly correct his script:
+
+
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use subs qw(helloWorld);
+
+
+helloWorld;
+exit;
+
+sub helloWorld {
+
+  print &quot;Hello, world!\n&quot;;
+
+} # helloWorld()
+
+
+As you are about to attach it to an email, you have a bright idea: why not
+teach him how to apply a patch! So, you save your corrected version of the
+script as hello2.pl and create a patch, using the diff(1) command:
+
+diff -u hello1.pl hello2.pl &gt;hello1.pl.patch
+
+You attach the patch to an email, along with instructions on how to apply
+it:
+
+1. Save the patch to your /tmp directory.
+2. Change into the directory containing your script.
+3. Run the patch(1) command:
+   patch -p 0 &lt;/tmp/hello1.pl.patch
+
+Let's take a look at the unified diff-format patch that you created:
+
+
+--- hello1.pl   2005-01-04 11:26:22.855403968 -0500
++++ hello2.pl   2005-01-04 11:14:46.669240352 -0500
+@@ -6,10 +6,11 @@
+ use subs qw(helloWorld);
+
+
+-hlloWorld;
+-exit
++helloWorld;
++exit;
+
+ sub helloWorld {
+
+-  prnt &quot;hell ,werl\\n&quot;;
+-} # helloWerld()
++  print &quot;Hello, world!\n&quot;;
++
++} # helloWorld()
+
+
+The first line (or rather, the first line that patch(1) cares about, more
+on this later) of the patch contains a description of the original file
+(i.e. the one to which your patch will be applied). It must start with
+ '--- ', and may contain any descriptive text after that. You can see
+that the diff(1) command lists the filename and its ctime. The next line
+is a description of the new file (i.e. the file that will be produced by
+applying your patch to the original file), and must start with '+++ &quot;,
+followed by any descriptive text.
+
+The remaining body of the patch contains one or more &quot;hunks&quot;. These are
+described by a header:
+
+@@ -&lt;old_start&gt;,&lt;old_lines&gt; +&lt;new_start&gt;,&lt;new_lines&gt; @@
+
+where:
+
+&lt;old start&gt; is the starting line of the context in the original file
+&lt;old_lines&gt; is the number of lines in the context in the original file
+&lt;new start&gt; is the starting line of the context in the new file
+&lt;new_lines&gt; is the number of lines in the context in the new file
+
+A context is what sets a unified diff apart from a regular one. (A
+regular 'diff hello1.pl hello2.pl' would look like this:
+
+
+9,10c9,10
+&lt; hlloWorld;
+&lt; exit
+---
+&gt; helloWorld;
+&gt; exit;
+14,15c14,16
+&lt;   prnt &quot;hell ,werl\\n&quot;;
+&lt; } # helloWerld()
+---
+&gt;   print &quot;Hello, world!\n&quot;;
+&gt;
+&gt; } # helloWorld()
+
+
+But forget about regular diffs. They are nowhere near as useful (and
+thus, common) as unified diffs.)
+
+So, what *is* a context? It is the differences, surrounded by a few
+unchanged lines. By default, diff(1) uses three lines of context. This
+is why the first line after the hunk header in our example patch is the
+sixth line of the original file: 'use subs qw(helloWorld);'; because
+the first line in the new file that differs is line 9: 'hlloWorld;'
+in the original becomes: 'helloWorld;' in the new file. The last line
+in the hunk is the last line in the file. Had there been three un-
+changed lines after line 10, they would have appeared in the hunk as
+well.
+
+You can control the context size by using the -U argument to diff(1).
+For example, to set the context size to five lines:
+
+diff -u -U 5 hello1.pl hello2.pl
+
+Changing the context size should have no effect on the patch(1)
+programme, but it is probably not wise to set the context size lower
+than three lines, because patch(1) might not have enough context if
+applying the patch to a newer version of the original file. In fact,
+version 2.8.4 of GNU diff(1) ignores the -U argument entirely if you
+try to set it lower than three.
+
+OK, back to our example patch. The hunk header:
+
+@@ -6,10 +6,11 @@
+
+means that this hunk's context starts at line 6 of the original file
+and goes on for 10 lines. The context in the new file also starts at
+line 6 but goes on for 11 lines (since we added a line in our patch).
+Finally, the hunk itself:
+
+
+ use subs qw(helloWorld);
+
+
+-hlloWorld;
+-exit
++helloWorld;
++exit;
+
+ sub helloWorld {
+
+-  prnt &quot;hell ,werl\\n&quot;;
+-} # helloWerld()
++  print &quot;Hello, world!\n&quot;;
++
++} # helloWorld()
+
+
+The first character of each line tells the patch(1) programme how to
+process the line: a space means that the line remains unchanged in
+the new file; a minus means that the line is removed from the new
+file; a plus means that the line is added to the new file. So, this
+hunk means that patch(1) will:
+
+1. Leave lines 6, 7, and 8 unchanged (since they start with a space)
+2. Remove lines 9 and 10 from the new file (they start with a minus)
+3. Add new lines 9 and 10 to the new file (they start with a plus)
+4. Leave lines 11, 12, and 13 unchanged (space)
+5. Remove lines 14 and 15 from the new file (minus)
+6. Add new lines 14, 15, *and 16* to the new file (plus)
+
+The reason that the context in the new file (the second set of num-
+bers in the hunk header, remember) is 11 lines instead of the 10-line
+context in the original file is that you added a new line 15. Where
+the original file had the closing curly bracket of the helloWorld()
+subroutine immediately after the prnt[sic] statement, you added an
+empty line in your patch, because you are a professional, and pay
+attention to matters of style, unlike your clueless nephew, who was
+just aping a real coder's style.
+
+Now that a simple example has been presented, here is a more complex
+one, with multiple hunks:
+
+
+Index: fastq.c
+===================================================================
+--- fastq.c     (revision 20)
++++ fastq.c     (working copy)
+@@ -1,40 +1,39 @@
+ /* ========================================================================
+- * Copyright 2003 Twenty First Century Communications &lt;swdev@example.com&gt;
++ * File: fastq.c
++ *
+  * Copyright 2003 Josh Glover &lt;josh.glover@example.com&gt;
+  *
+- * LICENCE:
++ * Licence:
+  *
+  *   This file is distributed under the terms of the BSD License (version
+  *   2). See the COPYING file, which should have been distributed with
+  *   this file, for details. If you did not receive the COPYING file, see:
+  *
+- *   <a  rel="nofollow" href="http://jmglov.homeunix.net/opensource/licenses/bsd.html">http://jmglov.homeunix.net/opensource/licenses/bsd.html</a>
++ *   <a  rel="nofollow" href="http://www.jmglov.net/opensource/licenses/bsd.txt">http://www.jmglov.net/opensource/licenses/bsd.txt</a>
+  *
+- * fastq.c
++ * Description:
+  *
+- * DESCRIPTION:
+- *
+  *   Implements the FastQ object and functions.
+  *
+- * USAGE:
++ * Usage:
+  *
+  *   #include &lt;fastq.h&gt;
+  *
+- * EXAMPLES:
++ * Examples:
+  *
+- *   See fastq.h
++ *   See &lt;fastq.h&gt;
+  *
+- * DEPENDENCIES:
++ * Dependencies:
+  *
+  *   none
+  *
+- * TODO:
++ * Todo:
+  *
+  *   - Add thread-safe synchronisation stuff (protect with
+  *     #ifdef THREADSAFE)
+  *   - Nothing, this code is perfect
+  *
+- * MODIFICATIONS:
++ * Modifications:
+  *
+  *   Josh Glover &lt;jmglov@example.com&gt; (2003/11/06): Initial revision
+  *   Josh Glover &lt;jmglov@example.com&gt; (2003/12/05): added FastQGet()
+@@ -47,7 +46,11 @@
+ // Standard library headers
+ #include &lt;stdlib.h&gt;
+
+-//! human-readable error codes
++/** Structure: err
++ *
++ * Human-readable error codes
++ */
++
+ static char *const err[FASTQ_ERR_BOGUS + 1] = {
+
+   &quot;FASTQ_SUCCESS&quot;,        // 00
+@@ -158,11 +161,17 @@
+ static inline _qnode *_fastqGetNode( FastQ *q, ULONG i );
+
+
+-/** Flushes the queue, removing all nodes.
++/** Method: _fastq_flush()
+  *
+- * @example.com *q  pointer to the FastQ object to flush
++ * Flushes the queue, removing all nodes.
+  *
+- * @example.com FASTQ_SUCCESS on success, FastQ error code on error
++ * Parameters:
++ *
++ *   *q - pointer to the FastQ object to flush
++ *
++ * Returns:
++ *
++ *   FASTQ_SUCCESS on success, FastQ error code on error
+  */
+
+ static inline UCHAR _fastq_flush( FastQ *q ) {
+@@ -450,6 +459,17 @@
+ } // FastQDequeueFrom()
+
+
++/** Method: doNothing()
++ *
++ * Silly method that I added to demonstrate a slightly more complex
++ * unified diff.
++ */
++
++void doNothing( FastQ *q ) {
++
++} // doNothing()
++
++
+ /** Returns the object enqueued in the specified queue at the specified
+  * index (as an offset from the front of the queue).
+  *
+
+
+This patch was generated by the svn(1) command:
+
+svn diff fastq.c &gt;/tmp/fastq.c.patch
+
+svn(1) is the command-line Subversion client, and its diff sub-programme
+does exactly what you would expect: it generates a diff (and a unified)
+one at that. The command as shown simply computes the differences be-
+tween the file as it appears in your working copy and the latest re-
+vision that exists in the repository. (If you do not know how revision
+control systems work, do not worry; this is not crucial to understanding
+this example. For a quick introduction to revision control, check out
+<a  rel="nofollow" href="http://svnbook.red-bean.com/en/1.1/ch01.html">http://svnbook.red-bean.com/en/1.1/ch01.html</a> if you are interested.)
+Here, the version of the file in our working copy is newer than the one
+in the repository. This is why Subversion uses the repository version
+as the original file and the working copy version as the new file, as
+the first few lines of the patch show:
+
+
+Index: fastq.c
+===================================================================
+--- fastq.c     (revision 20)
++++ fastq.c     (working copy)
+
+
+Notice here that Subversion puts two extra lines at the beginning of
+the file. This is fine; you may put anything you like at the top of
+your patches (e.g. copyright notices, 5h0u7z 70 j3r 1337 h0m13z, etc.),
+and patch(1) does not care. It just sits up and takes notice when it
+finds a line starting with '--- '.
+
+Also notice that your description of the original and new files is
+freeform: diff(1) put filenames and timestamps there, while svn(1)
+uses filenames and revision numbers instead.
+
+The first hunk is relatively straightforward:
+
+@@ -1,40 +1,39 @@
+
+It informs patch(1) that the context of the hunk:
+
+a. starts at line 1 of the original file,
+b. continues for 40 lines in the original file,
+c. also starts at line 1 of the new file,
+d. but continues for only 39 lines in the new file.
+
+This is fairly mundane, as we just reorganised the header comment
+a bit.
+
+Hunk 2 is slightly more interesting:
+
+@@ -47,7 +46,11 @@
+
+It starts at line 47 of the original file, but line 46 of the new
+file! Why is this? Simple: the first hunk *removed a line from the
+new file*. In fact, when we look at hunk 3, we should see an even
+bigger discrepancy between original and new files, because hunk 2's
+context is 7 lines in the original file, but 11 in the new file!
+
+Sure enough, hunk 3:
+
+@@ -158,11 +161,17 @@
+
+shows us that the context starts at line 158 of the original file,
+but line 161 of the new one. Some simple arithmetic should assure
+us that this is correct: hunk 1 removed one line from the new file,
+while hunk 2 added four. So hunk 3 should start -1 + 4 == 3 lines
+later in the new file than the original. And sure enough, 161 (the
+starting line of hunk 3 in the new file) - 158 (the starting line
+of the hunk in the original) yields 3!
+
+The rest of the patch is trivial. Hunk 4:
+
+@@ -450,6 +459,17 @@
+
+simply starts at line 450 of the original file and continues for
+six lines, but starts at line 459 (-1 + 4 + 6 == 9) of the new
+file and continues for 17 lines.
+
+To add a new twist to this example, let's decide that do not have
+commit access to this particular Subversion repository and so you
+email the patch to the author of the project (a very common occur-
+rence in the Open Source world). The author looks over the patch
+and decides that while he likes your elegant implementation of the
+new doNothing() method, he likes his Doxygen-style comments better
+than your NaturalDocs-style ones. So, he decides to apply *only*
+hunk 4 from your patch to his source tree. Being an uber-hacker,
+he decides that it will take him less time to edit your patch file
+than to read the manpage for patch(1) to see if Larry Wall has
+anticipated his needs and provided some switch to patch(1) that
+will apply only certain hunks.
+
+He leaves the first four lines of your patch alone, and then
+deletes all the way down to line 91 of the patch file, where hunk
+4 begins. So, the patch file has been reduced to:
+
+
+Index: fastq.c
+===================================================================
+--- fastq.c     (revision 20)
++++ fastq.c     (working copy)
+@@ -450,6 +459,17 @@
+ } // FastQDequeueFrom()
+
+
++/** Method: doNothing()
++ *
++ * Silly method that I added to demonstrate a slightly more complex
++ * unified diff.
++ */
++
++void doNothing( FastQ *q ) {
++
++} // doNothing()
++
++
+ /** Returns the object enqueued in the specified queue at the specified
+  * index (as an offset from the front of the queue).
+  *
+
+
+In a momentary fit of incompetence, he runs patch(1), thinking he is
+done:
+
+patch -p 0 &lt;/tmp/fastq.c.patch
+
+and miracle of miracles! patch(1) reports: &quot;patching file fastq.c&quot; and
+exits successfully. The author realises that he forgot one thing: the
+hunk header reads:
+
+@@ -450,6 +459,17 @@
+
+which claims that the context begins at line 450 in the original file
+but line 459 in the new file, *even though he discarded the previous
+hunks that added nine lines to the new file*. This should not have
+worked, but the beauty of unified diffs is that they provide patch(1)
+with enough context to recover from momentary lapses. What the author
+should have done was changed the hunk header to:
+
+@@ -450,6 +450,17 @@
+
+In even more complex situations than this, the author's failure to
+correct a header could result in patch(1) not applying the patch at
+all.
+
+And there you have it, in a nutshell: the mystery of unified diffs
+explained.
+
+--
+Josh Glover &lt;josh.glover@example.com&gt;
+
+Software Engineer
+Twenty First Century Communications, Inc.
+<a  rel="nofollow" href="http://www.tfcci.com/">http://www.tfcci.com/</a>
+
+GPG keyID 0x22111305 (E210 61C6 14DF B480 C211  AE2A 0F12 1D7B 2211 1305)
+gpg --keyserver pgp.mit.edu --recv-keys 22111305
+</pre><p><strong>Attachment:
+<a href="pgpMMz0wgmUWI.pgp" ><tt>pgpMMz0wgmUWI.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00432" href="msg00432.html">Re: [tlug] How to read / modify unified diffs</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00427.html">Re: [tlug] Subversion (was: More Tech Meeting Torrents)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00429.html">Re: [tlug] Subversion (was: More Tech Meeting Torrents)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00444.html">Re: [tlug] Heading to Akihabara</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00432.html">Re: [tlug] How to read / modify unified diffs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00428"><strong>Date</strong></a></li>
+<li><a href="threads.html#00428"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

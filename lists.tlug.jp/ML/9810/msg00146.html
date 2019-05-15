@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: tlug server latency -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Mon, 5 Oct 1998 18:17:26 +0900 -->
+<!--X-Message-Id: 19981005181720.A10398@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981003175910.621T&#45;100000@example.com -->
+<!--X-Reference-Id: XFMail.981005153326.schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00145.html">Date Prev</A>][<A HREF="msg00147.html">Date Next</A>][<A HREF="msg00137.html">Thread Prev</A>][<A HREF="msg00148.html">Thread Next</A>][<A HREF="maillist.html#00146">Date Index</A>][<A HREF="threads.html#00146">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: tlug server latency</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: tlug server latency</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 5 Oct 1998 18:17:20 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00137.html">XFMail.981005153326.schweiz@example.com</A>&gt;; from Jim Schweizer on Mon, Oct 05, 1998 at 03:33:26PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00099.html">Pine.LNX.3.96LJ1.1b7.981003175910.621T-100000@example.com</A>&gt; &lt;<A HREF="msg00137.html">XFMail.981005153326.schweiz@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Mon, Oct 05, 1998 at 03:33:26PM +0900, Jim Schweizer wrote:
+&gt; 
+&gt; On 03-Oct-98 Scott Stone wrote:
+&gt; &gt; 
+&gt; &gt; Entries such as this one: &lt;snip&gt;
+&gt; &gt; figure prominently in 'mailq -v' on the server. 
+&gt; 
+&gt; OK, this sent me running for 'The Bat Book'  :) 
+
+As much as I've grown to dislike sendmail, I've got to admit they have
+the coolest O'Reilly animal.  I forget who has the sloth, though (that'd
+be my runner up).
+
+Maybe the upcoming qmail book should have garlic or something on the
+cover.  Were any of Bat-Man's arch enemies named after an animal besides
+The Penguin?
+
+&gt;                                                 As I understand it (and my
+&gt; knowledge of sendmail is limited) mail is queued only for those
+&gt; recipients to whom delivery is not immediately possible, but if the s
+&gt; configuration option is set to true, all mail messages are queued. 
+&gt; 
+&gt; So, correct me if I'm wrong, if we set s to false wouldn't the message
+&gt; going to remora.co.jp be the only one queued (and any others that are
+&gt; undeliverable) allowing the majority of list to be sent?
+&gt; 
+&gt; I guess I need to study some more. How does majordomo effect the
+&gt; queue?
+
+I'm not sure what the "s" option actually does in sendmail (my bat book
+is at home) but I doubt it will have any beneficial effect here.  Only
+messages to remora.co.jp are being deferred, and I suspect that
+majordomo invokes sendmail separately for each recipient on the list
+rather than once for all envelope recipients.  At least I hope so.
+
+Sendmail operates on a "send it if you can, queue it if you can't"
+strategy, and so any messages found in the queue weren't sent
+immediately for some reason.  Qmail, by way of comparison, queues
+*everything* and has processes that add entries to the queue
+(qmail-inject and qmail-smtp) as well as a *separate* process to drain
+the queue (qmail-send).  In my opinion, this tends to work faster and
+more reliably -- or at the very least more deterministically.
+
+Regardless, 30 to 90 minutes to work through the list doesn't make sense
+just because an MX lookup failed -- the DNS timeout isn't THAT long.  
+
+Hmm ... how often is sendmail configured to do a queue run on the tlug
+server (what follows the -bq option)?  I've never seen less than 30
+minute deliveries -- maybe if any recipient is deferred the entire thing
+is put in the queue and awaits the next "batch run"?  If -bq is set to
+30m then I'm worried.  Blech!!!!
+
+I'd be happy to look into it, but if I can't figure it out in short
+order I'm likely to push to convert everything over to qmail and ezmlm!
+(Note that ezmlm can be made to look pretty close to majordomo,
+accepting the same commands, etc.)
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00148" HREF="msg00148.html">Batman (was Re: tlug: tlug server latency)</A></STRONG>
+<UL><LI><EM>From:</EM> Alberto Tomita &lt;atomita@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00099" HREF="msg00099.html">tlug: tlug server latency</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00137" HREF="msg00137.html">RE: tlug: tlug server latency</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00145.html">Re: tlug: Network Question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00147.html">Re: tlug: Re: search &amp; replace (was: Grep for subdirectories?)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00137.html">RE: tlug: tlug server latency</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00148.html">Batman (was Re: tlug: tlug server latency)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00146"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00146"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Sparc question -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Sun, 24 Jan 1999 12:08:38 +0900 -->
+<!--X-Message-Id: 19990124120748E.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.990124004909.570A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00354.html">Date Prev</A>][<A HREF="msg00356.html">Date Next</A>][<A HREF="msg00353.html">Thread Prev</A>][<A HREF="msg00356.html">Thread Next</A>][<A HREF="maillist.html#00355">Date Index</A>][<A HREF="threads.html#00355">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Sparc question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:jq@example.com">jq@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Sparc question</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 24 Jan 1999 12:07:48 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Sun, 24 Jan 1999 01:10:06 +0900 (JST)"&lt;<A HREF="msg00353.html">Pine.LNX.3.96LJ1.1b7.990124004909.570A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00353.html">Pine.LNX.3.96LJ1.1b7.990124004909.570A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jonathan" == Jonathan Byrne &lt;jq@example.com&gt; writes:
+
+    Jonathan&gt; Any Sparc experts up burning the midnight oil tonight?
+    Jonathan&gt; I'm kind of stuck here with this Sparc 2 and I hope I
+    Jonathan&gt; can tap into some advice here.
+
+
+    Jonathan&gt; boot cdrom
+
+    Jonathan&gt; Boot device: /sbsu/esp@example.com, 70000/sd@example.com,0:c File and args:
+    Jonathan&gt; SCSI device 6,0 is not responding Can't open boot
+    Jonathan&gt; device.
+
+    Jonathan&gt; The DIP switches on the drive are set for SCSI ID 6.
+    Jonathan&gt; But the plot thickens.  Typing probe-scsi gets me this:
+
+    Jonathan&gt; Target 1 Unit 0 Removable Read Only Device TOSHIBA
+    Jonathan&gt; CD-ROM XM-3401TA028301/28/93
+
+    Jonathan&gt; Target 3 Unit 0 Disk SEAGATE ST11200N
+    Jonathan&gt; SUN1.0595000085283Copyright (c) Seagate All rights
+    Jonathan&gt; reserved 0000
+
+    Jonathan&gt; Target 5 Unit 0 Disk SEAGATE ST1480 SUN04248628
+    Jonathan&gt; Copyright (c) 1992 Seaate All rights reserved 0000
+
+
+    Jonathan&gt; The report for the disks is consistent with the drive
+    Jonathan&gt; jumpers (both are internal disks), but the report for
+    Jonathan&gt; the CD-ROM drive is not.  Moreover, no matter what I do
+    Jonathan&gt; to the CD-ROM drives DIP switches, probe-scsi *always*
+    Jonathan&gt; reports it as above.  I opened up the CD-ROM drive to
+    Jonathan&gt; verify that the DIP switch cable was actually connected
+    Jonathan&gt; (it was), so I'm kind of at a loss here.
+
+Can you try re-seating the cable? If it still does not work, you can
+tell the sun to boot from a particular device. The device name is
+terribly long, but tou should be able to say something like
+
+boot /sbsu/esp@example.com,70000/sd@example.com,0:c
+
+At least I think thats it. On a sun at work, I have it setup to boot
+off an external disk, scsi-id 5. You use the "setenv" function in the
+boot prom to set the "boot-device". Do a "printenv" find out current
+settions.
+
+My sun at work:
+
+boot-device=/iommu@example.com,e0000000/sbus@example.com,e0001000/espdma@example.com,400000/esp@example.com,800000/sd@example.com,0:a
+disk
+
+Actually, I think that is much longer than it has to be. At home, I
+boot off another controller, and the device spec is much shorter:
+
+boot-device=/iommu/sbus/QLGC,isp@example.com,10000/sd@example.com,0:a
+
+I'm sorry I can't tell more details on how these work. I got it to
+work from following examples in the controller manual and a bit of
+experimentation. 
+
+    Jonathan&gt; Any ideas on what I need to do to make this work (maybe
+    Jonathan&gt; I just need a newer CD-ROM drive in SUN enclosure?) are
+    Jonathan&gt; appreciated.
+
+Actually, you might be better off with an old Sun drive.
+
+    Jonathan&gt; Oh, one other thing: this CD-ROM drive is attached to
+    Jonathan&gt; the SS2 using a cable that is narrow at the SS2 end and
+    Jonathan&gt; wide at the CD-ROM drive end.  Is there any problem with
+    Jonathan&gt; this?
+
+That should not be a problem in itself. However, it may be the the
+drive is scsi-2,3. The SS2 is plain old scsi. I have not been able to
+get scsi-2 devices to work with built in controllers on SS2's and
+5's. The add-on controllers, such as the ethernet/scsi combination
+controller, does work.
+
+HTH,
+
+	Andy
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00353" HREF="msg00353.html">tlug: Sparc question</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00354.html">Re: tlug: tlug SF bay area representative site visit</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00356.html">Re: tlug: Sparc question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00353.html">tlug: Sparc question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00356.html">Re: tlug: Sparc question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00355"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00355"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

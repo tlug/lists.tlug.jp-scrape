@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: GCC compiler question -->
+<!--X-From: Peter Linsley <plinsley@example.com> -->
+<!--X-Date:  Mon, 19 Oct 1998 10:57:49 +0900 -->
+<!--X-Message-Id: 199810190157.KAA23932@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3628A130.90268CF3@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00737.html">Date Prev</A>][<A HREF="msg00739.html">Date Next</A>][<A HREF="msg00711.html">Thread Prev</A>][<A HREF="msg00739.html">Thread Next</A>][<A HREF="maillist.html#00738">Date Index</A>][<A HREF="threads.html#00738">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: GCC compiler question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: GCC compiler question </strong></LI>
+<LI><strong>From</strong>: <strong>Peter Linsley &lt;<A HREF="mailto:plinsley@example.com">plinsley@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 19 Oct 1998 10:47:28 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-reply-to: Your message of "Sat, 17 Oct 1998 22:52:48 JST."            &lt;<A HREF="msg00711.html">3628A130.90268CF3@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hello,
+
+This is a common `hack' which is only any use when considering macro
+expansion, such as in this case.
+
+It stems from the fact that the programmer requires that the
+macro is in it's own block; this could be inherent from the syntax of
+the macro or just that they want to deal with block scope.
+
+Let's look at your discovery:
+
+#define spin_lock_init(x)       do { (x)-&gt;lock = 0; } while(0)
+
+If it were used in the following way:
+
+if (true)
+     spin_lock_init (x);
+
+The semi-colon following "spin_lock_init (x);" will be consumed as
+part of the macro expansion as:
+
+if (true)
+   do { (x)-&gt;lock = 0; } while(0);
+
+
+If we were to declare the macro as follows:
+
+#define spin_lock_init(x)       { (x)-&gt;lock = 0; }
+
+Then this would expand to  
+
+if (true)
+   { (x)-&gt;lock = 0; }
+
+...and not be syntactically correct, this will cause a compile error as
+no semi-colon is present.
+
+This is possibly a bad example to comprehend as there is only one expression, 
+I presume the programmer was just insistent on good programming habits.
+
+A more likely example would be the following macro:
+
+#define m(A) if(A){exp1; exp2;}
+
+You can see the problems with the semi-colon when this is expanded,
+we need to wrap it in a "do{ ... } while(0)".
+
+Regards,
+
+Peter
+
+Your message dated: Sat, 17 Oct 1998 22:52:48 JST
+&gt; I've been looking through some of the kernel source, and I keep seeing
+&gt; things like the following:-
+&gt; 
+&gt; #define spin_lock_init(x)       do { (x)-&gt;lock = 0; } while(0)
+&gt; 
+&gt; What's the point of the do {} while(0) bit? Why not just
+&gt; 
+&gt; #define spin_lock_init(x)       { (x)-&gt;lock = 0; }
+&gt; 
+&gt; or even
+&gt; 
+&gt; #define spin_lock_init(x)       (x)-&gt;lock = 0;
+&gt; 
+&gt; The only point I can see is causing compile-time errors for misuse, such
+&gt; as
+&gt; 
+&gt;    z += spin_lock_init(x);
+&gt; 
+&gt; which would compile under the 3rd alternative above. And who would
+&gt; really write such code anyway? And why not the 2nd alternative?
+&gt; 
+&gt; Neil.
+&gt; ---------------------------------------------------------------
+&gt; Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+&gt; Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+&gt; ---------------------------------------------------------------
+&gt; Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+&gt; 
+             
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00739" HREF="msg00739.html">Re: tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00752" HREF="msg00752.html">Re: tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00711" HREF="msg00711.html">tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00737.html">Re: tlug: Re: Intranet</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00739.html">Re: tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00711.html">tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00739.html">Re: tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00738"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00738"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

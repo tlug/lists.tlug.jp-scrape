@@ -1,0 +1,176 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Japanese on Slackware -->
+<!--X-From-R13: Fvz Vhezna <xnab&#45;gyhtNxnab.bet.hx> -->
+<!--X-Date: Mon, 11 Aug 2003 09:54:59 +0100 -->
+<!--X-Message-Id: 20030811085459.GA3715@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 20030811032939.5450B299D5@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00122.html">Date Prev</a>][<a href="msg00124.html">Date Next</a>][<a href="msg00114.html">Thread Prev</a>][<a href="msg00125.html">Thread Next</a>][<a href="maillist.html#00123">Date Index</a>][<a href="threads.html#00123">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Japanese on Slackware</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 11 Aug 2003 09:54:59 +0100</li>
+<li><strong>From</strong>: <strong>Tim Hurman &lt;<A HREF="mailto:kano-tlug@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Japanese%20on%20Slackware">kano-tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Japanese on Slackware</strong></li>
+<li>References: &lt;<a href="msg00114.html">20030811032939.5450B299D5@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Sun, Aug 10, 2003 at 11:29:39PM -0400, kayamboo wrote:
+&gt; 
+&gt; Hi folks
+&gt;    I did a lot of work around and have finally got canna and kinput2
+&gt;  installed on my slackware9.0
+&gt;  
+&gt;  But kterm is not installing and it throws an error in main.o while doing
+&gt;  make?
+&gt;  Any help?
+&gt;  
+
+Attached is a patch to fix the kterm install (really only a few small
+headers fixes).
+
+Tim.
+</pre>
+<pre>
+diff -u kterm-6.2.0.orig/main.c kterm-6.2.0.orig.new/main.c
+--- kterm-6.2.0.orig/main.c	1996-07-12 06:01:38.000000000 +0100
++++ kterm-6.2.0.orig.new/main.c	2003-08-11 09:41:01.000000000 +0100
+@@ -88,6 +88,9 @@
+ #include &lt;sys/socket.h&gt;
+ #endif /* KEEPALIVE */
+ 
++#include &lt;termios.h&gt;
++#include &lt;unistd.h&gt;
++
+ #ifdef att
+ #define ATT
+ #endif
+diff -u kterm-6.2.0.orig/screen.c kterm-6.2.0.orig.new/screen.c
+--- kterm-6.2.0.orig/screen.c	1996-06-23 09:00:26.000000000 +0100
++++ kterm-6.2.0.orig.new/screen.c	2003-08-11 09:41:41.000000000 +0100
+@@ -46,9 +46,6 @@
+ #include &lt;sys/ptem.h&gt;
+ #endif
+ 
+-extern Char *calloc(), *malloc(), *realloc();
+-extern void free();
+-
+ ScrnBuf Allocate (nrow, ncol, addr)
+ /*
+    allocates memory for a 2-dimensional array of chars and returns a pointer
+diff -u kterm-6.2.0.orig/scrollbar.c kterm-6.2.0.orig.new/scrollbar.c
+--- kterm-6.2.0.orig/scrollbar.c	1996-07-12 06:01:39.000000000 +0100
++++ kterm-6.2.0.orig.new/scrollbar.c	2003-08-11 09:41:58.000000000 +0100
+@@ -324,7 +324,6 @@
+ 	register TScreen *screen = &amp;xw-&gt;screen;
+ 	register int border = 2 * screen-&gt;border;
+ 	register int i;
+-	Char *realloc(), *calloc();
+ 
+ 	if(screen-&gt;scrollbar)
+ 		return;
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00114" href="msg00114.html">[tlug] Japanese on Slackware</a></strong>
+<ul><li><em>From:</em> kayamboo</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00122.html">Re: [tlug] CrossOver</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00124.html">Re: [tlug] Japanese on Slackware</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00114.html">[tlug] Japanese on Slackware</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00125.html">Re: [tlug] Japanese on Slackware</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00123"><strong>Date</strong></a></li>
+<li><a href="threads.html#00123"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

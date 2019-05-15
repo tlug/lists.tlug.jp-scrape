@@ -1,0 +1,198 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: More CDROM miseries in Wales -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date:  Sun, 5 Oct 1997 11:29:09 GMT -->
+<!--X-Message-Id: Pine.LNX.3.93.971005202145.181B&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00016.html">Date Prev</A>][<A HREF="msg00018.html">Date Next</A>][<A HREF="msg00015.html">Thread Prev</A>][<A HREF="msg00027.html">Thread Next</A>][<A HREF="maillist.html#00017">Date Index</A>][<A HREF="threads.html#00017">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: More CDROM miseries in Wales</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Lignux Abusers' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: More CDROM miseries in Wales</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 5 Oct 1997 20:27:22 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Dennis McMurchy &lt;denismcm@example.com&gt;
+--------------------------------------------------------
+  Hi all,
+
+  Thanks Jim for the very helpful advice regarding my Welsh friend's
+CDROM recognition problem.  I forward his latest on the problem:
+
+  Jim Tittsler wrote, partly quoting you or me:
+&gt; &gt;   CD-Rom... on IRQ15, Port 170, Model 468-021
+&gt; &gt; The Linux Install diskette (I booted it, but this time I aborted before
+&gt; &gt; anything was actually installed) detects it like this:-
+&gt; &gt;   hdd:  CDA468021, ATAPI CDROM drive  ide0 at 0x1f
+&gt;                                                 ^^^^ probably 0x1f0
+&gt; &gt;   The kennel rebuild went very smoothly (though I chose rather wildly
+&gt; &gt; between the various options), and I selected ATAPI CD-Rom. And, as you
+&gt; 
+&gt; Which hopefully means he said yes to "Include IDE/ATAPI CDROM support"
+&gt; (and also yes to "ISO9660 filesystem" but that will only be a problem
+&gt; after detecting the drive :-).  You will also want to exercise caution
+&gt; if you have an IDE chipset that has only a single FIFO for both of the
+&gt; interfaces.  In particular say Yes to the CMD640 and RZ1000 configuration
+&gt; options if you have either or if you aren't sure.
+
+I didn't get asked about any of these things --  I just selected ATAPI
+CDrom and that seemed to be an end to the matter. Perhaps there's
+something wrong with the setup program?
+
+-----------------------------(begin quotation)
+&gt; &gt; In the "Initializing block devices" section, it deals with the two hard
+&gt; &gt; disks and the floppy, but no mention of hdd or cdrom - UNLESS the
+&gt; &gt; following obscure line
+&gt; &gt;      ide0 at 0x1f0-0x1f7, 0x3f6 on irq 14
+&gt; &gt; is an attempt to detect it. The IRQ is different, but "ide0" and the
+&gt; &gt; memory address (or whatever those letters are) look similar to what the
+&gt; 
+&gt; That is the "primary" IDE interface, at ports 0x1F0~1F7 IRQ14, the
+&gt; "secondary" IDE interface is located at ports 0x170~177 and uses
+&gt; IRQ15.
+&gt; 
+&gt; (You can include ide?=port,upper_port,irq on the command line (as in
+&gt; linux ide0=0x1f0,0x3f6,14 ide1=0x170,0x376,15), but since those are
+&gt; the default values, it shouldn't be required.)
+See below** about this.
+
+&gt; What *may* be required is mentioning the drive location, especially
+&gt; if you have a non-standard setup (like a CD-ROM set as slave and no
+&gt; master device on that interface)... try booting your new kernel with
+&gt; a command line for LILO or loadlin like:
+&gt;   linux hdd=cdrom
+
+I had tried this before (after reading an article on Linux installation
+difficulties in Computer Shopper magazine). But I tried again, just for
+the record, and the boot goes smoothly, &amp; includes these lines:-
+  hdd: no response (status = 0xff)
+  hdd: ATAPI cdrom (?)
+It also included this line (which I think was absent from my usual boot,
+which detected only ide0):-
+  ide1 at ox170-0x177,0x376 on irq15
+which is the irq where Windows &amp; MS-DOS find the CDrom.
+But attempts to mount /mnt/cdrom, /cdrom, /dev/hdd, etc still fail with
+the message "hdd is not a block device".
+
+  Perhaps I need to get around the bug in the install setup (the failure
+to ask for details of the CDrom) by manually editing some config
+file(s). Isn't there something like an autoexec.bat that will bypass the
+crappy autodetection and just tell the kernel what devices actually are
+there? Or could I just add some parameters. ** Was JimT's idea that the
+following would REPLACE any mention of "hdd" or "cdrom"?
+&gt; You can include ide?=port,upper_port,irq on the command line (as in
+&gt; linux ide0=0x1f0,0x3f6,14 ide1=0x170,0x376,15), but since those are
+&gt;the default values, it shouldn't be required.)
+Anyway, when I booted using "linux hdd=cdrom", these ide parameters were
+correct.
+
+-------------------------(end quotation)
+
+  If anyone can help on this, I'd be very grateful.  I'm stumped (although
+I have wondered if this could a PnP problem - I don't if his CDROM drive
+is such a beast or not, probably not, eh.
+
+  Cheers,
+         Dennis 
+
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00027" HREF="msg00027.html">Re: tlug: More CDROM miseries in Wales</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00016.html">Re: tlug: Meeting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00018.html">Re: tlug: Meeting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00015.html">Re: tlug: Can't send mail!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00027.html">Re: tlug: More CDROM miseries in Wales</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00017"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00017"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

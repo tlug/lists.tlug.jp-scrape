@@ -1,0 +1,209 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] binary search of binary data -->
+<!--X-From-R13: Sqjneq Ievtug <rqjNrC500.pbz> -->
+<!--X-Date: Wed, 29 Dec 2004 23:50:51 +0900 -->
+<!--X-Message-Id: 20041229145051.GE2199@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20041225205936.GA2199@example.com -->
+<!--X-Reference: 87llbjj4xw.fsf@example.com -->
+<!--X-Reference: 20041227145652.GC2199@example.com -->
+<!--X-Reference: 87fz1rhy0m.fsf@example.com -->
+<!--X-Reference: 20041228041814.GD2199@example.com -->
+<!--X-Reference: 871xd9hezi.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00199.html">Date Prev</a>][<a href="msg00201.html">Date Next</a>][<a href="msg00190.html">Thread Prev</a>][<a href="msg00203.html">Thread Next</a>][<a href="maillist.html#00200">Date Index</a>][<a href="threads.html#00200">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] binary search of binary data</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 29 Dec 2004 23:50:51 +0900</li>
+<li><strong>From</strong>: <strong>Edward Wright &lt;<A HREF="mailto:edw@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20binary%20search%20of%20binary%20data">edw@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] binary search of binary data</strong></li>
+<li>References: &lt;<a href="msg00156.html">20041225205936.GA2199@example.com</a>&gt; &lt;<a href="msg00159.html">87llbjj4xw.fsf@example.com</a>&gt; &lt;<a href="msg00160.html">20041227145652.GC2199@example.com</a>&gt; &lt;<a href="msg00163.html">87fz1rhy0m.fsf@example.com</a>&gt; &lt;<a href="msg00165.html">20041228041814.GD2199@example.com</a>&gt; &lt;<a href="msg00190.html">871xd9hezi.fsf@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, Dec 29, 2004 at 02:04:33PM +0900, Stephen J. Turnbull wrote:
+&gt; &gt;&gt;&gt;&gt;&gt; &quot;Edward&quot; == Edward Wright &lt;edw@example.com&gt; writes:
+&gt; 
+&gt;     Edward&gt; I use grep -ab for searching thru the file for text
+&gt;     Edward&gt; strings, but I couldn't see how to pass a binary search
+&gt;     Edward&gt; pattern to grep. Am I missing something simple here?
+&gt; 
+&gt; That's not a grep problem, that's a shell problem!&lt;0.9wink&gt;
+
+Ah...  too true, too true
+
+&gt; 
+&gt; I can think of a number of ways to deal with this.  First, almost all
+&gt; shells/terminal drivers allow entry of binary characters in some way,
+&gt; for example use ^V&lt;control character&gt; for the low range and ALT-###
+&gt; for the high range.
+
+While trying to figure this out from the bash man page (no luck &lt;sigh&gt;)
+I came across $'&lt;hex here&gt;' which I didn't know and outputs the btye
+value of the &lt;hex here&gt; - e.g. echo $'\x50\x51' gives &quot;PQ&quot;.
+
+&gt;  Some shells will interpret octal escapes for you,
+&gt; although I believe bash doesn't.  Recent GNU greps support a
+&gt; --perl-regexp (-P) option; 
+
+mine doesn't.... mebbe I should get a new one... :)
+
+&gt; I don't know if that implies processing
+&gt; Perl string escapes, it may not.  There's always the -f option to take
+&gt; the search pattern from a file.
+
+This worked, although creating the file was a hassle. 
+
+&gt; 
+&gt; Finally, you can use 'grep -e `printf ...`'.
+
+I don't know how to make prinf output the byte values. It'll ouput the
+hex representation no problem....
+
+I tried using it to create the above mentioned file like so:
+
+printf $'\x26\x9d\x00\x00\x28\x9d\x00\x00' &gt;testfile
+
+but I ended up with a 2 byte file.... apparently it quit when it hit
+the null byte.... which kinda makes sense.
+
+(I tried the same thing as an argument to grep, but it also failed -
+probly for the same reason)
+
+&gt; 
+&gt; Unix rules, even when it sucks!
+
+Agreed!
+
+&gt; 
+&gt; None of these are particularly satisfactory, which is why I suggested
+&gt; doing the whole thing in &lt;scripted-language-with-initial-character-p-
+&gt; or-r-at-your-option&gt;.  (You could even use awk, etc.)
+
+which proved to be the best solution - at least it worked for me with
+the least hassle - but I did have to add a bit to escape meta-
+characters (duh)
+
+Anyway, thanks again for the assist! I got most of my data back.
+
+Ed
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Dave Brown</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00156" href="msg00156.html">[tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Edward Wright</li></ul></li>
+<li><strong><a name="00159" href="msg00159.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00160" href="msg00160.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Edward Wright</li></ul></li>
+<li><strong><a name="00163" href="msg00163.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00165" href="msg00165.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Edward Wright</li></ul></li>
+<li><strong><a name="00190" href="msg00190.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00199.html">Re: [tlug] coffee on keyboard.....again</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00201.html">Re: [tlug] coffee on keyboard.....again</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00190.html">Re: [tlug] binary search of binary data</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00203.html">Re: [tlug] binary search of binary data</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00200"><strong>Date</strong></a></li>
+<li><a href="threads.html#00200"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

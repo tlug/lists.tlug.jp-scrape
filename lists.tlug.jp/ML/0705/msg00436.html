@@ -1,0 +1,172 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] ssh tunnel in background requires nohup? -->
+<!--X-From-R13: Oy Vbnat <ubnatnNnyhz.ecv.rqh> -->
+<!--X-Date: Fri, 25 May 2007 14:24:44 +0900 -->
+<!--X-Message-Id: 20070525050045.GG58681@samsara.bebear.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00435.html">Date Prev</a>][<a href="msg00437.html">Date Next</a>][<a href="msg00479.html">Thread Prev</a>][<a href="msg00437.html">Thread Next</a>][<a href="maillist.html#00436">Date Index</a>][<a href="threads.html#00436">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] ssh tunnel in background requires nohup?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 25 May 2007 14:00:45 +0900</li>
+<li><strong>From</strong>: <strong>Al Hoang &lt;<a href="mailto:hoanga@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ssh%20tunnel%20in%20background%20requires%20nohup%3F">hoanga@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] ssh tunnel in background requires nohup?</strong></li>
+<li>User-agent: Mutt/1.5.12-2006-07-14</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi TLUGers,
+
+    I've been scritching my head on this one and was hoping to find a more definitive
+explanation from some ssh gurus here why I've been seeing a particular phenomenon with 
+using ssh tunnels.
+
+    I've been playing with ssh tunnels a little bit more and noticed I was having
+troubles logging off from a host once I started up a tunnel on it then tried to exit.
+Consider this use case example:
+
+
+desktop$ ssh somehost
+somehost$ ssh -f -n -N -L 8080:localhost:80  example@example.com
+somehost$ exit
+logout  &lt;---- It sits here and hangs unless I terminate the ssh session forcibly
+              from machine named desktop.
+
+
+    I find this behavior extremely annoying since the manpage for ssh states the
+following:
+
+     -f      Requests ssh to go to background just before command execution.  
+             This is useful if ssh is going to ask for passwords or passphrases, 
+             but the user wants it in the background.  This implies -n.  The 
+             recommended way to start X11 programs at a remote site is with 
+             something like ssh -f host 
+     -N      Do not execute a remote command.  This is useful for just forwarding ports
+     -n      Redirects stdin from /dev/null (actually, prevents reading from 
+             stdin).  This must be used when ssh is run in the background.
+
+    From my understanding I should be able to use the -f -N and -n options to
+get ssh to run in the background and I can go off and do other things including
+logout and expect the tunnel to keep running.  
+
+    So my questions to TLUG are:
+1. If you try something similar do you have the same issues?
+2. Is this distro-specific?  I've tested this on Debian Sarge, Ubuntu Feisty 
+   and Ubuntu Dapper so perhaps it is something that is Debian-specific but
+   I don't have enough linux distros available right now to test this thoroughly.
+3. Why is this happening?  My guess is that the sshd or shell process tied to
+   the machine you are trying to run the ssh tunnel from is waiting for some signal
+   from the ssh tunnel process before it exits.
+   
+I am able to get around this by using the nohup command in front of the ssh tunnel
+command but from I've gleaned from looking at various websites it should not 
+be necessary.  I tested setting up a ssh tunnel with FreeBSD using the same
+command and can confirm I can log off afterwards without it hanging so perhaps
+this is yet another one of those annoying subtle Linux bugs.
+
+Hints? 
+Alain
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00437" href="msg00437.html">Re: [tlug] ssh tunnel in background requires nohup?</a></strong>
+<ul><li><em>From:</em> emiddleton@example.com</li></ul></li>
+<li><strong><a name="00441" href="msg00441.html">Re: [tlug] ssh tunnel in background requires nohup? - take two</a></strong>
+<ul><li><em>From:</em> emiddleton@example.com</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00435.html">Re: [tlug] TLUG BBQ</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00437.html">Re: [tlug] ssh tunnel in background requires nohup?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00479.html">[tlug] Re: TLUG BBQ</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00437.html">Re: [tlug] ssh tunnel in background requires nohup?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00436"><strong>Date</strong></a></li>
+<li><a href="threads.html#00436"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

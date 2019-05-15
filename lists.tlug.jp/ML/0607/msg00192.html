@@ -1,0 +1,167 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] sshd writes password in clear text into /var/log/messages -->
+<!--X-From-R13: Oynva Vbnat <ubnatnNznp.pbz> -->
+<!--X-Date: Wed, 12 Jul 2006 00:20:55 +0900 -->
+<!--X-Message-Id: 44B3C1D0.2060905@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: A47B7143&#45;A353&#45;4817&#45;874A&#45;AB86A3AA6E5D@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00191.html">Date Prev</a>][<a href="msg00193.html">Date Next</a>][<a href="msg00189.html">Thread Prev</a>][<a href="msg00204.html">Thread Next</a>][<a href="maillist.html#00192">Date Index</a>][<a href="threads.html#00192">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] sshd writes password in clear text into /var/log/messages</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 12 Jul 2006 00:20:48 +0900</li>
+<li><strong>From</strong>: <strong>Alain Hoang &lt;<a href="mailto:hoanga@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20sshd%20writes%20password%20in%20clear%20text%20into%20%2Fvar%2Flog%2Fmessages">hoanga@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] sshd writes password in clear text into /var/log/messages</strong></li>
+<li>References: &lt;<a href="mailto:A47B7143-A353-4817-874A-AB86A3AA6E5D@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20sshd%20writes%20password%20in%20clear%20text%20into%20%2Fvar%2Flog%2Fmessages">A47B7143-A353-4817-874A-AB86A3AA6E5D@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.4 (X11/20060615)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+Niels Kobschaetzki wrote:
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+Hi!
+
+</pre><tt>I just noticed that sshd writes the passwords of the users which are  
+</tt><tt>logging in via ssh (auth-method is a password) in clear text into / 
+</tt><tt>var/log/messages.
+</tt><tt>  
+</tt></blockquote><pre style="margin: 0em;">
+   Ouch, that sounds you have debug mode turned on.
+
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>Google, man page and friends didn't help. Does anyone has an idea how  
+</tt><tt>I can switch it off?
+</tt><pre style="margin: 0em;">
+My logging-settings in the sshd_config are
+
+# Logging
+#obsoletes QuietMode and FascistLogging
+SyslogFacility AUTH
+LogLevel INFO
+</pre><tt>  
+</tt></blockquote><tt>Did you restart the SSHD server to make sure those settings are actually 
+</tt><tt>the ones that are being read?  What does ps awwux | grep sshd tell you 
+</tt><tt>about the options that sshd is starting with? 
+</tt><tt>   '-d' is debugging mode which is probably what you don't want.
+</tt><pre style="margin: 0em;">
+
+   Here's what I would do (besides panic).
+1. Double check the sshd_config and make sure that is the one you want
+</pre><tt>2. Find the currently running sshd process information via 'ps' or your 
+</tt><tt>other favorite system overlord tool and find out what options it is 
+</tt><tt>running with.  If you have '-ddd'  or  '-o LogLevel DEBUG' or something 
+</tt><tt>odd like that I'd stop that quickly.
+</tt><pre style="margin: 0em;">
+3. Find if there are any OTHER sshd processes running on your system
+</pre><tt>4. Check /etc/init.d/sshd and all other startup scripts to make sure 
+</tt><tt>they're not doing anything weird to the sshd startup options
+</tt><tt>5. Run sshd from the command line and double check it's not doing the 
+</tt><tt>same thing as using the normal init scripts.
+</tt><pre style="margin: 0em;">
+6. Double check you're not being hacked  into or something aggravating
+7. Wait for more suggestions from TLUG :-)
+
+Hope that helps,
+Alain
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00189" href="msg00189.html">[tlug] sshd writes password in clear text into /var/log/messages</a></strong>
+<ul><li><em>From:</em> Niels Kobschaetzki</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00191.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00193.html">Re: [tlug] Blocking bad sshd bruteforce attempt</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00189.html">[tlug] sshd writes password in clear text into /var/log/messages</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00204.html">[tlug] Scribus needs help with CJK</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00192"><strong>Date</strong></a></li>
+<li><a href="threads.html#00192"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

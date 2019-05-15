@@ -1,0 +1,215 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Upcoming OpenSSH vulnerability (fwd) -->
+<!--X-From-R13: Fvz Vhezna <xnab&#45;gyhtNxnab.bet.hx> -->
+<!--X-Date: Tue, 25 Jun 2002 18:25:41 +0900 (JST) -->
+<!--X-Message-Id: Pine.GSO.4.44.0206251025210.21302&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00548.html">Date Prev</a>][<a href="msg00550.html">Date Next</a>][<a href="msg00548.html">Thread Prev</a>][<a href="msg00577.html">Thread Next</a>][<a href="maillist.html#00549">Date Index</a>][<a href="threads.html#00549">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Upcoming OpenSSH vulnerability (fwd)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 25 Jun 2002 10:26:49 +0100 (BST)</li>
+<li><strong>From</strong>: <strong>Tim Hurman &lt;<A HREF="mailto:kano-tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Upcoming%20OpenSSH%20vulnerability%20%28fwd%29">kano-tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Upcoming OpenSSH vulnerability (fwd)</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+sigh, It has been a week for them....
+
+Tim.
+
+---------- Forwarded message ----------
+Date: Mon, 24 Jun 2002 15:00:10 -0600
+From: Theo de Raadt &lt;deraadt@example.com&gt;
+To: bugtraq@example.com
+Cc: dsi@example.com, announce@example.com, misc@example.com
+Subject: Upcoming OpenSSH vulnerability
+
+There is an upcoming OpenSSH vulnerability that we're working on with
+ISS.  Details will be published early next week.
+
+However, I can say that when OpenSSH's sshd(8) is running with priv
+seperation, the bug cannot be exploited.
+
+OpenSSH 3.3p was released a few days ago, with various improvements
+but in particular, it significantly improves the Linux and Solaris
+support for priv sep.  However, it is not yet perfect.  Compression is
+disabled on some systems, and the many varieties of PAM are causing
+major headaches.
+
+However, everyone should update to OpenSSH 3.3 immediately, and enable
+priv seperation in their ssh daemons, by setting this in your
+/etc/ssh/sshd_config file:
+
+	UsePrivilegeSeparation yes
+
+Depending on what your system is, privsep may break some ssh
+functionality.  However, with privsep turned on, you are immune from
+at least one remote hole.  Understand?
+
+3.3 does not contain a fix for this upcoming bug.
+
+If priv seperation does not work on your operating system, you need to
+work with your vendor so that we get patches to make it work on your
+system.  Our developers are swamped enough without trying to support
+the myriad of PAM and other issues which exist in various systems.
+You must call on your vendors to help us.
+
+Basically, OpenSSH sshd(8) is something like 27000 lines of code.  A
+lot of that runs as root.  But when UsePrivilegeSeparation is enabled,
+the daemon splits into two parts.  A part containing about 2500 lines
+of code remains as root, and the rest of the code is shoved into a
+chroot-jail without any privs.  This makes the daemon less vulnerable
+to attack.
+
+We've been trying to warn vendors about 3.3 and the need for privsep,
+but they really have not heeded our call for assistance.  They have
+basically ignored us.  Some, like Alan Cox, even went further stating
+that privsep was not being worked on because &quot;Nobody provided any info
+which proves the problem, and many people dont trust you theo&quot; and
+suggested I &quot;might be feeding everyone a trojan&quot; (I think I'll publish
+that letter -- it is just so funny).  HP's representative was
+downright rude, but that is OK because Compaq is retiring him.  Except
+for Solar Designer, I think none of them has helped the OpenSSH
+portable developers make privsep work better on their systems.
+Apparently Solar Designer is the only person who understands the need
+for this stuff.
+
+So, if vendors would JUMP and get it working better, and send us
+patches IMMEDIATELY, we can perhaps make a 3.3.1p release on Friday
+which supports these systems better.  So send patches by Thursday
+night please.  Then on Tuesday or Wednesday the complete bug report
+with patches (and exploits soon after I am sure) will hit BUGTRAQ.
+
+Let me repeat: even if the bug exists in a privsep'd sshd, it is not
+exploitable.  Clearly we cannot yet publish what the bug is, or
+provide anyone with the real patch, but we can try to get maximum
+deployement of privsep, and therefore make it hurt less when the
+problem is published.
+
+So please push your vendor to get us maximally working privsep patches
+as soon as possible!
+
+We've given most vendors since Friday last week until Thursday to get
+privsep working well for you so that when the announcement comes out
+next week their customers are immunized.  That is nearly a full week
+(but they have already wasted a weekend and a Monday).  Really I think
+this is the best we can hope to do (this thing will eventually leak,
+at which point the details will be published).
+
+Customers can judge their vendors by how they respond to this issue.
+
+OpenBSD and NetBSD users should also update to OpenSSH 3.3 right away.
+On OpenBSD privsep works flawlessly, and I have reports that is also
+true on NetBSD.  All other systems appear to have minor or major
+weaknesses when this code is running.
+
+(securityfocus postmaster; please post this through immediately, since
+i have bcc'd over 30 other places..)
+
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00577" href="msg00577.html">Re: [tlug] Upcoming OpenSSH vulnerability (fwd)</a></strong>
+<ul><li><em>From:</em> Stoyan Zhekov</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00548.html">Re: [tlug] Tripwire - any tips.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00550.html">Re: [tlug] Re: Piping stderr?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00548.html">Re: [tlug] Tripwire - any tips.</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00577.html">Re: [tlug] Upcoming OpenSSH vulnerability (fwd)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00549"><strong>Date</strong></a></li>
+<li><a href="threads.html#00549"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

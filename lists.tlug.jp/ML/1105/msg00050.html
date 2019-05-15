@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  vmware, linux, snapshots -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 16 May 2011 17:57:49 +0900 -->
+<!--X-Message-Id: 8762pbc8zl.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4DD0AE7D.2090406@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00049.html">Date Prev</a>][<a href="msg00051.html">Date Next</a>][<a href="msg00049.html">Thread Prev</a>][<a href="msg00051.html">Thread Next</a>][<a href="maillist.html#00050">Date Index</a>][<a href="threads.html#00050">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  vmware, linux, snapshots</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 May 2011 18:03:58 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20vmware%2C%20linux%2C%20snapshots">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  vmware, linux, snapshots</strong></li>
+<li>References: &lt;<a href="mailto:4DD0AE7D.2090406@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20vmware%2C%20linux%2C%20snapshots">4DD0AE7D.2090406@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Darren Cook writes:
+
+ &gt; Are there any good vmware options here? Or is running rsync regularly,
+ &gt; to copy from main to backup server, the best choice?
+
+Depending on exactly what the access pattern is like, Coda and Unison
+might be possibilities.  Unison keeps two filesystems in sync, but
+that's about all I know about it, I don't even know the protocol
+involved.
+
+Coda is a network file system, and works best in a true client-server
+configuration.  For performance, information is cached on the client
+and sent to the server.  With multiple servers, the information is
+sent to and stored on all of the servers in a cell.
+
+The catch is that for a file to be opened on the client, it must be
+copied *entirely* to the client's cache from the server.  This means
+that if you're dealing with DVD images or the like, the delay between
+*requesting* a file and anything at all happening is huge.  And
+obviously hosting a RDBMS on Coda is right out.  (OTOH, git repos and
+Coda get along *really* well.)  There are technical reasons why this
+is very difficult to avoid, so if the Linux servers are likely to be
+frequently requesting new large content from the Coda server(s), or in
+the event of request for new content, the reply must be realtime, Coda
+is not for you.  Also, typical cache sizes are measured in hundreds of
+megabytes; all frequently accessed files should fit in the cache.
+
+Another drawback is that Coda does require some effort of the admins,
+relative to simple rsync scripts or the like.  Configuration and
+tuning of a Coda cell requires a fair amount of attention at first.
+
+A third disadvantage is that the Coda client requires a special
+kernel.  For active open source like Linux and the *BSDs this is not a
+problem, but you're completely stuck waiting for the guys with the
+Windows source license for Windows upgrades, and even the Mac doesn't
+get a heck of a lot of attention.
+
+OTOH, it's wonderful for mostly static, write-the-file-once content,
+including things like Maildir MUAs or (some) IMAP servers.
+
+There was some work done on &quot;huge cache&quot; configurations (10s of
+gigabytes), so that effectively all work is done on the Coda client,
+and you have online, &quot;hot&quot; backup to the Coda server.  But I don't
+know if that ever was robust.
+
+Note that if you have large new content added to the client, there
+will be a *lot* of traffic to the server for a while.  So you're
+likely to get thrashing if you have both an active Coda client and a
+Coda server running on the same host.  You really do need to have the
+Coda client (which might host a webserver or something like that, as
+well as user home directories) and the Coda server (which should do
+nothing but Coda) on separate hosts in a production configuration.
+
+HTH
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00051" href="msg00051.html">Re: [tlug] vmware, linux, snapshots</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00049" href="msg00049.html">[tlug] vmware, linux, snapshots</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00049.html">[tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00051.html">Re: [tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00049.html">[tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00051.html">Re: [tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00050"><strong>Date</strong></a></li>
+<li><a href="threads.html#00050"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

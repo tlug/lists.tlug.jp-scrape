@@ -1,0 +1,217 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23] -->
+<!--X-From-R13: Evtheq Geqnuy <fvtheqheNehaobk.pbz> -->
+<!--X-Date: Tue, 20 Feb 2007 18:30:32 +0900 -->
+<!--X-Message-Id: 45DABA66.90809@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: E1HJLEb&#45;0005mP&#45;9n@example.com -->
+<!--X-Reference: 200702200304.l1K3461q011320@example.com -->
+<!--X-Reference: 45DA7B32.2060309@example.com -->
+<!--X-Reference: 87sld1mj5k.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00162.html">Date Prev</a>][<a href="msg00164.html">Date Next</a>][<a href="msg00162.html">Thread Prev</a>][<a href="msg00165.html">Thread Next</a>][<a href="maillist.html#00163">Date Index</a>][<a href="threads.html#00163">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 20 Feb 2007 10:07:50 +0100</li>
+<li><strong>From</strong>: <strong>Sigurd Urdahl &lt;<a href="mailto:sigurdur@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20rsync%20vs%20dd%20%5Bwas%20Tlug%20Digest%2C%20Vol%2014%2C%20Issue%2023%5D">sigurdur@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</strong></li>
+<li>References: &lt;E1HJLEb-0005mP-9n@example.com&gt;	&lt;<a href="msg00154.html">200702200304.l1K3461q011320@example.com</a>&gt;	&lt;<a href="msg00155.html">45DA7B32.2060309@example.com</a>&gt;	&lt;<a href="msg00157.html">87sld1mj5k.fsf@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.7 (X11/20060927)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">Stephen J. Turnbull wrote:
+[(rsync based) backup]
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">  More important is that you don't want to
+copy something like /dev/random or /dev/zero, which never return EOF.</pre><br>
+<tt>  
+</tt></blockquote><tt>I think any sane backup utility will copy the files under /dev in a sane 
+way, as special files See [1] for example with tar.</tt><br>
+<br>
+<tt>Rsync will skip these files [2], unless you use the --devices option [3, 
+need to be super-user/root]. Rsynx also takes the option --specials for 
+copying things likes fifos and sockets. (-D is the same as &quot;--specials 
+--devices&quot;).</tt><br>
+<br>
+<tt>Good old copy with cp on the other hand will try to read the devices and 
+write the content to new files, and thus fail to do what you want.
+</tt><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>I really think that rather than try to back up the whole hard drive in<br>
+one shot, you should back up /etc, /home, /var, and maybe /usr/local<br>
+and /boot.  /var should contain your pms state, so you don't really<br>
+need /usr, /bin, or /sbin.  /proc and /dev you shouldn't touch for the<br>
+reasons above.<br>
+  
+</tt></blockquote><tt><br>Whether to backup parts of your installation or all of it in my 
+experince depends a lot on what kind of deployments solutions you have, 
+what kind of restoration needs you expect, and of course budget. But at 
+least in proffesional environments I believe it's best to do complete 
+backups, otherwise you'll too easily end up wondering why you not took 
+backups of that one file you really need now. (Or even worse, your 
+customer wonders why you didn't). But backup is a complex matter, and 
+really need to be done based on your needs.
+</tt><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">If you really want to use dd, I would recommend partitioning the HDD
+and using dd to write the partitions to files, which can be compressed
+and burned to DVD.</pre><br>
+<tt>  
+</tt></blockquote><tt>Agreed. But remember that if you dd a partition it should preferably be 
+unmounted or mounted read-only, or at least not be written to. Otherwise 
+you'll end up with an inconsistent filesystem on the backup. Except for 
+partitions with very large number of files/ directories I can't see any 
+reason to use dd for &quot;normal&quot; backups.</tt><br>
+<br>
+<pre style="margin: 0em;">kind regards,
+-sig</pre><br>
+<pre style="margin: 0em;">[1] Backup of files in /dev with tar</pre><br>
+<tt>sigurdur@??:/tmp/foo$ tar --create --verbose --file  tartest.tar 
+/dev/random /dev/zero /dev/null<br>
+tar: Removing leading `/' from member names<br>
+/dev/random<br>
+/dev/zero<br>
+/dev/null<br>
+sigurdur@??:/tmp/foo$ tar --list --file tartest.tar<br>
+dev/random<br>
+dev/zero<br>
+dev/null<br>
+sigurdur@??:/tmp/foo$</tt><br>
+<br>
+<tt>The options to these two tar commands can be shortened to &quot;-cvf&quot; and 
+&quot;-tf&quot;. For compression add -z (gzip) or -j (bzip2) to any tar command.</tt><br>
+<br>
+<pre style="margin: 0em;">[2] Rsync of files in /dev</pre><br>
+<pre style="margin: 0em;">sigurdur@??:/tmp/foo$ rsync -av /dev/random /dev/zero /dev/null  .
+building file list ... done
+skipping non-regular file &quot;null&quot;
+skipping non-regular file &quot;random&quot;
+skipping non-regular file &quot;zero&quot;</pre><br>
+<pre style="margin: 0em;">sent 116 bytes  received 20 bytes  272.00 bytes/sec
+total size is 0  speedup is 0.00
+sigurdur@??:/tmp/foo$</pre><br>
+<pre style="margin: 0em;">[3] Rsync of files in /dev, with option for rsyncing device files</pre><br>
+<pre style="margin: 0em;">sigurdur@??:/tmp/foo$ sudo rsync -av --devices /dev/random /dev
+/zero /dev/null .
+building file list ... done
+null
+random
+zero</pre><br>
+<pre style="margin: 0em;">sent 97 bytes  received 38 bytes  270.00 bytes/sec
+total size is 0  speedup is 0.00</pre><br>
+<pre style="margin: 0em;">sigurdur@??:/tmp/foo$ ls -l /dev/random /dev/zero /dev/null .
+crw-rw-rw- 1 root     root     1, 3 Feb  2 14:04 /dev/null
+crw-rw-rw- 1 root     root     1, 8 Feb  2 14:04 /dev/random
+crw-rw-rw- 1 root     root     1, 5 Feb  2 14:04 /dev/zero</pre><br>
+<pre style="margin: 0em;">.:
+total 0
+crw-rw-rw- 1 root root 1, 3 Feb  2 14:04 null
+crw-rw-rw- 1 root root 1, 8 Feb  2 14:04 random
+crw-rw-rw- 1 root root 1, 5 Feb  2 14:04 zero
+sigurdur@??:/tmp/foo$</pre><br>
+<pre style="margin: 0em;">--
+Sigurd Urdahl
+Linux, goofing, cooking, making fire, computer security, having a
+beer. Give me good music.</pre><br>
+<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00154" href="msg00154.html">[tlug] RE: Tlug Digest, Vol 14, Issue 23</a></strong>
+<ul><li><em>From:</em> Tribble Phillip J SrA 374 LRS/LGRTT</li></ul></li>
+<li><strong><a name="00155" href="msg00155.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+<ul><li><em>From:</em> Erin D. Hughes</li></ul></li>
+<li><strong><a name="00157" href="msg00157.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00162.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00164.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00162.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00165.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00163"><strong>Date</strong></a></li>
+<li><a href="threads.html#00163"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

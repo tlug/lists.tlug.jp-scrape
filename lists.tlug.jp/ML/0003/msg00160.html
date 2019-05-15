@@ -1,0 +1,220 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Apache permission weird. -->
+<!--X-From: Yong&#45;Ming Hua <yhua@example.com> -->
+<!--X-Date:  Fri, 24 Mar 2000 02:56:04 +0900 -->
+<!--X-Message-Id: 38DA5A77.FCE46FD4@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.95.1000323092141.3273A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00159.html">Date Prev</A>][<A HREF="msg00161.html">Date Next</A>][<A HREF="msg00156.html">Thread Prev</A>][<A HREF="msg00164.html">Thread Next</A>][<A HREF="maillist.html#00160">Date Index</A>][<A HREF="threads.html#00160">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Apache permission weird.</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Apache permission weird.</strong></LI>
+<LI><strong>From</strong>: <strong>Yong-Ming Hua &lt;<A HREF="mailto:yhua@example.com">yhua@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 24 Mar 2000 02:55:03 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: Tamagawa University</LI>
+<LI>References: &lt;<A HREF="msg00156.html">Pine.LNX.3.95.1000323092141.3273A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hello,
+    I have tried almost all I could do to fix 'permission denied'
+problem when I use ~username for Apache1.3.9 bundled with
+Turbolinux6.0 but in vain.
+    I thought it very strange. The 'srm.conf' in the package given
+has the following section.
+-------------------------------------
+DocumentRoot "/home/httpd/html"
+
+# UserDir: The name of the directory which is appended onto a user's home
+# directory if a ~user request is recieved.
+
+UserDir /home/*/public_html
+&lt;Directory /home/*/public_html&gt;
+&lt;/Directory&gt;
+-------------------------------------
+well I fixed this, double checked access.conf
+and triple checked httpd.conf as well. I tried even to put
+.htaccess in public_html. But nothing changed.
+
+Then I downloaded Apache1.3.12 from www.apache.org
+and did make from scratch.
+The srm.conf  in this package has the following directives.
+I noticed this by diff.
+-------------------------------------------------------------
+#
+# Control access to UserDir directories.  The following is an example
+# for a site where these directories are restricted to read-only.
+#
+#&lt;Directory /home/*/public_html&gt;
+#    AllowOverride FileInfo AuthConfig Limit
+#    Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+#    &lt;Limit GET POST OPTIONS PROPFIND&gt;
+#        Order allow,deny
+#        Allow from all
+#    &lt;/Limit&gt;
+#    &lt;LimitExcept GET POST OPTIONS PROPFIND&gt;
+#        Order deny,allow
+#        Deny from all
+#    &lt;/LimitExcept&gt;
+#&lt;/Directory&gt;
+-------------------------------------------------------------
+This section cannot be found in the package given for Turbolinux
+Server Edition 6.0. But when I took a look at the original Apache
+pkg 1.3.9, I could find the section all right. Maybe some errors
+or careless mistakes happened while they prepared rpm packages.
+I took away those commnents and run httpd, and voila everything
+is fine.
+Now, everything runs fine. Thanks aplenty.
+Yong-Ming
+
+
+Selva Nair wrote:
+
+&gt; On Thu, 23 Mar 2000, Yong-Ming Hua wrote:
+&gt;
+&gt; &gt;  Hello,
+&gt; &gt;     I like to ask about the user permission to Apache server. I have just
+&gt; &gt;  installed
+&gt; &gt;  Turbolinux Server 6.0 with Apache bundled into one of my ol' machines.
+&gt; &gt;
+&gt; &gt;  In my access.conf I have got a directive,
+&gt; &gt;
+&gt; &gt;  order allow,deny
+&gt; &gt;  allow from all
+&gt; &gt;
+&gt; &gt;  and in srm.conf I have got
+&gt; &gt;
+&gt; &gt;  UserDir public_html
+&gt; &gt;
+&gt; &gt;  I can see Apache sample.html by its proper name. But I can't see any
+&gt; &gt;  file by using ~/username. public_html has a read access all right. And
+&gt;                  ^^^^^^^^^^
+&gt; should be /~username
+&gt;
+&gt; &gt;  of course index.html has the access all right too. But everytime I try
+&gt; &gt;  to get the stuff from a user's directory(public_html), I get 'No peremission
+&gt; &gt;  to this file/directory'. I havn't got any clue. I have never met this kind
+&gt; &gt;  of error-message before. I have checked the history about the proble
+&gt;
+&gt; Depending on your default access setup in access.conf you may need
+&gt; to specify  allow from all, or whetever access control you need  for
+&gt; public_html. Try creating a .htaccess file in $HOME/public_html with
+&gt; "allow from all" . If that solves it, review your access.conf to see why
+&gt; access is not allowed by default.
+&gt;
+&gt; Selva
+
+--
+FROM THE OFFICE OF YONG-MING HUA(YMH CAL LABORATORY)
+yhua@example.com, root@example.com
+Office Tel:(Japan)(0)-42-739-8132  Fax:(Japan)(0)-42-739-8847
+A Word from YMH CAL LAB : Help those with Terminal Illness
+They need your love. <A TARGET="_top" HREF="http://www.kelvin.lit.tamagawa.ac.jp">http://www.kelvin.lit.tamagawa.ac.jp</A>
+
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00164" HREF="msg00164.html">Re: tlug: Apache permission weird.</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;j-byrne@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00156" HREF="msg00156.html">Re: tlug: Apache permission weird.</A></STRONG>
+<UL><LI><EM>From:</EM> Selva Nair &lt;selva@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00159.html">tlug: Non-member submission from ["Micheal E Cooper" &lt;mecooper@example.com&gt;]    (fwd)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00161.html">tlug: Perl 5.6</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00156.html">Re: tlug: Apache permission weird.</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00164.html">Re: tlug: Apache permission weird.</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00160"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00160"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] HOWTO: Using Emobile Data Card D02HW (Huawei E220 HSDPA USB	Modem) with Debian/Linux -->
+<!--X-From-R13: Rvrgevpu Pbyyznaa <qverfhNjro.qr> -->
+<!--X-Date: Sat, 03 May 2008 13:48:05 +0900 -->
+<!--X-Message-Id: 1209821115.4428.17.camel@pippi.pippi -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00032.html">Date Prev</a>][<a href="msg00034.html">Date Next</a>][<a href="msg00080.html">Thread Prev</a>][<a href="msg00036.html">Thread Next</a>][<a href="maillist.html#00033">Date Index</a>][<a href="threads.html#00033">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] HOWTO: Using Emobile Data Card D02HW (Huawei E220 HSDPA USB	Modem) with Debian/Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 03 May 2008 22:25:15 +0900</li>
+<li><strong>From</strong>: <strong>Dietrich Bollmann &lt;<a href="mailto:diresu@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20HOWTO:%20Using%20Emobile%20Data%20Card%20D02HW%20%28Huawei%20E220%20HSDPA%20USB%9Modem%29%20with%20Debian%2FLinux">diresu@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] HOWTO: Using Emobile Data Card D02HW (Huawei E220 HSDPA USB	Modem) with Debian/Linux</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi,
+
+I recently bought an Emobile Data Card D02HW (Huawei E220 HSDPA USB
+Modem) and - after some hours of frustration - finally made it work on
+my Debian/Linux laptop :)
+
+I am not a network guru at all and my strategy was to randomly try all
+kind of permutations of different information, setting and methods I
+found on the internet, on man pages, in the system log and in the user
+guide of my modem - trial and error and trial and error and
+... finally a connection :)
+
+My method seems to work fine - but I am not sure if every detail of my
+configuration makes sense.  Also it relies on a kernel newer than
+2.6.20+ for the driver.  Please post an answer if you know things
+better :)
+
+By the way, the one most helpful document I found was written by
+Luca Cappa and is called &quot;Using Huawei E220 with Debian/Linux&quot;.
+It describes how to use the Huawei E220 HSDPA USB modem to connect 
+to some Italian provider and can be found here:
+<a  href="http://ske.sourceforge.net/html/projects/huawei/huawei_tre.html">http://ske.sourceforge.net/html/projects/huawei/huawei_tre.html</a>
+Thanks Luca :)
+
+I also tried wvdial - somethimes with success and sometimes without.
+I still don't understand why it worked when it worked and why not when
+not :)
+
+Here my solution:
+
+
+* howto in short:
+
+1. create the following two files as root:
+
+file /etc/ppp/emobile.chat :
+
+cat &gt; /etc/ppp/emobile.chat &lt;&lt;FIN
+ABORT BUSY
+ABORT ERROR
+REPORT CONNECT
+TIMEOUT 10
+&quot;&quot; &quot;AT&amp;F&quot;
+OK &quot;AT+COPS?&quot;
+'+COPS: 0,2,&quot;44000&quot;,2' &quot;ATZ&quot;
+OK &quot;ATE1&quot;
+OK &quot;ATS0=0&quot;
+OK 'AT+CGDCONT=1,&quot;IP&quot;,&quot;emb.ne.jp&quot;'
+OK &quot;ATDT*99#&quot;
+TIMEOUT 30
+CONNECT \d\c
+FIN
+
+file /etc/ppp/peers/emobile :
+
+cat &gt; /etc/ppp/peers/emobile &lt;&lt;FIN
+lock
+connect &quot;/usr/sbin/chat -v -f /etc/ppp/emobile.chat&quot;
+/dev/ttyUSB0
+hide-password
+noauth
+debug
+novj
+460800
+defaultroute
+noipdefault
+user em
+password em
+modem
+crtscts
+usepeerdns
+nodeflate
+nobsdcomp
+FIN
+
+here they are:
+
+ls -la /etc/ppp/emobile.chat /etc/ppp/peers/emobile
+
+-rw-r--r-- 1 root root 197 2008-05-03 20:45 /etc/ppp/emobile.chat
+-rw-r--r-- 1 root root 200 2008-05-03 20:45 /etc/ppp/peers/emobile
+
+
+2. plug in the usb modem
+
+...and give it some time to set up.
+
+The modem contains some memory with some windows executables and a
+file browser showing them might pop up.  The files do not contain any
+usable information for using the modem with Linux and can be
+ignored.
+
+
+3. connect
+
+by entering the following as root:
+
+/usr/sbin/pppd call emobile
+
+
+4. open some page in your browser :)
+
+...and don't forget to &quot;work online&quot; (In the case of epiphany
+deactivate the option: File -&gt; [ ] Work Offline).
+
+
+5. disconnect
+
+by killing the pppd process (for example with: killall pppd).
+
+
+* a slightly longer version of the howto
+
+Same as the short one but I also list the system log messages to
+compare them to your own outputs in the case things do not work out of
+the box...
+
+1. create the files /etc/ppp/emobile.chat and /etc/ppp/peers/emobile as
+before
+
+2. follow the system messages by executing
+
+tail -f /var/log/messages
+
+in some xterm...
+
+
+2. plug in the usb modem
+
+...and give it some time to set up.
+
+In my case the following log messages are printed to the xterm where I
+started the command `tail -f /var/log/messages':
+
+May  3 21:19:44 pippi kernel: usb 5-6.4: new full speed USB device using
+ehci_hcd and address 10
+May  3 21:19:44 pippi kernel: usb 5-6.4: configuration #1 chosen from 1
+choice
+May  3 21:19:44 pippi kernel: scsi3 : SCSI emulation for USB Mass
+Storage devices
+May  3 21:19:44 pippi kernel: usb 5-6.4: USB disconnect, address 10
+May  3 21:19:45 pippi kernel: usb 5-6.4: new full speed USB device using
+ehci_hcd and address 11
+May  3 21:19:45 pippi kernel: usb 5-6.4: configuration #1 chosen from 1
+choice
+May  3 21:19:45 pippi kernel: usb-storage: probe of 5-6.4:1.0 failed
+with error -5
+May  3 21:19:45 pippi kernel: usb-storage: probe of 5-6.4:1.1 failed
+with error -5
+May  3 21:19:45 pippi kernel: scsi6 : SCSI emulation for USB Mass
+Storage devices
+May  3 21:19:45 pippi kernel: usbcore: registered new interface driver
+usbserial
+May  3 21:19:45 pippi kernel: drivers/usb/serial/usb-serial.c: USB
+Serial support registered for generic
+May  3 21:19:45 pippi kernel: usbcore: registered new interface driver
+usbserial_generic
+May  3 21:19:45 pippi kernel: drivers/usb/serial/usb-serial.c: USB
+Serial Driver core
+May  3 21:19:45 pippi kernel: drivers/usb/serial/usb-serial.c: USB
+Serial support registered for GSM modem (1-port)
+May  3 21:19:45 pippi kernel: option 5-6.4:1.0: GSM modem (1-port)
+converter detected
+May  3 21:19:45 pippi kernel: usb 5-6.4: GSM modem (1-port) converter
+now attached to ttyUSB0
+May  3 21:19:45 pippi kernel: option 5-6.4:1.1: GSM modem (1-port)
+converter detected
+May  3 21:19:45 pippi kernel: usb 5-6.4: GSM modem (1-port) converter
+now attached to ttyUSB1
+May  3 21:19:45 pippi kernel: usbcore: registered new interface driver
+option
+May  3 21:19:45 pippi kernel: drivers/usb/serial/option.c: USB Driver
+for GSM modems: v0.7.1
+May  3 21:19:50 pippi kernel: scsi 6:0:0:0: CD-ROM            HUAWEI
+Mass Storage     2.31 PQ: 0 ANSI: 2
+May  3 21:19:50 pippi kernel: Driver 'sr' needs updating - please use
+bus_type methods
+May  3 21:19:50 pippi kernel: sr0: scsi-1 drive
+May  3 21:19:50 pippi kernel: Uniform CD-ROM driver Revision: 3.20
+May  3 21:19:50 pippi kernel: sd 0:0:0:0: Attached scsi generic sg0 type
+0
+May  3 21:19:50 pippi kernel: sd 2:0:0:0: Attached scsi generic sg1 type
+0
+May  3 21:19:50 pippi kernel: sr 6:0:0:0: Attached scsi generic sg2 type
+5
+May  3 21:19:59 pippi kernel: UDF-fs: No VRS found
+
+
+3. connect
+
+by entering the following as root:
+
+/usr/sbin/pppd call emobile
+
+Here come the the log messages:
+
+May  3 21:29:38 pippi kernel: PPP generic driver version 2.4.2
+May  3 21:29:38 pippi pppd[4323]: pppd 2.4.4 started by root, uid 0
+May  3 21:29:39 pippi chat[4326]: abort on (BUSY)
+May  3 21:29:39 pippi chat[4326]: abort on (ERROR)
+May  3 21:29:39 pippi chat[4326]: report (CONNECT)
+May  3 21:29:39 pippi chat[4326]: timeout set to 10 seconds
+May  3 21:29:39 pippi chat[4326]: send (AT&amp;F^M)
+May  3 21:29:39 pippi chat[4326]: expect (OK)
+May  3 21:29:39 pippi chat[4326]: AT&amp;F^M^M
+May  3 21:29:39 pippi chat[4326]: OK
+May  3 21:29:39 pippi chat[4326]:  -- got it 
+May  3 21:29:39 pippi chat[4326]: send (AT+COPS?^M)
+May  3 21:29:40 pippi chat[4326]: expect (+COPS: 0,2,&quot;44000&quot;,2)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: AT+COPS?^M^M
+May  3 21:29:40 pippi chat[4326]: +COPS: 0,2,&quot;44000&quot;,2
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (ATZ^M)
+May  3 21:29:40 pippi chat[4326]: expect (OK)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: OK
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (ATE1^M)
+May  3 21:29:40 pippi chat[4326]: expect (OK)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: ATZ^M^M
+May  3 21:29:40 pippi chat[4326]: OK
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (ATS0=0^M)
+May  3 21:29:40 pippi chat[4326]: expect (OK)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: AATS0=0^M^M
+May  3 21:29:40 pippi chat[4326]: OK
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (AT+CGDCONT=1,&quot;IP&quot;,&quot;emb.ne.jp&quot;^M)
+May  3 21:29:40 pippi chat[4326]: expect (OK)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: AT+CGDCONT=1,&quot;IP&quot;,&quot;emb.ne.jp&quot;^M^M
+May  3 21:29:40 pippi chat[4326]: OK
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (ATDT*99#^M)
+May  3 21:29:40 pippi chat[4326]: timeout set to 30 seconds
+May  3 21:29:40 pippi chat[4326]: expect (CONNECT)
+May  3 21:29:40 pippi chat[4326]: ^M
+May  3 21:29:40 pippi chat[4326]: ATDT*99#^M^M
+May  3 21:29:40 pippi chat[4326]: CONNECT
+May  3 21:29:40 pippi chat[4326]:  -- got it 
+May  3 21:29:40 pippi chat[4326]: send (\d)
+May  3 21:29:41 pippi pppd[4323]: Serial connection established.
+May  3 21:29:41 pippi pppd[4323]: Using interface ppp0
+May  3 21:29:41 pippi pppd[4323]: Connect: ppp0 &lt;--&gt; /dev/ttyUSB0
+May  3 21:29:42 pippi pppd[4323]: CHAP authentication succeeded
+May  3 21:29:42 pippi pppd[4323]: CHAP authentication succeeded
+May  3 21:29:45 pippi pppd[4323]: Could not determine remote IP address:
+defaulting to 10.64.64.64
+May  3 21:29:45 pippi pppd[4323]: local  IP address 60.254.246.45
+May  3 21:29:45 pippi pppd[4323]: remote IP address 10.64.64.64
+May  3 21:29:45 pippi pppd[4323]: primary   DNS address 60.254.193.158
+May  3 21:29:45 pippi pppd[4323]: secondary DNS address 60.254.209.158
+
+
+4. open some page in your browser :)
+
+
+5. disconnect
+
+by killing the pppd process (for example with: killall pppd).
+
+Messages like these should be printed:
+
+May  3 21:36:39 pippi pppd[4323]: Terminating on signal 15
+May  3 21:36:39 pippi pppd[4323]: Connect time 6.9 minutes.
+May  3 21:36:39 pippi pppd[4323]: Sent 14807 bytes, received 28663
+bytes.
+May  3 21:36:39 pippi pppd[4323]: Connection terminated.
+May  3 21:36:40 pippi pppd[4323]: Exit.
+
+
+Good luck :)
+
+Dietrich
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00036" href="msg00036.html">Re: [tlug] HOWTO: Using Emobile Data Card D02HW (Huawei E220 HSDPA	USB Modem) with Debian/Linux</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00032.html">Re: [tlug] WiFi roaming and open networks</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00034.html">Re: [tlug] emobile D01NXII data card and (debian) linux? - or how	to get an internet connection as fast as possible?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00080.html">Re: [tlug] WiFi roaming and open networks</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00036.html">Re: [tlug] HOWTO: Using Emobile Data Card D02HW (Huawei E220 HSDPA	USB Modem) with Debian/Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00033"><strong>Date</strong></a></li>
+<li><a href="threads.html#00033"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

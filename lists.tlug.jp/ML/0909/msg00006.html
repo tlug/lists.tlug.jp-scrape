@@ -1,0 +1,169 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Method/tools to create a video from images, but with control of when the images and for how long they show. -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Tue, 01 Sep 2009 17:09:54 +0900 -->
+<!--X-Message-Id: 4A9CD6BF.1090604@bonivet.net -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 376549C4&#45;087B&#45;4C36&#45;959E&#45;0274E47ACC02@bebear.net -->
+<!--X-Derived: pgpIBHVj9J57h.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00005.html">Date Prev</a>][<a href="msg00007.html">Date Next</a>][<a href="msg00002.html">Thread Prev</a>][<a href="msg00004.html">Thread Next</a>][<a href="maillist.html#00006">Date Index</a>][<a href="threads.html#00006">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Method/tools to create a video from images, but with control of when the images and for how long they show.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 01 Sep 2009 09:09:35 +0100</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<a href="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Method%2Ftools%20to%20create%20a%20video%20from%20images%2C%20but%20with%20control%20of%20when%20the%20images%20and%20for%20how%20long%20they%20show.">gstewart@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Method/tools to create a video from images, but with control of when the images and for how long they show.</strong></li>
+<li>References: &lt;<a href="mailto:376549C4-087B-4C36-959E-0274E47ACC02@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Method%2Ftools%20to%20create%20a%20video%20from%20images%2C%20but%20with%20control%20of%20when%20the%20images%20and%20for%20how%20long%20they%20show.">376549C4-087B-4C36-959E-0274E47ACC02@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.23 (X11/20090812)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 31/08/09 13:53, zev wrote:
+
+&gt; I am looking into methods to create a video from a set of images.
+&gt; The catch is that I want to show the images at specific times.
+&gt; 
+&gt; Such as show image 1 at start (0) until 2.5 seconds
+&gt; Then show image 2 at 2.5 seconds until 4 seconds.
+&gt; Next show image 3 at 4 seconds until 9 seconds.
+&gt; And so on.
+
+As you say, ffmpeg is one tool that will do the trick.
+
+The idea is to convert each frame into a video of a format that can be
+concatenated (ie. you can simply cat multiple files into one and still have
+it render). MPEG1 comes to mind.
+
+In fact, I've just done preciesly that in order to validate the theory.
+
+Taking your image times of 2.5, 1.5 and 5 seconds and working on a 24fps
+basis, that's 60, 36 and 120 frames respectively.
+
+Generate the &quot;copies&quot; of each image:
+
+$ for i in `seq -w 1 60`; do ln image1.jpg part1_$i.jpg; done
+$ for i in `seq -w 1 36`; do ln image2.jpg part2_$i.jpg; done
+$ for i in `seq -w 1 120`; do ln image3.jpg part3_$i.jpg; done
+
+Generate the individual videos using ffmpeg (that's the tool I know best) in
+PAL video framesize (NTSC would be 720x480:
+
+$ ffmpeg -r 24 -i part1_%02d.jpg -vcodec mpeg1video -s 720x576 -b 4000k \
+  -aspect 4:3 -f mpeg1video part1.mp1
+$ ffmpeg -r 24 -i part2_%02d.jpg -vcodec mpeg1video -s 720x576 -b 4000k \
+  -aspect 4:3 -f mpeg1video part2.mp1
+$ ffmpeg -r 24 -i part3_%03d.jpg -vcodec mpeg1video -s 720x576 -b 4000k \
+  -aspect 4:3 -f mpeg1video part3.mp1
+
+Join the lot together:
+
+$ cat part[1-3].mp1 &gt; final_video.mp1
+
+You can then do what you want with final_video.mp1 - leave it as is or
+transcode it to some other format.
+
+-- 
+G. Stewart - gstewart@example.com
+
+Light travels faster than sound. That is why some people appear bright
+until you hear them speak.
+
+</pre><p><strong>Attachment:
+<a href="pgpIBHVj9J57h.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> OpenPGP digital signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00005.html">Re: [tlug] Anyone seen this gizmo yet?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00007.html">Re: [tlug] Git challenged (maintaining an Android build)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00002.html">Re: [tlug] Method/tools to create a video from images, but with control of when the images and for how long they show.</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00004.html">Re: [tlug] Git challenged (maintaining an Android build)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00006"><strong>Date</strong></a></li>
+<li><a href="threads.html#00006"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

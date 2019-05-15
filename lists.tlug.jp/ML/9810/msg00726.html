@@ -1,0 +1,212 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Intranet -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Mon, 19 Oct 1998 04:51:52 +0900 -->
+<!--X-Message-Id: 199810181408.OAA00217@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36293E71.1CEB2E49@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00725.html">Date Prev</A>][<A HREF="msg00727.html">Date Next</A>][<A HREF="msg00716.html">Thread Prev</A>][<A HREF="msg00728.html">Thread Next</A>][<A HREF="maillist.html#00726">Date Index</A>][<A HREF="threads.html#00726">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Intranet</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Intranet</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 18 Oct 1998 14:08:46 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00715.html">36293E71.1CEB2E49@example.com</A>&gt; from "Rafael Coninck Teigao" at Oct 18, 98 01:03:46 am</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; 
+&gt; Hi, I'm still tring to get my intranet working (it's just 2 machines,
+&gt; why can't I fix it???).
+&gt;     Here is the deal:
+&gt;         I can ping, but can't do anything else (telnet, ftp, etc). I
+&gt; found on my logs this:
+&gt; 
+&gt; Oct 17 22:38:10 rapido in.ftpd[1932]: warning: can't get client address:
+&gt; Connection timed out
+&gt; Oct 17 22:38:10 rapido in.ftpd[1932]: connect from unknown
+&gt; 
+&gt; Oct 17 22:41:47 rapido in.telnetd[2050]: warning: can't get client
+&gt; address: Connection timed out
+&gt; Oct 17 22:41:48 rapido in.telnetd[2050]: connect from unknown
+&gt; 
+&gt;     Then I tried to configure my named, I think I did everything right.
+&gt; But the same problem happens. Only with /etc/hosts, the same thing...I
+&gt; don't know what else to do. I'll send you some data about my network.
+&gt; 
+&gt;     The main machine is called "rapido" e the other one is called
+&gt; "lento". "rapido" has a Genius NE2000 PCI Board, on "lento" I don't know
+&gt; the manufacturer, but the Board is ISA. As I can ping, I figured out
+&gt; that the problem isn't on hardware, but configuration. Anyway, here goes
+&gt; my ifconfig for eth0 on "rapido":
+&gt; 
+&gt; eth0      Link encap:Ethernet  HWaddr 00:C0:DF:E4:ED:F5
+&gt;               inet addr:192.168.1.1  Bcast:192.168.1.254
+&gt; Mask:255.255.255.0
+&gt;               UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+&gt;               RX packets:205 errors:0 dropped:0 overruns:0
+&gt;               TX packets:231 errors:0 dropped:0 overruns:0
+&gt;               Interrupt:11 Base address:0xef40
+&gt; 
+&gt; "rapido's" /etc/host.conf:
+&gt; 
+&gt; order hosts bind
+&gt; multi on
+&gt; 
+&gt; "rapido's" /etc/host:
+&gt; 
+&gt; 127.0.0.1       localhost       localhost
+&gt; 
+&gt; "rapido's" /etc/hosts:
+&gt; 
+&gt; 192.168.1.1        rapido           rapido.rct.net
+&gt; 192.168.1.2        lento            lento.rct.net
+&gt; 127.0.0.1            localhost        localhost.localdomain
+&gt; 200.224.74.34   ifnet            ifnet.com.br
+&gt; 200.134.10.5     dainf            dainf.cefetpr.br
+&gt; 
+&gt; "rapido's" /etc/resolv.conf:
+&gt; 
+&gt; domain     rct.net
+&gt; nameserver 127.0.0.1
+&gt; nameserver 200.224.74.34
+
+The last line in your /etc/resolv.conf is probably the culprit
+because the nameserver 200.224.74.34 is only available when you
+are hooked to the net - and evwen then it won't work because
+this nameserver doesn't know about your local machines for sure.
+Thus bind lookup for your local network is bound to fail.
+
+If you want to use bind you have to set it up locally on one
+machine and use it on both machines. In that case it is also
+better to use the eth0 address as the nameserver address. So, if
+the nameserver is running on rapido, then use 
+
+       nameserver 192.168.1.1
+
+on both machines. BTW, what does nslookup tell you ? Try to look
+up rapido and lento by it ! I slowly get the impression that due
+to some configuration mistake with named ( believe me, BIND is a
+picky beast .... ) it gives wrong answers.
+
+I guess you should track down that first.
+
+For a test you also can disable the startup of named upon boot
+so that all your daemons have to rely on /etc/hosts. However, if
+a nameserver is running, pretty much all programs seem to prefer
+it even if it spits out total bullshit and consequently fail.
+Seems to me that this is your problem.
+
+Ping normally works because it does not rely so stupidly on
+named....
+
+================================================================
+"It was hell. They knew it.          Karl-Max Wagner
+  But they called it                 karlmax@example.com
+    W-I-N-D-O-Z-E"
+================================================================
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00728" HREF="msg00728.html">Re: tlug: Intranet</A></STRONG>
+<UL><LI><EM>From:</EM> Rafael Coninck Teigao &lt;rct@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00715" HREF="msg00715.html">tlug: Intranet</A></STRONG>
+<UL><LI><EM>From:</EM> Rafael Coninck Teigao &lt;rct@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00725.html">Re: tlug: kanji or romaji for Japanese? (was: parallel-port IDE)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00727.html">Re: tlug: kanji or romaji for Japanese? (was: parallel-port IDE)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00716.html">Re: tlug: Intranet</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00728.html">Re: tlug: Intranet</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00726"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00726"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

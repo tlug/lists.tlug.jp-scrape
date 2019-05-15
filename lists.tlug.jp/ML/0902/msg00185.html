@@ -1,0 +1,272 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] "Centralized" vs, "distributed" VCSs -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 21 Feb 2009 15:01:15 +0900 -->
+<!--X-Message-Id: 87d4dc5o3b.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 499A44AF.3010209@bebear.net -->
+<!--X-Reference: 87k57pqnoc.fsf@xemacs.org -->
+<!--X-Reference: 499B9B9C.9040202@bebear.net -->
+<!--X-Reference: 499E33B2.7040300@fremlin.org -->
+<!--X-Reference: 20090220064730.GN22190@lucky.cynic.net -->
+<!--X-Reference: 87r61t5yhp.fsf@xemacs.org -->
+<!--X-Reference: 20090220151752.GC1700@lucky.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00184.html">Date Prev</a>][<a href="msg00186.html">Date Next</a>][<a href="msg00166.html">Thread Prev</a>][<a href="msg00187.html">Thread Next</a>][<a href="maillist.html#00185">Date Index</a>][<a href="threads.html#00185">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 21 Feb 2009 14:57:28 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%22Centralized%22%20vs%2C%20%22distributed%22%20VCSs">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</strong></li>
+<li>References: &lt;<a href="msg00116.html">499A44AF.3010209@bebear.net</a>&gt; &lt;<a href="msg00120.html">87k57pqnoc.fsf@xemacs.org</a>&gt;	&lt;<a href="msg00127.html">499B9B9C.9040202@bebear.net</a>&gt; &lt;<a href="msg00152.html">499E33B2.7040300@fremlin.org</a>&gt;	&lt;<a href="msg00159.html">20090220064730.GN22190@lucky.cynic.net</a>&gt;	&lt;<a href="msg00161.html">87r61t5yhp.fsf@xemacs.org</a>&gt; &lt;<a href="msg00166.html">20090220151752.GC1700@lucky.cynic.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Curt Sampson writes:
+
+ &gt; Actually, those with central VCSs use the VCS to merge, too. Every time
+ &gt; you do an &quot;svn update,&quot; you're doing a merge.
+
+Well, in some sense, yes.  To be precise, all of these systems use the
+heuristic that files which are touched in only one parent can be
+merged by taking the text of that parent as the merger (very
+plausible), and similarly for individual hunks within files (not as
+clearly reasonably safe, but works well in practice).  Real merging
+has to be done by a human, though, including *but not limited to*
+cases where the VCS signals a conflict.
+
+The point is that DVCSes handle a lot more cases automatically than
+SVN can, because they use past history intensively.  CVS can't do it;
+it doesn't have atomic commits.  The SVN framework *can* do this
+because it has atomic commits, but the actual implementation doesn't
+do it (modulo rumors that SVN 1.5 does handle criss-crossing merges
+better than earlier versions).
+
+ &gt; &gt; and have the option of doing it centrally.  Those using
+ &gt; &gt; legacy VCSes have no choice but to insist that the developers do the
+ &gt; &gt; merging, not the VCS.
+ &gt; 
+ &gt; Huh? Some developer somewhere always has to do the merge. It's just a
+ &gt; matter of who does it, and where, when and how.
+
+Well, in a DVCS, you can merge every other commit without errors.  (If
+you have developers who do that, people who actually review the
+history are obstructed by the merge turds and the complexity of the
+history graph, of course, but the developers usually don't care.)  In
+CVS or SVN, you don't dare do that; you'll end up with merge hell.
+You must insist that the developers of the patches sync to the central
+tree and then push (or send a patch).  (Actually you let CVS/SVN
+require updates before *allowing* anyone to commit.)
+
+On the other hand, Mercurial and Bazaar track which changes have been
+applied to the trees being merged, and avoid various kinds of spurious
+conflicts.  git doesn't actually do anything interesting, but
+delegates intelligent behavior to the user.  git's incredible speed
+and ability to edit the history DAG efficiently enables the user
+transform the tree to more appropriate one, and then perform the
+merger in stages.  (This is why people who don't get git don't get
+git, ISTM.  They think this should be automatic.)
+
+ &gt; &gt; &quot;Centralized&quot; refers to whether you have to push to communicate your
+ &gt; &gt; changes to others or not.
+ &gt; 
+ &gt; Hm? Someone, somewhere, always has to push or pull changes to get them
+ &gt; into the main release (except for the guy who is committing to the main
+ &gt; release &quot;branch&quot; or &quot;repo&quot; or whatever you care to call it).
+
+Of course, &quot;the main release&quot;.  What distributed VC enables is general
+networks of pushes and pulls, rather than restricting to a star
+topology where everybody communicates via the central repository.  In
+a distributed VC, you can just publish an URL and let the interested
+come to you, and they can then merge your code with trees from other
+sources conveniently.  In a legacy VC, to do a merge with any
+convenience and degree of hope of success you need to be working with
+branches from the same repo.
+
+So in a DVCS you can leverage distribution to get a radically
+different degree of decentralization from what's possible with a
+legacy VCS, where you can decentralize development but not
+administration and communication.
+
+ &gt; &gt; Both terms also apply to workflows.  Typically the problem is that
+ &gt; &gt; people confuse VCS (infrastructure == possible workflows) with
+ &gt; &gt; workflow (== politically mandated).
+ &gt; 
+ &gt; True, though I'm not confusing them.
+
+Well, no offense intended, but I think you're confusing something.
+
+ &gt; Part of my point, though, is that while both svn and git, say, can
+ &gt; support certain ways of working, for some of those ways svn is
+ &gt; rather more convenient to use that git.
+
+Examples, please.  Preferably a case where it would make sense to
+migrate from an existing git installation to a new Subversion
+repository. ;-)
+
+IME, legacy VCSes are &quot;convenient&quot; only because you actually have to
+read the git manual and realize that 99% of the commands available are
+irrelevant, whereas with svn the commands you've used since Tichy
+published RCS still work the same.  (Figuring out the manual is
+nontrivial with git, admittedly, and even worse with bzr, the
+self-proclaimed &quot;DVCS for the rest of us&quot;. ;-)  As you've pointed out,
+Linux has a perfectly traditional centralized workflow into the Linus
+mainline.[1]  The only thing that SVN does better than git AFAIK is to
+force developers to get permission from The Management to publish
+branches in easily mergeable form.  (Well, it probably works better on
+Windows in the sense that the inherent brokenness of NTFS doesn't hurt
+anywhere near as much amidst the pain of dealing with network latency,
+whereas git has not been well-optimized to deal with NTFS and is
+painfully slow, so-desu.)
+
+Granted, if you already have a Subversion server installed, it often
+makes little sense to migrate; many workflows won't be enhanced, so
+it's a pure cost.  But &quot;change is less convenient than doing nothing&quot;
+cuts both ways, it's just that Subversion has a large installed base
+(and so far I have yet to hear of a case where a project even
+considered migrating from git to Subversion!)
+
+ &gt; &gt; And of those several dozen, how many have an URL to their current
+ &gt; &gt; active repo that you can post so that I can pull from it?
+ &gt; 
+ &gt; All of them: anoncvs.netbsd.org. You don't even need to know who they
+ &gt; are; it's all in one convenient place.
+
+*All* of the several dozen?  And what's convenient about it?  It
+doesn't serve HTTP (even cvs.xemacs.org does that!), and I don't know
+the CVSROOT so I can't even use checkout -c to get a list of modules.
+I bet few of those several dozen have listed CVS modules with a brief
+homepage[2] explaining the content of their private branches ... oh,
+of course what you mean is that those private branches really *are*
+private, I can't get access to their in-development trees (which are
+probably kept in git, anyway ;-).  What I can get access to is the
+patches they make the effort to publish, usually directly to the
+trunk, right?  And even those who do keep branches in CVS, it's
+probably non-trivial to merge a stale branch (with a feature I want)
+to trunk.
+
+Footnotes: 
+[1]  It's just a whale of a lot faster than it could have been
+implemented in SVN!
+
+[2]  I'm referring to .git/description.  Cf. the second column of the
+list you see at <a  href="http://git.kernel.org/">http://git.kernel.org/</a>.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00187" href="msg00187.html">Re: [tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00116" href="msg00116.html">[tlug] Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00120" href="msg00120.html">[tlug] Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00152" href="msg00152.html">[tlug] Re: Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00159" href="msg00159.html">Re: [tlug] Re: Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00161" href="msg00161.html">Re: [tlug] Re: Call for presenters - March 14th technical meeting</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00166" href="msg00166.html">[tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00184.html">[tlug] Root Access, Sudo, Etc.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00186.html">Root logins versus sudo (was: Re: [tlug] Replacing the WM in Gnome	2.24)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00166.html">[tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00187.html">Re: [tlug] &quot;Centralized&quot; vs, &quot;distributed&quot; VCSs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00185"><strong>Date</strong></a></li>
+<li><a href="threads.html#00185"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

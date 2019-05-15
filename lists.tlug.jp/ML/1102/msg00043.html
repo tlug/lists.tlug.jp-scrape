@@ -1,0 +1,176 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] [Javascript] Shouldn't there be a sort option on objects -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 07 Feb 2011 17:01:54 +0900 -->
+<!--X-Message-Id: 87sjw0z3g8.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4D4E75AB.5060703@articlass.org -->
+<!--X-Reference: 87aai91c4o.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Reference: 4D4F65F2.1060000@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00042.html">Date Prev</a>][<a href="msg00044.html">Date Next</a>][<a href="msg00040.html">Thread Prev</a>][<a href="msg00047.html">Thread Next</a>][<a href="maillist.html#00043">Date Index</a>][<a href="threads.html#00043">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 07 Feb 2011 16:52:39 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</strong></li>
+<li>References: &lt;<a href="mailto:4D4E75AB.5060703@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">4D4E75AB.5060703@example.com</a>&gt;	&lt;<a href="mailto:87aai91c4o.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">87aai91c4o.fsf@example.com</a>&gt;	&lt;<a href="mailto:4D4F65F2.1060000@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BJavascript%5D%20Shouldn%27t%20there%20be%20a%20sort%20option%20on%20objects">4D4F65F2.1060000@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+
+ &gt; I went to Stack Overflow and looked at relevant questions/answers there,
+ &gt; and, to quote directly: &quot;All JavaScript objects are basically
+ &gt; associative arrays&quot;
+ &gt; <a  rel="nofollow" href="http://stackoverflow.com/questions/1948936/how-do-i-convert-this-object-to-an-array-in-javascript">http://stackoverflow.com/questions/1948936/how-do-i-convert-this-object-to-an-array-in-javascript</a>
+ &gt; 
+ &gt; So they're already arrays, but I can't use array functions on them?
+
+You can use *some* array functions on them, in particular indexing
+(which is what makes something an array, in practice).  However, in an
+ordinary array the indicies are integers, and therefore ordered.  It
+makes sense to reorder the values to correspond to indicies in order.
+
+In an associative array, the index is an arbitrary object.  Often a
+string, or a symbol, but it could also be a code object or something
+with a lot of internal structure, and in general there is no sense in
+which these are ordered.  This means that some functions that work on
+ordinary arrays won't work.  So in particular you can't use a sort
+function on an associative array.  Another example is that you can't
+do a binary search on an associative array.[1]
+
+You could argue that if all of the indicies are actually ordered, you
+should be able to sort the array, but that turns out to be a great way
+to have your program crash the whole server when somehow something
+unordered becomes an index and your program throws an unexpected
+&quot;can't sort&quot; fatal error.  So even dynamic languages like Python and
+Javascript will look at the associative array and say, &quot;nope, not
+touching *that*! not even gonna try.&quot;  (I wouldn't be surprised if
+Perl can sort such a thing, though. :-)
+
+As to how to convert such an object to an ordinary array, I don't know
+offhand.  The most efficient way would be to avoid creating an object
+in the first place, and read the data into an array instead of an
+object.
+
+Footnotes: 
+[1]  Binary search looks like &quot;find the object halfway between 'a
+banana' and 'the color red', and check if it's the one we want; if
+not, try the object halfway between 'a banana' and the object we just
+found, and repeat the halving process until we find the one we want&quot;.
+I hope you will agree that &quot;halfway between 'a banana' and 'the color
+red'&quot; makes no sense, and that the computer is well within its rights
+to throw a fatal error there!
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00047" href="msg00047.html">Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00032" href="msg00032.html">[tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00034" href="msg00034.html">[tlug]  [Javascript] Shouldn't there be a sort option on objects</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00037" href="msg00037.html">Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00042.html">Re: [tlug] Great Git resources -- thanks!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00044.html">Re: [tlug] Great Git resources -- thanks!</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00040.html">Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00047.html">Re: [tlug] [Javascript] Shouldn't there be a sort option on objects</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00043"><strong>Date</strong></a></li>
+<li><a href="threads.html#00043"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re[2]: tlug: Setting up Samba -->
+<!--X-From: Roberto Tongu&#45;R10027Y <Roberto_Tongu&#45;R10027Y@example.com> (by way of "A.Tomita,Jr." <atomita@example.com>) -->
+<!--X-Date:  Sat, 30 May 1998 11:25:39 +0900 -->
+<!--X-Message-Id: 199805300220.LAA28082@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00716.html">Date Prev</A>][<A HREF="msg00718.html">Date Next</A>][<A HREF="msg00719.html">Thread Prev</A>][<A HREF="msg00723.html">Thread Next</A>][<A HREF="maillist.html#00717">Date Index</A>][<A HREF="threads.html#00717">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re[2]: tlug: Setting up Samba</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re[2]: tlug: Setting up Samba</strong></LI>
+<LI><strong>From</strong>: <strong>Roberto Tongu-R10027Y &lt;<A HREF="mailto:Roberto_Tongu-R10027Y@example.com">Roberto_Tongu-R10027Y@example.com</A>&gt; (by way of "A.Tomita,Jr." &lt;<A HREF="mailto:atomita@example.com">atomita@example.com</A>&gt;)</strong></LI>
+<LI>Date: Sat, 30 May 1998 11:20:12 +0900</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Message authorized by:
+    : sstone@example.com@example.com at #EMAIL
+
+On Sat, 4 Apr 1998, Jonathan Byrne--3Web wrote:
+
+&gt; Having dug through piles of Samba documentation and examined samba.conf for
+&gt; clues, I still find myself pretty far from enlightenment and just wanting to
+&gt; do a few simple things that will bring my computer at work much closer to my
+&gt; goal of being able to run it under Linux all the time and only occasionally
+&gt; boot it into Windows.
+&gt;
+&gt; Those simple things are:
+&gt;
+&gt; 1) Make the computer visible as a node on our office LAN;
+
+Just make sure it's using the same workgroup name as the other machines,
+and that it's exporting something as 'browseable'.
+
+&gt; 2) Make two of it's directories visible: public-upload (unrestricted
+&gt; read-write) and public-download (unrestricted read, write only by me or
+&gt; root) that are on my Windows 95 partition that is being mounted under Linux;
+
+this section from my smb.conf creates a public read/write share:
+
+[backup]
+        comment = Backup stuff
+        browseable = yes
+        read only = no
+        preserve case = yes
+        writable = yes
+        public = yes
+        path = /mnt/f/laptop
+
+
+If you wanted to make one that was writable only by 'jonathan' and 'root',
+change the 'writable' line to:
+
+     write list = jonathan, root
+
+
+&gt; 3) Be able to use the printer which is attached to the NT server machine on
+&gt; our LAN.
+
+Run printtool and say you want to set up an SMB printer.  Be warned,
+though, that SMB sometimes has problems with NT (I'm not 100% sure why) -
+let me know how it goes.
+
+PS - the printer stuff in smb.conf is if you want to *export* YOUR
+printers via smb to the network.  It works, too... I do it here, actually.
+
+BTW - there's probably a man page you overlooked - did you do a 'man
+smb.conf' ?  It describes the specifics of the configuration file.
+
+&gt;
+&gt; I've got the feeling that if I can do 1, then 2 and 3 will be easy, but I'm
+&gt; not sure what I need to do to make it show up on our LAN.  The SMB daemon is
+&gt; started at boot and is running, so I know that part is at least working, but
+&gt; Samba is proving a bit challenging to figure out.  Can somebody who is
+&gt; familiar with it point me to a doc file that will tell me clearly what I
+&gt; need to do to accomplish these things, and/or tell me what I need to put in
+&gt; samba.conf to make it do them?
+&gt;
+&gt; Of course, if a graphical front-end similar in function to the network
+&gt; control panel in Windows is available for Samba, I'd be most interested in
+&gt; knowing where to download it :-)
+&gt;
+&gt; TIA,
+&gt;
+&gt; Jonathan
+&gt;
+&gt;
+&gt;
+&gt;
+&gt; ---------------------------------------------------------------
+&gt; Next TLUG Meeting: 11 April Sat, Tokyo Station Yaesu gate 12:30
+&gt; Featuring Tague Griffith of Netscape i18n talking on source code
+&gt; ---------------------------------------------------------------
+&gt; a word from the sponsor:
+&gt; TWICS - Japan's First Public-Access Internet System
+&gt; www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+&gt;
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+               &lt;sstone@example.com&gt;
+Linux Developer/Systems Administrator for Pacific HiTech, Inc.
+<A TARGET="_top" HREF="http://www.pht.com">http://www.pht.com</A>          <A TARGET="_top" HREF="http://armadillo.pht.co.jp">http://armadillo.pht.co.jp</A>
+<A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>             <A TARGET="_top" HREF="http://www.turbolinux.com">http://www.turbolinux.com</A>
+
+
+---------------------------------------------------------------
+Next TLUG Meeting: 11 April Sat, Tokyo Station Yaesu gate 12:30
+Featuring Tague Griffith of Netscape i18n talking on source code
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: (?) July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00723" HREF="msg00723.html">tlug: You mean I'm not the only Samba flunkie...</A></STRONG>
+<UL><LI><EM>From:</EM> Sean Bennett &lt;sean@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00716.html">tlug: new linux hardware</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00718.html">Re: tlug: A great Microsoft joke</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00719.html">Re: tlug: new linux hardware</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00723.html">tlug: You mean I'm not the only Samba flunkie...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00717"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00717"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 10 Apr 2001 18:53:52 +0900 -->
+<!--X-Message-Id: 15058.55344.722635.44844@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104100134.KAA12861@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00080.html">Date Prev</A>][<A HREF="msg00082.html">Date Next</A>][<A HREF="msg00066.html">Thread Prev</A>][<A HREF="msg00073.html">Thread Next</A>][<A HREF="maillist.html#00081">Date Index</A>][<A HREF="threads.html#00081">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 10 Apr 2001 18:53:52 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00066.html">200104100134.KAA12861@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00066.html">200104100134.KAA12861@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;3enszC.A.-_E.Mmt06@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; I was referring to the TK documentation, which has a
+    Jim&gt; one-liner saying that you set "tk useinputmethods 1" to
+    Jim&gt; engage XIM. It doesn't even say which keystrokes turn it on,
+    Jim&gt; which is application-specific.
+
+Exactly.  Tk has no idea how it is done.  The XIM model is that
+Kinput2 makes all the decisions about what to do with keystrokes,
+including the initiation sequence.  TheRe's no reason why Kinput2,
+xwnmo, et al need to use the same sequence, and (this being Eunuchs)
+they probably don't.  And of course the user or sysadmin can configure
+it to something else again.
+
+I believe the delegation of control of the keyboard to the IM is also
+true for Mac and Windows, but presumably The Kanji Key wins there
+"Because Bill-sama Says So."
+
+    Jim&gt; What if a user wants to run an app that switches between a
+    Jim&gt; Korean IM and a German one? Locales can't be changed on the
+    Jim&gt; fly
+
+Sure they can, even if Chris says not.  See Chapter 28 of Professional
+Linux Programming, Wrox 2000, for some sample code (tested!) that
+shows how to do it (on page 1k, as it happens, cool)!  I've never seen
+it implemented anywhere else, but Uli Drepper threatened us with a
+glibc 2.2 with _threadsafe_ multiple locales per program when he was
+here in January 1999.  Dunno if he carried out his threat.  Seems
+silly, since noone would actually use it....
+
+And Chris is correct, you can only use the current locale in XOpenIM,
+but there's no reason why you can't open multiple IMs, including
+simultaneously, after changing the program's locale.
+
+Nobody does this (not even me, yet, but XEmacs 22.0 _may_ get
+it---it's a trivial extension to lazy initting of XIM, which is
+something I've wanted for years).  But that's because programmers are
+normally incapable of using _any_ natural language correctly, so they
+cannot imagine wanting to use two or more at once.  ;-)
+
+    &gt;&gt;&gt; In your case, you need (a) XMODIFIERS="@example.com=kinput2"
+
+    Jim&gt; Got that.
+
+Cool.
+
+    &gt;&gt;&gt; and (b) LANG="ja_JP.eucJP" (probably, works for me but YYMV)
+    &gt;&gt;&gt; in your environment or you will lose.  Of course, you may lose
+    &gt;&gt;&gt; anyway; this is XIM.
+
+    Jim&gt; Doesn't work. Possibly because LC_ALL contains "C", according
+    Jim&gt; to the return from setlocale().
+
+OK, well you can try invoking your "tkApp" (more forcibly) with
+"LC_ALL=ja_JP.eucJP tkApp".
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00080.html">Re: ADSL problems with LAN hub</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00082.html">Re: April 13th Nomikai!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00066.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00073.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00081"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00081"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

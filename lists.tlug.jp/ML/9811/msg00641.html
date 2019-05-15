@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: multiple domains with sendmail -->
+<!--X-From: Oliver Oberdorf <oly@example.com> -->
+<!--X-Date:  Wed, 25 Nov 1998 12:22:07 +0900 -->
+<!--X-Message-Id: 365B780E.CF420FF3@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981125093218.24851v&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00640.html">Date Prev</A>][<A HREF="msg00642.html">Date Next</A>][<A HREF="msg00636.html">Thread Prev</A>][<A HREF="msg00647.html">Thread Next</A>][<A HREF="maillist.html#00641">Date Index</A>][<A HREF="threads.html#00641">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: multiple domains with sendmail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: multiple domains with sendmail</strong></LI>
+<LI><strong>From</strong>: <strong>Oliver Oberdorf &lt;<A HREF="mailto:oly@example.com">oly@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 24 Nov 1998 22:22:55 -0500</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>References: &lt;<A HREF="msg00636.html">Pine.LNX.3.96LJ1.1b7.981125093218.24851v-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+
+It is possible to do this with sendmail, but you probably need to mess
+with the rewriting rules in the sendmail.cf file.  You can get almost
+any special case behavior out of sendmail this way, but it is quite
+painful to do.
+
+I don't know much about qmail, but it does allow you to handle two
+virtual domains differently.  If info@ isn't the only think you'd
+like to separate out, this is definitely the way to go.  Note that
+qmail delivers to folks' home directories, rather than to the
+standard spool file.  Probably configurable.
+
+A final solution, if this is just a really special case, is
+procmail.  You could setup an info account (I'm assuming both info
+addresses are just aliases and different people take turns in the
+two separate roles?).  info could have a .forward file that
+filters incoming mail through procmail.  Then you just need a
+.procmailrc for info that sends info@example.com to one user and info@example.com to
+another; or better yet to two more distinct aliases that you can
+then more easily administer.
+
+--------------
+.forward:
+"|exec /usr/local/bin/procmail"
+--------------
+
+--------------
+.procmailrc:
+:0
+* ^TOinfo@example.com
+phtinfo
+
+:0
+* ^TOinfo@example.com
+turboinfo
+--------------
+
+--------------
+/etc/aliases:
+# may need to run 'newaliases' after editing
+phtinfo: cliff
+turboinfo: sstone
+--------------
+
+Hope this helps,
+-Oly
+
+P.S. My wife and I are in the states, but thinking
+of working in Tokyo in a year, what's it like - do
+you enjoy working there?
+
+Scott Stone wrote:
+&gt; 
+&gt; OK, if I have one machine that has 2 domainnames bound to it with virtual
+&gt; IPs (ie, pacific.pht.com receives mail for *.pht.com and
+&gt; *.turbolinux.com)...now, if I want to have 'info@example.com' and
+&gt; 'info@example.com' NOT be the same (currently, if I set up
+&gt; 'info@example.com', 'info@example.com' will be identical), how do I do
+&gt; that, using sendmail 8.9.1?  Or is it even possible with sendmail?  If
+&gt; not, what can do this, qmail?
+&gt; 
+&gt; --------------------------------------------------
+&gt; Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+&gt; Head of TurboLinux Development/Systems Administrator
+&gt; Pacific HiTech, Inc (USA) / Pacific HiTech, KK (Japan)
+&gt; 
+&gt; ----------------------------------------------------------------
+&gt; Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+&gt; Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+&gt; ----------------------------------------------------------------
+&gt; more info: <A HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00636" HREF="msg00636.html">tlug: multiple domains with sendmail</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00640.html">Re: tlug: Bus speed question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00642.html">tlug: Firewall machine - how fast for ethernet speeds</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00636.html">tlug: multiple domains with sendmail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00647.html">Re: tlug: multiple domains with sendmail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00641"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00641"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

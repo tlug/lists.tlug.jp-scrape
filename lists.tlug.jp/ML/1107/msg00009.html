@@ -1,0 +1,183 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  Git: bring in a file from another branch -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 11 Jul 2011 18:36:37 +0900 -->
+<!--X-Message-Id: 874o2tupjp.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4E1A831E.2080203@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00008.html">Date Prev</a>][<a href="msg00010.html">Date Next</a>][<a href="msg00011.html">Thread Prev</a>][<a href="msg00012.html">Thread Next</a>][<a href="maillist.html#00009">Date Index</a>][<a href="threads.html#00009">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  Git: bring in a file from another branch</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 11 Jul 2011 18:36:42 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Git:%20bring%20in%20a%20file%20from%20another%20branch">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  Git: bring in a file from another branch</strong></li>
+<li>References: &lt;<a href="mailto:4E1A831E.2080203@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Git:%20bring%20in%20a%20file%20from%20another%20branch">4E1A831E.2080203@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Darren Cook writes:
+
+ &gt; I've these three branches:
+ &gt;    master: git clone of a github repository. (Note, an open source
+ &gt; *library*, not an application.)
+ &gt; 
+ &gt;    custom: a branch of master, with my bug fixes and new features that
+ &gt; are fed back to the main project.
+ &gt; 
+ &gt;     myapp: a branch of custom, adding application code that uses this
+ &gt; library.
+
+Don't do that last.  It hurts.  I recommend you try this instead:
+
+  # make a repository for MyApp
+  cd /usr/local/src
+  mkdir MyApp
+  git init
+  # pull in the library as a submodule
+  git submodule add github:open-source-library  # upstream URL
+  git submodule init
+  git submodule update
+  # make a branch for local work
+  pushd open-source-library
+  git checkout -b custom
+  popd
+  # Tell the submodule mechanism that you really do want to commit to it
+  # *and* have it communicate with upstream.
+  # The merge itself is a no-op here.  In your real application where
+  # you already have code and changes staged, YMMV.
+  git submodule update --rebase
+
+Now you can add the MyApp code, and git will not get confused about
+which is which.  To push your changes to the library to upstream, you
+just cd to that directory, merge custom into master, and git push.
+
+However, looking at the few submodules I actually use, I realize I've
+never tried to push to upstream from this setup.  So it may be more
+complicated than I think.
+
+The main thing you need to be careful about is that the *parent*
+project (MyApp) remembers the commit that you originally grabbed with
+&quot;git submodule init; git submodule update&quot;.  If you clone from MyApp,
+you won't get the local changes at all (unless they've been pushed
+upstream and you've updated .gitmodules to reflect that).
+
+ &gt; Also, is it possible to veto a directory from being checked out in a
+ &gt; certain branch?
+
+Not really.  If your workflow is adapted to the situation, you can
+merge from myapp into custom, then just rm -rf those directories,
+commit, and learn to just never ever work on &quot;lib&quot; and &quot;examples&quot; in
+the &quot;myapp&quot; branch.  But if you ever commit a change to one of those
+files in myapp and try to merge back to custom or master, you'll get a
+modify/delete conflict which is a mild PITA.  I know plenty of smart
+people who regularly find themselves working in the wrong branch,
+though, and for them one solution is submodules.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00012" href="msg00012.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00004" href="msg00004.html">[tlug] Git: bring in a file from another branch</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00008.html">[tlug]  git: push from behind the firewall</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00010.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00011.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00012.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00009"><strong>Date</strong></a></li>
+<li><a href="threads.html#00009"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

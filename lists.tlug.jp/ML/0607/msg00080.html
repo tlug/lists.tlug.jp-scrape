@@ -1,0 +1,205 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] compilation warnings for unsigned char -->
+<!--X-From-R13: Xvz Perra <Xvz.PerraNvasbgrpu.zbanfu.rqh.nh> -->
+<!--X-Date: Thu, 06 Jul 2006 15:26:54 +0900 -->
+<!--X-Message-Id: 200607060624.k666OdXq028644@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00079.html">Date Prev</a>][<a href="msg00081.html">Date Next</a>][<a href="msg00079.html">Thread Prev</a>][<a href="msg00101.html">Thread Next</a>][<a href="maillist.html#00080">Date Index</a>][<a href="threads.html#00080">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] compilation warnings for unsigned char</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 06 Jul 2006 16:24:39 +1000 (EST)</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<a href="mailto:Jim.Breen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20compilation%20warnings%20for%20unsigned%20char">Jim.Breen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] compilation warnings for unsigned char</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>[&quot;Stephen J. Turnbull&quot; (Re: [tlug] compilation warnings for unsigned char) writes:]
+&gt;&gt; &gt;&gt;&gt;&gt;&gt; &quot;Jim&quot; == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+&gt;&gt;     Jim&gt; With my latest distro (FDC4) the gcc (version 4.0.2 20051125
+&gt;&gt;     Jim&gt; (Red Hat 4.0.2-8)) spews out warnings for every strcpy,
+&gt;&gt;     Jim&gt; strcat, etc. E.g.
+&gt;&gt; 
+&gt;&gt; If you have no worries about anything but char, try -Wno-conversion.
+&gt;&gt; Unfortunately, conversions of integers generally *are* dangerous, so
+&gt;&gt; you could lose bad.  I don't recommend it :-(, but you know your code
+&gt;&gt; better than I do.
+
+I tried that - it made no difference.
+
+&gt;&gt;     Jim&gt; Putting -funsigned-char as a gcc option makes no difference.
+&gt;&gt; 
+&gt;&gt; Good!  The libraries you're calling were compiled with the default
+&gt;&gt; definition of char; their prototypes should not be changed.  (I wonder
+&gt;&gt; how they manage this?  I don't see anything obvious in &lt;string.h&gt;.)
+
+Hmmm. It says (in string.h):
+extern char *strcpy (char *__restrict __dest, __const char *__restrict __src)
+
+I assumed that __restrict was the problem.
+
+&gt;&gt; What might fool GCC is to change the type that you use to &quot;char&quot; and
+&gt;&gt; then use -funsigned-char.  This would of course hose anybody whose
+&gt;&gt; compiler doesn't support -funsigned-char.  You probably don't want to
+&gt;&gt; do that.
+
+Ironically that gets me back where I was 15 years ago. My Japanese-
+pushing code began in 1991 with a DOS dictionary program (JDIC). In that
+I used vanilla &quot;char&quot; and set the compiler (Turbo C) to treat all char
+as unsigned. Never a problem.
+
+When I pulled a lot of the JDIC.c code into xjdicin 1992, I found there was 
+no global setting possible (I think -funsigned-char  came later), so I
+made all my chars unsigned (I think the concept of a signed char is
+quite flakey anyway.)
+
+I may well try that.
+
+&gt;&gt;     Jim&gt; Can anyone suggest a solution/workaround?
+&gt;&gt; 
+&gt;&gt; The following is good because you know that these functions only test
+&gt;&gt; for equality.  It might be preferable to do this at a somewhat higher
+&gt;&gt; level, if you have some standard patterns of usage you could encapsulate.
+&gt;&gt; 
+&gt;&gt; #ifdef PSYCHOPATHIC_GCC
+&gt;&gt; # ifdef I_TRUST_CPP
+&gt;&gt; 
+&gt;&gt; #define strcat(head,tail) strcat ((char *) (head), (char *) (tail))
+&gt;&gt; 
+&gt;&gt; # else
+&gt;&gt; 
+&gt;&gt; inline unsigned char *
+&gt;&gt; gcc_in_a_straitjacket_strcat (unsigned char *head, unsigned char *tail)
+&gt;&gt; {
+&gt;&gt;   return (unsigned char *) strcat ((char *) head, (char *) tail);
+&gt;&gt; }
+&gt;&gt; 
+&gt;&gt; #undef strcat
+&gt;&gt; #define strcat gcc_in_a_straitjacket_strcat
+&gt;&gt; 
+&gt;&gt; # endif /* I_TRUST_CPP */
+&gt;&gt; #endif /* PSYCHOPATHIC_GCC */
+&gt;&gt; 
+&gt;&gt; If there isn't an autoconf macro to test for PSYCHOPATHIC_GCC, there
+&gt;&gt; should be!  I_TRUST_CPP is a developer constant, so one arm can be
+&gt;&gt; optimized away. :-)
+
+I have tried just the I_TRUST_CPP section in my .h file and
+it worked for strc* but I shudder to think of doing it for
+everything like sprintf, etc.
+
+What a stupid mess. Why for Bog's sake does the signed-ness of char
+matter for things like strcat and strcpy anyway?  Mutter, mutter.
+
+I may well just move everything to char, set -funsigned-char and be done
+with it.
+
+Jim
+
+-- 
+Jim Breen                                <a  rel="nofollow" href="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</a>
+Clayton School of Information Technology,               Tel: +61 3 9905 9554
+Monash University, VIC 3800, Australia                  Fax: +61 3 9905 5146
+(Monash Provider No. 00008C)                &#x30B8;&#x30E0;&#x30FB;&#x30D6;&#x30EA;&#x30FC;&#x30F3;@&#x30E2;&#x30CA;&#x30B7;&#x30E5;&#x5927;&#x86D9;&#x89E6;Â
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00101" href="msg00101.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00079.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00081.html">Re: [tlug] Baby Steps for Command Line Backups . . . . . . . . . . . . . . .</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00079.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00101.html">Re: [tlug] compilation warnings for unsigned char</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00080"><strong>Date</strong></a></li>
+<li><a href="threads.html#00080"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

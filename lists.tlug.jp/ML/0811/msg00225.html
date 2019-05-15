@@ -1,0 +1,289 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] SSH Issues -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Mon, 24 Nov 2008 10:45:24 +0900 -->
+<!--X-Message-Id: 20081124014523.GH17040@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081117161020.GB10314@lucky.cynic.net -->
+<!--X-Reference: 20081117193740.2d38af12@ronin.larsko.net -->
+<!--X-Reference: 20081117235804.GF10314@lucky.cynic.net -->
+<!--X-Reference: 871vx9o5b1.fsf@xemacs.org -->
+<!--X-Reference: 20081118112601.GC2893@smtp.office.cynic.net -->
+<!--X-Reference: 87y6zgmr1o.fsf@xemacs.org -->
+<!--X-Reference: 20081121111614.GA26444@lucky.cynic.net -->
+<!--X-Reference: 87abbtkxlo.fsf@xemacs.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00224.html">Date Prev</a>][<a href="msg00226.html">Date Next</a>][<a href="msg00216.html">Thread Prev</a>][<a href="msg00230.html">Thread Next</a>][<a href="maillist.html#00225">Date Index</a>][<a href="threads.html#00225">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] SSH Issues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 24 Nov 2008 10:45:24 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20SSH%20Issues">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] SSH Issues</strong></li>
+<li>References: &lt;20081117161020.GB10314@lucky.cynic.net&gt;	&lt;20081117193740.2d38af12@ronin.larsko.net&gt;	&lt;<a href="msg00193.html">20081117235804.GF10314@lucky.cynic.net</a>&gt;	&lt;<a href="msg00197.html">871vx9o5b1.fsf@xemacs.org</a>&gt;	&lt;<a href="msg00199.html">20081118112601.GC2893@smtp.office.cynic.net</a>&gt;	&lt;<a href="msg00202.html">87y6zgmr1o.fsf@xemacs.org</a>&gt;	&lt;<a href="msg00214.html">20081121111614.GA26444@lucky.cynic.net</a>&gt;	&lt;<a href="msg00216.html">87abbtkxlo.fsf@xemacs.org</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-11-21 22:38 +0900 (Fri), Stephen J. Turnbull wrote:
+
+&gt; Curt Sampson writes:
+&gt; 
+&gt;  &gt; Which is why we run Linux and our &quot;local&quot; server is the one running on
+&gt;  &gt; our own laptop.
+&gt; 
+&gt; Yeah, but I still lose because I can't get out (legitimately) except
+&gt; through the apparently broken servers.
+
+Just have your server forward its requests through them. It's worth
+doing anyway, for the caching, unless you have a specific reason to
+avoid them.
+
+&gt;  &gt;     2. Authoritative servers should never resolve anyway;
+&gt; 
+&gt; What do you mean by &quot;resolve&quot;?  They shouldn't serve requests except
+&gt; from authorized and authenticated secondaries?
+
+Sorry, I meant &quot;recursively resolve queries.&quot; They should return
+requests for records for which they have an authoritative answer, and
+for anything else return &quot;request refused&quot; (i.e., go do the recursion to
+find it yourself).
+
+&gt;  &gt; Hm, so add RRSIG validation to OpenSSH? That's a thought.
+&gt; No, to lwres, the lightweight resolver daemon, or to libresolv.
+
+Well, for reasonable performance, one wants to add caching as well so
+one doesn't have to do a cryptographic validation of every single lookup
+in the domains in question. Ideally, caching across all processes. Oops!
+We've just implemented the existing infrastructure, with bind9 doing the
+validation and setting the AD bit!
+
+Doing the validation only in OpenSSH and only there for SSHFP records,
+would be an acceptable performance hit, given the alternative of no
+validation.
+
+&gt;  &gt; Well, one of the reasons [admins] perhaps haven't bothered to
+&gt;  &gt; [implement DNSSEC] is issues like this.
+&gt; Nonsense.  They just haven't bothered.
+
+You've demonstrated enough lack of knowledge of the details of DNSSEC
+implementation that I'm going to venture to guess that you've not done
+it. You might consider doing a bit of cost/benefit analysis on this
+before coming up with so strong an opinion.
+
+&gt; Er, who said it was the library's &quot;fault&quot;?  My main point is precisely
+&gt; that even if the library is correct, that doesn't guarantee anything
+&gt; is going to work.
+
+Will it break things? In what way?
+
+&gt;  &gt; I thought DNSSEC did a lot of things in suboptimal ways, too, when I
+&gt;  &gt; first started with it.
+&gt; 
+&gt; I didn't say &quot;suboptimal&quot;.  I said &quot;unobvious&quot;.  TOOWTDI is an
+&gt; essential principle in interface design, but not always so in
+&gt; implementation.  Still, &quot;some thought required&quot; does make it hard for
+&gt; a lot of people to get behind the idea of actually doing something.
+
+Well, if &quot;some thought required&quot; is a barrier, drop any ideas about
+touching anything related to security via cryptography. It's often a
+little bit tricky, and it's very easy to break the system in unobvious
+ways through being naive. (Take a look at the recent debian RNG debacle
+for a particularly spectacular example.)
+
+I'm sorry that this DNSSEC stuff is not obvious to you, but there's no
+way to make it simple to those who don't understand what's going on
+underneath the hood.
+
+&gt;  &gt; &gt; The authoritative server cannot authenticate the data it sends itself,
+&gt;  &gt; &gt; that's axiomatic.
+&gt;  &gt; 
+&gt;  &gt; Sure it can. So long as it has the public key, it can check the signatures.
+&gt; 
+&gt; That's &quot;validation&quot; (not to mention useless in context, so presumably
+&gt; I meant something else).
+
+It's authentication, in the technical sense of the term. And it's
+exactly what any client server does as well; if the authoratative server
+is doing &quot;validation&quot; in your unusual terminology, the clients are doing
+no more and and no less.
+
+&gt; Authentication implies trust.
+
+As does your &quot;validation&quot;; in both cases you trust that the data were
+generated by some particular source. (N.B.: this source is *not* the
+authoritative server. It's the adminstrator of the zone.)
+
+Authorization, of course, also implies trust, though of the &quot;I trust you
+to let you do these things,&quot; variety, which authentication does not.
+Authorization depends on authentication in the sense that it doesn't
+make sense to trust a random entity to do some set of things; you need
+to be certain they are who you think they are, first.
+
+I would highly recommend studying the basics of security and
+cryptography to the point where you understand these sorts of concepts
+and the standard terminology for them; you are not likely to understand
+most explanations of DNSSEC (in particular, the RFCs) without them.
+
+Also, note that DNSSEC, for reasons of efficency, state and the way
+DNS itself works, is a rather tricky implementation of a cryptographic
+system. It took me quite some time to understand why things are done the
+way they are, and I have been studying cryptographic protocols for many
+years.
+
+&gt; What I meant was that the server cannot guarantee authenticity of the
+&gt; data it sends, it can only make sure it arrives intact.
+
+I'm sorry, but this is entirely wrong, on both counts. The server *can*
+indeed authenticate the data it sends, in exactly the same way the
+client can. The server cannot make sure it arrives intact at the client,
+which is why the client performs authentication on the data.
+
+&gt;  &gt; &gt; Either you trust it (eg, because you have its key-signing key through
+&gt;  &gt; &gt; a trusted channel and you validate the record-signing key with that),
+&gt;  &gt; &gt; or you don't.  If you don't trust it, then it is trivial for that
+&gt;  &gt; &gt; server to simply change its data in any way it likes and then sign it.
+&gt;  &gt; 
+&gt;  &gt; This embodies a fairly major misunderstanding of DNSSEC. Authoritative
+&gt;  &gt; servers don't sign anything; they serve already signed records. They
+&gt;  &gt; have no need for the private key, and it would be considered very poor
+&gt;  &gt; practice to leave your signing key lying around on your authoritative
+&gt;  &gt; servers.
+&gt; 
+&gt; *sigh*  I never claimed to understand DNSSEC.  In fact, I had *zero*
+&gt; knowledge of it until I started reading RFCs a few days ago.
+&gt; 
+&gt; However, you're misreading what I wrote.  I didn't say when or where a
+&gt; &quot;real&quot; DNS system would sign things; I was describing why DNSSEC is
+&gt; only meaningful if you trust that you've reached the right server in
+&gt; the first place.
+
+And I'm telling you again, that is entirely wrong. When it comes to
+DNSSEC validation (i.e., the authentication of the records), you do not
+care in the slightest from what server the records came; you do not
+trust the server. All you are doing is checking to see if the records
+are correct or not, regardless of the server whence they came.
+
+This is a very important, nay, critical, part of the DNSSEC security
+model.
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00230" href="msg00230.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00193" href="msg00193.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00197" href="msg00197.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00199" href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00202" href="msg00202.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00214" href="msg00214.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00216" href="msg00216.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00224.html">[tlug] script fails as cron job</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00226.html">[tlug] Looking for a distribution to replace Ubuntu</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00216.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00230.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00225"><strong>Date</strong></a></li>
+<li><a href="threads.html#00225"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

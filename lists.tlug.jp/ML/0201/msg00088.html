@@ -1,0 +1,174 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Newly compiled Kernel woes:defconfig -->
+<!--X-From-R13: Tenax Praargg <oraarggNabzbybt.antbln&#45;h.np.wc> -->
+<!--X-Date: Tue, 22 Jan 2002 13:33:33 +0900 (JST) -->
+<!--X-Message-Id: 20020121043327.GA804@example.com&#45;biscuit.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 13507881ED4DD511B24F00508BB287BF013E3D54@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00087.html">Date Prev</a>][<a href="msg00089.html">Date Next</a>][<a href="msg00083.html">Thread Prev</a>][<a href="msg00060.html">Thread Next</a>][<a href="maillist.html#00088">Date Index</a>][<a href="threads.html#00088">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Newly compiled Kernel woes:defconfig</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Newly compiled Kernel woes:defconfig</strong></li>
+<li><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@DOMAIN.HIDDEN">bennett@example.com</A>&gt;</strong></li>
+<li>Date: Mon, 21 Jan 2002 13:33:27 +0900</li>
+<li>Content-disposition: inline</li>
+<li>Content-type: text/plain; charset=euc-jp</li>
+<li>In-reply-to: &lt;<a href="msg00082.html">13507881ED4DD511B24F00508BB287BF013E3D54@example.com</a>&gt;</li>
+<li>References: &lt;<a href="msg00082.html">13507881ED4DD511B24F00508BB287BF013E3D54@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.3.25i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, Jan 22, 2002 at 10:49:24AM +0800, Mancy, Raymond wrote:
+&gt; OK, went home last night and made boot disks, so I could go into rescue
+&gt; mode. ...the only problem is that it asks me for the image of the RH
+&gt; image...and it cant detect my PCMCIA cd-rom.....and it wont boot from my RH
+&gt; CD's on that machine...it boots from them fine on my desktop, and on the
+&gt; laptop my NT disks boot...
+&gt; 
+&gt; I think that I will just try and look on the net and try and find out how to
+&gt; fix this &quot;unresolved Symbols&quot; problem that I am getting whenever I try to
+&gt; insmod a module. I think that should fix things up hopefully
+
+Ray,
+
+You've received loadsa suggestions.  If this one feels like adding to the
+confusion, pass it up.  But every other cook has had a shot at the stew, so
+...
+
+The &quot;unresolved symbols&quot; error is issued by insmod when hooks needed by the
+module it is trying to load cannot be found in the kernel. The hooks may be
+missing because:
+
+  (a) the kernel doesn't match the module (i.e. the kernel is missing stuff
+      that has to be compiled in in order for the module to do its thing); or
+      
+  (b) some other module, which contains the hooks, has not yet been
+      loaded into the kernel.
+
+If you load using &quot;modprobe&quot;, you should seldom see this message, but only IF:
+
+  o The kernel and the modules are a matched set (i.e. they were all created
+    off the same configuration of the same source); AND
+
+  o You have run &quot;depmod -a&quot; after installing the kernel and modules, and
+    before using modprobe.
+
+  o There is a copy of &quot;System.map-&lt;ver&gt;&quot; in your /boot directory that is
+    identical to the file System.map created during the kernel/modules compile
+    run (this file ends up in the top of the kernel source tree), and this
+    file was in place when you ran &quot;depmod -a&quot;.[1] This command analyzes the
+    capabilities of the kernel and of the modules, and creates files that tell
+    modprobe what modules depend on other modules, so it can save you lots of
+    finger-work by just doing the right thing (most of the time).
+
+If you are getting this error for ALL modules (even stuff like, say &quot;insmod
+fat&quot;), then you should check your configuration to see if you have compiled
+the kernel without loadable module support in the kernel.  You can check
+quickly by going to the top of your kernel source tree and using &quot;grep
+CONFIG_MODULES .config&quot;.  If the answer is no, that's a problem you want to
+fix.
+
+
+[1] If you prefer, you can force depmod to use a map in a different place (see
+&quot;man depmod&quot;), but it is a good idea to get the default working correctly,
+since the scripts run at system startup typically issue &quot;depmod -a&quot;, which
+would overwrite your forced dependencies.
+
+
+Hope this helps,
+Frank Bennett
+Nagoya
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00082" href="msg00082.html">RE: [tlug] Newly compiled Kernel woes:defconfig</a></strong>
+<ul><li><em>From:</em> Mancy, Raymond</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00087.html">Re: [tlug] what's coming for Linux in the year 2002</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00089.html">Re: [tlug] Gentoo install issue...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00083.html">Re: [tlug] Newly compiled Kernel woes:defconfig</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00060.html">[tlug] C/C++</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00088"><strong>Date</strong></a></li>
+<li><a href="threads.html#00088"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

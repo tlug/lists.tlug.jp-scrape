@@ -1,0 +1,257 @@
+;; Start as a server
+;;(gnuserv-start)
+
+
+;; User-installed Lisp
+;; ==================================================
+
+; Wikipedia-mode
+(autoload 'wikipedia-mode "$HOME/.xemacs/user_lisp/wikipedia-mode.el"
+	    "Major mode for editing documents in Wikipedia markup." t)
+
+;; ==================================================
+
+
+;; Spell checking settings
+;; ==================================================
+
+; Use British English (the Queen cannot be wrong!)
+(setq flyspell-default-dictionary "british")
+(setq ispell-dictionary "british")
+
+
+;; Keybindings
+;; ==================================================
+
+(custom-set-variables
+ '(cperl-electric-parens t)
+ '(cperl-electric-keywords t)
+ '(lazy-lock-mode nil nil (lazy-lock))
+ '(make-backup-files nil)
+ '(cperl-indent-level 2)
+ '(line-number-mode t)
+ '(mouse-yank-at-point t)
+ '(user-mail-address "jglover@amazon.co.jp")
+ '(query-user-mail-address nil)
+ '(font-lock-mode t nil (font-lock)))
+(custom-set-faces
+ '(default ((t (:size "9pt" :family "Bitstream Vera Sans Mono"))) t))
+
+
+;; Misc colour settings
+;; ==================================================
+
+; Colour the buffer tabs sanely; make the toolbar vanish.
+(set-specifier default-toolbar-visible-p nil)
+(set-face-background 'buffers-tab "Black")
+
+
+;; Fontification settings
+;; ==================================================
+
+(setq bg-colour      "Black")
+(setq comment-colour "White")
+(setq code-colour    "SpringGreen")
+(setq string-colour  "Orange")
+(setq preproc-colour "Green")
+(setq keyword-colour "Yellow")
+(setq ref-colour     "red3")
+(setq type-colour    "LightBlue")
+
+; Face to use for comments
+(set-face-foreground  'font-lock-comment-face       comment-colour)
+
+; Face to use for function and variable names
+(set-face-foreground  'font-lock-function-name-face code-colour)
+(make-face-bold       'font-lock-function-name-face)
+(set-face-foreground  'font-lock-variable-name-face code-colour)
+(make-face-bold       'font-lock-variable-name-face)
+; Face to use for strings and documentation strings
+(set-face-foreground  'font-lock-string-face        string-colour)
+(set-face-foreground  'font-lock-doc-string-face    string-colour)
+; Face to use for preprocessor commands
+(set-face-foreground  'font-lock-preprocessor-face  preproc-colour)
+(make-face-bold       'font-lock-preprocessor-face)
+; Face to use for keywords
+(set-face-foreground  'font-lock-keyword-face       keyword-colour)
+(make-face-bold       'font-lock-keyword-face)
+; Face to use for reference names
+(set-face-foreground  'font-lock-reference-face     ref-colour)
+(make-face-bold       'font-lock-reference-face)
+; Face to use for type names
+(set-face-foreground  'font-lock-type-face          type-colour)
+(make-face-bold       'font-lock-type-face)
+
+;; ==================================================
+
+
+;; MMM Mode
+;; ==================================================
+
+(require 'mmm-auto)
+(setq mmm-global-mode 'maybe)
+(setq mmm-submode-decoration-level '2)
+
+(set-face-background 'mmm-default-submode-face     bg-colour)
+(set-face-background 'mmm-init-submode-face        bg-colour)
+(set-face-background 'mmm-cleanup-submode-face     bg-colour)
+(set-face-background 'mmm-declaration-submode-face bg-colour)
+(set-face-background 'mmm-comment-submode-face     bg-colour)
+(set-face-foreground 'mmm-comment-submode-face     comment-colour)
+(set-face-background 'mmm-output-submode-face      bg-colour)
+(set-face-background 'mmm-code-submode-face        bg-colour)
+(set-face-background 'mmm-special-submode-face     bg-colour)
+
+(mmm-add-mode-ext-class nil "\\.m[i]?\\'" 'mason)
+
+;; ==================================================
+
+
+;; Custom functions
+;; ==================================================
+
+; Regular text editing mode (email, etc)
+(defun nice-text-mode ()
+  "setup a sane mode for editing english text"
+  (interactive)
+  (text-mode)
+  (flyspell-mode)
+  (auto-fill-mode))
+
+; ebuild-mode (for Gentoo development)
+(defun ebuild-mode ()
+  (shell-script-mode)
+  (sh-set-shell "bash")
+  (make-local-variable 'tab-width)
+  (setq tab-width 4))
+(setq auto-mode-alist (cons '("\\.ebuild\\'" . ebuild-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.eclass\\'" . ebuild-mode) auto-mode-alist))
+
+
+;; Other settings
+;; ==================================================
+
+; Make sure mutt-generated emails are edited in the proper mode
+(set-default 'auto-mode-alist (append `(("mutt-" . nice-text-mode)) auto-mode-alist))
+
+; Make the scroll wheel on the mouse work
+(mwheel-install)
+
+
+;; Mode hooks
+;; ==================================================================
+
+
+; Code folding
+(defun my-fold-hook ()
+
+  (setq outline-minor-mode-prefix "\C-co")
+  (outline-minor-mode t)
+  (hide-body)
+)
+
+; Indent two columns using spaces, not tabs
+(defun my-indent-hook ()
+
+  (setq tab-width 2 indent-tabs-mode nil)
+)
+
+
+; Add code folding to Perl mode
+(add-hook 'cperl-mode-hook        'my-fold-hook)
+
+; Add indention to all source code modes
+(add-hook 'c-mode-common-hook     'my-indent-hook)
+(add-hook 'cperl-mode-hook        'my-indent-hook)
+(add-hook 'html-mode-hook         'my-indent-hook)
+(add-hook 'mmm-major-mode-hook    'my-indent-hook)
+(add-hook 'sgml-mode-hook         'my-indent-hook)
+(add-hook 'shell-script-mode-hook 'my-indent-hook)
+(add-hook 'xslt-mode-hook         'my-indent-hook)
+
+
+;; Define a new CC-Mode style
+;; ==================================================================
+
+
+(defconst group4-cc-style
+  '((c-tab-always-indent        . t)
+    (c-comment-only-line-offset . 0)
+    (c-hanging-braces-alist     . ((substatement-open after)
+                                   (brace-list-open)))
+    (c-hanging-colons-alist     . ((member-init-intro before)
+                                   (inher-intro)
+                                   (case-label after)
+                                   (label after)
+                                   (access-label after)))
+    (c-cleanup-list             . (scope-operator
+                                   empty-defun-braces
+                                   defun-close-semi))
+    (c-offsets-alist            . ((arglist-close . c-lineup-arglist)
+                                   (substatement-open . 0)
+                                   (case-label        . 4)
+                                   (block-open        . 0)
+                                   (knr-argdecl-intro . -)))
+    (c-echo-syntactic-information-p . t)
+    )
+  "Group4 C++ Programming Style")
+
+;; offset customizations not in my-c-style
+(setq c-offsets-alist '((member-init-intro . ++)))
+
+;; Customizations for all modes in CC Mode.
+(defun group4-cc-mode-common-hook ()
+  ;; add my personal style and set it for the current buffer
+  (c-add-style "GROUP4" group4-cc-style t)
+  ;; other customizations
+  ;;(setq tab-width 4
+  (setq tab-width 4
+        ;; this will make sure spaces are used instead of tabs
+        indent-tabs-mode nil)
+  (setq c-basic-offset 4)
+  ;; keybindings for all supported languages.  We can put these in
+  ;; c-mode-base-map because c-mode-map, c++-mode-map, objc-mode-map,
+  ;; java-mode-map, idl-mode-map, and pike-mode-map inherit from it.
+  (define-key c-mode-base-map "\C-m" 'c-context-line-break)
+  )
+
+(add-hook 'c-mode-common-hook 'group4-cc-mode-common-hook)
+
+
+;; Filename associations
+;; ==================================================================
+
+; cperl-mode:		.cgi
+(setq auto-mode-alist (append (list (cons "\\.cgi\\'" 'cperl-mode))
+      auto-mode-alist))
+
+; html-mode:		.tmpl
+(setq auto-mode-alist (append (list (cons "\\.tmpl\\'" 'html-mode))
+      auto-mode-alist))
+
+; javascript-mode:	*js.tmpl
+(setq auto-mode-alist (append (list (cons "js\\.tmpl\\'" 'javascript-mode))
+      auto-mode-alist))
+
+; makefile-mode:	Makefile.*
+(setq auto-mode-alist (append (list (cons "[Mm]akefile\\." 'makefile-mode))
+      auto-mode-alist))
+
+; mmm-mode:	*.m[i]?
+(setq auto-mode-alist (append (list (cons "\\.m[i]?\\'" 'mmm-mode))
+      auto-mode-alist))
+
+; sgml-mode:		.xul
+(setq auto-mode-alist (append (list (cons "\\.xul\\'" 'sgml-mode))
+      auto-mode-alist))
+
+; For macro files, ignore the macro bit and deal with the prior extension
+; (see: C-h v auto-mode-alist)
+(push '("\\.m4$" nil YOW!) auto-mode-alist)
+
+
+;; I18N stuff
+;; ==================================================
+
+
+(load "~/.xemacs/i18n.el")

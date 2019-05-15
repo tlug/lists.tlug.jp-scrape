@@ -1,0 +1,225 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Start and stop Apache on TL2.0 -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Thu, 13 Aug 1998 01:30:25 +0900 -->
+<!--X-Message-Id: 199808121335.NAA00406@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 35CE5A03.CB35135B@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00228.html">Date Prev</A>][<A HREF="msg00231.html">Date Next</A>][<A HREF="msg00282.html">Thread Prev</A>][<A HREF="msg00260.html">Thread Next</A>][<A HREF="maillist.html#00229">Date Index</A>][<A HREF="threads.html#00229">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Start and stop Apache on TL2.0</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Start and stop Apache on TL2.0</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 12 Aug 1998 13:35:47 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00210.html">35CE5A03.CB35135B@example.com</A>&gt; from "Shigeo Honda" at Aug 10, 98 11:25:07 am</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; Where is http.pid on TL2.0J and how to stop and start again Apache? 
+&gt; Please let me know.
+
+You don't need any. Look up how httpd is called up using ps ax.
+Then do a killall -15 &lt;the_stuff_you_got_from_ps_ax&gt;.
+
+In the following I list a few perl scrips I made to facilitate
+these things
+
+================================listpid*=====================
+#!/usr/bin/perl
+@example.com=@example.com;
+if ($parameter[0] eq "") {
+        die "Usage: listpid &lt;processname&gt;\n";
+}
+@example.com = s ax;
+$schalter = "1";
+foreach $zeile (@example.com) {
+        @example.com = split(/ +/,$zeile);
+        chomp (@example.com);
+        if ($satz[5] =~ /$parameter[0]/) {
+                print $satz[1]."   ".$satz[5]."\n";
+                $schalter = "2"
+        }
+}
+if ($schalter == "1") {
+        print  "No such process\n";
+}
+
+=============================killname*=======================
+#!/usr/bin/perl
+@example.com=@example.com;
+if ( !($parameter[0] =~ /-/) || ($parameter[1] eq "")) {
+        die "Usage: killname &lt;signal&gt; &lt;processname&gt;\n";
+}
+@example.com = s ax;
+$schalter = "1";
+foreach $zeile (@example.com) {
+        @example.com = split(/ +/,$zeile);
+        chomp (@example.com);
+        if ($satz[5] =~ /$parameter[1]/) {
+                print $satz[1]."   ".$satz[5]."\n";
+                $zack = ill $parameter[0] $satz[1];
+                $schalter = "2"
+        }
+}
+if ($schalter == "1") {
+        print  "No such process\n";
+}
+==========================relaunch*==========================
+#!/usr/bin/perl
+@example.com=@example.com;
+if ( !($parameter[0] =~ /-/) || ($parameter[1] eq "")) {
+        die "Usage: relaunch &lt;signal&gt; &lt;processname&gt;\n";
+}
+@example.com = s ax;
+$schalter = "1";
+foreach $zeile (@example.com) {
+        @example.com = split(/ +/,$zeile);
+        chomp (@example.com);
+        if ($satz[5] =~ /$parameter[1]/) {
+                print $satz[1]."   ".$satz[5]."\n";
+                $zack = ill $parameter[0] $satz[1];
+                $zack = $satz[5];
+                $schalter = "2"
+        }
+}
+if ($schalter == "1") {
+        $zack = $parameter[1];
+        print $zack;
+}
+=============================================================
+
+All the above operate on the pattern provided in the command
+line. If this pattern is found in ps' COMMAND field, they
+operate on that. So be careful ! If you just pass one character
+all processes where this character is found are affected - with
+very undesirable consequences !
+
+listpid lists the pids of the processes with the pattern you
+passed on the command line, killname sends a kill to all these
+processes ( you specify the signal on the command line ) and
+relaunch kills the process and restarts it. Relaunch has a
+bug: if ti can't find a process running before and the pattern
+given is not the full name of a command it starts nothing.
+
+So a killname -15 httpd should solve your problem......
+
+Copy these scripts int /usr/bin or so and make them executable
+( chmod 700 and chown root.root is good ).
+
+The names in the scripts are in German. This is not because I
+dislike English but because all the reserved words are in
+English and I always forget them. Using another language avoids
+that kind of trouble ( some friends of mine in Slovenia do it in
+Slovenian exactly for the same reason.... ).
+
+Hope that helps. The scripts are under GNU/GPL 2.0 or higher as
+usual. So if you want to improve them, do so to your hear's
+content.
+
+                              Karl-Max Wagner
+                              karlmax@example.com
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00260" HREF="msg00260.html">Re: tlug: Start and stop Apache on TL2.0</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeo Honda &lt;shige@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00210" HREF="msg00210.html">tlug: Start and stop Apache on TL2.0</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeo Honda &lt;shige@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00228.html">Re: tlug: dual-pentium processors</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00231.html">Re: Let's Note + TLJ2.0 (Re: tlug: gratitude)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00282.html">Re: tlug: Start and stop Apache on TL2.0</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00260.html">Re: tlug: Start and stop Apache on TL2.0</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00229"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00229"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

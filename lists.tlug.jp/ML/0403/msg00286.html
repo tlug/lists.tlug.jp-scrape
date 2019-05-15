@@ -1,0 +1,178 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] help! raid failure -->
+<!--X-From-R13: Pbgbaq Pbglnafmxv <gyhtNfvyvpbavhz.arg> -->
+<!--X-Date: Mon, 15 Mar 2004 22:26:59 +0000 -->
+<!--X-Message-Id: 20040315222659.72021b0d.tlug@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00285.html">Date Prev</a>][<a href="msg00287.html">Date Next</a>][<a href="msg00291.html">Thread Prev</a>][<a href="msg00287.html">Thread Next</a>][<a href="maillist.html#00286">Date Index</a>][<a href="threads.html#00286">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] help! raid failure</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 15 Mar 2004 22:26:59 +0000</li>
+<li><strong>From</strong>: <strong>Botond Botyanszki &lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20help%21%20raid%20failure">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] help! raid failure</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+This is one of those seagate drives driving me insane. I have to identical
+(except for the firmware) in a raid array with raid1 and raid0 devices.
+I was getting dma timer expiries earlier also a few times, the reset
+resulted in a success but this time it is different:
+
+---------kern.log----------------------
+hda: dma_timer_expiry: dma status == 0x20
+hda: timeout waiting for DMA
+hda: timeout waiting for DMA
+hda: (__ide_dma_test_irq) called while not waiting
+hda: status timeout: status=0xd0 { Busy }
+ 
+hda: drive not ready for command
+ide0: reset timed-out, status=0x80
+hda: status timeout: status=0x80 { Busy }
+ 
+hda: drive not ready for command
+ide0: reset timed-out, status=0x80
+end_request: I/O error, dev 03:07 (hda), sector 52720
+raid1: Disk failure on hda7, disabling device.
+        Operation continuing on 1 devices
+end_request: I/O error, dev 03:07 (hda), sector 52728
+end_request: I/O error, dev 03:07 (hda), sector 52736
+...
+md: updating md7 RAID superblock on device
+md: hdc7 [events: 00000012]&lt;6&gt;(write) hdc7's sb offset: 2666688
+md: recovery thread got woken up ...
+md7: no spare disk to reconstruct array! -- continuing in degraded mode
+md: updating md10 RAID superblock on device
+md: hdc10 [events: 0000000a]&lt;6&gt;(write) hdc10's sb offset: 20482752
+md: (skipping faulty hda7 )
+md: (skipping faulty hda10 )
+md10: no spare disk to reconstruct array! -- continuing in degraded mode
+md: recovery thread finished ...
+---------------------------------------
+
+The box was doing okay, but I was stupid enough to access the partition
+(with reiser) on the raid0 device, and that resulted in a kernel oops in
+kupdated:
+
+---------kern.log----------------------
+journal-601, buffer write failed
+ (device ide0(3,11))
+kernel BUG at prints.c:341!
+invalid operand: 0000
+CPU:    0
+EIP:    0010:[&lt;c017580a&gt;]    Not tainted
+EFLAGS: 00010282
+eax: 00000039   ebx: cc052000   ecx: cd5e2000   edx: ce18a014
+esi: 00000000   edi: c6ec65a0   ebp: cc052000   esp: c12a1e2c
+ds: 0018   es: 0018   ss: 0018
+Process kupdated (pid: 7, stackpage=c12a1000)
+---------------------------------------
+
+I tried doing a reboot, but the process hangs and it doesn't do anything:
+root    pts/9    Z    06:44   0:00 [shutdown] &lt;defunct&gt;
+
+The servicies (ssh, smtp, etc) still work though.
+
+My biggest problem now is that I'm on the other side of the planet. 
+I guess I'm fucked.
+
+Any suggestions?
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00285.html">[tlug] Red Hat World Tour Tokyo Stop</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00287.html">[tlug] Have you guys seen this?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00291.html">Re: [tlug] Red Hat World Tour Tokyo Stop</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00287.html">[tlug] Have you guys seen this?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00286"><strong>Date</strong></a></li>
+<li><a href="threads.html#00286"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

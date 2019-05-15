@@ -1,0 +1,222 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] iptables and port&#45;forwarding concerns -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Thu, 22 Apr 2004 13:45:11 +0200 -->
+<!--X-Message-Id: 20040422134511.5c9d8c88.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20040422001900.130cfff5.gstewart@example.com -->
+<!--X-Reference: 20040422000240.GH11018%jmglov@example.com -->
+<!--X-Derived: pgp00057.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00189.html">Date Prev</a>][<a href="msg00191.html">Date Next</a>][<a href="msg00185.html">Thread Prev</a>][<a href="msg00195.html">Thread Next</a>][<a href="maillist.html#00190">Date Index</a>][<a href="threads.html#00190">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptables and port-forwarding concerns</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 22 Apr 2004 13:45:11 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20iptables%20and%20port-forwarding%20concerns">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptables and port-forwarding concerns</strong></li>
+<li>References: &lt;<a href="msg00177.html">20040422001900.130cfff5.gstewart@example.com</a>&gt;&lt;<a href="msg00180.html">20040422000240.GH11018%jmglov@example.com</a>&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, 21 Apr 2004 20:02:40 -0400, Josh Glover &lt;tlug@example.com&gt; wrote:
+
+&gt; Heh. I have never seriously thought you an idiot. I just get my jollies by
+&gt; poking fun at you when you give me a huge opening! ;)
+
+Speaking of which...
+
+&gt; 192.168.0.0 - 192.168.1.1 in your subnet, right? Just making sure *I* am
+&gt; not making a stupid mistake! :)
+
+*SPLORF!!*
+
+It's OK now, you can pull your foot out of your mouth :)
+
+&gt; Right, don't MASQUERADE, first of all. Try this instead:
+&gt; 
+&gt; iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source &lt;IP&gt;
+
+Makes sense, but shouldn't that be &quot;-o ppp0&quot; since ppp0 is the 'net-facing
+interface?
+
+&gt; You have things backwards.
+
+Tell me about it...
+
+&gt; DNAT *must* be done pre-routing, with --from:
+&gt; 
+&gt; iptables -t nat -I PREROUTING 1 -i eth0 -p tcp -s 192.168.0.3 \
+&gt;   -d ! 192.168.0.0/23 -j DNAT --from 192.168.0.3:10000-10100
+
+This doesn't make sense. You're saying:
+
+Any TCP stuff (&quot;-p tcp&quot;) coming in through eth0 (&quot;-i eth0&quot;) from fly's IP
+(&quot;-s 192.168.0.3&quot;) and meant for the outside world (&quot;-d ! 192.168.0.0/23&quot;)
+has to have the destination IP modified (&quot;-j DNAT&quot;) so that it looks like
+it's going to ports 10000-10100 of fly (&quot;--from 192.168.0.3:10000-10100&quot;,
+shouldn't that be &quot;--to&quot; anyway rather than &quot;--from&quot;?). In effect, it's
+making TCP traffic from fly loop back on itself.
+
+Having read the excellent documentation at the NAT HOWTO link you gave here:
+
+&gt; <A  HREF="http://www.stearns.org/iptables/NAT-HOWTO.txt">http://www.stearns.org/iptables/NAT-HOWTO.txt</A>
+
+I now understand that I have to point DNAT the other way round. More like:
+
+iptables -t nat -A PREROUTING -i ppp0 -p tcp --dport 10000:10100 \
+  -j DNAT --to 192.168.0.3:10000-10100
+
+There's no need to do SNAT for packets going the other way since netfilter
+will remember how the inbound packets were mangled and will unmangle
+outbound packets symetrically going back the other way. Reminder: the tcp
+connection will be INITIATED BY THE REMOTE HOST (the Asterisk server), which
+is why those ports on the laptop need to be accessible from the 'net in the
+first place.
+
+&gt; This is not complete, but hopefully it corrects your misconceptions
+&gt; enough to get you started.
+
+It did, thanks. And the HOWTO enabled me to pick holes in your corrections
+too :)
+
+&gt; Get rid of masquerading altogether and do SNAT.
+
+Will do.
+
+I'm working on a new firewall script 'coz the old one needs updating anyway.
+
+&gt; &gt;    or is the IP routing in the Linux kernel (2.4.25) smarter than that?
+&gt; 
+&gt; Bugger if I know. :)
+
+It doesn't have to be smarter than that in fact. If the Asterisk server
+can't contact me on port 10000 it'll try on 10001 etc. ad nauseum ad
+run-out-of-portsium.
+
+&gt; &gt;    should I be looking at full NAT instead in the first place?
+&gt; 
+&gt; Quoth the iptables(8) man page:
+
+Yes, I saw that, but wondered if it mattered that much anyway given that IP
+masquerading worked fine - you know, if it ain't broke don't fix it.
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.5)
+--------------------------------------------------------------
+Why do people pay to go up tall buildings and then put money in
+binoculars to look down at things on the ground?
+</pre>
+<p><strong>Attachment:
+<a href="pgp00057.pgp" ><tt>pgp00057.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00195" href="msg00195.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00177" href="msg00177.html">[tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00180" href="msg00180.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00189.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00191.html">Re: [tlug] EBView Works Great / Random House UB?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00185.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00195.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00190"><strong>Date</strong></a></li>
+<li><a href="threads.html#00190"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

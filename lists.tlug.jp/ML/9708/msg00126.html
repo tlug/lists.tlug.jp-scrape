@@ -1,0 +1,283 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Java and Japanese -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date:  Wed, 27 Aug 1997 13:07:59 GMT -->
+<!--X-Message-Id: Pine.HPP.3.95.970827215145.8858A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00125.html">Date Prev</A>][<A HREF="msg00127.html">Date Next</A>][<A HREF="msg00125.html">Thread Prev</A>][<A HREF="msg00132.html">Thread Next</A>][<A HREF="maillist.html#00126">Date Index</A>][<A HREF="threads.html#00126">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Java and Japanese</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Java and Japanese</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 27 Aug 1997 22:07:39 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 8bit</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=iso-2022-jp</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Craig Oda &lt;craig@example.com&gt;
+--------------------------------------------------------
+Hi,
+thanks to Tsurui-san from Toshiba CAE Systems, I tested out 
+getBytes("8859_1") and now have a working servlet that mails
+me the contents of a Japanese HTML form and writes to a file
+in JIS, ShiftJIS, and EUC.  The code is purely for testing.  I'm
+posting it because I'm excited about the getBytes("EUC"),
+getBytes("SJIS"), and getBytes("JIS"), think it's mondo cool.
+
+I also have about 25 pages of Japanese mailing list archives dealing
+with Java, Japanese and SQL databases that I may edit and
+put on my home page one day.  Evidently, the database JDBC 
+driver people had the same problem with Strings that I had
+with the servlet.  Fascinating stuff.  
+
+I'm about to watch my Japanese drama, so I'll post my test
+here for the benefit of others.  I'll probably have a couple
+of clean objects in a couple of days that can be used to
+handle generic Japanese forms, so let me know if anyone
+wants it.  Though, the weekend is coming up and I've been 
+wanting to go outside.   
+
+I'm not sure what the "8859_1" means.  Does anyone know?
+
+
+Regards,
+Craig
+
+
+
+ ------------------------- begin test code  -------------
+
+/* Test program that shows use of Strings and the new JDK 1.1 encoding
+    conversion classes.  It also uses Sun's servlet development kit 1.0.
+    I've tested input into the form with EUC encoding under Linux and
+    ShiftJIS under Apple Macintosh Kanji Talk.  
+
+This is the HTML test form.
+
+ &lt;h1&gt;Servlet Test&lt;/h1&gt;
+ &lt;FORM METHOD=POST 
+ ACTION= "<A HREF="http://cow.farm.twics.com/village-bin/servlet.sh/test2">http://cow.farm.twics.com/village-bin/servlet.sh/test2</A>"&gt;
+ Ì¾Á°: &lt;INPUT TYPE="TEXT" NAME="name" SIZE=20&gt;&lt;BR&gt;
+ &lt;INPUT TYPE="submit" NAME="request" VALUE="Send"&gt;
+ &lt;/FORM&gt;
+
+    */
+
+import java.io.*;
+import java.util.*;
+import java.net.*;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+
+public
+class test2 extends HttpServlet {
+
+    public void doPost(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException
+    {
+	res.setContentType("text/html");
+
+	// get name_ from HTTP apache server.  This is taken from
+	// the HTML form
+	String name_ = req.getParameter("name");
+
+	// the String should be a unicode encoded string
+	String uniString;
+	// sends the output stream back to the HTTP server to send
+	// to the browser
+	ServletOutputStream out = res.getOutputStream();
+
+	try {
+	  uniString = new String(name_.getBytes("8859_1"),"EUCJIS");
+	  byte[] eucByteArray = uniString.getBytes("EUCJIS");
+	  byte[] sjisByteArray = uniString.getBytes("SJIS");
+	  byte[] jisByteArray = uniString.getBytes("JIS");
+
+
+	  File eucOut = new File("/tmp/name_of_person.euc");
+	  File sjisOut = new File("/tmp/name_of_person.sjis");
+	  File jisOut = new File("/tmp/name_of_person.jis");
+
+ 	  FileOutputStream writesJis = new FileOutputStream(sjisOut);
+ 	  FileOutputStream writeEuc = new FileOutputStream(eucOut);
+	  FileOutputStream writeJIS = new FileOutputStream(jisOut);
+
+
+ 	  for (int j = 0; j &lt; jisByteArray.length; j ++) {
+                   writeJIS.write(jisByteArray[j]); 
+ 	  }
+ 	  writeJIS.flush();
+ 	  writeJIS.close();
+ 	  out.println("Wrote File");
+
+        try { 
+          // open a network socket on the SMTP port
+          Socket server = new Socket("mail.twics.com", 25);     
+
+          // set up network print stream
+          PrintWriter sendmailout =
+            new PrintWriter(
+                            new BufferedWriter(
+                                             new OutputStreamWriter(
+                                                                    server.getOutputStream())), true);
+          // send mail greetings and message
+          sendmailout.println("HELO my_box.twics.com\n" 
+                               + "MAIL FROM:&lt;me@example.com&gt;\n"
+                               + "RCPT TO:&lt;you@example.com&gt;\n"
+                               + "DATA\n");
+
+          // send the body of the e-mail here
+
+         sendmailout.println("Hi, this is an automated message"
+                              + " with the results of the "
+                              + "questionaire form." );
+          
+         Date date_written = new Date();
+         sendmailout.println("This note was sent on " + date_written);
+
+ 	  for (int j = 0; j &lt; jisByteArray.length; j ++) {
+                   sendmailout.write(jisByteArray[j]); 
+ 	  }
+	  sendmailout.println("\n");
+
+         // the mail program requires a single dot on a line
+          // by itself
+          sendmailout.println(".");
+          sendmailout.println("QUIT");
+          sendmailout.close();
+        }  
+        catch ( UnknownHostException e ) { 
+          System.out.println("Can't find host."); 
+        }  
+        catch ( IOException e ) { 
+          System.out.println("Error connecting to host."); 
+        } 
+
+	  
+ 	  for (int j = 0; j &lt; sjisByteArray.length; j ++) {
+                   writesJis.write(sjisByteArray[j]); 
+ 	  }
+ 	  writesJis.flush();
+ 	  writesJis.close();
+ 	  out.println("Wrote File");
+
+	  for (int j = 0; j &lt; eucByteArray.length; j ++) {
+                  writeEuc.write(eucByteArray[j]); 
+		  out.write(eucByteArray[j]);
+	  }
+	  writeEuc.flush();
+	  writeEuc.close();
+
+
+	}
+	catch (UnsupportedEncodingException encodErr) {
+	  System.out.println(encodErr);
+	  }
+
+    }
+}
+
+
+--------------------------------------------------------
+"Knowledge is the air and light of civilization.  Transform it and you
+transform all else."
+Craig Oda 	craig@example.com	
+   TWICS - IEC Building, 1-21 Yotsuya, Shinjuku-ku, Tokyo 160 JAPAN
+Main Reception: 03-3351-5977	Fax: +81-3-3353-6096
+
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00125.html">AW: tlug: Lyx and Latex</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00127.html">Re[2]: tlug: Help! Stupid Japanese printing question.</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00125.html">AW: tlug: Lyx and Latex</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00132.html">Font Encodings - Re: tlug: Java and Japanese</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00126"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00126"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Installing LINUX -->
+<!--X-From: jwt@example.com (Jim Tittsler) -->
+<!--X-Date:  Mon, 18 Mar 1996 04:21:36 GMT -->
+<!--X-Message-Id: 22NTxUr0B4sM088yn@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199602171322.WAA00233@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00098.html">Date Prev</A>][<A HREF="msg00100.html">Date Next</A>][<A HREF="msg00133.html">Thread Prev</A>][<A HREF="msg00111.html">Thread Next</A>][<A HREF="maillist.html#00099">Date Index</A>][<A HREF="threads.html#00099">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Installing LINUX</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Installing LINUX</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:jwt@example.com">jwt@example.com</A> (Jim Tittsler)</strong></LI>
+<LI>Date: Mon, 18 Mar 1996 12:51:18 +0900</LI>
+<LI>Newsgroups: <strong><A HREF="news:list.tlug">list.tlug</A></strong></LI>
+<LI>Organization: 7J1AJH/AI8A Tokyo</LI>
+<LI>References: &lt;<A HREF="msg00093.html">199602171322.WAA00233@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;I think I also put the modem and mouse on the same COM port (COM1), though I
+&gt;have not tested either yet.
+
+All those selections do is create symbolic links in the /dev directory.
+It makes talking to /dev/modem a synonym for /dev/ttyS0 for example.
+You can fix this by using "ln -sf /dev/ttyS1 /dev/modem" if your modem
+were on COM2 for example.  (DOS COM ports start with 1, Unix ports are
+origin 0).  Actually, I don't like using the symbolic link for the
+modem, since it can make creating the "lock files" that keep only one
+task at a time from claiming the modem a bit problematic.  The one for
+the mouse is useful however.
+
+&gt;Is there a simple way to correct these mistakes, or would it be simpler to
+&gt;reformat the partition and reinstall? No Jim - don't tell me anything to do
+&gt;with recompiling my kernel.  [...]
+
+Nuts.  That would have been my first choice.  How did you know?  :-)
+A smaller kernel is better, so in the long run, you will want to do it
+eventually.  If you have the X Window System running, the new xconfig
+makes picking and choosing the elements you want for your kernel easy.
+"make xconfig" in the /usr/src/linux directory.
+
+Anyway... If you make another "boot" disk, you can copy the kernel from it
+to where you are booting from.  Slackware used to use the "minix" filesystem
+for its boot disks, but I've not tried 3.0.  If it is still minix, you
+will be able to stick in the "corrected" boot disk and do:
+  mount -t minix /dev/fd0 /mnt
+
+Now if you do an 'ls /mnt', you should see a file called vmlinuz.
+
+If you are using LOADLIN to boot from DOS:
+  1. Just copy vmlinuz to wherever you are booting from:
+     cp /mnt/vmlinuz /dosc/linux/vmlinuz (or wherever)
+  2. Restart with LOADLIN, specifying the new kernel name.
+  
+If you use LILO:
+  1. Copy the correct vmlinuz off the floppy to your root partition:
+     cp /mnt/vmlinuz /vmlinuz
+  2. Rerun lilo to get it to notice the new position of the boot image:
+     lilo
+  3. Reboot and you should have your new kernel.
+  (Purists among us would probably copy it to a new name, duplicate
+  part of /etc/lilo.conf to include a section which points to the new
+  name... allowing you to boot from either kernel... the one you know
+  partially works, and the one you hope will be better.)
+  
+You can also just make the new boot disk, and boot from floppy.  Give
+the argument root=/dev/sda7 (or wherever your root partition is located).
+
+Or, you can reinstall.
+
+(That is one nice thing about Red Hat's installation script, you can
+back up.)
+
+&gt;Configuring Adaptec at IO:334 IRQ 9 DMA priority 6
+&gt;No BIOS32 extensions present. This release still depends on it. Sorry.
+
+I think these are two separate things.  I believe the BIOS32 message
+comes from the power management stuff... which can be safely ignored.
+
+&gt;2.I installed two sets of kernel sources: 1.2.13 and 1.3.20. Do I need both?
+
+1.2.13 is the "stable" kernel.  1.3.xx are the "development" kernels that
+have new features or improved performance... but (a) changes a couple of
+times a week (I'm currently using 1.3.75) and (b) is not guaranteed to
+work in all/any of its combinations.  For just getting started, I would
+suggest "rm -rf /usr/src/linux-1.3.20" unless you have some hardware 
+that isn't supported in the 1.2.xx series.
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00093" HREF="msg00093.html">Installing LINUX</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00098.html">Re: Installing LINUX</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00100.html">Re: Installing LINUX</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00133.html">Re: Installing LINUX</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00111.html">Re: Installing LINUX</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00099"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00099"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

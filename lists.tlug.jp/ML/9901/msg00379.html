@@ -1,0 +1,201 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: More generic than Linux: X -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 25 Jan 1999 18:27:49 +0900 -->
+<!--X-Message-Id: 13996.14581.276518.561581@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19990125170028.A36113@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00378.html">Date Prev</A>][<A HREF="msg00380.html">Date Next</A>][<A HREF="msg00378.html">Thread Prev</A>][<A HREF="msg00380.html">Thread Next</A>][<A HREF="maillist.html#00379">Date Index</A>][<A HREF="threads.html#00379">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: More generic than Linux: X</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: More generic than Linux: X</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 25 Jan 1999 18:27:17 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00378.html">19990125170028.A36113@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00378.html">19990125170028.A36113@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Scott" == Scott Perlman &lt;perlman@example.com&gt; writes:
+
+    Scott&gt; How in zee world does X negotiate codesets and fonts?
+
+X11 itself doesn't.  There's zero magic in the X server.  The app or a
+toolkit is responsible for squirting out strings that are correctly
+encoded.  When you see a -*-JISX0208*-0 font requested, that means
+that X will display it correctly if and only if straight 7-bit JIS
+code (no escapes, no GR codes, please) of correct endianness is sent
+to the server.
+
+The standard toolkits (maybe it's as low as libXmu, I don't think it's
+libX11) provide X Compound Text, as does Motif.  Motif also provides a
+more complex tagged Text structure.  X Compound Text is a member of
+the ISO-2022 family and allows 8 bit codes, but the shifts are different
+from the EUC conventions.  None of the standard Japanese coding
+systems are compatible with Compound Text (although EUC &lt;-&gt; Compound
+text is trivial, just add a few appropriate escape sequences).  The
+tagged text structure is ugly and not accessible to the user; it's
+not relevant to your problem.
+
+So you must look at the application level.  Kterms (and probably
+rxvts, exterms, and cxterms) can switch encodings on the fly using a
+Ctrl-MouseButton to access menus.  Unless your LANG variable is
+Japanese (ja_JP* and possibly locally defined aliases), X?Emacs/Mule
+assumes X compound text, and your EUC and possibly Shift-JIS text will
+be mojibake.  Mule is pretty good at guessing otherwise.  Japanese
+less includes appropriate guessing magic, I believe.
+
+Try starting a kterm with `kterm -km euc &amp;', then in that kterm `cat
+$file_containing_Japanese | nkf -e'.  That should get you correct
+Japanese, regardless of your LANG setting(s).  If it doesn't, you have
+big problems (or one of the rare files that nkf can't guess).
+
+I just realized that your distinction was GUI vs CLI.  Does that mean
+that kterm (rxvt, whatever) works, but other programs don't?  Which
+ones?  Mule, Netscape, Japanized window manager, ...?  What's not OK,
+text display or GUI button labels or both?
+
+Did it suddenly stop working, or did it never work?
+
+    Scott&gt; Can anyone give me a pointer as to where this is explained?
+    Scott&gt; (Free preferred, but a good book, is also very good)
+
+OReilly Associates, Xlib Programmer's Guide (Vol 1).  Also Vol 0 (on
+the X protocol).  For X.
+
+I don't think there's much relevant content in it but FWIW (haff, kaff, 
+blush) <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/Tools/I18N/LJ-I18N.html">http://turnbull.sk.tsukuba.ac.jp/Tools/I18N/LJ-I18N.html</A> has a
+bunch of references.
+
+Unfortunately, for Japanese, you're pretty much SOL because every
+Japanese program does it a little bit differently.  The
+lang_COUNTRY.Encoding style locale specification wasn't really
+intended for the mess we've got in Japan.  There isn't much
+standardization for how to handle this stuff.
+
+If Ken Lunde's book (revised version) is on the shelves, that's the
+best bet.  (Also OReilly, I think it's called Chinese, Japanese,
+Korean, Vietnamese Info Processing, commonly referred to as
+Son-of-UJIP.)  UJIP goes into excruciating detail about Japanese
+codes, but doesn't help much with the operating environment.  I don't
+know if CJKV has more of that.
+
+Many books about Japanese environments have cookbook approaches to
+setting your various variables, that may give a hint.  None of them
+are much help on debugging if you've followed the recipe and it don't
+work, though.
+
+"Use the Source, Luke."
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00380" HREF="msg00380.html">tlug: Ken Lundes book</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00378" HREF="msg00378.html">tlug: More generic than Linux: X</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Perlman &lt;perlman@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00378.html">tlug: More generic than Linux: X</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00380.html">tlug: Ken Lundes book</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00378.html">tlug: More generic than Linux: X</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00380.html">tlug: Ken Lundes book</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00379"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00379"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

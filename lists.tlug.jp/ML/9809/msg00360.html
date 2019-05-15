@@ -1,0 +1,176 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Samba Printing from NT -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Mon, 14 Sep 1998 12:00:09 +0900 -->
+<!--X-Message-Id: 19980914115759C.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980914113533.1688B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00359.html">Date Prev</A>][<A HREF="msg00361.html">Date Next</A>][<A HREF="msg00357.html">Thread Prev</A>][<A HREF="msg00362.html">Thread Next</A>][<A HREF="maillist.html#00360">Date Index</A>][<A HREF="threads.html#00360">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Samba Printing from NT</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:rob@example.com">rob@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Samba Printing from NT</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 14 Sep 1998 11:57:59 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: Your message of "Mon, 14 Sep 1998 11:42:31 +0900 (JST)"&lt;<A HREF="msg00357.html">Pine.LNX.3.96LJ1.1b7.980914113533.1688B-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00357.html">Pine.LNX.3.96LJ1.1b7.980914113533.1688B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Rob" == Rob Bickel &lt;rob@example.com&gt; writes:
+
+    Rob&gt; I have been able to print from my NT machine to a printer
+    Rob&gt; connected to my Linux machine for the past year.  I would get
+    Rob&gt; periodic errors that said there was a problem with the
+    Rob&gt; printer.  To solve this problem I just deleted the printer
+    Rob&gt; and re-installed it again.  Recently I tried to do this
+    Rob&gt; again, but now when I try to open up the linux machine from
+    Rob&gt; NT I get the following error:
+
+    Rob&gt; Linux Machine Nameにアクセスできません。そのアカウントは、こ
+    Rob&gt; のワークステーションからのログインを許可されていません。
+
+    Rob&gt; Where do I let Samba know that I want to allow my NT machine
+    Rob&gt; to access it?  I didn't do this before and I had no problem,
+    Rob&gt; no all of a sudden there is a problem.
+
+If you are using NT4.0 SP3, then the problem is that as of SP3, NT
+encrypts passwords, whereas samba expects them as clear text by
+default. You can change samba, I believe, to use encrypted passwords,
+or you can do the following:
+
+1) Use regedt32
+
+2) From the HKEY_LOCAL_MACHINE subtree, go to the following key:
+
+	\SYSTEM\CurrentControlSet\Services\Rdr\Parameters
+
+3) Click Add Value on the Edit Menu.
+
+4) Add the following:
+
+	Value Name: EnablePlainTextPassword
+	Data  Type: REG_DWORD
+	Date: 1
+
+Click OK, Run the MS UPST ( Universal Problem Solving Tool)
+
+AKA reboot
+
+
+After the reboot, you should be fine. I forgot the URL for this, but
+you can search MS's pages for article id Q166730
+
+Hope this helps.
+
+Another thing you could try in a Cmd window is:
+
+	net use \\hostname\printer
+
+And see if it asks you for a password, it should if its the first time
+you've connected to that host, I think.
+
+Andy
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00362" HREF="msg00362.html">Re: tlug: Samba Printing from NT</A></STRONG>
+<UL><LI><EM>From:</EM> Rob Bickel &lt;rob@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00357" HREF="msg00357.html">tlug: Samba Printing from NT</A></STRONG>
+<UL><LI><EM>From:</EM> Rob Bickel &lt;rob@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00359.html">Re: tlug: Eth problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00361.html">Re: tlug: Eth problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00357.html">tlug: Samba Printing from NT</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00362.html">Re: tlug: Samba Printing from NT</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00360"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00360"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

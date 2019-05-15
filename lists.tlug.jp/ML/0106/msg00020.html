@@ -1,0 +1,167 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: DNS forward question -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Fri, 1 Jun 2001 19:51:42 +0900 -->
+<!--X-Message-Id: 20010601195142.R5613@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F183LoygXLsxpTljBOh0000b71f@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00019.html">Date Prev</A>][<A HREF="msg00021.html">Date Next</A>][<A HREF="msg00012.html">Thread Prev</A>][<A HREF="msg00011.html">Thread Next</A>][<A HREF="maillist.html#00020">Date Index</A>][<A HREF="threads.html#00020">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: DNS forward question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: DNS forward question</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 1 Jun 2001 19:51:42 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00012.html">F183LoygXLsxpTljBOh0000b71f@example.com</A>&gt;; from jean_christian@example.com on Fri, Jun 01, 2001 at 04:52:02AM -0000</LI>
+<LI>References: &lt;<A HREF="msg00012.html">F183LoygXLsxpTljBOh0000b71f@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;Dr6dFD.A.ZWF.xN3F7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.5i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Fri, Jun 01, 2001 at 04:52:02AM -0000, Jean-Christian Imbeault wrote:
+&gt; 
+&gt; &gt;and if your DNS server has access
+&gt; &gt;to the internet I'm not sure why forwarding is needed since it should
+&gt; &gt;check root servers automatically for any host it doesn't know. Why
+&gt; &gt;are you trying to use forwarders anyhow?
+&gt; 
+&gt; That's actually a good question. If I try a lookup without forwarders I get 
+&gt; this:
+&gt; 
+&gt; [root@example.com named]# nslookup www.yahoo.com
+&gt; ;; connection timed out; no servers could be reached
+&gt; 
+&gt; But my named.conf file has "." entry as follows. I guess I must have 
+&gt; something configured wrong somwhere?
+&gt; 
+&gt; zone "." IN {
+&gt;         type hint;
+&gt;         file "db.cache";
+&gt; };
+
+This should be:
+
+zone "." {
+	type hint;
+	file "db.cache";
+};
+
+Check also the contents of the file /var/named/db.cache. Does it look 
+remotely familar to the output of the dig command with no args? If not
+then perhaps you need a new one. Check also for errors popping out in
+the logs.
+
+&gt; Also, doesn't using forwarders lighten the load on my own DNS server? This 
+&gt; in that they don't have to process a whole iterative lookup but pass a 
+&gt; recursive lookup request to the forwarders?
+
+Nah, forwarders are useful in a couple of situations and yours is not
+one of them. If your DNS server can query the external root servers then
+there is just no need in such a small network. Queries will be much
+faster without it as things get cached locally.
+
+PS. I'm happy to help out, but you're getting paid for our knowledge. Try
+hitting man pages and howtos before you ask. Alot of the questions are
+simply answered there. Have a look at man resolver for your other
+question on why sometimes non fqdns are working and other times not.
+
+Tom.
+-- 
+Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00012" HREF="msg00012.html">Re: DNS forward question</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00019.html">Re: DNS is up!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00021.html">Re: DNS is up!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00012.html">Re: DNS forward question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00011.html">DNS is up!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00020"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00020"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

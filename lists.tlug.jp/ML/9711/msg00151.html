@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: gcc bug in SlackWare 3.3 -->
+<!--X-From: "J. David Beutel" <jdb@example.com> -->
+<!--X-Date: Thu, 20 Nov 1997 11:58:14 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.LNX.3.96.971121004546.208A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00150.html">Date Prev</A>][<A HREF="msg00152.html">Date Next</A>][<A HREF="msg00150.html">Thread Prev</A>][<A HREF="msg00152.html">Thread Next</A>][<A HREF="maillist.html#00151">Date Index</A>][<A HREF="threads.html#00151">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: gcc bug in SlackWare 3.3</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: gcc bug in SlackWare 3.3</strong></LI>
+<LI><strong>From</strong>: <strong>"J. David Beutel" &lt;<A HREF="mailto:jdb@example.com">jdb@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 21 Nov 1997 02:05:31 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I am a most unhappy camper.  When recompiling pine 3.96, I get:
+
+	cc: Internal compiler error: program cc1 got fatal signal 6
+
+on SlackWare 3.3 (kernel 2.0.30, gcc 2.7.2.2).  I've looked on
+dejanews for bugs in these 3 platforms, but haven't seen anything
+like this.  I want to recompile so I can try a Japanese localization.
+Can someone suggest an approach?  Has someone been able to recompile
+their pine on this platform?
+
+11011011
+
+Details follow:
+
+For pine 3.96, I started with the source from SlackWare 3.3
+(which I am running on a newly-installed laptop, kernel 2.0.30),
+with and without the patches from SlackWare, and even the pine 3.96
+source from the Japanese localization site (ftp.noc.titech.ac.jp
+/pub/tmp/aki/pine/) with and without its own patches.  So, yes,
+the problem seems to be with the compiler itself (gcc 2.7.2.2)
+or my system, which are both straight from the SlackWare 3.3 install.
+(I haven't even rebuilt my kernel.)  I get the same problem both
+before and after installing JE.  The pine that came precompiled
+with SlackWare is also 3.96, and works fine (I'm using it now),
+so there's at least one inconsistancy.  The bug occurs only and always
+when compiling mailindx.c (both with and without optimization):
+
+kamishimo root # uname -a
+Linux kamishimo 2.0.30 #3 Tue Jun 24 03:59:07 CDT 1997 i586 unknown
+
+kamishimo root # cc -v   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE   -c mailindx.c -o mailindx.o
+Reading specs from /usr/lib/gcc-lib/i486-linux/2.7.2.2/specs
+gcc version 2.7.2.2
+ /usr/lib/gcc-lib/i486-linux/2.7.2.2/cpp -lang-c -v -undef -D__GNUC__=2 -D__GNUC_MINOR__=7 -D__ELF__ -Dunix -Di386 -Dlinux -D__ELF__ -D__unix__ -D__i386__ -D__linux__ -D__unix -D__i386 -D__linux -Asystem(unix) -Asystem(posix) -Acpu(i386) -Amachine(i386) -
+
+D__i486__ -DLNX -DSYSTYPE="LNX" -DMOUSE mailindx.c /tmp/cca00345.i
+GNU CPP version 2.7.2.2 (i386 Linux/ELF)
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ /usr/local/include
+ /usr/i486-linux/include
+ /usr/lib/gcc-lib/i486-linux/2.7.2.2/include
+ /usr/include
+End of search list.
+ /usr/lib/gcc-lib/i486-linux/2.7.2.2/cc1 /tmp/cca00345.i -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -quiet -dumpbase mailindx.c -version -o /tmp/cca00345.s
+GNU C version 2.7.2.2 (i386 Linux/ELF) compiled by GNU C version 2.7.2.1.
+cc: Internal compiler error: program cc1 got fatal signal 6
+
+Signal 6 is SIGABRT, so I presume that cc found an error and then
+killed itself (not vice versa), but I would have expected a
+better error message in that case (like from an assert(), including
+the source file and line number).  The cc1 core file stack trace is:
+
+(gdb) bt
+#0  0x40077f61 in __kill ()
+#1  0x4004407d in gsignal ()
+#2  0x806e900 in free ()
+#3  0x8071503 in free ()
+#4  0x807146c in free ()
+#5  0x8073033 in free ()
+#6  0x8071aec in free ()
+#7  0x8059b91 in free ()
+#8  0x8058ad8 in free ()
+#9  0x8049fcc in free ()
+#10 0x80637a2 in free ()
+#11 0x8065cf2 in free ()
+#12 0x8048f5e in free ()
+(gdb)
+
+The mailindx.c file has 4350 lines, so I haven't tried using
+brute force to isolate the trigger.
+
+I haven't compiled many other programs on this system, but this is
+the only case I've seen.  I have had no problems compiling earlier
+versions of pine on earlier versions of Linux on other hardware.
+
+--
+J. David Beutel       "You're inhabited by the society you live in through
+11011011 jdb@example.com  your use of language." McCorduck on Turkle on Lacan
+
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00152" HREF="msg00152.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+<UL><LI><EM>From:</EM> Hajime Saitou &lt;hajime@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00154" HREF="msg00154.html">japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00156" HREF="msg00156.html">tlug: gcc bug in SlackWare 3.3</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00163" HREF="msg00163.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt-tlug@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00150.html">tlug: 100 mb hard disk plugged in to one sparc....</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00152.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00150.html">tlug: 100 mb hard disk plugged in to one sparc....</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00152.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00151"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00151"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

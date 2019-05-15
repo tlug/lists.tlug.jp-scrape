@@ -1,0 +1,190 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: tlug] Security question with grep/e... -->
+<!--X-From-R13: Xvz Perra <Xvz.PerraNvasbgrpu.zbanfu.rqh.nh> -->
+<!--X-Date: Tue, 23 Mar 2004 16:03:45 +1100 (EST) -->
+<!--X-Message-Id: 200403230503.i2N53juu011858@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00344.html">Date Prev</a>][<a href="msg00346.html">Date Next</a>][<a href="msg00340.html">Thread Prev</a>][<a href="msg00346.html">Thread Next</a>][<a href="maillist.html#00345">Date Index</a>][<a href="threads.html#00345">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: tlug] Security question with grep/e...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 23 Mar 2004 16:03:45 +1100 (EST)</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<A HREF="mailto:Jim.Breen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20tlug%5D%20Security%20question%20with%20grep%2Fe...">Jim.Breen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: tlug] Security question with grep/e...</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>"Stephen J. Turnbull" &lt;stephen@example.com&gt; wrote:
+&gt;&gt; 
+&gt;&gt; &gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+&gt;&gt; 
+&gt;&gt;     Jim&gt; [...] the CGI program would do a system() call [...]
+&gt;&gt; 
+&gt;&gt; Since you care about the host, don't do system() calls.  There are too
+&gt;&gt; many ways to break the call itself, and you then become hostage to any
+&gt;&gt; security holes that may exist in the called programs as well.
+
+Can you be more specific about the risks? As I understand it, doing a 
+system("foobar par1 par2"); just stokes up /bin/sh under my account (it's
+usually cgiwrap or equivalent) and runs foobar. No different from my running
+foobar myself. I'm not doing it with anything suid, etc. I don't have su
+rights on the host.
+
+&gt;&gt; What's wrong with using the native regexp facility of whatever you're
+&gt;&gt; using to write the CGI?  Even if it's in C or C++, the POSIX regcomp/
+&gt;&gt; regexec facility is not rocket science to use.  That's what you'd be
+&gt;&gt; using with grep, anyway, AFAIK.
+
+Two reasons:
+
+(a) laziness. It's easier to stoke up a system call than open the file and
+do it line-by-line. Actually it's *MUCH* easier than regexec()'s
+horrible call;
+
+(b) portability. I have actually found some of those libraries not
+so smoothly implemented. Since I have mirrors on Solaris, AIX, FreeBSD
+and almost all Linices, system("egrep ..."); seemed more likely to 
+work on them all. (iconv(), for example, has some problems on the AIX
+system, probably because of code-table differences.)
+
+Brett Robson &lt;b-robson@example.com&gt; wrote:
+
+&gt;&gt; OS stuff in cgi is a nightmare, 
+
+system() in C isn't exactly OS level. It's really a way of spawning
+a program and returning once it has finished.
+
+&gt;&gt; I'd prefer to use Perl's built in stuff
+&gt;&gt; do to that. If you aren't programming in Perl perhaps a Perl wrapper
+&gt;&gt; would be best.
+
+Steve's suggestion of regcom/regexec achieves the same, and avoids
+using a &lt;shudder&gt;Perl wrapper&lt;/shudder&gt;.
+
+&gt;&gt; The most obvious thing of course is to make sure the web server's
+&gt;&gt; privileges  are restricted.
+
+Of course. But I don't see how this is affecting privileges. It all runs
+in my space and with my guid, etc.
+
+&gt;&gt; ps it's bloody cold in Tokyo.
+
+Balmy here. Low 20s each day. Just that slight autumnal nip in the
+air early on.
+
+Cheers
+
+Jim
+
+-- 
+Jim Breen                                <A HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>
+Computer Science &amp; Software Engineering,                Tel: +61 3 9905 9554
+Monash University, VIC 3800, Australia                  Fax: +61 3 9905 5146
+(Monash Provider No. 00008C)                ジム・ブリーン@モナシュ大学
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00346" href="msg00346.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+<li><strong><a name="00347" href="msg00347.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00350" href="msg00350.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Tim Hurman</li></ul></li>
+<li><strong><a name="00367" href="msg00367.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Jake Morrison</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00344.html">Re: [tlug] Magazines &amp; Software</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00346.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00340.html">Re: [tlug] Security question with grep/egrep</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00346.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00345"><strong>Date</strong></a></li>
+<li><a href="threads.html#00345"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Onboard EEPro trouble, or...? -->
+<!--X-From-R13: Xbanguna Plear <ogrnzNtby.pbz> -->
+<!--X-Date: Fri, 20 Dec 2002 23:59:46 +0900 -->
+<!--X-Message-Id: 20021220145946.GC32536@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00035.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00187.html">Date Prev</a>][<a href="msg00189.html">Date Next</a>][<a href="msg00201.html">Thread Prev</a>][<a href="msg00189.html">Thread Next</a>][<a href="maillist.html#00188">Date Index</a>][<a href="threads.html#00188">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Onboard EEPro trouble, or...?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 20 Dec 2002 23:59:46 +0900</li>
+<li><strong>From</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Onboard%20EEPro%20trouble%2C%20or...%3F">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Onboard EEPro trouble, or...?</strong></li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I recently installed Linux on a system with a GigaByte
+PE667 Ultra.  Not without a couple of gotchas, though.
+One is that there was no RH 8.0 driver yet for the 
+Promise FastTrack 133 RAID, so I installed RH 7.3 and
+will have a whole lotta updatin' goin' on once I get around
+the second gotcha.
+
+That one is that while eth0 appears to come up normally and I have
+a link light, I have no connectivity.  It's onboard Ether,
+an EEPro VE.  Output snips from lspci, eepro100-diag, netstat and
+route follow.  Googling has been inconclusive.
+
+The IP addresses below have not been changed to protect the
+innocent.
+
+The symptoms:
+
+1) Output of the route command takes about 30 seconds and yields this:
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0     *               255.255.255.0   U     0      0        0 eth0
+127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+default         192.168.0.1     0.0.0.0         UG    0      0        0 eth0
+
+2) Output of netstat -nr in instant and yields this:
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+192.168.0.0     0.0.0.0         255.255.255.0   U        40 0          0 eth0
+127.0.0.0       0.0.0.0         255.0.0.0       U        40 0          0 lo
+0.0.0.0         192.168.0.1     0.0.0.0         UG       40 0          0 eth0
+
+These seem to be correct (0.1 *is* the gateway).
+
+Ping to 0.1 gives:
+
+PING 192.168.0.1 (192.168.0.1) from 192.168.0.108 : 56(84) bytes of data.
+&gt;From 192.168.0.108 icmp_seq=1 Destination Host Unreachable
+&gt;From 192.168.0.108 icmp_seq=2 Destination Host Unreachable
+&gt;From 192.168.0.108 icmp_seq=3 Destination Host Unreachable
+&gt;From 192.168.0.108 icmp_seq=4 Destination Host Unreachable
+
+Yet it is up and is pingable from other PCs, and is only on the
+other side of a hub, a switch, and a patch panel from me.
+
+ifconfig output
+----------------
+eth0      Link encap:Ethernet  HWaddr 00:20:ED:59:4E:7C  
+          inet addr:192.168.0.108  Bcast:192.168.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:168 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:160 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100 
+          RX bytes:9586 (9.3 Kb)  TX bytes:6972 (6.8 Kb)
+          Interrupt:5 Base address:0x9000 Memory:e2006000-e2006038 
+
+
+eepro100-diag with eth0 up
+--------------------------
+eepro100-diag.c:v2.05 6/13/2001 Donald Becker (becker@example.com)
+ <A  HREF="http://www.scyld.com/diag/index.html">http://www.scyld.com/diag/index.html</A>
+Assuming a Intel i82557/8/9 EtherExpressPro100 adapter at 0x9000.
+i82557 chip registers at 0x9000:
+  00000050 0f25612c 00000000 00080002 1821782d 000005f0
+  No interrupt sources are pending.
+   The transmit unit state is 'Suspended'.
+   The receive unit state is 'Ready'.
+  This status is normal for an activated but idle interface.
+
+eepro100-diag with eth0 down
+----------------------------
+eepro100-diag.c:v2.05 6/13/2001 Donald Becker (becker@example.com)
+ <A  HREF="http://www.scyld.com/diag/index.html">http://www.scyld.com/diag/index.html</A>
+Assuming a Intel i82557/8/9 EtherExpressPro100 adapter at 0x9000.
+i82557 chip registers at 0x9000:
+  01002000 10880000 00000000 00080002 1821782d 000005f0
+  Interrupt sources are pending.
+   The transmit unit state is 'Idle'.
+   The receive unit state is 'Idle'.
+  This status is unusual for an activated interface.
+ The Command register has an unprocessed command 0100(?!).
+
+
+eepro100-diag -aa output
+------------------------
+eepro100-diag.c:v2.05 6/13/2001 Donald Becker (becker@example.com)
+ <A  HREF="http://www.scyld.com/diag/index.html">http://www.scyld.com/diag/index.html</A>
+Assuming a Intel i82557/8/9 EtherExpressPro100 adapter at 0x9000.
+i82557 chip registers at 0x9000:
+  00000050 1011a12c 00000000 00080002 183f0000 000005f0
+  No interrupt sources are pending.
+   The transmit unit state is 'Suspended'.
+   The receive unit state is 'Ready'.
+  This status is normal for an activated but idle interface.
+
+eepro100-diag -ee output
+------------------------
+eepro100-diag.c:v2.05 6/13/2001 Donald Becker (becker@example.com)
+ <A  HREF="http://www.scyld.com/diag/index.html">http://www.scyld.com/diag/index.html</A>
+Assuming a Intel i82557/8/9 EtherExpressPro100 adapter at 0x9000.
+EEPROM contents, size 64x16:
+    00: 2000 59ed 7c4e 1a03 0000 0201 4701 0000
+  0x08: 0000 0000 49a2 3013 8086 0000 0000 0000
+      ...
+  0x30: 002c 0000 0000 0000 0000 0000 0000 0000
+  0x38: 0000 0000 0000 4030 0000 0000 0000 26e3
+ The EEPROM checksum is correct.
+Intel EtherExpress Pro 10/100 EEPROM contents:
+  Station address 00:20:ED:59:4E:7C.
+  Board assembly 000000-000, Physical connectors present: RJ45
+  Primary interface chip i82555 PHY #1.
+   Sleep mode is enabled.  This is not recommended.
+   Under high load the card may not respond to
+    PCI requests, and thus cause a master abort.
+
+eepro100-diag -m output
+-----------------------
+eepro100-diag.c:v2.05 6/13/2001 Donald Becker (becker@example.com)
+ <A  HREF="http://www.scyld.com/diag/index.html">http://www.scyld.com/diag/index.html</A>
+Assuming a Intel i82557/8/9 EtherExpressPro100 adapter at 0x9000.
+ MII PHY #1 transceiver registers:
+  3100 782d 02a8 0330 05e1 0021 0000 0000
+  0000 0000 0000 0000 0000 0000 0000 0000
+  2404 0000 0000 0000 0000 0000 0000 0000
+  0000 0000 0000 0000 0010 0000 0000 0000.
+
+lspci -vv output
+----------------
+02:08.0 Ethernet controller: Intel Corp.: Unknown device 103a (rev 82)
+        Subsystem: Intel Corp.: Unknown device 3013
+        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B-
+        Status: Cap+ 66Mhz- UDF- FastB2B+ ParErr- DEVSEL=medium &gt;TAbort- &lt;TAbort- &lt;MAbort- &gt;SERR- &lt;PERR-
+        Latency: 32 (2000ns min, 14000ns max), cache line size 08
+        Interrupt: pin A routed to IRQ 5
+        Region 0: Memory at e2006000 (32-bit, non-prefetchable) [size=4K]
+        Region 1: I/O ports at 9000 [size=64]
+        Capabilities: [dc] Power Management version 2
+                Flags: PMEClk- DSI+ D1+ D2+ AuxCurrent=0mA PME(D0+,D1+,D2+,D3hot+,D3cold+)
+                Status: D0 PME-Enable- DSel=0 DScale=2 PME-
+
+
+Most things on this board appear as &quot;unknown device,&quot; I suspect b/c this
+mobo is much newer than the lspci that shipped with RH 7.3.
+
+As an aside, why RH 7.3 and not 8.0 or Debian?  B/c there was a Promise
+FastTrack 133 driver available for RH 7.3 and SuSE 7.3.  Keep that in mind
+if you're looking at any boards with this RAID chip and don't have a 2.4.19
+kernel.  I understand the 20276 chip is supported in 2.4.19, but none of
+the major distros has an installer using this kernel AFAIK, so installing
+to the RAID doesn't work (in RH 8.0 it saw it as two separate IDE drives,
+but couldn't boot after the install was done; Debian and a beta of FreeBSD 5
+saw nothing; RH 7.3 with the Promise driver from Gigabyte's site (didn't
+find it on Promise's site) correctly sees the array as a single SCSI disk
+at the install (/dev/sda in this case).
+
+Why, you may wonder, didn't I just run the chip in ATA controller mode
+and use Linux software RAID?  Debian still didn't see it that way, and it
+still didn't work right in RH 8.0, so I went for 7.3 and will do some
+major updating  :-P
+
+TIA for any light you can shed on this problem,
+
+Jonathan
+
+
+-- 
+GPG key: DF12B4EF (5399 C834 3ABB C3AF 610C  5345 D5D6 E6EA DF12 B4EF)
+gpg --keyserver pgp.mit.edu --recv-keys  DF12B4EF
+Where I work, we always get a bonus - every year,
+they bend us over and bone us!
+</pre>
+<p><strong>Attachment:
+<a href="pgp00035.pgp" ><tt>pgp00035.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00189" href="msg00189.html">[tlug] Re: Onboard EEPro trouble, or...?</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+<li><strong><a name="00190" href="msg00190.html">Re: [tlug] Onboard EEPro trouble, or...?</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00187.html">[tlug] A CUP(S) full of trouble</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00189.html">[tlug] Re: Onboard EEPro trouble, or...?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00201.html">Re: [tlug] A CUP(S) full of trouble</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00189.html">[tlug] Re: Onboard EEPro trouble, or...?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00188"><strong>Date</strong></a></li>
+<li><a href="threads.html#00188"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

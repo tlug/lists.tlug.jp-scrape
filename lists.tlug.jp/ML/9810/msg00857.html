@@ -1,0 +1,208 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: kterm error message -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 21 Oct 1998 12:55:06 +0900 -->
+<!--X-Message-Id: 13869.23297.704519.930427@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.GSO.3.94.981020112606.18551A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00856.html">Date Prev</A>][<A HREF="msg00858.html">Date Next</A>][<A HREF="msg00834.html">Thread Prev</A>][<A HREF="msg00897.html">Thread Next</A>][<A HREF="maillist.html#00857">Date Index</A>][<A HREF="threads.html#00857">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: kterm error message</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: kterm error message</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 21 Oct 1998 12:54:41 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00834.html">Pine.GSO.3.94.981020112606.18551A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00834.html">Pine.GSO.3.94.981020112606.18551A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "John" == John G Baniewicz &lt;john.baniewicz@example.com&gt; writes:
+
+    John&gt; After upgrading from RH4.2 to 5.0 and now 5.1, I'm once
+    John&gt; again trying to get Japanese support working on my system.
+    John&gt; Under RH4.2, things worked fairly smoothly as far as the
+    John&gt; input, display, and printing of Japanese were concerned.  My
+    John&gt; latest attempt to get Japanese going on RH5.1 does not seem
+    John&gt; to have gotten off to a good start.
+
+You've been hosed by the decision of the XFree86 people to not enable
+support for X's locale kludge in glibc builds because glibc supports
+POSIX locales properly.  Unfortunately, Japan is one of the locales
+that isn't ready for prime time yet.
+
+IMHO glibc locale support isn't really there either, the documentation 
+of how to build locales is sparse (as of a few months ago; this may
+have changed recently but surely hasn't really shaken down yet).
+
+    John&gt; You should be aware that a kterm does indeed appear, and it
+    John&gt; can display Japanese.  (I did set up "LANG=ja_EUC" in my
+    John&gt; .bash_profile.)  Nevertheless, I am a little concerned that
+    John&gt; something isn't configured properly.  (The version of glibc
+    John&gt; that I have is glibc-2.0.7-19.)  Consequently, I have not
+    John&gt; attempted to get either canna or wnn up and running.  (I
+    John&gt; figure if there is a problem, now's a good time to nip it in
+    John&gt; the bud.)
+
+Probably everything will in fact work properly as long as LANG is
+either C or ja*.  At least if the binaries are old enough: Japanese
+hackers have spent enormous amounts of effort kludging around the lack
+of locale support (instead of assembling the necessary locale data),
+and lots of Japanese programs (including older versions of kinput2 and
+kterm) simply default to the right locale and do the work of the
+locale functions internally.
+
+    John&gt; kterm: error in loading shared libraries
+    John&gt; : undefined symbol: _Xsetlocale
+
+Translation:  "kterm: too new".
+
+    John&gt; The bottom line is I'm stuck.  I'm more than willing to try
+    John&gt; compiling XFree86 from source, if I only had a better idea
+    John&gt; of what i must do to get the job done.
+
+Brave man.  I don't know how badly hacked the i386 sources are, but
+compiling RedHat's source RPM for X11R6.3 on Sparc is one of my top
+three reasons for hating Red Hat.  I don't recommend messing with Red
+Hat sources, especially the 100MB X11 distribution, as your first
+build from source.  _Especially_ not if you want to fix something
+related to Japanese and locales: much of the ugliest code that I've
+seen in X is in the Wnn4 configure stuff---it would be _very_ easy to
+break it by changing something in the Xlib configuration.
+
+A much better place to start big is with the Linux kernel or an Emacs
+variant.  I don't really recommend gcc or egcs; they are if anything
+even more fragile and OS/hardware dependent than X11 is, although
+they're generally pretty stable and straightforward these days.
+
+    John&gt; I'd be very grateful if anyone could get back to me on how I
+    John&gt; can get things properly up and running.
+
+I haven't any complaints[1] with TurboLinux's Japanese support.  I would
+strongly recommend dishing out the yen for the 2.0J-Pro CD as the
+fastest route to a reasonably stable system.  This should get you
+compatibility with most RedHat RPMs that don't exist in TL yet, and
+you can ask Scott for help if they don't work for you; he seems to be
+more than willing to add packages on a single user's request,
+especially if it's just a matter of small tweaks in an existing source 
+RPM.
+
+If that's not appealing but you do have the bandwidth, download
+Scott's X11 .rpms and install them, and learn to use rpm -q to find
+out what the dependencies are and replace required packages with TL
+versions until the system stabilizes.
+
+Footnotes: 
+[1]  Well, I wouldn't if Scott hadn't specifically instructed me to
+     beat on the betas until I found something to complain about.  :-)
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00897" HREF="msg00897.html">Re: tlug: kterm error message</A></STRONG>
+<UL><LI><EM>From:</EM> Hernando TANAKA &lt;ktanaka@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00834" HREF="msg00834.html">tlug: kterm error message</A></STRONG>
+<UL><LI><EM>From:</EM> "John G. Baniewicz" &lt;john.baniewicz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00856.html">tlug: another sendmail problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00858.html">Re: tlug: Re: O"Reilly perl Books</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00834.html">tlug: kterm error message</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00897.html">Re: tlug: kterm error message</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00857"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00857"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

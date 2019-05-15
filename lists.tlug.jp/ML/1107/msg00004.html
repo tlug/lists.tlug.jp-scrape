@@ -1,0 +1,211 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] Git: bring in a file from another branch -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Mon, 11 Jul 2011 14:06:06 +0900 -->
+<!--X-Message-Id: 4E1A831E.2080203@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00003.html">Date Prev</a>][<a href="msg00005.html">Date Next</a>][<a href="msg00003.html">Thread Prev</a>][<a href="msg00006.html">Thread Next</a>][<a href="maillist.html#00004">Date Index</a>][<a href="threads.html#00004">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Git: bring in a file from another branch</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 11 Jul 2011 13:59:10 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Git:%20bring%20in%20a%20file%20from%20another%20branch">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Git: bring in a file from another branch</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.17) Gecko/20110424 Thunderbird/3.1.10</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Sometimes to really understand a tool you have to start using it for
+real work, and that is where I'm at with git. I'll start a different
+thread for one of my questions, which I think is more about ssh. But
+before that I'm really struggling doing things that should be simple.
+
+I've these three branches:
+   master: git clone of a github repository. (Note, an open source
+*library*, not an application.)
+
+   custom: a branch of master, with my bug fixes and new features that
+are fed back to the main project.
+
+    myapp: a branch of custom, adding application code that uses this
+library.
+
+I naturally do my development on the myapp branch. I've now changed one
+of the library files, that I want to feed back to custom. I've already
+been burnt by this nieve approach:
+
+   git checkout custom
+   git merge myapp
+
+That brings in all my application code. I'd then read I just specify the
+particular commit I want. So this time I'd been careful to use two
+different commits in myapp, one for library code, one for my application
+files.
+
+  $ git merge 160ef92
+  Updating e7a7f3f..160ef92
+  Fast-forward
+   darren_thoughts.txt                |  124 +++++++++++
+   ...
+
+Grrr... I.e. it brings in all files from &quot;myapp&quot; [1]. I've searched in
+vain for an option to say &quot;just merge this one commit&quot; or &quot;just merge
+this one file from that branch&quot;, or &quot;just merge with files that already
+exist in this branch, and don't create new files&quot;.
+
+But it must be possible? If not, how do people develop closed-source
+code, using open-source libraries, where they sometimes want to add
+features to the libraries?
+
+Just in case you don't understand what I'm trying to do, here is the way
+I'll do it if git doesn't support this style of development:
+  git checkout myapp
+  cd lib
+  cp abc{,.new}	#Preserve the file
+  git checkout custom
+  cd lib
+  mv abc.new abc
+  git commit -m &quot;...&quot; abc
+(where the ... will be the commit message I used when I added it to the
+myapp branch)
+
+
+Also, is it possible to veto a directory from being checked out in a
+certain branch? I.e. the &quot;custom&quot; branch has the &quot;lib&quot; and &quot;examples&quot;
+directories. The &quot;myapp&quot; branch has its own &quot;myapp&quot; directory. I want to
+say, under no circumstances, ever [2], should code from the &quot;myapp&quot;
+directory end up in the &quot;custom&quot; or &quot;master&quot; branches.
+
+Thanks in advance,
+
+Darren
+
+
+
+[1]: By the way, to undo the mess the usually all-powerful:
+   git reset --hard
+is not enough. You have to specify the commit you had before. Luckily
+the above merge message gives it. I.e.
+   git reset --hard e7a7f3f
+
+
+[2]: No, really, I mean it :-) The first time this happened to me, git
+checkout had brought in the settings file from myapp without my
+noticing, and my *passwords* had been pushed to my fork repository on
+github. I didn't notice until browsing the files using the github web
+interface! I quickly deleted the whole repository on github and started
+over fresh :-(.
+
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00006" href="msg00006.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00007" href="msg00007.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00009" href="msg00009.html">[tlug]  Git: bring in a file from another branch</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00003.html">[tlug] [OT] Google+ invites</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00005.html">[tlug] git: push from behind the firewall</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00003.html">[tlug] [OT] Google+ invites</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00006.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00004"><strong>Date</strong></a></li>
+<li><a href="threads.html#00004"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

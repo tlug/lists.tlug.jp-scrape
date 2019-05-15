@@ -1,0 +1,307 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Compuserve and PPP -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Wed, 3 Jun 1998 06:08:15 +0900 -->
+<!--X-Message-Id: 199806021803.SAA00245@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.980602011255.372A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00087.html">Date Prev</A>][<A HREF="msg00088.html">Date Next</A>][<A HREF="msg00039.html">Thread Prev</A>][<A HREF="msg00236.html">Thread Next</A>][<A HREF="maillist.html#00086">Date Index</A>][<A HREF="threads.html#00086">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Compuserve and PPP</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Compuserve and PPP</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 2 Jun 1998 18:03:12 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00039.html">Pine.LNX.3.96.980602011255.372A-100000@example.com</A>&gt; from "Gaspar Sinai" at Jun 2, 98 01:28:46 am</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; My provider gives me an access point that I could use while I am
+&gt; abroad. There are some catches. Now I could set it up so that
+If you are talking about Compuserve, quite a few.....
+&gt; it works, but it seems to work only with Windows95 which is totally
+You probably talk about that proprietary stuff Compuserve provides...
+&gt; useless for me, because all my mail stuff is on the Linux partition
+&gt; of a dual-boot laptop. 
+&gt; I would be glad if somebody with compuserve experience could help me. I
+No problem. I'll teach you the ropes in the following.....
+&gt; Compuserve allience I am thinking of attaching a serial port analyzer, if
+No problem. Just come along and grab my HP1640A.....
+&gt; What I have learnt so far is that:
+&gt; o the access point is Compuserve
+&gt; o When you connect it is 7-bit mode.
+&gt; o People with compuserve accounts here converse the following way:
+&gt; CONNECT 
+&gt; &lt;garbage&gt;: +                           this swithes from 7 to 8 bit mode
+&gt; Host Name:  CIS
+&gt; Login ID: 12345,213/GO:PPPCONNECT      This tells them what we are up to
+&gt;                                        but it wont work for me. It says
+&gt;                                        'invalid login' . Yeah, my login
+&gt;                                        is not a number.....
+&gt; Password: &lt;passw&gt;
+&gt; start pppd here.
+&gt; 
+&gt; So this works for Compuserve users in Linux, but it wont work for me. 
+&gt; My Id is not a number. But in windows it works. How can I get what windows
+&gt; does without a serial analyzer? 
+It works with Linux, too. Except if you are in Japan. In Japan
+for some political reasons they only provide full services if
+you don't use their direct access point, but only if you come
+via the "FENICS" network or if you are a subscriber with NIFTY -
+in which case you can use their access points.
+
+Compuserve provides a listing of access point phone numbers
+somewhere (I actually forgot where - browse around). Here is
+already catc #1: the fast majority of fast access points given
+there are actually NIFTY access points - if you aren't a
+subscriber, you can't use them. All the low speed access points
+( 2400 bit/s !!!!! - welcome to the stone age ! ) are FENICS.
+FENICS has high speed access points as well, but the trick is to
+get information about their phone numbers. Despite weeks of
+arguments Compuserve customer service was only able to provide
+me with dial in numbers in Osaka and Tokyo. I later found out
+that it isn't the fault of Compuserve, but that of FENICS - I
+found their homepage and an email address and I asked them for a
+list, but they didn't even bother to reply. Apparently they
+don't bother to talk to somebody as lowly as me - or Compuserve.
+
+In the following I provide the login script I use for Minicom in
+Japan.
+
+sleep 4
+send "@example.com"
+expect {
+  "HOST NAME"
+  }
+sleep 1
+send "C CIS"
+expect {
+  "User ID:"
+  }
+send "$(LOGIN)"
+expect {
+  "Password:"
+  }
+send "$(PASS)"
+
+After you got a connection, you first wait 4 seconds. This is
+important, because the network isn't exactly very fast. Then you
+send the string @example.com ( terminated with CRLF as usual - in the
+script this is done by default ). Then you wait for the string
+HOST NAME. Then wait a second. Then you send a C CIS ( means
+"connect Compuserve", of course ). Then you wait for Compuserve
+to come back with the well known "User ID" prompt. You then send
+a &lt;your-CIS-ID&gt;/GO:PPPCONNECT, wait for the "Password" prompt
+and send your password. After that you quit Minicom with the
+infamous CTRL-A Q and launch your pppd ( see section "terminal
+authentication" in PPP for dummies which I posted lately ).
+
+Strictly speaking, that @example.com stuff is only required for the slow
+access points, for the fast one you can just leave it away. On
+the other hand, it doesn't do any harm with the fast ones -
+except that it generates a "Unknown command" response - then
+everything proceeds normally.
+
+It should be understood that such a connection is VERY FLAKY
+!!!! If you keep being kicked out all the time, decrease the
+speed with which you talk to your modem. I found out that 9600
+bit/s provide a halfways albeit very slow connection. I tried to
+track down where the problems come from and did a ping to my
+provider at home. I got any amount of duplicated packets, often
+quite far ( in time ) apart. Well, that explains it: if the DUP
+falls within the next receive window of TCP/IP it's gonna mess
+up things there with an ensuing death of pppd.....
+
+This DUP stuff is a most alarming fact: it is downright
+pathological and normally unheard of in any decent network 
+( I am certainly not a newbie in networking, but I have NEVER
+seen it in such an amount anywhere else ).
+
+Again, I strongly suspect that FENICS is to blame because I've
+never seen such things happen with Compuserve outside Japan
+(althogh I am not very happy with their networking....).
+
+Important catch: outside Japan you have to use terminal settings
+of "7E1" to log into Compuserve. DON'T DO THAT OVER FENICS!!!!
+ALWAYS USE SETTINGS OF "8N1" !!!!! If you fail to do so, you get
+nowhere.....I learned this the hard way by wasting an hour and
+quite a couple of Yens inside a hot telephone booth playing with
+the parameters under Minicom.....
+
+Here are some decent dial in points into FENICS:
+
+Tokyo: 57105300
+Osaka: 9443620
+Okayama: 0862214956
+Fukui: 675900
+
+The one Compuserve lists for Niigata ( with 14400 bits/s ) is OK.
+Don't be astonished if accessing from Japan makes your
+Compuserve bill go through the ceiling: FENICS is expensive.
+
+This should be enough to get you into Compuserve in Japan....
+
+Now about Compuserve outside Japan.
+
+My script to connect to Compuserve outside Japan is as follows:
+
+send "\r"
+expect {
+   "Host Name:"
+   }
+send "CIS"
+expect {
+   "User ID:"
+   }
+send "$(LOGIN)/GO:PPPCONNECT"
+expect {
+   "Password:"
+   }
+send "$(PASS)"
+
+It is much like the previous one, Just with the FENICS stuff
+left out. And here is that important SUPER CATCH:
+
+Outside Japan you always log into Compuserve using a terminal
+setting of "7E1". You have that until PPP starts. PPP can only
+work with an 8bit clean connection. So inside Minicom you have
+to stick to it, but when you leave it and start up pppd locally,
+it talks to Compuserve's pppd with 8N1 !!!! This is in stark
+contrast to what I said in "PPP for dummies". If you don't know
+it, you're hosed.....
+
+Another catch: With a normal provider, if you kill your local
+pppd, the modem connection is terminated. This doesn't work with
+Compuserve. You have to power cycle your modem.
+
+With a PCMCIA modem this is easy: you just stop the PCMCIA
+services which ensues in turning off the power to your modem
+card. Without power, the modem is unable to hold the connection,
+of course. A bit brutal, but works well.
+
+I'd generally dissuade to start PCMCIA during bootup: PCMCIA
+devices tend to be power hungry ( particularly modems ) and with
+no cardmgr running, they are powered down. I just start cardmgr
+by hand when needed. This way I can leave my modem plugged in
+without bothering about the power drain.
+
+Alternatives to Compuserve: talk with your provider and ask them
+whether they are members of one of the global reach alliances
+like GRIC or IPASS. If so, have them instruct you how to log
+into another provider close to your respective location
+belonging to the same alliance. You then can login just into
+another provider closeby and he authenticates you via your home
+provider and bills him for the services provided to you. Your
+provider in turn bills you for that. Twics, for example is a
+member of GRIC.
+
+Hope that gets you started.
+
+                            Karl-Max Wagner
+                            karlmax@example.com
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+After June 13, the next meeting is 8 August at Tokyo Station
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00236" HREF="msg00236.html">Re: tlug: Compuserve and PPP</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">PPP Problems (Re: tlug: PPP for Dummies :-)</A></STRONG>
+<UL><LI><EM>From:</EM> Gaspar Sinai &lt;gsinai@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00087.html">Re: tlug: Linux telecom nexus</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00088.html">Re: tlug: Tokyo internet providers --&gt; any suggestions ???</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00039.html">PPP Problems (Re: tlug: PPP for Dummies :-)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00236.html">Re: tlug: Compuserve and PPP</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00086"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00086"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

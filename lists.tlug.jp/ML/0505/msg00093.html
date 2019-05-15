@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] attack via ssh? (don't panic :&#45;P) -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 13 May 2005 19:06:09 +0900 -->
+<!--X-Message-Id: 87is1nl9ta.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00092.html">Date Prev</a>][<a href="msg00094.html">Date Next</a>][<a href="msg00090.html">Thread Prev</a>][<a href="msg00095.html">Thread Next</a>][<a href="maillist.html#00093">Date Index</a>][<a href="threads.html#00093">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] attack via ssh? (don't panic :-P)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 13 May 2005 19:06:09 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20attack%20via%20ssh%3F%20%28don%27t%20panic%20%3A-P%29">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] attack via ssh? (don't panic :-P)</strong></li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (cilantro, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I just noticed a godzillion of these in the logs on a recently installed
+but as yet unused box (took a while to find the ipf pages on NetBSD
+;-):
+
+sshd[15304]: Illegal user stephanie from 217.13.10.212
+sshd[15304]: error: Could not get shadow information for NOUSER
+sshd[15304]: Failed password for illegal user stephanie from 217.13.10.212 port 49443 ssh2
+sshd[15306]: Failed password for root from 217.13.10.212 port 49547 ssh2
+
+(about 700 lines worth for the most persistent mofo).  So I checked
+the logs on my Linux boxen, and the same jerks are hammering on those
+doors too (except there I send them an ICMP port-not-available by
+return mail, so there's no attempt to log in permitted, I'm just
+seeing logs of SYN packets).
+
+Anybody know what's going on here?  I guess it's just a &quot;transitive
+trust&quot; attack using passwords from cracked boxes?  What's worrysome is
+that it's a different source address every time, and I'm getting hit
+every day, sometimes four or five times; I gotta wonder if they're
+actually successfully cracking that many boxes.
+
+Ah ... BTW, if you're using iptables (kernels 2.4 and up), here's a
+recipe to log and reject these suckers:
+
+iptables -A INPUT -p tcp --syn --dport 22 -j LOG    -s x.y.z.w/#bits -d a.b.c.d
+iptables -A INPUT -p tcp       --dport 22 -j ACCEPT -s x.y.z.w/#bits -d a.b.c.d
+iptables -A INPUT -p tcp       --dport 22 -j LOG
+iptables -A INPUT -p tcp       --dport 22 -j REJECT
+
+where a.b.c.d is the address of the host you're protecting, x.y.z.w is
+the address of a network you want to permit (eg, your ADSL ISP if
+a.b.c.d is at work), and #bits is the number of high bits in the
+network address that are significant (eg, a class C net would be /24,
+such as 192.168.1.0/24).  N.B.  If you're currently logged in over the
+net when you do this, make sure you wire the ACCEPT _before_ the
+REJECT, or you'll get cut off.  Also, the --syn in the LOG rule
+limits logs to attempts to establish a connection, so you won't get
+every packet you SCP logged.  :-)  You can repeat the first two rules
+with different networks if your ISP has a bunch.
+
+Note that there's no guarantee somebody in your ISP's range(s) won't
+get owned, but that's somewhat less likely than somebody somewhere on
+the Internet getting owned!
+
+On my box, the logged packets go to syslog; YMMV.
+
+Also, it may be a good idea to disable password logins via ssh on
+net-facing boxen.  In sshd2_config
+
+	AllowedAuthentications		publickey
+
+(ie, passwd is NOT in allowed authentications).
+
+I would say that (unless you've got remarkably popular password for
+one of the account names in the list) there's not much to worry about,
+but ssh auth failures do fill up the logs in an annoying fashion....
+
+-- 
+School of Systems and Information Engineering <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00095" href="msg00095.html">Re: [tlug] attack via ssh? (don't panic :-P)</a></strong>
+<ul><li><em>From:</em> Michael Reinsch</li></ul></li>
+<li><strong><a name="00104" href="msg00104.html">Re: [tlug] attack via ssh? (don't panic :-P)</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00092.html">Re: [tlug] [ANN] Warning TLUG meeting for 2005-05-14 moved to 2005-05-21</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00094.html">[tlug] Proposal for linux end users to get namespaces. aka Namespaces not only for the root user anymore.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00090.html">Re: [tlug] music and audio tools</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00095.html">Re: [tlug] attack via ssh? (don't panic :-P)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00093"><strong>Date</strong></a></li>
+<li><a href="threads.html#00093"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

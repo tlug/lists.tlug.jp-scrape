@@ -1,0 +1,205 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: UTF&#45;8 Terminal Emulators? -->
+<!--X-From-R13: [vxr Tnovna <zsnovnaNfhfr.qr> -->
+<!--X-Date: Wed, 17 Apr 2002 02:33:34 +0900 (JST) -->
+<!--X-Message-Id: s3tpu0zmttx.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020415225535.0f13291e.ryan.shaw@example.com -->
+<!--X-Reference: s3tk7r9yrkc.fsf@example.com -->
+<!--X-Reference: 20020416090025.6190b516.ryan.shaw@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00297.html">Date Prev</a>][<a href="msg00299.html">Date Next</a>][<a href="msg00274.html">Thread Prev</a>][<a href="msg00338.html">Thread Next</a>][<a href="maillist.html#00298">Date Index</a>][<a href="threads.html#00298">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: UTF-8 Terminal Emulators?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>Ryan Shaw &lt;<A HREF="mailto:ryan.shaw@DOMAIN.HIDDEN">ryan.shaw@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: UTF-8 Terminal Emulators?</strong></li>
+<li><strong>From</strong>: <strong>Mike Fabian &lt;<A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 16 Apr 2002 19:33:46 +0200</li>
+<li>Cc: <A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></li>
+<li>Content-type: text/plain; charset=iso-2022-jp</li>
+<li>In-reply-to: &lt;<a href="msg00265.html">20020416090025.6190b516.ryan.shaw@example.com</a>&gt; (RyanShaw's message of &quot;Tue, 16 Apr 2002 09:00:25 +0900&quot;)</li>
+<li>References: &lt;<a href="msg00263.html">20020415225535.0f13291e.ryan.shaw@example.com</a>&gt;&lt;<a href="msg00264.html">s3tk7r9yrkc.fsf@example.com</a>&gt;&lt;<a href="msg00265.html">20020416090025.6190b516.ryan.shaw@example.com</a>&gt;</li>
+<li>Reply-to: <A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A></li>
+<li>Sender: <A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A></li>
+<li>User-agent: Gnus/5.090004 (Oort Gnus v0.04) XEmacs/21.4 (ArtificialIntelligence, i386-suse-linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Ryan Shaw &lt;ryan.shaw@example.com&gt; writes:
+
+&gt; Mike Fabian wrote:
+&gt;
+&gt;&gt; Ryan Shaw &lt;ryan.shaw@example.com&gt; writes:
+&gt;&gt; 
+&gt;&gt; &gt; I've tried using "xterm -u8" but I get empty boxes when I try to
+&gt;&gt; &gt; print UTF-8 strings.
+&gt;&gt; 
+&gt;&gt; You need to specify suitable fonts. Which fonts are suitable depends
+&gt;&gt; on what parts of Unicode you want to display.
+&gt;
+&gt; I see. That explains it.
+&gt;
+&gt;&gt; LC_CTYPE=en_US.UTF-8 works just as well if you only want to display
+&gt;&gt; Japanese but don't need to input it.
+&gt;
+&gt; Well, I usually have my LC_CTYPE set to ja_JP.EUC-JP because usually
+&gt; when I work with Japanese, I work in EUC.
+
+But that won't work well in an UTF-8 terminal emulator.
+
+If you do this for example
+
+    LANG=ja_JP.UTF-8 LC_CTYPE=ja_JP.eucJP xterm -u8 -fn -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1 -fw -misc-fixed-medium-r-normal-ja-18-120-100-100-c-180-iso10646-1
+
+you have the following locale settings in your UTF-8 xterm:
+
+    mfabian@example.com:~$ locale
+    LANG=ja_JP.UTF-8
+    LC_CTYPE=ja_JP.eucJP
+    LC_NUMERIC="ja_JP.UTF-8"
+    LC_TIME="ja_JP.UTF-8"
+    LC_COLLATE=POSIX
+    LC_MONETARY="ja_JP.UTF-8"
+    LC_MESSAGES="ja_JP.UTF-8"
+    LC_PAPER="ja_JP.UTF-8"
+    LC_NAME="ja_JP.UTF-8"
+    LC_ADDRESS="ja_JP.UTF-8"
+    LC_TELEPHONE="ja_JP.UTF-8"
+    LC_MEASUREMENT="ja_JP.UTF-8"
+    LC_IDENTIFICATION="ja_JP.UTF-8"
+    LC_ALL=
+    mfabian@example.com:~$ 
+
+Now 'cat some-utf-8-encoded-file' will work correctly.  But 'less
+some-utf-8-encoded-file' won't work correctly by default.  less checks
+LC_CTYPE for the default charset, and because this is different from
+the real capabilities of the terminal, you will see mojibake.
+
+    LESSCHARSET=utf-8 less test-texts/yuki.utf-8
+
+works, but setting LC_CTYPE wrong destroys the automatic detection.
+All programs writing messages to stdout/stderr using gettext will
+display mojibake as well for example
+
+    mfabian@example.com:~$ ls non-existant-file
+    ls: non-existant-file: [... mojibake ...]
+
+because they assume that the terminal handles euc-jp if LC_CTYPE is
+set like that. But it doesn't do that if you force UTF-8 with the '-u8'
+option.
+
+&gt; Fortunately, when I tried the -fn and -fw options as you recommended
+&gt; with the -u8 option, I was able to view Japanese UTF-8 strings without 
+&gt; having to change my LC_CTYPE.
+
+Without the '-u8' option, xterm will use UTF-8 mode in UTF-8 locales
+and will not use UTF-8 mode in other locales. '-u8' forces UTF-8 mode
+even in locales which don't use UTF-8 like ja_JP.eucJP.
+
+But why would you want to do that? It just gives you a lot of mojibake
+in the terminal.
+
+The intention of the '-u8' option is to be able to use xterm in UTF-8
+mode even on systems which don't have UTF-8 locales. On systems which
+do support UTF-8 locales, the '-u8' option is deprecated and one
+should set LC_CTYPE correctly instead.
+
+See also:
+
+    <A HREF="http://mail.nl.linux.org/linux-utf8/2001-05/msg00063.html">http://mail.nl.linux.org/linux-utf8/2001-05/msg00063.html</A>
+
+-- 
+Mike Fabian   &lt;mfabian@example.com&gt;   <A HREF="http://www.suse.de/~mfabian">http://www.suse.de/~mfabian</A>
+睡眠不足はいい仕事の敵だ。
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00263" href="msg00263.html">[tlug] UTF-8 Terminal Emulators?</a></strong>
+<ul><li><em>From:</em> Ryan Shaw</li></ul></li>
+<li><strong><a name="00264" href="msg00264.html">[tlug] Re: UTF-8 Terminal Emulators?</a></strong>
+<ul><li><em>From:</em> Mike Fabian</li></ul></li>
+<li><strong><a name="00265" href="msg00265.html">[tlug] Re: UTF-8 Terminal Emulators?</a></strong>
+<ul><li><em>From:</em> Ryan Shaw</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00297.html">Re: [tlug] Nomikai Attendance List</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00299.html">Re: [tlug] Re: UTF-8 Terminal Emulators?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00274.html">Re: [tlug] Re: UTF-8 Terminal Emulators?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00338.html">[tlug] Re: UTF-8 Terminal Emulators?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00298"><strong>Date</strong></a></li>
+<li><a href="threads.html#00298"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

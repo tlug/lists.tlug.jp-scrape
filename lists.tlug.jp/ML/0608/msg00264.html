@@ -1,0 +1,176 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] [OT] Creating user&#45;friendly URLS with mod_rewrite/Apache -->
+<!--X-From-R13: "ebznaf znyvabifxvf" <ebznavafuNtznvy.pbz> -->
+<!--X-Date: Fri, 18 Aug 2006 17:46:52 +0900 -->
+<!--X-Message-Id: 931e6e80608180146s391d58e4k1680e0ad9baa5e3@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 44E53F8A.90605@example.com -->
+<!--X-Reference: 20060818.145626.239386559.dave@?om -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00263.html">Date Prev</a>][<a href="msg00265.html">Date Next</a>][<a href="msg00310.html">Thread Prev</a>][<a href="msg00260.html">Thread Next</a>][<a href="maillist.html#00264">Date Index</a>][<a href="threads.html#00264">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [OT] Creating user-friendly URLS with mod_rewrite/Apache</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 Aug 2006 11:46:49 +0300</li>
+<li><strong>From</strong>: <strong>&quot;romans malinovskis&quot; &lt;<a href="mailto:romaninsh@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BOT%5D%20Creating%20user-friendly%20URLS%20with%20mod_rewrite%2FApache">romaninsh@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [OT] Creating user-friendly URLS with mod_rewrite/Apache</strong></li>
+<li>References: &lt;<a href="mailto:44E53F8A.90605@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BOT%5D%20Creating%20user-friendly%20URLS%20with%20mod_rewrite%2FApache">44E53F8A.90605@example.com</a>&gt;	&lt;<a href="mailto:20060818.145626.239386559.dave@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BOT%5D%20Creating%20user-friendly%20URLS%20with%20mod_rewrite%2FApache">20060818.145626.239386559.dave@???</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+&gt; So what I really want is for Apache and PHP to play nice together so
+&gt; that it will take pretty much anything after the &quot;.com&quot;, in the above
+&gt; example where it says &quot;kevin_cooney&quot;, and pass that to index.php to be
+&gt; used for looking up data in the database and passing the right information.
+&gt;
+&gt; But wait, there's another issue here. On my &quot;tokyocomedy.com&quot; web site,
+&gt; there is an actual subdirectory called &quot;japanese&quot;, which is all about
+&gt; the Japanese side of the comedy group, and all the HTML in there is
+&gt; maintained by a different dude than me. So I'd want to make sure that
+&gt; certain exceptions will go to the right directory.
+&gt; The tricky part seems to be getting Apache to work without at least some
+&gt; kind of &quot;category&quot; directory. After all, without that, what would I
+&gt; specify in &quot;.htaccess&quot; in order to tell Apache where to take the link?
+
+Most of the popular CMSs use something like the following snippet in an
+.htaccess file (or right in the apache config). What it does is essentially say,
+
+If the requested URI matches a real file or directory, proceed as normal.  If
+not, call index.php (or whatever you set it to) which then needs to take care of
+the request one way or the other (for example send 404 if it's a missing image
+file)
+
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php
+</pre></blockquote><pre style="margin: 0em;">
+
+I would use the following, which is straightforward:
+RewriteEngine on
+RewriteRule     ^(main.php.*)$           $1                  [L]
+RewriteRule     ^([^\./]*(&amp;.*)?)$        main.php?page=$1    [L]
+
+put var_dump() into main.php to see what is actually passed and
+experement with additional variables.
+
+Url looks like this:
+
+<a  rel="nofollow" href="http://example.com/SomePage">http://example.com/SomePage</a>
+
+adding .html at the end wouldn't make much change i think, just keep
+links simple. Also if you are writing CMS or News site I would suggest
+URLs in the following form:
+
+<a  rel="nofollow" href="http://example.com/283-Article_about_very_nice_linux_mailinglist.html">http://example.com/283-Article_about_very_nice_linux_mailinglist.html</a>
+
+Search for mod_rewrite samples to get more ideas and just try one after another.
+
+romans
+<a  rel="nofollow" href="http://grr.void.lv/cv">http://grr.void.lv/cv</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00254" href="msg00254.html">[tlug] [OT] Creating user-friendly URLS with mod_rewrite/Apache</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00258" href="msg00258.html">Re: [tlug] [OT] Creating user-friendly URLS with mod_rewrite/Apache</a></strong>
+<ul><li><em>From:</em> David E</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00263.html">Re: [tlug] Hosting site suggestions</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00265.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00310.html">Re: [tlug] [OT] Creating user-friendly URLS with mod_rewrite/Apache [SOLVED]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00260.html">[tlug] Hosting site suggestions</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00264"><strong>Date</strong></a></li>
+<li><a href="threads.html#00264"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

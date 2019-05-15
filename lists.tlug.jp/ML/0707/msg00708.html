@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Tip of the Day: "ghosting" a machine with nc and dd -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNtznvy.pbz> -->
+<!--X-Date: Tue, 17 Jul 2007 15:34:22 +0900 -->
+<!--X-Message-Id: d8fcc0800707162334w4c694ba2yd2b9b296e7964f94@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00707.html">Date Prev</a>][<a href="msg00709.html">Date Next</a>][<a href="msg00842.html">Thread Prev</a>][<a href="msg00709.html">Thread Next</a>][<a href="maillist.html#00708">Date Index</a>][<a href="threads.html#00708">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Jul 2007 15:34:20 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Tip%20of%20the%20Day:%20%22ghosting%22%20a%20machine%20with%20nc%20and%20dd">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">You can also find this TotD on the wiki:</pre><br>
+<pre style="margin: 0em;"><a  href="http://www.tlug.jp/wiki/Linux_Help:Tip_of_the_Day:Cloning_a_machine_with_nc_and_dd">http://www.tlug.jp/wiki/Linux_Help:Tip_of_the_Day:Cloning_a_machine_with_nc_and_dd</a></pre><br>
+<pre style="margin: 0em;">If you have two more-or-less similar machines (meaning mainly that the
+target machine has a hard drive at least as large as the source; the
+kernel seems to cope with most other differences as &quot;trivial&quot;,
+assuming you have a pretty modular one like most distros give you
+these days, ya damn kids![1]) and you want to clone one:</pre><br>
+<pre style="margin: 0em;">1. Plug both machines into a fast hub, or use a crossover cable[2] to
+connect them directly
+2. Boot up both machines from a LiveCD like Gentoo[3] or KNOPPIX[4]
+3. Bring up networking on both machines. I would advise giving them
+both private addresses, say 192.168.1.1 for the source and
+192.168.1.254 for the target (and thus that is how my examples will
+work)
+4. Determine the device name of the hard drive on each machine. If you
+have an IDE (Wikipedia) drive, your device will almost certainly be
+/dev/hda, and if you have a SCSI (Wikipedia) (or SATA (Wikipedia)? can
+someone confirm this) drive, it will be /dev/sda. To verify this, run:</pre><br>
+<pre style="margin: 0em;">sudo fdisk /dev/hda</pre><br>
+<pre style="margin: 0em;">or</pre><br>
+<pre style="margin: 0em;">sudo fdisk /dev/sda</pre><br>
+<pre style="margin: 0em;">If you have the right drive, the output should look something like this:</pre><br>
+<pre style="margin: 0em;">Disk /dev/hda: 60.0 GB, 60011642880 bytes
+255 heads, 63 sectors/track, 7296 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes</pre><br>
+<pre style="margin: 0em;">  Device Boot    Start       End    Blocks   Id  System
+/dev/hda1   *         1        13    104391   83  Linux
+/dev/hda2            14      7042  56460442+  83  Linux
+/dev/hda3          7043      7296   2040255   82  Linux swap</pre><br>
+<pre style="margin: 0em;">5. On the target machine, run:
+HDD_DEV=/dev/sda
+# (replace /dev/sda with the appropriate device name from the previous step)
+TARGET_PORT=2727
+nc -l -p ${TARGET_PORT} | dd of=${HDD_DEV}</pre><br>
+<pre style="margin: 0em;">6. On the source machine, run:
+HDD_DEV=/dev/hda
+# (replace /dev/hda with the appropriate device name)
+TARGET_IP=192.168.1.254
+# (replace 192.168.1.254 with the correct IP address if you did not
+follow my advice)
+TARGET_PORT=2727
+dd if=${HDD_DEV} | nc ${TARGET_IP} ${TARGET_PORT}</pre><br>
+<pre style="margin: 0em;">7. Wait for a while
+8. Once the transfer finishes (you will know when you get dropped back
+to a command prompt; switch to a different virtual terminal and run
+top if you'd like to monitor the procedure--dd and nc processes should
+be consistently near the top until completion), reboot the target
+machine off its hard drive</pre><br>
+<pre style="margin: 0em;">Cheers,
+Josh</pre><br>
+<pre style="margin: 0em;">[1] Get off mah lawn!
+[2] <a  href="http://en.wikipedia.org/wiki/Ethernet_crossover_cable">http://en.wikipedia.org/wiki/Ethernet_crossover_cable</a>
+[3] <a  href="ftp://ftp.ecc.u-tokyo.ac.jp/GENTOO/releases/x86/current/livecd/livecd-i686-installer-2007.0.iso">ftp://ftp.ecc.u-tokyo.ac.jp/GENTOO/releases/x86/current/livecd/livecd-i686-installer-2007.0.iso</a>
+[4] <a  href="ftp://ftp.kernel.org/pub/dist/knoppix/KNOPPIX_V5.1.1CD-2007-01-04-EN.iso">ftp://ftp.kernel.org/pub/dist/knoppix/KNOPPIX_V5.1.1CD-2007-01-04-EN.iso</a></pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00709" href="msg00709.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+<li><strong><a name="00710" href="msg00710.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00713" href="msg00713.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+<li><strong><a name="00722" href="msg00722.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> emiddleton@example.com</li></ul></li>
+<li><strong><a name="00732" href="msg00732.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> tlug</li></ul></li>
+<li><strong><a name="00754" href="msg00754.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00707.html">Re: [tlug] Japanese in Xandros</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00709.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00842.html">Re: [tlug] Japanese in Xandros</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00709.html">Re: [tlug] Tip of the Day: &quot;ghosting&quot; a machine with nc and dd</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00708"><strong>Date</strong></a></li>
+<li><a href="threads.html#00708"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

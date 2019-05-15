@@ -1,0 +1,217 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: GCC compiler question -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 19 Oct 1998 15:07:51 +0900 -->
+<!--X-Message-Id: 13866.55070.954065.698861@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3628A130.90268CF3@example.com -->
+<!--X-Reference-Id: 199810190157.KAA23932@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00751.html">Date Prev</A>][<A HREF="msg00753.html">Date Next</A>][<A HREF="msg00751.html">Thread Prev</A>][<A HREF="msg00783.html">Thread Next</A>][<A HREF="maillist.html#00752">Date Index</A>][<A HREF="threads.html#00752">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: GCC compiler question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: GCC compiler question </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 19 Oct 1998 15:07:26 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00738.html">199810190157.KAA23932@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00711.html">3628A130.90268CF3@example.com</A>&gt;&lt;<A HREF="msg00738.html">199810190157.KAA23932@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Peter" == Peter Linsley &lt;plinsley@example.com&gt; writes:
+
+    Peter&gt; It stems from the fact that the programmer requires that
+    Peter&gt; the macro is in it's own block; this could be inherent from
+    Peter&gt; the syntax of the macro or just that they want to deal with
+    Peter&gt; block scope.
+
+Actually, the point is to conceal from surrounding code the fact that
+the macro is a block.  Syntactically, it is now treated similarly to 
+a call to a function returning void.  The error messages will be
+different if used in an expression of course.
+
+    Peter&gt; Let's look at your discovery:
+
+    Peter&gt; #define spin_lock_init(x) do { (x)-&gt;lock = 0; } while(0)
+
+    Peter&gt; If it were used in the following way:
+
+    Peter&gt; if (true)
+    Peter&gt;      spin_lock_init (x);
+
+    Peter&gt; The semi-colon following "spin_lock_init (x);" will be
+    Peter&gt; consumed as part of the macro expansion as:
+
+    Peter&gt; if (true)
+    Peter&gt;    do { (x)-&gt;lock = 0; } while(0);
+
+It's still there, not consumed, as far as I can see.
+
+    Peter&gt; If we were to declare the macro as follows:
+
+    Peter&gt; #define spin_lock_init(x) { (x)-&gt;lock = 0; }
+
+    Peter&gt; Then this would expand to
+
+    Peter&gt; if (true)
+    Peter&gt;    { (x)-&gt;lock = 0; }
+
+    Peter&gt; ...and not be syntactically correct, this will cause a
+    Peter&gt; compile error as no semi-colon is present.
+
+This is exactly backward, isn't it?  The expansion would be
+
+     if (true)
+        { (x)-&gt;lock = 0; };  /* Warning Will Robinson! Extra semicolon!! */
+
+and might or might not cause a syntax error depending on whether the
+caller's intention was
+
+     if (true)
+        spin_lock_init(x);
+     else
+        { ... }
+
+(which generates an "unmatched else" syntax error) or not.  Neither of 
+Neil's alternatives work intuitively here.  A syntax directed editor
+would have fits with
+
+      if (true)
+         spin_lock_init(x)  /* No semicolon!  ARRRGggh, gak, die! */
+      else
+         { ... }
+
+&gt;&gt;&gt;&gt;&gt; "Neil" == Neil Booth &lt;NeilB@example.com&gt; writes:
+
+    Neil&gt; or even
+
+    Neil&gt; #define spin_lock_init(x)       (x)-&gt;lock = 0;
+
+    Neil&gt; The only point I can see is causing compile-time errors for
+    Neil&gt; misuse, such as
+
+    Neil&gt;    z += spin_lock_init(x);
+
+    Neil&gt; which would compile under the 3rd alternative above. And who
+    Neil&gt; would really write such code anyway?
+
+Somebody whose mouse slipped on delete-region, leaving the "z +=" part
+hanging?  Someone who wrote something like
+
+    z += (installing_module_p) ? 1 : spin_lock_init(x);
+
+maybe?  Point is, in a large project, you don't know what people are
+going to do with your functions.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "XEmacs rules."
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00783" HREF="msg00783.html">Re: tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00711" HREF="msg00711.html">tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00738" HREF="msg00738.html">Re: tlug: GCC compiler question</A></STRONG>
+<UL><LI><EM>From:</EM> Peter Linsley &lt;plinsley@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00751.html">Re: tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00753.html">Re: tlug: kanji or romaji for Japanese? (was: parallel-port IDE)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00751.html">Re: tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00783.html">Re: tlug: GCC compiler question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00752"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00752"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

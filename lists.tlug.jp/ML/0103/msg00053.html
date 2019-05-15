@@ -1,0 +1,209 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: IPChains rules -->
+<!--X-From: Tobias Diedrich <ranma@example.com> -->
+<!--X-Date: Sat, 3 Mar 2001 15:13:16 +0100 (CET) -->
+<!--X-Message-Id: Pine.LNX.4.30.0103031439560.8903&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 15008.33424.983448.180679@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00052.html">Date Prev</A>][<A HREF="msg00054.html">Date Next</A>][<A HREF="msg00052.html">Thread Prev</A>][<A HREF="msg00069.html">Thread Next</A>][<A HREF="maillist.html#00053">Date Index</A>][<A HREF="threads.html#00053">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: IPChains rules</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: IPChains rules</strong></LI>
+<LI><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 3 Mar 2001 15:13:16 +0100 (CET)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00052.html">15008.33424.983448.180679@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;tGXNUB.A.EBD.QwPo6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull wrote:
+
+&gt; &gt;&gt;&gt;&gt;&gt; "Tobias" == Tobias Diedrich &lt;ranma@example.com&gt; writes:
+&gt;
+&gt;     Tobias&gt; AFAIK No. At least not the "Allow only known existing
+&gt;     Tobias&gt; incoming connections" part. You need to know the State of
+&gt;     Tobias&gt; the Connection for that.
+&gt;
+&gt; Ah, OK.  You _can_ ignore connection attempts on TCP ports, I thought
+&gt; that was what you meant.
+
+Now I'm not sure what you mean with that ^^;;
+
+&gt; It's not clear what the benefit of this is to me yet; I guess you can
+&gt; use it to block garbage at the router?  Or is it just more efficient
+&gt; to drop the packets on the floor early rather than drop them on the
+&gt; floor because the listener never sees a SYN?
+
+As far as I understand it there are the following points about the
+statefullness (aka connection tracking):
+1. You need it for masquerading special modules (i.e. transparent ftp
+masquerading)
+2. It helps to keep your rules simple (You don't need an extra rule for
+each port in the INPUT table)
+3. A statefull packet filter can detect stealth port scans (i.e. port
+scans from source port 80 without SYN flag set)
+
+&gt;     Tobias&gt; Works for ping, traceroute,
+&gt;
+&gt; Wrong.  Ping is ICMP, traceroute is UDP.  No state ... sorry.
+
+Well it's true that these are "stateless" connections, but the packet
+filter treats them as statefull connections anyway, which is possible and
+works quite good.
+I think it's explained in some README somewhere...
+
+For example, a ICMP-ECHO-REQUEST packet from lan to outside will be
+allowed with my rules because all traffic from the lan to the outside is
+allowed. The packet filter then assigns a state of "NEW" to this
+"connection" from my system to the destination system. It will recognize
+the corresponding ICMP-ECHO-REPLY packet from that host and set the state
+to ESTABLISHED and will let this packet through (with my rules that is)
+and after that the connection is finished. A second ICMP-ECHO-REPLY packet
+would not be let through because I have not sent a ICMP-ECHO-REQUEST
+packet first.
+
+I'm pretty sure that traceroute is ICMP too btw.
+
+IIRC it does not work for UDP connections (dns) because the packet filter
+does not know that "protocol" (That's why I have two rules for
+UDP-Replies)
+
+&gt; If RELATED means what I think it does, it's just a guess.  It could be
+&gt; (easily) spoofed; (conventional) ping and traceroute packets don't
+&gt; contain any information that would help you to verify this status.
+
+RELATED would be an ftp-data connection to an ftp connection for example.
+Other RELATED packets are ICMP error packets (i.e. icmp-host-unreachable)
+
+From the iptables manpage:
+
+Possible states are INVALID meaning that packet is associated with no
+known connection, ESTABLISHED meaning that the packet is associated with a
+connection which has seen packets in both directions, NEW meaning that the
+packet has started a new connection, or otherwise  associated with a
+connection which has not seen packets in both directions, and RELATED
+meaning that the packet is starting a new connection, but is associated
+with an existing connection, such as an FTP data transfer, or an ICMP
+error.
+
+&gt; I wonder how much checking is done on ESTABLISHED, for that matter.
+&gt; Is it just a dynamic firewall that automatically opens an incoming
+&gt; window to the local source port when you make an outgoing connection?
+&gt; Or does it verify TCP serial numbers and (maybe) high-level protocol?
+&gt; Seems unlikely....
+
+It's the latter ^__^
+You have high level protocol modules (with conntrack_ftp being included
+in the kernel)
+And connection tracking for TCP and ICMP connections (conntrack) which
+does verify TCP serial numbers, source host and port and such.
+
+Really neat stuff ^_^
+
+&gt;     Tobias&gt; http, ftp.
+&gt;
+&gt; Or is FTP's "two-circuit" protocol what is meant by "RELATED"?
+
+Exactly
+
+-- Tobias
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00069" HREF="msg00069.html">Re: IPChains rules</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00052" HREF="msg00052.html">Re: IPChains rules</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00052.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00054.html">linux only with linux?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00052.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00069.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00053"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00053"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

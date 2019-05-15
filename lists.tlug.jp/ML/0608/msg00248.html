@@ -1,0 +1,214 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] New Custom Server for Linux &#45; Advice Needed -->
+<!--X-From-R13: Oggvyn Yvanyv <nggvynNxvanyv.pu> -->
+<!--X-Date: Fri, 18 Aug 2006 11:42:55 +0900 -->
+<!--X-Message-Id: 20060818040829.376a85a5.attila@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 013301c6c251$c4ec5540$fa00a8c0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00247.html">Date Prev</a>][<a href="msg00249.html">Date Next</a>][<a href="msg00265.html">Thread Prev</a>][<a href="msg00259.html">Thread Next</a>][<a href="maillist.html#00248">Date Index</a>][<a href="threads.html#00248">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] New Custom Server for Linux - Advice Needed</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 Aug 2006 04:08:29 +0200</li>
+<li><strong>From</strong>: <strong>Attila Kinali &lt;<a href="mailto:attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20New%20Custom%20Server%20for%20Linux%20-%20Advice%20Needed">attila@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] New Custom Server for Linux - Advice Needed</strong></li>
+<li>References: &lt;<a href="mailto:013301c6c251%24c4ec5540%24fa00a8c0@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20New%20Custom%20Server%20for%20Linux%20-%20Advice%20Needed">013301c6c251$c4ec5540$fa00a8c0@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Fri, 18 Aug 2006 08:06:27 +0900
+&quot;Matt Gross&quot; &lt;mattgross@example.com&gt; wrote:
+
+ 
+&gt; Here is what I am thinking I would like (my goal is to spend about 500,000
+&gt; yen):
+
+Hmm.. you can buy quite something with that money.
+ 
+&gt; *	Dual CPU with hyper threading
+
+Leave HT out of the equation. It gives better performance
+only in very limited workload scenarios. As you want to build a 
+server you might want to make sure that you have enough
+I/O performance instead of CPU power.
+Dual CPU boards tend to have better I/O performance, but
+on todays systems it's mostly limited by the wire delay
+and this is mostly determined by wire length.
+
+What you might want to look for though is that you
+have as much L2/L3 cache as possible. For a server
+1MB/CPU is absolute minimum, IMHO.
+
+32bit or 64bit is mostly a question on what you want to
+run and how much work you want to invest into it.
+If you go for an amd64, then you have to live with a few
+limitations of software that doesnt work correctly on that
+system yet. It's better for sparc bassed systems where most
+programs do work. But on amd64 you can always build a 32bit
+chroot and run the other programms too.
+
+&gt; *	RAID 5 (Software or Hardware - what do you recommend?)
+
+Depends on what you want. If you go for hardware, make sure
+you use a controller with enough onboard cache that is
+battery backed (or you will lose data in a case of crash)
+
+BTW: it is worth paying a bit more for better disks with
+longer warranty and that are specified for 24/7 use.
+
+BTW2: dont use PATA, it's a lot slower than SATA, SCSI or FC-AL
+
+&gt; *	4GB of Memory
+
+4G memory does only help if you have a lot of disk access
+that you want to cache or have ( multiple if it's a 32bit cpu)
+processes that use a lot of memory.
+
+&gt; The goal is to install a Fedora system with Xen.  Then to create multiple
+&gt; guest systems to replace several individual servers I have scattered around
+&gt; my apartment.
+
+Uhmm.. are you sure you want to use Xen? Do the different servers
+really have to be seperated? If not, use a single linux instance.
+If they have to be seperated i'd rather use something like
+OpenVZ[1] or Linux Virtual Server[2]. Both are very similar
+systems that are something like an enhanced version of chroot.
+They give a lot better performance than Xen and are easier to set
+up. OpenVZ is backed by a company and uses an older kernel version
+where security fixes are backported to, claiming that it's the
+way to go if you want a secure system. Linux VS uses a vanilla
+kernel and applies a patch and thus can keep up with all changes
+to the kernel[3].
+
+
+&gt; What I would like advice/recommendations on is the technical specs for the
+&gt; Motherboard, CPU, RAID setup, etc.  
+
+There for you need to provide more information on what you want
+to do with the machine. Just saying &quot;Running Xen to replace
+other servers&quot; is not enough. What services do you want to run
+on it, how much memory/cpu do they need, how much diskspace,
+how important is your data on disk, how important is uptime,
+can you handle scheduled downtime etc pp.
+
+			Attila Kinali
+
+[1] www.openvz.org
+[2] www.linuxvirtualserver.org
+[3] I personally like the approach of Linux VS better as I know
+that not all patches that are security relevant are announced as such
+and w/o hundreds of people who go trough every patch it's impossible
+to make sure that nothing that might impose a security risk is left out.
+But you might find the backing up of a company more appealing, then
+you have at least someone to blame ;)
+
+
+-- 
+&#x5FC3;&#x3092;&#x3053;&#x3081;&#x3066;&#x805E;&#x3051;&#x5FC3;&#x3092;&#x3053;&#x3081;&#x3066;&#x8A71;&#x305B;
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00259" href="msg00259.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00237" href="msg00237.html">[tlug] New Custom Server for Linux - Advice Needed</a></strong>
+<ul><li><em>From:</em> Matt Gross</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00247.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00249.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00265.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00259.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00248"><strong>Date</strong></a></li>
+<li><a href="threads.html#00248"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

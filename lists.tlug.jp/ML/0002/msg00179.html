@@ -1,0 +1,208 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: HTTP headers q -->
+<!--X-From: Adrian Havill <havill@example.com> -->
+<!--X-Date:  Thu, 17 Feb 2000 15:15:49 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.20.0002171430580.23548&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000217133805.A15316@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00178.html">Date Prev</A>][<A HREF="msg00180.html">Date Next</A>][<A HREF="msg00177.html">Thread Prev</A>][<A HREF="msg00180.html">Thread Next</A>][<A HREF="maillist.html#00179">Date Index</A>][<A HREF="threads.html#00179">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: HTTP headers q</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: HTTP headers q</strong></LI>
+<LI><strong>From</strong>: <strong>Adrian Havill &lt;<A HREF="mailto:havill@example.com">havill@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 Feb 2000 15:16:53 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00173.html">20000217133805.A15316@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Thu, 17 Feb 2000, Frank Bennett (フランクべネット ) wrote:
+&gt; Looking at my still-untidy stuff around the headers, I found that AHA! 
+&gt; The header stuff was only being generated for the initial connection;
+&gt; after that, a cookie in the browser would be detected, and all of the
+&gt; header output would be avoided.  Something like: 
+&gt;     if {[lsearch -exact [cgi_cookie_list] clientid]==-1} {
+&gt;       puts "Content-type: content=\"text/html\"; charset=\"EUC-JP\""
+&gt;       puts "Pragma: content=\"no-cache\""
+&gt;       puts "Set-Cookie: clientid=$clientid"
+&gt;     }
+
+The correct Pragma line is:
+
+Pragma: no-cache
+
+not
+
+Pragma: content="no-cache"
+
+Also, the Content-Type line should read:
+
+Content-Type: text/html; charset=euc-jp
+
+(no "content=", and the quotes aren't necessary. Case-insensitive, so
+cApiTaLiZe as you wish). Apache is probably sensing that the Content-Type
+is malformed, and replacing it.
+
+This is a HTTP/1.0ism. For good measure and to be HTTP/1.1 cache and
+browser friendly, you should also include the HTTP/1.1ism (since HTTP/1.0 
+is depreciated):
+
+Cache-Control: no-cache
+
+HTTP/1.0 browsers (Netscape) will use the Pragma. HTTP/1.1 browsers (IE,
+and libwww based browsers like Lynx and Amaya) will use the
+Cache-Control. You can do neat things with Cache-Control, like
+"Cache-Control: private", which means the proxy
+shouldn't cache, but the browser may. This is actually what most CGIs that
+use "GET" form posting methods want. Too bad HTTP/1.0 don't understand
+it. Squid is getting close to HTTP/1.1 compliance... so if your Netscape's
+come through a Squid proxy/cache, they'll grok (most of) 1.1.
+
+&gt; When I "fixed" things so that Content-type: and the Pragma: both output
+&gt; always, and added the empty line, I got what looks like *Apache's*
+&gt; Content-type: header (text/plain) as part of the text of the document when
+&gt; it is rendered.  What's Apache putting its finger into the works for?
+
+The CGI 1.1 spec says it has to... the headers _are_ pre-interpreted,
+because the HTTP/1.1 protocol is too complicated to just leave the headers
+as-is. Apache will munge the headers to form a complete
+request, since the client may have requested only a partial response or a
+chunked response. (but the only library I know of that can do that
+is libwww... and most software that uses it never takes advantage of the
+full power of HTTP/1.1. Too bad, because that power was focused on caching
+efficiency and speeding the WWW up) Also, your output to stdout is
+buffered whether you like it or not, even if you use "nph-", for
+compatibility with SSL and other things.
+
+&gt; I'm really just thrashing around with this at the moment.  What I want to
+&gt; do is fix the Content-type: header in the CGI and persuade Apache to just
+&gt; trust me and pass my headers through to the client verbatim.  I think that
+&gt; the FastCGI interface may be failing because I am not generating correct
+&gt; headers, but Apache won't leave well enough alone when I do.  Grrr.
+
+I don't know is FastCGI is interfering or not. My advice is to first get
+it working _without_ the FastCGI on plain CGI, then when you know it
+works, transfer it over.
+
+If you REALLY want to pass all the headers untouched, prefix your cgi
+program with "nph-" (non parsed headers). However, the only headers that
+CGI munges are "location" and "content-type" (and it doesn't really munge 
+content-type... it changes changes the other headers it adds with the
+output), so I don't think nph- will solve your problems.
+
+I don't know if FastCGI supports nph- style CGIs, but Apache does.
+
+&gt; If anyone has read this far without their eyes glazing over ...  any
+&gt; suggestions?  Including (especially) texts I should read to better learn
+&gt; my way around Apache and CGI programming. 
+
+The CGI/1.1 spec is &lt;URL:<A HREF="http://hoohoo.ncsa.uiuc.edu/cgi/interface.html">http://hoohoo.ncsa.uiuc.edu/cgi/interface.html</A>&gt;
+The HTTP/1.1 spec is RFC 2616.
+--
+Adrian HAVILL, Senior Software Engineer
+Development Manager, TurboLinux Japan
+PGP Key Fingerprint: D5B6 321C 0F82 117D EAC2 6D08 D942 FA38 7427 8195
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00180" HREF="msg00180.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00173" HREF="msg00173.html">tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> "Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00178.html">RE: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00180.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00177.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00180.html">Re: tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00179"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00179"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

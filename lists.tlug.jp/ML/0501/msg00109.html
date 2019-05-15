@@ -1,0 +1,213 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Crazy automount solution -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Wed, 19 Jan 2005 11:52:46 &#45;0500 -->
+<!--X-Message-Id: d8fcc0800501190852557b1fd5@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00108.html">Date Prev</a>][<a href="msg00110.html">Date Next</a>][<a href="msg00108.html">Thread Prev</a>][<a href="msg00110.html">Thread Next</a>][<a href="maillist.html#00109">Date Index</a>][<a href="threads.html#00109">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Crazy automount solution</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 19 Jan 2005 11:52:46 -0500</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Crazy%20automount%20solution">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Crazy automount solution</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On my local LUG (COLUG, the Central Ohio Linux Users Group) mailing
+list, some chap posted about how he could get his USB hard drive to
+automount. I thought several of you on this list might be amused by or
+interested in my solution:
+
+On Tue, 18 Jan 2005 21:34:02 -0500, Name Withheld &lt;foobar@example.com&gt; wrote:
+
+&gt; I have one of those USB flash drives.   (nifty devices, BTW).  When I
+&gt; plug it in the USB port of my PC, it is not automatically mounted.  I
+&gt; can manually mount the device.  Is there a way to have the USB device
+&gt; automatically mount after I plug it into the USB port?
+
+You should mention which desktop environment (e.g. GNOME or KDE) you
+are running, as DE's (yes, the apostrophe *is* correct when making an
+acronym plural) usually provide an automount mechanism that causes a
+nifty icon to show up on your desktop.
+
+Now, there is probably a way to accomplish this with the kernel
+automounter, but let me give you a solution in the spirit of Unix:
+
+1. Create an entry in your /etc/fstab, something like this:
+
+/dev/sda1  /mnt/usbhdd  vfat  user  0 0
+
+Your entry may be a bit different depending on the device, mount
+point, and file system. See the manpage for mount(8) for more
+information.
+
+2. Write a shell script, ${HOME}/bin/automount.sh:
+
+#!/bin/sh
+
+# A list of devices that you want to automount (i.e. the device that appears
+# when you plug your USB device in)
+DEVS=&quot;/dev/sda1 /dev/sdb1&quot;
+
+# Set this to the number of seconds that should elapse between polling
+# attempts (the lower the number, the more responsive, but more CPU
+# time will be consumed)
+SLEEPTIME=15
+
+# Loop forever
+while [ 1 ]; do
+
+ # Iterate through devices
+ for i in ${DEVS}; do
+
+   # Does this device exist?
+   if [ -e $i ]; then
+
+     # Do not mount devices that are already mounted
+     mount | grep &quot;^$i&quot; &gt;/dev/null 2&gt;&amp;1
+     if [ $? != 0 ]; then mount $i; fi
+
+   fi # if (found the device)
+
+ done # for (traversing devices)
+
+ sleep ${SLEEPTIME}
+
+done # while (looping forever)
+
+3. Make your script executable:
+
+chmod +x ${HOME}/bin/automount.sh
+
+4. Add a line to your /etc/inittab so that your script will run automatically:
+
+ams:234:respawn:${HOME}/bin/automount.sh
+
+Substitute the value of &quot;echo ${HOME}&quot; for ${HOME} in the above line!
+
+5. Tell init to reread /etc/inittab:
+
+sudo init q
+
+or, if you do not have sudo(8) installed and configured[1], you can use su:
+
+su root -c 'init q'
+
+Now, plugging in a drive should result in it being auto-mounted within
+${SLEEPTIME} seconds.
+
+-Josh
+
+[1] If you do not have sudo(8) configured, get thee to this page!
+   <A  HREF="http://www.courtesan.com/sudo/">http://www.courtesan.com/sudo/</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00110" href="msg00110.html">Re: [tlug] Crazy automount solution</a></strong>
+<ul><li><em>From:</em> Ben Konrath</li></ul></li>
+<li><strong><a name="00122" href="msg00122.html">Re: [tlug] Crazy automount solution</a></strong>
+<ul><li><em>From:</em> Semi Malinen</li></ul></li>
+<li><strong><a name="00132" href="msg00132.html">Re: [tlug] Crazy automount solution</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00151" href="msg00151.html">[tlug] Re: Crazy automount solution</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00108.html">Re: [tlug] Re:  Majordomo problems with new sendmail permissions [SOLVED]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00110.html">Re: [tlug] Crazy automount solution</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00108.html">Re: [tlug] Re:  Majordomo problems with new sendmail permissions [SOLVED]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00110.html">Re: [tlug] Crazy automount solution</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00109"><strong>Date</strong></a></li>
+<li><a href="threads.html#00109"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

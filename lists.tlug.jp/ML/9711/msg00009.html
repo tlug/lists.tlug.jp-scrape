@@ -1,0 +1,206 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Printing problems again (actually, still!) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 4 Nov 1997 00:45:04 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xSbbl&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199711031527.AAA39168@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00008.html">Date Prev</A>][<A HREF="msg00010.html">Date Next</A>][<A HREF="msg00003.html">Thread Prev</A>][<A HREF="msg00014.html">Thread Next</A>][<A HREF="maillist.html#00009">Date Index</A>][<A HREF="threads.html#00009">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Printing problems again (actually, still!)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Printing problems again (actually, still!)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 4 Nov 1997 14:32:57 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00003.html">199711031527.AAA39168@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00003.html">199711031527.AAA39168@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Matthew" == Matthew C Gushee &lt;matt@example.com&gt; writes:
+
+    Matthew&gt;     /min { /Ryumin-Light-EUC-H findfont } def
+
+    Matthew&gt; whereas the ones that printed out okay have this:
+
+    Matthew&gt;     /of { /Ryumin-Light-RKSJ-H findfont exch scalefont
+    Matthew&gt; setfont } bind def
+
+    Matthew&gt; --seems like it might have something to do with my
+    Matthew&gt; troubles. Any ideas about this?
+
+Bingo.  It's a damn shame JIS has no enforcement powers.  I don't know 
+a general-purpose solution to this.  Best guess is below.
+
+&gt;&gt;&gt;&gt;&gt; "Masa" == Ucida Masatomo writes:
+
+    Masa&gt; There are 3 codes for Japanese Language. They are EUC
+    Masa&gt; (popular for Unix users), Shift-JIS (popular for Windows and
+    Masa&gt; Mac) and JIS (used for Internet communication).  It seems to
+    Masa&gt; me that your printer accepts Shift-JIS. So use 'use nkf -s'.
+    Masa&gt; Printing command is 'nkf -e file | lpr'.
+
+    Masa&gt; Good Luck.
+
+He's gonna need more than good luck.  If the files are in binary
+Postscript that _might_ work but he's still going to have to hack the
+findfont commands.  If it's not in binary (and usually 8-bit strings
+get translated to hex code, dunno about psconv), nkf won't do a thing.
+
+    Matthew&gt; If the above isn't the key, I wonder if there's something
+    Matthew&gt; really "obvious" that I don't have set up right
+
+Nothing obvious.  Doing Japanese well is hard.  MS took the route of
+redefining the standards to suit themselves, in a quasi-logical,
+non-extensible, incompatible way.  Nice method if you have the
+monopoly power to pull it off; of course it hoses the rest of the
+world.  Thanks again, Bill.  But then, this is just SOP in Japan (see
+Ken Lunde's book, count the number of corporate standards).
+
+    Matthew&gt; While we're at it . . . Ghostscript . . . augh!  I
+    Matthew&gt; installed a binary of Aladdin Ghostscript 5.01 and some
+    Matthew&gt; of the Wadalab fonts, and I can get kanji on-screen, but
+    Matthew&gt; no output to the printer. That's not just no kanji, I
+    Matthew&gt; mean no output whatsoever. Both
+[ ... ]
+    Matthew&gt; wrong (note that my printer is not specifically supported
+    Matthew&gt; by GS, but since it's Postscript it should be possible to
+    Matthew&gt; print on it, shouldn't it?).
+
+No.  Ghostscript is not easy to convince to convert Postscript to
+Postscript.  (This is coming, especially in the forms of ps2pdf and
+pdf2ps.  I'd like to be able to do Level-2 to Level-1, but I don't
+think that works.)  Ghostscript is probably converting to Epson LX-80
+or so graphics codes.  There may be a way to do what you want with
+Ghostscript, but it also should be unnecessary, since you evident;y
+have the fonts.
+
+Since your printer really is Postscript and has Japanese fonts, then
+what you need to do first is convince psconv to use the execrable
+Microsoft RSKJ encoding.  Probably there is a config file for psconv
+where the fonts are listed.  Or psconv may just autodetect the kanji
+code in the file.  (There's no real excuse for the printer to accept
+*-RSKJ-* encoding but refuse *-EUC-*; the fonts are identical, the
+encoding translation is a simple algorithm which takes up at worst
+32kB, and should be less than half that, actually---and doesn't need
+to use any precious Postscript VM.  Thanks again, Bill.)
+
+Then, you do something like
+
+    cat my-japanese-file | jconv -os | psconv | lpr
+
+I prefer jconv to nkf.  The source code is readable as are the
+comments, and it never acts like it knows more about the contents of a
+file than I do.  If you want to know what jconv thinks is in a file,
+you use the `-c' switch.  If you want to override jconv's guess, use
+`-i[sje]' option, where `s', `j', and `e' should be obvious.
+
+	    <A TARGET="_top" HREF="ftp://ftp.uu.net/vendors/oreilly/nutshell/ujip">ftp://ftp.uu.net/vendors/oreilly/nutshell/ujip</A>
+
+(I may have capitalization wrong, and I forget where the code lives
+under that directory.)
+Next TLUG meeting is Saturday Dec. 13, 1997  (possibly Nov. 13?)
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00014" HREF="msg00014.html">Re: tlug: Printing problems again (actually, still!) --Thanks!</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00003" HREF="msg00003.html">tlug: Printing problems again (actually, still!)</A></STRONG>
+<UL><LI><EM>From:</EM> Matthew C Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00008.html">tlug: Net access for visitors to Japan</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00010.html">Re: tlug: Net access for visitors to Japan</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00003.html">tlug: Printing problems again (actually, still!)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00014.html">Re: tlug: Printing problems again (actually, still!) --Thanks!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00009"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00009"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

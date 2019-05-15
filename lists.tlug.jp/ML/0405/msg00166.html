@@ -1,0 +1,177 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Japanese in Perl on Linux -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 12 May 2004 14:20:13 +0900 -->
+<!--X-Message-Id: 87r7tqxlv6.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1084328057.18154.17.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00165.html">Date Prev</a>][<a href="msg00167.html">Date Next</a>][<a href="msg00164.html">Thread Prev</a>][<a href="msg00171.html">Thread Next</a>][<a href="maillist.html#00166">Date Index</a>][<a href="threads.html#00166">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Japanese in Perl on Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 12 May 2004 14:20:13 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Japanese%20in%20Perl%20on%20Linux">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Japanese in Perl on Linux</strong></li>
+<li>References: &lt;<a href="msg00160.html">1084328057.18154.17.camel@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.4 (Portable Code, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; "Blomberg" == Blomberg David &lt;dblomber@example.com&gt; writes:
+
+    Blomberg&gt; I am using perl to send an email it works except that
+    Blomberg&gt; Japanese text come out as question marks.
+
+This is non-trivial stuff.  You should be familiar with RFC 2821,
+2822, 1463, 2045, 2046, 2047, 2048, and 2049 at least, or you _will_
+get it wrong.  (Not that it much matters in this country; neither
+Microsoft nor the author of Emacs/Mule figured out MIME for half a
+decade after it was JIS and RFC mandated.)  You also need to bone up
+on Perl's character encoding transformation libraries.
+
+    Blomberg&gt; print MAIL "$BIT@example.com%Q%9%o!<%I>pJs(B";
+
+    Blomberg&gt; (first version output is just question marks)
+
+You presumably need to tell Perl that "I don't think we're in Kansas
+anymore, Toto."  Question marks are the usual (criminally negligent,
+there should be a fatal error) way of telling you that you've
+neglected to tell the program about your locale.  Maybe setting LANG
+is enough, maybe not.
+
+I don't think modern Perls will do the right thing with raw Japanese;
+you probably have to convert to Unicode internally.  (But I haven't
+done M17N in Perl since early 1995.  ;-)
+
+    Blomberg&gt; $temp = MIME::Base64::encode("$BIT@example.com%Q%9%o!<%I>pJs(B");
+    Blomberg&gt; chomp($temp);
+    Blomberg&gt; print MAIL "=?ISO-2022-JP?B?$temp?=\n";
+
+    Blomberg&gt; (this one I get the string
+    Blomberg&gt; =?ISO-2022-JP?B?Pz8/Pz8/Pz8/?=
+    Blomberg&gt; mime encoded Japanese text as best I can tell)
+
+Not a chance.  The signature of ISO-2022-JP in base64 encoding is
+quite characteristic, because (according the RFC 1463) it is REQUIRED
+to start with ESC ( B.  Thus is it _always_ "GyRC".  Second, it is
+REQUIRED to end with ESC $ B.  There are exactly three trailing Base64
+patterns (because 2, the number of bytes in a JIS character, and 3,
+the number of bytes that are encoded by a group of four Base64 digits,
+are relatively prime).
+
+Also, 12 base64 digits is 9 bytes, so it can't possibly all be JIS.
+
+I conclude you definitely need to convert the Japanese to some
+internal encoding (some form of Unicode, you probably don't need to
+know), and then from that to ISO-2022-JP.  Doesn't Perl have an
+iconv(3) wrapper?
+
+
+
+-- 
+Institute of Policy and Planning Sciences     <A HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can "do" free software business;
+              ask what your business can "do for" free software.
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00160" href="msg00160.html">[tlug] Japanese in Perl on Linux</a></strong>
+<ul><li><em>From:</em> Blomberg David</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00165.html">Re: [tlug] Japanese in Perl on Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00167.html">Re: [tlug] Japanese in Perl on Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00164.html">Re: [tlug] Japanese in Perl on Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00171.html">Re: [tlug] Japanese in Perl on Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00166"><strong>Date</strong></a></li>
+<li><a href="threads.html#00166"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

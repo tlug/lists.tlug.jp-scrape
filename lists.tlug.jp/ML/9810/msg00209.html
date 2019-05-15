@@ -1,0 +1,201 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: LILO Vs. 1024?? -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 7 Oct 1998 14:32:38 +0900 -->
+<!--X-Message-Id: 19981007143230.C11940@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19981007111157.E11845@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981007125730.1878D&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00208.html">Date Prev</A>][<A HREF="msg00210.html">Date Next</A>][<A HREF="msg00202.html">Thread Prev</A>][<A HREF="msg00211.html">Thread Next</A>][<A HREF="maillist.html#00209">Date Index</A>][<A HREF="threads.html#00209">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: LILO Vs. 1024??</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG mailing list &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: LILO Vs. 1024??</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Oct 1998 14:32:30 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00202.html">Pine.LNX.3.96LJ1.1b7.981007125730.1878D-100000@example.com</A>&gt;; from Jonathan Byrne - 3Web on Wed, Oct 07, 1998 at 01:02:36PM +0900</LI>
+<LI>Mail-Followup-To: TLUG mailing list &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00193.html">19981007111157.E11845@example.com</A>&gt; &lt;<A HREF="msg00202.html">Pine.LNX.3.96LJ1.1b7.981007125730.1878D-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Oct 07, 1998 at 01:02:36PM +0900, Jonathan Byrne - 3Web wrote:
+
+&gt; On Wed, 7 Oct 1998, Rex Walters wrote:
+&gt;
+&gt; &gt;I *strongly* recommend by the way that you partition this thing into
+&gt; &gt;multiple partitions. I don't believe in one big ext2 filesystem for
+&gt; &gt;all of your Linux data.
+&gt;
+&gt; What benefits does this get me, and/or risks if I don't?
+
+A filesystem is just a very complex data structure. The leaf nodes in
+the data structure contain your data. Losing or corrupting data in a
+leaf node is bad, but losing or corrupting *metadata* (info about the
+structure itself) can be catastrophic.
+
+The main reason to use multiple filesystems (IMHO) is to
+compartmentalize this risk. Corrupting (or simply filling) filesystem A
+won't affect filesystem B in any way.
+
+At the very least, you almost certainly want to keep *your* data in
+separate filesystems from OS data.  You'll appreciate this the first
+time you try to upgrade your operating system (or if you want to try
+multibooting different OS partitions).  It's nice to be able to have
+separate / &amp; /usr partitions for TL/RH/Debian or say for a 2.1 kernel
+and 2.0 kernel and still be able to mount the same home directory under
+all of them. And having the install scripts for your upgrade newfs the
+filesystem containing your home directory is never fun.
+
+You also gain administrative flexibility.  You can choose different
+optimizations for each filesystem (space/performance, number of inodes,
+max-mount-counts before fsck, raid choices, etc.).  You can optimize
+based on data flow and access patterns.  Read-only filesystems can be
+configured differently from heavy-write filesystems, mostly-sequential
+from mostly-random, mostly-logs from mostly databases, and so on.
+
+You're experiences recently should point out the benefits of a small
+root partition wrt BIOS limitations.
+
+The ability to do "full dump" image backups and restores is also a big
+plus. This is especially true if you're able to mount a filesystem
+read-only -- you *know* you can safely restore a dd image if it was
+created while the filesystem was read-only.
+
+There are, I'm sure, even more reasons that I've missed, but
+fundamentally the reason to have multiple filesystems is that not all of
+your data is the same.
+
+I actually stumbled across another benefit of multiple filesystems
+at home the other day. I've actually got several large disks on my
+system at home, each chunked up into multiple partitions. I'd created
+filesystems on all of these partitions all on the same day. Since
+I don't leave my home machine running all the time, all of these
+filesystems are mounted and unmounted pretty frequently (at least once
+or twice a day).
+
+Linux as a sanity check forces a fsck on a filesystem at boot time even
+if it was cleanly unmounted if a certain amount of time has elapsed or
+too many unmount/mount cycles have occured (20 by default). Every week
+or two I'd go to boot my machine and have to wait an infuriatingly long
+time for everything to come up as multiple 2+ GB partitions were fsck'd
+(even with fstab saying to do 'em in parallel it took a while).
+
+The solution was to run "tune2fs -c" on each filesystem and specify a
+different max-count before check for each. This way I should never have
+to fsck more than one or two filesystems during a single boot. I also
+took the opportunity to bump the frequency of forced fscks way down.
+Much nicer.
+
+Convinced?
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00211" HREF="msg00211.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00193" HREF="msg00193.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00202" HREF="msg00202.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00208.html">Re: tlug: Downward Spiral</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00210.html">Re: tlug: Wine and Windows Printers</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00202.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00211.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00209"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00209"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Kernel/device/FS boot problem -->
+<!--X-From-R13: "Rnivq X Wnaahppv" <wyvahkNchapuphggre.zy1.arg> -->
+<!--X-Date: Tue, 15 Apr 2008 04:26:26 +0900 -->
+<!--X-Message-Id: 1208200775.5494.1247834431@webmail.messagingengine.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1207953029.8350.1247434723@webmail.messagingengine.com -->
+<!--X-Reference: d8fcc0800804120108s4d535204ue5d41585e077dfef@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00337.html">Date Prev</a>][<a href="msg00339.html">Date Next</a>][<a href="msg00314.html">Thread Prev</a>][<a href="msg00340.html">Thread Next</a>][<a href="maillist.html#00338">Date Index</a>][<a href="threads.html#00338">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Kernel/device/FS boot problem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 14 Apr 2008 13:19:35 -0600</li>
+<li><strong>From</strong>: <strong>&quot;David J Iannucci&quot; &lt;<a href="mailto:jlinux@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Kernel%2Fdevice%2FFS%20boot%20problem">jlinux@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Kernel/device/FS boot problem</strong></li>
+<li>References: &lt;<a href="msg00307.html">1207953029.8350.1247434723@webmail.messagingengine.com</a>&gt;   	&lt;<a href="msg00314.html">d8fcc0800804120108s4d535204ue5d41585e077dfef@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Sat, 12 Apr 2008 17:08:55 +0900, &quot;Josh Glover&quot; &lt;jmglov@example.com&gt;
+said:
+&gt; &gt;   VFS: Cannot open root device &quot;sda6&quot; or unknown-block(0,0)
+&gt; &gt;   Please append a correct &quot;root=&quot; boot option; here are the available
+&gt; &gt;   partitions: Kernel panic - not syncing: VFS: Unable to mount root fs
+&gt; &gt;   on unknown-block(0,0)
+&gt; 
+&gt; Do you have SCSI compiled into the kernel?
+
+Yeah... I'm pretty sure I do.  Here's the &quot;broken&quot; kernel&quot;:
+
+  # grep -i scsi .config | grep -v '^#'
+  CONFIG_SCSI=y
+  CONFIG_SCSI_DMA=y
+  CONFIG_SCSI_PROC_FS=y
+  CONFIG_SCSI_WAIT_SCAN=m
+  CONFIG_SCSI_LOWLEVEL=y
+
+and here's one that works:
+
+  # grep -i scsi .config | grep -v '^#'
+  CONFIG_SCSI=y
+  CONFIG_SCSI_DMA=y
+  CONFIG_SCSI_NETLINK=y
+  CONFIG_SCSI_WAIT_SCAN=m
+  CONFIG_SCSI_SPI_ATTRS=y
+  CONFIG_SCSI_FC_ATTRS=y
+  CONFIG_SCSI_LOWLEVEL=y
+  CONFIG_SCSI_AIC7XXX=y
+  CONFIG_SCSI_AIC79XX=y
+
+I'm not sure what the various extra stuff means in the latter, but
+it doesn't &quot;seem&quot; like it oughta break things this badly :-)
+
+There's a flag in both called CONFIG_BLK_DEV_IDESCSI that looks
+like it might be important, but it is turned off in both.
+
+Thanks,
+Dave
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00340" href="msg00340.html">Re: [tlug] Kernel/device/FS boot problem</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00307" href="msg00307.html">[tlug] Kernel/device/FS boot problem</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+<li><strong><a name="00314" href="msg00314.html">Re: [tlug] Kernel/device/FS boot problem</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00337.html">Re: [tlug] CAPTCHA on keitai</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00339.html">Re: [tlug] Kernel/device/FS boot problem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00314.html">Re: [tlug] Kernel/device/FS boot problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00340.html">Re: [tlug] Kernel/device/FS boot problem</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00338"><strong>Date</strong></a></li>
+<li><a href="threads.html#00338"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

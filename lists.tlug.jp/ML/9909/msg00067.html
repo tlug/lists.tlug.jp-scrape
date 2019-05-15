@@ -1,0 +1,169 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Time -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 6 Sep 1999 18:17:27 +0900 -->
+<!--X-Message-Id: 14291.34442.569917.786585@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19990907172226.A4220@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00066.html">Date Prev</A>][<A HREF="msg00068.html">Date Next</A>][<A HREF="msg00064.html">Thread Prev</A>][<A HREF="msg00069.html">Thread Next</A>][<A HREF="maillist.html#00067">Date Index</A>][<A HREF="threads.html#00067">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Time</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Time</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 6 Sep 1999 18:16:58 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00064.html">19990907172226.A4220@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00064.html">19990907172226.A4220@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "FB" == "Frank Bennett" &lt;bennett@example.com&gt; writes:
+
+    FB&gt; There is a timed daemon on the new system, which I hooked up
+    FB&gt; for service in /etc/inetd.conf.  Sure enough, I now get a time
+    FB&gt; back from this machine when I rdate against it from the other
+    FB&gt; servers (running TL 3.0 at present).
+
+I don't seem to have a timed installed on any of my Debian systems; in 
+fact, I can't even seem to find a package which provides it.  But all
+of my systems seem to give sensible responses to rdate inquiries.  Out 
+of curiosity, I checked 133.6.33.1, and it's still giving exactly the
+same date:  Mon Apr 28 01:25:08 1952.
+
+According to the rdate manpage, RFC 868 is "usually implemented" in
+inetd, not a separate server.  And in fact grepping /etc/inetd.conf
+and /etc/services gives
+
+daytime		stream	tcp	nowait	root	internal
+#daytime	dgram	udp	wait	root	internal
+time		stream	tcp	nowait	root	internal
+#time		dgram	udp	wait	root	internal
+
+daytime		13/tcp
+daytime		13/udp
+time		37/tcp		timserver
+time		37/udp		timserver
+timed		525/udp		timeserver
+
+Are you sure you've got timed plugged in to the right service?  It
+sure looks to me like it is a different protocol from rdate, and
+probably what's happening is that the naive rdate protocol is trying
+to interpret a magic number from timed as a date.
+
+BTW, if you're still interested in CODA, 5.2.7 is definitely usable
+(on i386 systems, for the first time since about 4.6.5 when I first
+tried it).  5.3.1 is out, but I don't know how reliable it is.  And I
+dunno if it works on Sparc, yet.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: September 17 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: October 9 (Sat), 13:00     place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00069" HREF="msg00069.html">Re: tlug: Time</A></STRONG>
+<UL><LI><EM>From:</EM> "Petersen Jens-Ulrik (NRC/Tokyo)" &lt;jens-ulrik.petersen@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00071" HREF="msg00071.html">Re: tlug: Time</A></STRONG>
+<UL><LI><EM>From:</EM> "Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00064" HREF="msg00064.html">tlug: Time</A></STRONG>
+<UL><LI><EM>From:</EM> "Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00066.html">Re: tlug: Debugging a PLIP connection</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00068.html">tlug: Green Frog 0.4 Development</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00064.html">tlug: Time</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00069.html">Re: tlug: Time</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00067"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00067"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: on demand dialing in pppd -->
+<!--X-From: "J. David Beutel" <jdb@example.com> -->
+<!--X-Date:  Wed, 5 May 1999 12:19:59 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.990505161539.203B&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199905041010.TAA05851@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00016.html">Date Prev</A>][<A HREF="msg00018.html">Date Next</A>][<A HREF="msg00014.html">Thread Prev</A>][<A HREF="msg00018.html">Thread Next</A>][<A HREF="maillist.html#00017">Date Index</A>][<A HREF="threads.html#00017">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: on demand dialing in pppd</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: on demand dialing in pppd</strong></LI>
+<LI><strong>From</strong>: <strong>"J. David Beutel" &lt;<A HREF="mailto:jdb@example.com">jdb@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 5 May 1999 16:21:35 +0000 (GMT)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00010.html">199905041010.TAA05851@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, 4 May 1999, Tetsuji Rai wrote:
+
+&gt; Does anyone know whether real on-demand dialing (with dinamic address 
+&gt; assignment) will be supported or not.   I found a substitute for pppd called 
+
+I use kerneld to start pppd (with dinamic address assignment) on demand.
+It works fine.  Here's the relevant section from the Kerneld mini-howto:
+
+Dial-on-demand networking
+
+kerneld also gets a request when the kernel needs to send data to a network
+connection for which there is no known route. This is typically the case
+when your network access is through a SLIP- or PPP-connection that is only
+active part of the time.
+
+The request that kerneld gets are of the form "request-route a.b.c.d", where
+a.b.c.d is the IP address that the kernel has data for. kerneld will handle
+this request by running a shell script, /sbin/request-route, with the IP
+address as parameter. The most likely IP address requested the first time is
+that of your nameserver (see /etc/resolv.conf) so that will be the address
+passed to the request-route script. Unless you have more than one possible
+network connection (dial-up or ethernet), you can safely ignore the IP
+address; all of your network access has to go the same way, so there is no
+need to differentiate between requests for one IP address or another.
+
+To implement on-demand dialing, you just need to change the
+/sbin/request-route script so that it sets up your SLIP or PPP connection.
+For SLIP, this typically involves running 'dip' or some other program to
+call the SLIP server and setup the connection; for PPP, you will probably
+run chat+pppd. The script does not need to worry about loading the ppp- or
+slip-modules; this will happen automatically through kerneld.
+
+Calling up your ISP and setting up the SLIP/PPP connection can take a while,
+and may not always be succesful. The request-route script therefore has a
+built-in timer - by default set for 60 seconds - which is how long it will
+keep the kernel waiting for the kerneld request to complete. But often the
+network setup does not take 60 seconds, so for the quickest possible
+response you should arrange for the request-route timer to be killed as soon
+as the network setup is complete. SLIP users can do this with recent version
+of dip, by including the command
+
+  shell kill `cat /tmp/request-route`
+
+just before the "mode SLIP" command in your DIP script.
+
+PPP users should have
+
+  kill `cat /tmp/request-route`
+
+in their /etc/ppp/ip-up script.
+
+If your network takes longer than 60 seconds to setup, then you will need to
+change the duration of the timer in the /sbin/request-route script. In that
+case, you will probably also need to change the kerneld delay for
+autocleaning unused modules, by adding a "delay=xxx" option to the line in
+/etc/rc.d/rc.S that starts up kerneld. The 'xxx' value is the delay before
+modules are removed, in seconds (default is 60). This is especially
+necessary if you used ppp: The ppp modules are loaded as soon as pppd
+starts, but if you use a command like "/usr/sbin/pppd connect `chat -f
+/etc/chat.script` ..." then pppd is idle while the chat-script runs, and the
+ppp-modules may have been unloaded by the time the chat-script completes!
+
+kerneld does not yet monitor the network activity to shutdown the network
+connection; however, PPP users can take advantage of the 'idle-disconnect'
+option for pppd introduced in ppp-2.2.0. If you pass the option
+'idle-disconnect 600' to pppd, then the PPP connection will be terminated
+after 600 seconds (10 minutes) of inactivity. SLIP users will have to
+shutdown the connection manually.
+
+
+--
+David Beutel        "Remember, no matter where you go, there you are."
+jdb@example.com  
+11011011       
+
+-------------------------------------------------------------------
+Next Nomikai: TBD                    Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00018" HREF="msg00018.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+<UL><LI><EM>From:</EM> Tetsuji Rai &lt;tetsuji@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+<UL><LI><EM>From:</EM> "Marc E. Christensen" &lt;marc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00010" HREF="msg00010.html">tlug: on demand dialing in pppd</A></STRONG>
+<UL><LI><EM>From:</EM> Tetsuji Rai &lt;tetsuji@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00016.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00018.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00014.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00018.html">Re: tlug: on demand dialing in pppd</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00017"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00017"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

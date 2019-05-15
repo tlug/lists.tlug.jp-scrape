@@ -1,0 +1,187 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] HOWTO: Emobile D11LC on Linux -->
+<!--X-From-R13: "Wna Vrnsre" <fcnprgheavcNfghqvbgheavc.arg> -->
+<!--X-Date: Fri, 12 Sep 2008 00:32:26 +0900 -->
+<!--X-Message-Id: 49397.60.254.227.85.1221145554.squirrel@www.studioturnip.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00149.html">Date Prev</a>][<a href="msg00151.html">Date Next</a>][<a href="msg00145.html">Thread Prev</a>][<a href="msg00157.html">Thread Next</a>][<a href="maillist.html#00150">Date Index</a>][<a href="threads.html#00150">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] HOWTO: Emobile D11LC on Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 12 Sep 2008 00:05:54 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>&quot;Ian Heafer&quot; &lt;<a href="mailto:spaceturnip@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20HOWTO:%20Emobile%20D11LC%20on%20Linux">spaceturnip@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] HOWTO: Emobile D11LC on Linux</strong></li>
+<li>User-agent: SquirrelMail/1.4.9a</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi All,
+
+  It took a little work but I finally got online using my D11LC. Figured
+I'd share what I learned just in case anyone is else is having trouble. 
+I got it up and working in Arch, but I doubt that this process would be
+too different in other distros.
+
+- Getting Linux to recognize the modem
+
+I've seen a few reports that Linux will see the D11LC as a modem right off
+the bat when you plug it in.  That wasn't the case for me.  I tried in
+Arch, Debian Lenny, Ubuntu Hardy, and Fedora 9 and in all of them it shows
+up as a USB flash stick.
+
+To get it to show up as a modem you need usb_modeswitch.  There may or may
+not be a package for it in your distros repo, for Arch its in the AUR.
+After installing usb_modeswitch edit /etc/usb_modeswitch.conf and comment
+out everything but the settings for the Alcatel OT-X020.  After running
+usb_modeswitch you'll see the correct vendor and product ids when you run
+lsusb.  usb_modeswitch needs to be run every time the modem is plugged in,
+but this is easy to automate using udev rules.
+
+usbserial is the module you need to get the D11LC working, but you need to
+pass the vendor and product IDs in when you load the module for it to pick
+it up:
+
+modprobe usbserial vendor=0x1c9e product=0x6061
+
+if you look a dmesg you'll see that /dev/ttyUSB0-2 have been created.
+
+
+- Making the connection
+
+I used wvdial to set up the ppp connection.  I started with the conf file
+created when you run wvdialconf and made a few changes.  My
+/etc/wvdial.conf is as follows:
+
+[Dialer Defaults]
+Init2 = ATS0=0
+Modem Type = Analog Modem
+Phone = *99***1#
+ISDN = 0
+Username = em
+Init1 = ATZ
+Password = em
+Modem = /dev/ttyUSB0
+Baud = 460800
+Stupid Mode = on
+
+The phone, username, and password are the ones from the e-mobile manual. 
+I changed the baud and init2 strings based on what I found at
+<a  href="http://nlweb.iii.u-tokyo.ac.jp/~iwase/tips/fc6emobile.html">http://nlweb.iii.u-tokyo.ac.jp/~iwase/tips/fc6emobile.html</a>  I'm not really
+sure if init2 needed to change but wvdialconf set the baud to 9600.  I
+found you need stupid mode on to force the ppp connection to start right
+after you connect, if you don't have that, wvdial times out after it
+connects waiting for a login prompt.
+
+I needed to edit /etc/ppp/ip-up to copy /etc/ppp/resolv.conf to
+/etc/resolv.conf
+
+I also needed to load the ppp_generic module before I could make a ppp
+connection, but that may just be an arch thing.
+
+In my short time using it is seems to work well enough, The only other
+things I'd like to figure out are if there is a way to see the signal
+strength and amount of data transferred like the windows and mac software
+does. (As an aside, I believe E-mobile's literature says that the D11LC
+only works with intel macs, but while I was playing around I plugged it
+into my old PPC iBook and got it working so there is support for PPC macs)
+ Hope all this will be of use to someone.
+
+Ian
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00149.html">Re: [tlug] Firefox 3.0.1 doesn't respect	&lt;meta	http-equiv=&quot;content-type&quot;&gt;</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00151.html">Re: [tlug] Firefox 3.0.1 doesn't respect	&lt;meta	http-equiv=&quot;content-type&quot;&gt;</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00145.html">[tlug] Agg pick up [ was: Fwd: Questions about opensource license</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00157.html">[tlug] Dinky computers</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00150"><strong>Date</strong></a></li>
+<li><a href="threads.html#00150"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

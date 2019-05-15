@@ -1,0 +1,174 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: FTP client buffer overflow [SECURITY] -->
+<!--X-From: Scott Stone <sstone@example.com> -->
+<!--X-Date:  Thu, 17 Dec 1998 09:23:13 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.981217092019.17300J&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00380.html">Date Prev</A>][<A HREF="msg00382.html">Date Next</A>][<A HREF="msg00380.html">Thread Prev</A>][<A HREF="msg00382.html">Thread Next</A>][<A HREF="maillist.html#00381">Date Index</A>][<A HREF="threads.html#00381">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: FTP client buffer overflow [SECURITY]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Users' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: FTP client buffer overflow [SECURITY]</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 Dec 1998 09:23:04 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Someone, I believe it was Christian Gafton at Redhat, found a buffer
+overflow in the standard FTP client.  Redhat, Caldera, and PHT have posted
+fixes - I don't have URLs for Redhat and Caldera's fixes (I assume you
+should look in the Usual Places), but for TL 2.0, 3.0, or 3.0.1 (E or J),
+get the RPM:
+
+ftp.pht.com:/pub/turbolinux-3.0-updates/i386/ftp-0.10-2.i386.rpm
+                                       /SRPMS/ftp-0.10-2.src.rpm
+
+
+note that we've also stopped putting TL in the release number.  This is to
+let people know that our packages aren't going to self-destruct if not
+used with TL, or something to that affect.  Anyway, here's the patch
+that's applied to the FTP client, in case you want to see what's been
+done:
+
+-- cut here, unified diff patch follows --
+
+--- netkit-ftp-0.10/ftp/ftp.c.ovr	Thu Mar 20 21:02:13 1997
++++ netkit-ftp-0.10/ftp/ftp.c	Tue Dec 15 16:42:46 1998
+@@ -394,7 +394,8 @@
+ 			if (dig &gt; 4 &amp;&amp; pflag == 1 &amp;&amp; isdigit(c))
+ 				pflag = 2;
+ 			if (pflag == 2) {
+-				if (c != '\r' &amp;&amp; c != ')')
++				if ( (strlen(pasv) &lt;= sizeof(pasv) - 1) &amp;&amp;
++				    (c != '\r') &amp;&amp; (c != ')'))
+ 					*pt++ = c;
+ 				else {
+ 					*pt = '\0';
+@@ -811,7 +812,8 @@
+ 				return;
+ 			}
+ 		}
+-		else if (runique &amp;&amp; (local = gunique(local)) == NULL) {
++		else if (runique &amp;&amp; (strcmp(cmd,"NLST") != 0) &amp;&amp;
++			 (local = gunique(local)) == NULL) {
+ 			(void) signal(SIGINT, oldintr);
+ 			code = -1;
+ 			return;
+--- netkit-ftp-0.10/ftp/cmds.c.ovr	Sun Jun  8 16:07:19 1997
++++ netkit-ftp-0.10/ftp/cmds.c	Tue Dec 15 16:41:26 1998
+@@ -131,7 +131,7 @@
+ setpeer(int argc, char *argv[])
+ {
+ 	char *host;
+-	short port;
++	unsigned short port;
+ 
+ 	if (connected) {
+ 		printf("Already connected to %s, use close first.\n",
+
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+Head of TurboLinux Development/Systems Administrator
+Pacific HiTech, Inc (USA) / Pacific HiTech, KK (Japan)
+
+
+------------------------------------------------------------------
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 13 February, 12:30               Place: TBD
+------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00382" HREF="msg00382.html">Re: tlug: FTP client buffer overflow [SECURITY]</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;chris@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00380.html">Re: tlug: PC-PJ1 modem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00382.html">Re: tlug: FTP client buffer overflow [SECURITY]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00380.html">Re: tlug: PC-PJ1 modem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00382.html">Re: tlug: FTP client buffer overflow [SECURITY]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00381"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00381"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

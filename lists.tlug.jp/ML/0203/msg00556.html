@@ -1,0 +1,169 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Gnome over VNC in Japanese -->
+<!--X-From-R13: [vxr Tnovna <zsnovnaNfhfr.qr> -->
+<!--X-Date: Wed, 27 Mar 2002 23:54:40 +0900 (JST) -->
+<!--X-Message-Id: s3tn0wu2h8x.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020327194714.0054f788.oconnell@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00555.html">Date Prev</a>][<a href="msg00557.html">Date Next</a>][<a href="msg00546.html">Thread Prev</a>][<a href="msg00547.html">Thread Next</a>][<a href="maillist.html#00556">Date Index</a>][<a href="threads.html#00556">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Gnome over VNC in Japanese</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>&quot;Jim O'Connell&quot; &lt;<A HREF="mailto:oconnell@DOMAIN.HIDDEN">oconnell@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Gnome over VNC in Japanese</strong></li>
+<li><strong>From</strong>: <strong>Mike Fabian &lt;<A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A>&gt;</strong></li>
+<li>Date: Wed, 27 Mar 2002 15:54:38 +0100</li>
+<li>Cc: <A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></li>
+<li>Content-type: text/plain; charset=iso-2022-jp</li>
+<li>In-reply-to: &lt;<a href="msg00546.html">20020327194714.0054f788.oconnell@example.com</a>&gt; (&quot;JimO'Connell&quot;'s message of &quot;Wed, 27 Mar 2002 19:47:14 +0900&quot;)</li>
+<li>References: &lt;<a href="msg00546.html">20020327194714.0054f788.oconnell@example.com</a>&gt;</li>
+<li>Reply-to: <A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A></li>
+<li>Sender: <A HREF="mailto:mfabian@DOMAIN.HIDDEN">mfabian@example.com</A></li>
+<li>User-agent: Gnus/5.090004 (Oort Gnus v0.04) XEmacs/21.4 (ArtificialIntelligence, i386-suse-linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>"Jim O'Connell" &lt;oconnell@example.com&gt; writes:
+
+&gt; I have a RedHat 7.2 installation on a machine that I would like to
+&gt; be able to VNC to and have it set for Japanese.
+
+&gt; I know that the machine is all set up for Japanese, because if I log
+&gt; in locally using GDM, I can select Japanese as an option and it
+&gt; works beautifully.
+
+When you select Japanese in GDM, it will start the X-session with LANG=ja_JP.
+
+&gt; (If I start X using 'startx' I can only get English, but that's sort
+&gt; of a different problem.)
+
+use startx like this:
+
+    LANG=ja_JP LC_ALL=ja_JP startx
+
+This is basically what GDM does, it sets the locale before starting
+X11. You can get the same effect with startx when you set the locale.
+
+&gt; I've read the documentation about setting the language variables,
+&gt; but they simply do not seem to work.
+
+&gt; Anyone currently able to do this?  (I've included my ~/.vnc/xstartup
+&gt; file below.)  Also, but less importantly, setting the display size
+&gt; to 800x600 would be handy if it can be done *only* for when logging
+&gt; in through VNC - to avoid that annoying window scrolling...
+&gt;
+&gt; Cheers,
+&gt; Jim
+&gt; PS - the following works well for English Gnome:
+&gt;
+&gt; #!/bin/sh
+&gt;
+&gt; xrdb $HOME/.Xresources
+&gt; xsetroot -solid grey
+&gt; xterm -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &amp;
+&gt; gnome-session &amp;
+
+The following should do it:
+
+    #!/bin/sh
+
+    xrdb $HOME/.Xresources
+    xsetroot -solid grey
+    xterm -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &amp;
+    LANG=ja_JP LC_ALL=ja_JP gnome-session &amp;
+
+Probably you can omit LC_ALL=ja_JP. Works on my system without.
+I just added the LC_ALL hammer here to make sure that
+you get everything set to Japanese (especially LC_CTYPE).
+
+-- 
+Mike Fabian   &lt;mfabian@example.com&gt;   <A HREF="http://www.suse.de/~mfabian">http://www.suse.de/~mfabian</A>
+睡眠不足はいい仕事の敵だ。
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00546" href="msg00546.html">[tlug] Gnome over VNC in Japanese</a></strong>
+<ul><li><em>From:</em> Jim O'Connell</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00555.html">[tlug] cup/paste buffer - encoding</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00557.html">Re: [tlug] Red Hat manuals</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00546.html">[tlug] Gnome over VNC in Japanese</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00547.html">[tlug] Help with fdisk please</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00556"><strong>Date</strong></a></li>
+<li><a href="threads.html#00556"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

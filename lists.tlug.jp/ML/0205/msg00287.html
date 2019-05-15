@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Apache running as root? -->
+<!--X-From-R13: Pehab Dnbhyg <oeNenbhyg.pbz> -->
+<!--X-Date: Tue, 28 May 2002 21:25:19 +0900 (JST) -->
+<!--X-Message-Id: 3CF37757.6040507@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F36z1R4R7iM823Rm5Jt0001036b@example.com -->
+<!--X-Reference: 20020528185803.6dc361d6.bkesuma@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00286.html">Date Prev</a>][<a href="msg00288.html">Date Next</a>][<a href="msg00285.html">Thread Prev</a>][<a href="msg00280.html">Thread Next</a>][<a href="maillist.html#00287">Date Index</a>][<a href="threads.html#00287">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Apache running as root?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 28 May 2002 21:25:59 +0900</li>
+<li><strong>From</strong>: <strong>Bruno Raoult &lt;<A HREF="mailto:br@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Apache%20running%20as%20root%3F">br@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Apache running as root?</strong></li>
+<li>References: &lt;<a href="msg00278.html">F36z1R4R7iM823Rm5Jt0001036b@example.com</a>&gt; &lt;<a href="msg00285.html">20020528185803.6dc361d6.bkesuma@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.0rc3) Gecko/20020523</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I don't think log files is the reason, as:
+1) The log files belong to apache server user (not root), usually (at 
+least they should)
+2) If a file is opened by a parent process before a fork, the child will 
+get the same
+    file descriptor, and could write, even after changing its uid/gid: 
+there is no permission
+    check on write() system call, only on open().
+
+The main reason could be that one process only can listen to a socket 
+port (port 80).
+You can easily check, for apache, that even you have many httpd running, 
+only one
+is listening to the server port. This process should be able to:
+- Know all its child processes (to kill, restart, increase/decrease the 
+number, etc...)
+- Reread configuration files, create new files in directories where only 
+root could
+  create files (even if the owner id changed later)
+- Open new sockets on low-numbered port (eg. after a kill -USR1), if you 
+changed the
+   configuration file
+- etc...
+
+Bruno.
+
+-- 
+Computers are like air-conditions. They don't properly work, if you open
+Windows.
+
+
+br.
+
+Batara Kesuma wrote:
+
+&gt;Hi Jc :)
+&gt;
+&gt;On Tue, 28 May 2002 17:24:36 +0900
+&gt;&quot;Jean-Christian Imbeault&quot; &lt;jean_christian@example.com&gt; wrote:
+&gt;
+&gt;  
+&gt;
+&gt;&gt;Is having the httpd running as root normal? Is it safe? I read that
+&gt;&gt;apache needed to start running as root in order to bind to port 80 but
+&gt;&gt;that after that it would switch to user nobody . . . However I still
+&gt;&gt;have the oneprocess running as root.
+&gt;&gt;    
+&gt;&gt;
+&gt;
+&gt;Yes, it is normal. 
+&gt;Because the child still needs its root, for example to write the apache
+&gt;log file, etc.
+&gt;
+&gt;--bk
+&gt;
+&gt;
+&gt;  
+&gt;
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00278" href="msg00278.html">[tlug] Apache running as root?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+<li><strong><a name="00285" href="msg00285.html">Re: [tlug] Apache running as root?</a></strong>
+<ul><li><em>From:</em> Batara Kesuma</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00286.html">[tlug] Sendmail's log?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00288.html">Re: [tlug] Sendmail's log?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00285.html">Re: [tlug] Apache running as root?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00280.html">Re: [tlug] Apache running as root?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00287"><strong>Date</strong></a></li>
+<li><a href="threads.html#00287"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

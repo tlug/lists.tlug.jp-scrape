@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: HTTP question -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 3 Dec 1999 12:31:35 +0900 -->
+<!--X-Message-Id: 14407.14718.94955.95357@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19991203112259.A15079@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00025.html">Date Prev</A>][<A HREF="msg00027.html">Date Next</A>][<A HREF="msg00025.html">Thread Prev</A>][<A HREF="msg00030.html">Thread Next</A>][<A HREF="maillist.html#00026">Date Index</A>][<A HREF="threads.html#00026">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: HTTP question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: HTTP question</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 3 Dec 1999 12:31:10 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00023.html">19991203112259.A15079@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00023.html">19991203112259.A15079@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "FB" == "Frank Bennett (フランクべネット )" &lt;bennett@example.com&gt; writes:
+
+    FB&gt; I need to sling text strings back and forth between browsers
+    FB&gt; and our Web server.  I've been using encoded CGI "?" strings
+    FB&gt; for this purpose.
+
+This usage is deprecated, AFAIK.  See below.
+
+    FB&gt;   o Is this truncation behaviour common to all browsers?  (I'm
+    FB&gt; a bit irritated by this, to be honest; I can see why a
+    FB&gt; *server* might want to squash lines that appear to be too
+    FB&gt; long, but I can't think of any utility in having a client
+    FB&gt; preemptively impose such a restriction).
+
+Um, avoiding a buffer overrun sounds pretty likely to me.  Another
+possibility is there is some garbage in the kanji string that tickles
+a bug in MSIE's escaping function (see the Note below).  From the HTML
+4.0 spec:
+
+     <A HREF="http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13">http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13</A>
+
+17.13 Form submission
+
+The following sections explain how user agents submit form data to
+form processing agents.
+
+17.13.1 Form submission method
+
+The method attribute of the FORM element specifies the HTTP method
+used to send the form to the processing agent. This attribute may take
+two values:
+
+    get: With the HTTP "get" method, the form data set is appended to
+    the URI specified by the action attribute (with a question-mark
+    ("?") as separator) and this new URI is sent to the processing
+    agent.
+
+    post: With the HTTP "post" method, the form data set is included
+    in the body of the form and sent to the processing agent. 
+
+The "get" method should be used when the form is idempotent (i.e.,
+causes no side-effects). Many database searches have no visible
+side-effects and make ideal applications for the "get" method.
+
+If the service associated with the processing of a form causes side
+effects (for example, if the form modifies a database or subscription
+to a service), the "post" method should be used.
+
+  Note. The "get" method restricts form data set values to ASCII
+  characters. Only the "post" method (with
+  enctype="multipart/form-data") is specified to cover the entire
+  [ISO10646] character set.
+
+    FB&gt;   o If not, is there a browser out there in common use that is
+    FB&gt; entirely free of length limits of this kind?
+
+Mozilla.  If it's not, you can make it so.
+
+Of course I'm not serious; point is, how can you _know_ without
+reading the source?  Not worth it.
+
+    FB&gt;   o If not, is there an alternative, incompetely traumatic
+    FB&gt; method for sending archive text of arbitrary length to our
+    FB&gt; server from browser clients out in the field?  (Methods that
+    FB&gt; require the user to configure their machine specially to cope
+    FB&gt; with our site are *not* acceptable).
+
+This is exactly what "method=POST" is designed for.  MSIE and Netscape
+have both implemented it since 1995 at least; I don't think you have
+to worry about that.  It's trivial to implement on the browser side;
+for the server's CGIs most scripting languages provide libraries for
+parsing POSTed forms.  The Portable Etruscan Retributive Lycophage has
+several, although if you use Python your newt is likely to get better
+sooner.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: December 17 (Fri), 19:00 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: January, 2000
+* Topic: "glibc - current status and future developments"
+* Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+* Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00023" HREF="msg00023.html">tlug: HTTP question</A></STRONG>
+<UL><LI><EM>From:</EM> "Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00025.html">tlug: Re: HTTP question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00027.html">tlug: December meeting participants</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00025.html">tlug: Re: HTTP question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00030.html">tlug: ip subnetting question..</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00026"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00026"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

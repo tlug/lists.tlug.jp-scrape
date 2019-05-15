@@ -1,0 +1,183 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: 2 Problems with Kernel 2.2.1 upgrade -->
+<!--X-From: Neil Booth <NeilB@example.com> -->
+<!--X-Date:  Wed, 10 Feb 1999 19:21:13 +0900 -->
+<!--X-Message-Id: 36C15DF9.EC11314B@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36BC4027.F853B657@example.com -->
+<!--X-Reference-Id: 14014.16061.666836.934319@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00177.html">Date Prev</A>][<A HREF="msg00179.html">Date Next</A>][<A HREF="msg00129.html">Thread Prev</A>][<A HREF="msg00184.html">Thread Next</A>][<A HREF="maillist.html#00178">Date Index</A>][<A HREF="threads.html#00178">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</strong></LI>
+<LI><strong>From</strong>: <strong>Neil Booth &lt;<A HREF="mailto:NeilB@example.com">NeilB@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 10 Feb 1999 19:22:49 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: ...</LI>
+<LI>References: &lt;<A HREF="msg00119.html">36BC4027.F853B657@example.com</A>&gt; &lt;<A HREF="msg00123.html">14014.16061.666836.934319@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi Stephen,
+
+Stephen J. Turnbull wrote:
+
+&gt; This is a pretty uninformative symptom to report; what could be wrong?
+&gt; I'm not going to count the ways, it'll take much too long.
+
+True, I'll post again when I reboot 2.2.1, and write down more details.
+(The problem is I cannot post from 2.2.1!). Pinging my ISP worked fine
+(I tested the basics like that before posting).
+ 
+&gt;     Neil&gt; Also, has anyone who has upgraded to modutils-2.1.121
+&gt;     Neil&gt; managed to keep modules working when booting under 2.0.x? It
+&gt;     Neil&gt; appears to have broken my modular 2.0.x kernel as it cannot
+&gt;     Neil&gt; load ppp anymore as a module.
+&gt; 
+&gt; Rebuilding the 2.0.x kernel and modules has worked for me twice, once
+&gt; on i836 and once on sparc.
+
+Hmmm, using 2.1.121 modules? You must have changed either the kernel
+source or the modutils source then, because in untouched form they
+disagree about a kerneld_msg structure. This is the problem I (and
+apparently many others) came across.
+
+The following is declared in modutils-2.1.121/include/kerneld.h :-
+
+struct kerneld_msg
+  {
+    long mtype;
+    long id;
+    short version;
+    short pid;
+    char text[1];
+  };
+
+which has 2 extra items compared to
+linux-2.0.36/include/linux/kerneld.h.
+In case anyone comes across this, one (of many) solutions is to edit the
+modutils source as follows:-
+
+struct kerneld_msg
+  {
+    long mtype;
+    long id;
+#ifdef NEW_KERNELD_PROTOCOL
+    short version;
+    short pid;
+#endif
+    char text[1];
+  };
+
+and recompile kerneld. Then everything hums as expected.
+
+Thanks for your reply,
+
+Neil.
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00184" HREF="msg00184.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00119" HREF="msg00119.html">tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00123" HREF="msg00123.html">tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00177.html">Re: tlug: Re: your mail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00179.html">tlug: *** IMPORTANT *** unsubscription HOWTO</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00129.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00184.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00178"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00178"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

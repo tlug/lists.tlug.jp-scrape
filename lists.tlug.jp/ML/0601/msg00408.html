@@ -1,0 +1,221 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] searching for kanji strings, ignore punctuation and end of lines:  Perl Solution and comments -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Wed, 18 Jan 2006 17:28:06 +0900 -->
+<!--X-Message-Id: 43CDFC16.7030808@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00409.html">Date Prev</a>][<a href="msg00410.html">Date Next</a>][<a href="msg00409.html">Thread Prev</a>][<a href="msg00421.html">Thread Next</a>][<a href="maillist.html#00408">Date Index</a>][<a href="threads.html#00408">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] searching for kanji strings, ignore punctuation and end of lines:  Perl Solution and comments</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 18 Jan 2006 17:28:06 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20searching%20for%20kanji%20strings%2C%20ignore%20punctuation%20and%20end%20of%20lines%3A%20%20Perl%20Solution%20and%20comments">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] searching for kanji strings, ignore punctuation and end of lines:  Perl Solution and comments</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Thanks for help from Edward, Steven, Josh et al.
+
+I have a solution to my suprisingly pesky problem, (see the solution 
+after the &gt;&gt;). To recap the problem:
+
+&lt;&lt;review---------
+
+I have a quote that is just a
+string of kanji, and I am looking for where it came from. I do have an
+etext version of the canon (several hundred megabytes and thousands of
+files), in utf8, which most likely contains this phrase.
+
+The problem is that the etexts inserts a special &quot;space&quot; or a maru
+(i.e. a unicode period, little circle) at random places, trying to
+make it easier to read, and making it impossible to find with grep, and 
+breaks lines at unlikely places.
+
+I can assume that two lines is enough to look at, and there is
+actually no ascii white spaces, just those two unicode characters that
+get in the way.
+
+Example, using ABCDEF for a six kanji phrase I am looking for, and 
+&quot;ghijklmnopq...&quot; for other kanji that happen to be on the line.  And &quot;.&quot; 
+for the maru:
+
+p0001a05(00)-ghi.jklmn.op.rs.AB.
+p0001a06(00)-CD.EFtuvw.xyz.
+
+If you are set to unicode, here is a real snippet from the CBETA canon:
+
+p0001b16(00)|　念彌勒佛緣　念佛三昧緣
+p0001b17(00)|　　普敬述意緣第一
+p0001b18(00)|夫大聖有平等之相。弟子有稱揚之德。
+p0001b19(02)|故十方諸佛。同出於淤泥之濁。三身正覺。
+
+And I am searching for e.g. 揚之德故十 , which goes over line breaks and 
+maru.
+
+ &gt;&gt;end of review----------------------
+
+Solution:
+
+Following Steven's (and others) general approach, I simply make a search 
+argument with optional puntuation, newline, line number characters 
+between each and every kanji (the $w = [--] below). The hard part was 
+that newline processing is not taken care of by perl in quite such an 
+easy way. In fact, the text is from DOS and hence has DOS \015\012 line 
+breaks. Looking at this in emacs it shows as simple \012, but perl sees 
+and insists on having both \015 and \012 specified. As has so often 
+happened to me, I get all twisted up with new lines, especially when 
+crossing platforms. Once I figured that out, it was just a matter of 
+learning enough perl to figure out the syntax.
+
+I slurp in the whole file with -0777 (thanks Edward), and set my special 
+ignore-this string to $w in the BEGIN, then looped over all the files 
+globbed (thanks to the -n switch). The /xo switches in the perl match is 
+so I can put in white space for readability, and to not recompile the 
+search arguent each time for the $w variable. I do have to remember to 
+print out the name of the current file $ARGV!
+
+Here is my little perl-lette, already set for a particular search (not 
+the one above, sorry).  Put in my ~/bin and invoked with: -&gt; cbsearch 
+fileglob
+
+#!/usr/bin/perl -0777 -n
+BEGIN {$w = '[0-9pabc()|。　\n\015]*'}
+if (/\n$w.*
+相$w弟$w子$w有$w稱$w揚$w之$w德$w
+故十
+.*/xo){print $&amp;, &quot;\n&quot;;}
+
+It prints out (for this example), the file name and the text in the file:
+
+t54n2123.txt
+p0001b18(00)|夫大聖有平等之相。弟子有稱揚之德。
+p0001b19(02)|故十方諸佛。同出於淤泥之濁。三身正覺。
+
+This kind of thing, to put it mildly, is fabulously useful to me.
+
+
+The ugly part is that I have to go edit the perl script file each time, 
+and do a little emacs deal to insert the $w between each kanji. Still, 
+it works!
+
+But hmm, slow. A good 60 seconds for the above example, on my three year 
+old Toshiba laptop.
+
+Any suggestions about speeding up would be appreciated. I have looked at 
+Namazu a bit, but its not clear to me that it is set up for this kind of 
+thing. Its not really words we are talking about here, and the point is 
+to ignore punctuation, not use it to make syntatic units like Namazu 
+does. (These texts are not punctuated in the original, and old writers 
+quote them either without punctuation or making up some of their own.)
+
+Steven, are you serious, can you do something like this with egrep and 
+elisp? That would be great. I would love to hear more.
+
+Thanks everyone, especially all the perl from Edward.
+
+David Riggs, Kyoto
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00421" href="msg00421.html">Re: [tlug] searching for kanji strings, ignore punctuation and endof lines:  Perl Solution and comments</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00409.html">[tlug] Mozilla as default browser in KDE</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00410.html">[tlug] Base64 and headers (was: Editing Soud Files (WAV &amp; MP3))</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00409.html">[tlug] Mozilla as default browser in KDE</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00421.html">Re: [tlug] searching for kanji strings, ignore punctuation and endof lines:  Perl Solution and comments</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00408"><strong>Date</strong></a></li>
+<li><a href="threads.html#00408"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: RedHat Woes -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Wed, 11 Oct 2000 18:08:14 +0900 -->
+<!--X-Message-Id: 20001011180814.O21310@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: EB92040165F4D1119A8600A0C9A398BF0524A2A9@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00142.html">Date Prev</A>][<A HREF="msg00144.html">Date Next</A>][<A HREF="msg00141.html">Thread Prev</A>][<A HREF="msg00142.html">Thread Next</A>][<A HREF="maillist.html#00143">Date Index</A>][<A HREF="threads.html#00143">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: RedHat Woes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: RedHat Woes</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 11 Oct 2000 18:08:14 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00141.html">EB92040165F4D1119A8600A0C9A398BF0524A2A9@example.com</A>&gt;; from Kelly_Mismash@example.com on Wed, Oct 11, 2000 at 03:49:10AM -0500</LI>
+<LI>References: &lt;<A HREF="msg00141.html">EB92040165F4D1119A8600A0C9A398BF0524A2A9@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;qfiK0B.A.z-B.1ED55@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.4i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Regarding lilo, and its mysterious LI, have a look in the lilo readme
+which should be under your docs directory, on my RH, it is 
+/usr/doc/lilo-0.21/README. I had this problem once, but no problems
+booting off my rescue to fix it. It does sound like your partition
+table got mangled or something though :(
+
+Basically when you make a new kernel, copy it into /boot with a new
+name. Don't overwrite the old kernel and then make a new non default
+entry in lilo.conf for it. Then run lilo command. I also make sure
+that /boot is on a separate partition and is small so it I don't have
+to worry about limits. I usually assign ~20MB to it, but it can
+be smaller :)
+
+The section you want from the README is...
+
+LILO start message
+- - - - - - - - -
+
+When LILO loads itself, it displays the word "LILO". Each letter is printed
+before or after performing some specific action. If LILO fails at some
+point, the letters printed so far can be used to identify the problem. This
+is described in more detail in the technical overview.
+
+Note that some hex digits may be inserted after the first "L" if a
+transient disk problem occurs. Unless LILO stops at that point, generating
+an endless stream of error codes, such hex digits do not indicate a severe
+problem.
+
+  (&lt;nothing&gt;)  No part of LILO has been loaded. LILO either isn't installed
+    or the partition on which its boot sector is located isn't active.
+   L &lt;error&gt; ...   The first stage boot loader has been loaded and started,
+    but it can't load the second stage boot loader. The two-digit error
+    codes indicate the type of problem. (See also section "Disk error
+    codes".) This condition usually indicates a media failure or a geometry
+    mismatch (e.g. bad disk parameters, see section "Disk geometry").
+   LI   The first stage boot loader was able to load the second stage boot
+    loader, but has failed to execute it. This can either be caused by a
+    geometry mismatch or by moving /boot/boot.b without running the map
+    installer.
+   LIL   The second stage boot loader has been started, but it can't load
+    the descriptor table from the map file. This is typically caused by a
+    media failure or by a geometry mismatch.
+   LIL?   The second stage boot loader has been loaded at an incorrect
+    address. This is typically caused by a subtle geometry mismatch or by
+    moving /boot/boot.b without running the map installer.
+   LIL-   The descriptor table is corrupt. This can either be caused by a
+    geometry mismatch or by moving /boot/map without running the map
+    installer.
+   LILO   All parts of LILO have been successfully loaded.
+
+
+Cheers,
+
+Tom.
+-- 
+Thomas O'Dowd                   Have you had your noop today?
+tom@example.com                  <A TARGET="_top" HREF="http://www.nooper.com">http://www.nooper.com</A>
+
+On Wed, Oct 11, 2000 at 03:49:10AM -0500, Kelly_Mismash@example.com wrote:
+&gt; I had the same problem with LILO on a laptop that I was using at the last
+&gt; company I worked for. There is something funky about lilo, but I never took
+&gt; the time to try to figure it out. I found that if I hit the "Esc" key when
+&gt; it displayed LI that I would get the whole LILO prompt and then I could
+&gt; choose which kernel/OS I wanted to boot up into. However, even if I did not
+&gt; hit the "Esc" key lilo would eventually boot up into the default kernel/OS
+&gt; that I had configure in the lilo conf file. If it simply just hangs on you
+&gt; and never boots then you obviously have a different and/or additional
+&gt; problems that I did not. Of course this does not explain your partition
+&gt; issue which I have no advice to offer.
+&gt; 
+&gt; 	kelly
+&gt; 
+&gt; -----Original Message-----
+&gt; From: shawn [<A TARGET="_top" HREF="mailto:shawn@example.com">mailto:shawn@example.com</A>]
+&gt; Sent: Wednesday, October 11, 2000 1:57 PM
+&gt; To: tlug@example.com
+&gt; Subject: RedHat Woes
+&gt; 
+&gt; 
+&gt; Hi all,
+&gt; 
+&gt; I've run myself into a little problem and was hoping someone might have some
+&gt; advice.
+&gt; 
+&gt; It started when I recompiled the kernel to configure module support. I
+&gt; followed the kernel HOW-TO, and had no problems, including running bzlilo at
+&gt; the end.
+&gt; 
+&gt; When I rebooted however, the startup stalled at LI
+&gt; where there is usually LILO. I booted with a boot/rescue disk, and got
+&gt; kernel panic, same thing when I used TomsRootBoot, same thing when trying
+&gt; single user mode.
+&gt; 
+&gt; I made a "fresh" installation on the secondary hd (hdb) and was then able to
+&gt; boot. When attempting to mount the original drive partitions, though, I am
+&gt; only able to mount the original /boot and / partitions. the original /home
+&gt; contained only dmesg.txt. Attempts to mount other partitions result in:
+&gt; VFS: wrong fs type, bad option, bad superblock, or too many mounted
+&gt; filesystems.
+&gt; (I am using mount with the -t ext2 option for fs.)
+&gt; 
+&gt; Any ideas on how I can work through this mess?
+&gt; 
+&gt; Shawn
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Nomikai Meeting: October 20 (Fri) 19:00   Place: Tengu TokyoEkiMae
+&gt; Next Technical Meeting: November 11 (Sat) 13:30  Place: LinuxProbe Hall
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Nomikai Meeting: October 20 (Fri) 19:00   Place: Tengu TokyoEkiMae
+&gt; Next Technical Meeting: November 11 (Sat) 13:30  Place: LinuxProbe Hall
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00141" HREF="msg00141.html">RE: RedHat Woes</A></STRONG>
+<UL><LI><EM>From:</EM> Kelly_Mismash@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00142.html">resolution for external monitor</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00144.html">resolution for external monitor</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00141.html">RE: RedHat Woes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00142.html">resolution for external monitor</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00143"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00143"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

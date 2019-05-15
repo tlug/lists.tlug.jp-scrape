@@ -1,0 +1,260 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Beavis is back and I wanna show him a raw IP dump -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Thu, 7 Sep 2000 02:06:27 +0900 (JST) -->
+<!--X-Message-Id: 14774.31123.909813.667130@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14774.5234.887615.132988@example.com -->
+<!--X-Reference-Id: 20000906200953.X13308@example.com -->
+<!--X-Reference-Id: 14774.19531.120468.461876@example.com -->
+<!--X-Reference-Id: 20000907003858.E15988@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00093.html">Date Prev</A>][<A HREF="msg00095.html">Date Next</A>][<A HREF="msg00088.html">Thread Prev</A>][<A HREF="msg00092.html">Thread Next</A>][<A HREF="maillist.html#00094">Date Index</A>][<A HREF="threads.html#00094">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Beavis is back and I wanna show him a raw IP dump</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@example.com">jq@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Beavis is back and I wanna show him a raw IP dump</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 7 Sep 2000 02:06:27 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00088.html">20000907003858.E15988@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00077.html">14774.5234.887615.132988@example.com</A>&gt;&lt;<A HREF="msg00081.html">20000906200953.X13308@example.com</A>&gt;&lt;<A HREF="msg00085.html">14774.19531.120468.461876@example.com</A>&gt;&lt;<A HREF="msg00088.html">20000907003858.E15988@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;ZSZG3B.A.RFC.gwnt5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "jb" == Jonathan Q &lt;jq@example.com&gt; writes:
+
+    jb&gt; Exactly what is between you and the router?  Hubs, switches,
+    jb&gt; the whole deal.  Feel free to do an ASCII network diagram if
+    jb&gt; you're of a mind to :-) What brand of routers, switches, etc.?
+
+Linux &lt;--&gt; 3Com 3c905 or 3c589 &lt;- 10BaseT -&gt; ancient CentreCom hub &lt;-
+10Base5 -&gt; CentreCom 440 transceiver &lt;- 10Base5? -&gt; [I don't know]
+&lt;--&gt; router (I don't know, probably Cisco, maybe it handles 100BaseT??)
+
+    jb&gt; I also haven't found any docs on specifically what ifconfig is
+    jb&gt; referring to in the frames column of the errors section,
+
+According to Donald Becker (3c59x.c to be precise) this is information
+read from the card.  sonic.c seems to imply that you can actually read
+such broken frames (I haven't looked real close yet at that source),
+but 3c59x and 3c589_cs just drop those packets on the floor (which is
+why Karpski and Ethereal don't see them).
+
+    jb&gt; so I'm going to hazard a guess that these were malformed or
+    jb&gt; incomplete frames that were received (frames being the
+    jb&gt; protocol data unit used by ethernet).  I'm supposing there
+    jb&gt; isn't a horrendous amount of traffic on your side of the
+
+No.  Certainly not this time of night....
+
+    jb&gt; router link.  I'm wondering if an interface isn't borked
+    jb&gt; somewhere.
+
+Yeah, between Beavis's ears, for sure.
+
+Chris's suggestion about duplex mismatch sounds like exactly the kind
+of thing that would happen.
+
+    jb&gt; You said UDP doesn't work, but how about ICMP?
+
+I don't know.  I tried ping -l, but even that wasn't enough to get it
+to drop ICMPs.  I don't know what's happening with UDP; what I know is
+that the Coda file system, which uses UDP a lot (it has its own
+methods for achieving reliability) falls on its face about half the time.
+
+    jb&gt;   What does a traceroute from you to the router look like?
+
+traceroute to 130.158.98.254 (130.158.98.254), 30 hops max, 38 byte packets
+ 1  router-97.sk.tsukuba.ac.jp (130.158.97.254)  1.441 ms *  1.839 ms
+
+And here's one to another box connected to the same hub as .109:
+
+traceroute to 130.158.98.114 (130.158.98.114), 30 hops max, 38 byte packets
+ 1  router-97.sk.tsukuba.ac.jp (130.158.97.254)  1.357 ms  1.679 ms  1.367 ms
+ 2  tleepslib2.sk.tsukuba.ac.jp (130.158.98.114)  3.249 ms  3.417 ms  3.072 ms
+
+(note, for experimental purposes I have my routes set as:
+
+bash-2.04$ /sbin/route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.10.254  0.0.0.0         255.255.255.255 UH    0      0        0 ppp0
+130.158.98.254  0.0.0.0         255.255.255.255 UH    0      0        0 eth0
+0.0.0.0         130.158.98.254  0.0.0.0         UG    1      0        0 eth0
+
+the ppp0 iface is actually an ssh tunnel over eth0).
+
+    jb&gt; Any really, really slow hops?
+
+Aside from the second packet invariably disappearing into a black
+hole, no.
+
+However, a long series of pings from .109 to .114 via .254 will show
+mostly ~3.2ms, then it will bounce up to 20, 50, 150 ms for a packet
+or two, then back to ~3.2ms.
+
+    jb&gt; If you know the IP address of the router's exit port,
+    jb&gt; traceroute to that, too.  And then something at least one hop
+    jb&gt; on the other side of that router.
+
+The router has at least 5 addresses (130.158.{96,97,98,99,101}.254).
+I am told that 130.158.97.254 and 130.158.98.254 at least share a
+physical interface (ie, are aliases).  I'm sure that's true because I
+can "see" other machines on 130.158.97.0, without a gateway, if I set
+a route there.  I know that 130.158.99.254 is a separate physical
+interface; I can't see those machines.
+
+Traceroutes to all of those addresses have the form of the traceroute
+above to 130.158.98.254, right down to all of them thinking they are
+130.158.97.254.  The timings are always 1.3ms * 4ms or so.
+
+    jb&gt; Can you post your ifconfig output?
+
+bash-2.04$ /sbin/ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:10:4B:26:62:FD  
+          inet addr:130.158.98.109  Bcast:130.158.98.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:81060 errors:259 dropped:0 overruns:0 frame:226
+          TX packets:43951 errors:0 dropped:0 overruns:0 carrier:5
+          collisions:1 txqueuelen:100 
+          Interrupt:18 Base address:0x1040 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16144  Metric:1
+          RX packets:14 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:14 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+
+ppp0      Link encap:Point-to-Point Protocol  
+          inet addr:192.168.1.3  P-t-P:192.168.10.254  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1500  Metric:1
+          RX packets:26920 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:31815 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:3 
+
+
+    jb&gt; Also, you mentioned it seems to be hosing packets from time to
+
+These are the frame and other errors; the packets that get through are
+fine.
+
+    jb&gt; time, so this is apparently an intermittent problem?  Is there
+    jb&gt; any kind of regular pattern to when it does it?
+
+Without a trace, I can't do any pattern identification.  :-(
+
+As I mentioned before, an FTP transfer between two machines with
+routes set as above (ie, no route to localnet, all traffic (except to
+self) via the gw) will send the error rate to nearly 20% (and the
+transfer rate is 10-20 KBps).
+
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00077" HREF="msg00077.html">Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00081" HREF="msg00081.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00085" HREF="msg00085.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00088" HREF="msg00088.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00093.html">Re: new webpage: rikai.com</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00095.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00088.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00092.html">Re: Beavis is back and I wanna show him a raw IP dump</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00094"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00094"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

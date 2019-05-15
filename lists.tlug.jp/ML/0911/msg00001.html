@@ -1,0 +1,182 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Permissions on local Apache web testing environment -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Sun, 01 Nov 2009 14:55:41 +0900 -->
+<!--X-Message-Id: 20091101055540.GF21560@poetic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4AEC20F3.7050507@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00000.html">Date Prev</a>][<a href="msg00002.html">Date Next</a>][<a href="msg00004.html">Thread Prev</a>][<a href="msg00049.html">Thread Next</a>][<a href="maillist.html#00001">Date Index</a>][<a href="threads.html#00001">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Permissions on local Apache web testing environment</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 1 Nov 2009 14:55:40 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Permissions%20on%20local%20Apache%20web%20testing%20environment">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Permissions on local Apache web testing environment</strong></li>
+<li>References: &lt;<a href="mailto:4AEC20F3.7050507@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Permissions%20on%20local%20Apache%20web%20testing%20environment">4AEC20F3.7050507@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2009-10-31 20:35 +0900 (Sat), Dave M G wrote:
+
+&gt; Anyway, the thing is, even though I have all the files, now that I have
+&gt; placed all my web sites back into their usual spots and set up my
+&gt; httpd.conf and hosts files as they were, my sites are behaving very strange.
+
+So now you've learned that there's more information in a backup than
+just the filenames and their contents.
+
+And you probably also realize the wisdom of doing restores for practice.
+(Using virtual machines can help with this, if your CPU supports KVM.
+Unfortunately, Debian-based distros seem to have dropped support for
+xen, thus large swathes of machines that used to be able to run virtual
+machines can no longer do so. *Sigh*.)
+
+&gt; It seems that the permissions might not have carried over properly,
+&gt; because the errors I am getting say things like:
+&gt; &quot;failed to open stream: Permission denied...&quot;
+&gt; 
+&gt; So I tried to find out what the permissions should be, and modify all
+&gt; the files....
+
+Right. So if you want to debug this yourself, you need first to make sure
+that you understand the basics of how users and permissions work on Unix
+systems. Short summary: 
+
+  * every process has a numerical uid and a list of gids;
+  * every file is owned by a single uid and gid, and has user, group and
+    other access permissions;
+  * access uses user perms when uids match, otherwise group perms if the
+    gid is in the process' gid list, otherwise other perms;
+  * perms are read, write and execute bits, with the obvious meaning for
+    files;
+  * on directories, r = list, w = create new entries, and x = search
+    (i.e., you can access something in an --x dir if you know the name,
+    but you can't list the names of things in that dir)
+
+So for your web server, you need two things: apache to be able to
+read the website's files, and some user or users to be able to update
+the website's files. 
+
+ps will tell you as what user the server process is running (this can
+be changed in the apache config file, in many installations), the group
+information will be the group list for that uid.
+
+So now you need to figure out from there some reasonable option. If you
+don't want the apache user (which is, rememmber running all of your
+cgi scripts and so on, which are thus a popular vector for exploiting
+systems) to be able to write files, it will either have to access them
+via group perms where group can't write, or other perms where other
+can read. Remember that if you let other read everything on the site,
+anybody on the system can read any of those files which, in the case of
+database-type things, may be more access than is granted via the web
+interface, which will have its own access control on top of what the
+file system does.
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974
+           Functional programming in all senses of the word:
+                   <a  rel="nofollow" href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00049" href="msg00049.html">Re: [tlug] Permissions on local Apache web testing environment</a></strong>
+<ul><li><em>From:</em> Daniel A. Ramaley</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00000.html">Re: [tlug] sshfs in fstab not working</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00002.html">[tlug] recomendations for a functional language</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00004.html">Re: [tlug] sshfs in fstab not working</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00049.html">Re: [tlug] Permissions on local Apache web testing environment</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00001"><strong>Date</strong></a></li>
+<li><a href="threads.html#00001"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

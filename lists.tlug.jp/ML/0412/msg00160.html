@@ -1,0 +1,193 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] binary search of binary data -->
+<!--X-From-R13: Sqjneq Ievtug <rqjNrC500.pbz> -->
+<!--X-Date: Mon, 27 Dec 2004 23:56:52 +0900 -->
+<!--X-Message-Id: 20041227145652.GC2199@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20041225205936.GA2199@example.com -->
+<!--X-Reference: 87llbjj4xw.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00159.html">Date Prev</a>][<a href="msg00161.html">Date Next</a>][<a href="msg00159.html">Thread Prev</a>][<a href="msg00163.html">Thread Next</a>][<a href="maillist.html#00160">Date Index</a>][<a href="threads.html#00160">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] binary search of binary data</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 27 Dec 2004 23:56:52 +0900</li>
+<li><strong>From</strong>: <strong>Edward Wright &lt;<A HREF="mailto:edw@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20binary%20search%20of%20binary%20data">edw@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] binary search of binary data</strong></li>
+<li>References: &lt;<a href="msg00156.html">20041225205936.GA2199@example.com</a>&gt; &lt;<a href="msg00159.html">87llbjj4xw.fsf@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Stephen,
+
+HUGE Thank You!!
+While I couldn't use your &quot;guess&quot;, it pointed me in the right
+direction. If details interest, see below.
+
+Thanks,
+Ed
+
+
+On Mon, Dec 27, 2004 at 09:34:03PM +0900, Stephen J. Turnbull wrote:
+&gt; &gt;&gt;&gt;&gt;&gt; &quot;Edward&quot; == Edward Wright &lt;edw@example.com&gt; writes:
+&gt; 
+&gt;     Edward&gt; Feels like there should be a simple answer to this, but it
+&gt;     Edward&gt; eludes me.
+&gt; 
+&gt; It depends on what you want to do with the bytes, and how big the file
+&gt; is.  Here's my guess
+
+Truth be known, I had an &quot;accident&quot;. A ~40M file was truncated to 0
+length. I promptly unmounted the partition and saved it off as a
+file. That is the file I want to seek in - it's about 750M. I have
+manually located a few blocks that contain consecutive data. If I
+can find an &quot;indirect block&quot; in the file system, I can recover a
+big chunk of data at once. That's what I want to seek.
+
+&gt; 
+&gt; $ python
+&gt; &gt;&gt;&gt; infile = open (FILE, &quot;r&quot;)
+&gt; &gt;&gt;&gt; s = infile.readlines()
+&gt; &gt;&gt;&gt; r = compile (&quot;\xec\xa5\xc1\x01&quot;)
+&gt; &gt;&gt;&gt; m = r.search (s, 0)
+&gt; &gt;&gt;&gt; while m:
+&gt; &gt;&gt;&gt;  print &quot;match at %d\n&quot; % m.start()
+&gt; &gt;&gt;&gt;  m = r.search (s, m.end())
+&gt; &gt;&gt;&gt; 
+&gt; &gt;&gt;&gt; ^D
+&gt; $
+&gt;
+
+The file is too big to slurp and I don't know enough (any?) python
+to modify the code. I did something similar in perl. This works. It
+returns the block(s) in which the match was found which is what I need.
+
+#!/usr/bin/perl
+my $tmp;
+my $rawbytes = &quot;f1250000f2250000&quot;;
+$tmp = length $rawbytes;
+my $seek = pack &quot;H$tmp&quot;, $rawbytes;
+$INFILE = &quot;/mnt/hda3/recover_src/sda2&quot;;
+open INFILE, &quot;&lt;$INFILE&quot;;
+my $i = 0;
+my $buf;
+while (read INFILE, $buf, 4096){
+        if ( $buf =~ $seek ){
+                print &quot;Block: $i matched\n&quot;;
+        }
+        $i++;
+}
+close INFILE;
+
+Comment: there oughta be a &quot;binary&quot; grep.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00163" href="msg00163.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00156" href="msg00156.html">[tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Edward Wright</li></ul></li>
+<li><strong><a name="00159" href="msg00159.html">Re: [tlug] binary search of binary data</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00159.html">Re: [tlug] binary search of binary data</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00161.html">[tlug] software patents in japan</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00159.html">Re: [tlug] binary search of binary data</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00163.html">Re: [tlug] binary search of binary data</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00160"><strong>Date</strong></a></li>
+<li><a href="threads.html#00160"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

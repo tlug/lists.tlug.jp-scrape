@@ -1,0 +1,203 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] new computer configuration -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNqrfcnzzrq.pbz> -->
+<!--X-Date: Thu, 27 Jun 2002 14:03:25 +0900 (JST) -->
+<!--X-Message-Id: 20020627060434.GB4120@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020627032944.6045.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00681.html">Date Prev</a>][<a href="msg00683.html">Date Next</a>][<a href="msg00685.html">Thread Prev</a>][<a href="msg00768.html">Thread Next</a>][<a href="maillist.html#00682">Date Index</a>][<a href="threads.html#00682">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] new computer configuration</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Jun 2002 01:04:34 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<A HREF="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20new%20computer%20configuration">scottro@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] new computer configuration</strong></li>
+<li>References: &lt;<a href="msg00662.html">20020627032944.6045.qmail@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, Jun 26, 2002 at 08:29:44PM -0700, nitin kakkar wrote:
+&gt; 
+&gt; Hi All
+&gt; 
+&gt;   I am getting a new computer for a friend (P4 1.6  IWill MB) , He wants  Linux (RH 7.2), Win 98 and capability to have more one os like Sun Os, Free BSB or XP (just to play around for a while, he wants to change this from time to time ).
+&gt; 
+&gt; Also some partition should be shared between Linux and windows.
+
+
+&gt; 
+&gt;  The disk he got is 30or 40GB. Can anyone please suggest how  should we make the partitions, Win98 does not make them and linux only support 4 primary partitions so please explain how to make partitions and of what type.
+&gt;
+There are many ways to do it--probably the easiest.  Use the Win98
+boot disk's fdisk and make a partition for Win98.  Depending upon how
+much stuff he puts in there, you can easily get by with 1.5 gigs.
+Then, if you put in XP, it gives you a chance to choose the size of
+the partition and create it. You can put it on Fat32 if you like, and
+then the Win9x can access it.  (Also, it's safe to write to a Fat32
+partition in Linux, whereas writing to an NTFS one is considered
+experimental.)
+
+Both of these will probably have to be primary partitions, I haven't
+installed either on a multiboot box in awhile, so I don't remember. 
+XP's bootloader will give you a choice of booting either 98 or XP, I
+think. (Someone confirm or correct that--Win2k does, but by the time I
+got to XP, I'd dropped 9x completely)
+
+Then, you can put in Linux.  You'll need a swap partition--while the
+formula of 2x the machine's RAM is no longer considered a must, you
+should have enough room to do that--and you can partition the rest of
+it as you like--separate for /usr etc, or everything in /.  
+j
+You can let RH put its Grub bootloader in the MBR--since the first
+partition will be Fat32, Grub should have no trouble seeing it and
+adding it to the boot menu. If you choose it, then you should be put
+into XP's bootloader, and choose either XP or Win98 there.  (Again,
+someone please confirm or correct that, that's how it works with
+2k--my present setup is XP and various Unix/Linux O/S's.)
+
+Put the RH, including swap, on logical drives in extended partitions.
+This will leave you the possibility of having two more primary
+partitions, which will be necessary for FreeBSD or Solaris.
+
+Then, you can put in FreeBSD. It will require a primary partition,
+which can be created during installation.  Up to 4.4 I think it was,
+their auto partitioning had a terribly small /var partition, but now
+the default is something like 250 megs.  During installation, choose
+to not install a boot loader.  You'll be able to boot it from Grub, by
+editing the RH /boot/grub/grub.conf. 
+
+Solaris will also require a primary partition.  BTW, that partition
+will be seen by Linux as a swap partition--once, I almost told a Linux
+install to go ahead and format it before realizing that I didn't have
+a 4 gig swap partition. :)
+
+How much space you give to each one will depend upon how much you
+think you'll be putting in each one.  The Win98, as I said, will have
+plenty of space if you give it 1.5 gigs--I think a basic install uses
+600-700 megs.  XP should have at least 2 gigs.  For me, a RedHat
+install--putting in both KDE and Gnome, printing support, development,
+kernel development, Japanese support, print support, X and a few other
+things took about 1800 megs in 7.1, 2100 in 7.2 and 2600 in 7.3  :)
+
+I use FreeBSD for a LOT of things so I have that partition fairly
+large, about 7 gigs.  Solaris will easily fit in a 2 gig partition--of
+course, again it depends upon what you're going to add to it.
+
+FWIW with my XP installation, I have a relatively small NTFS
+partition, and large Fat32 partition--as I said, I can write to that
+with few worries in Linux, in case I want to transfer something.
+FreeBSD can mount ext2 and ext3 partitions--AFAIK, it can't do Reiser,
+xfs and jfs yet, but RH 7.1's default is ext3. (You will have to
+recompile the FreeBSD kernel and add that support, however).
+
+HTH a bit
+Scott Robbins
+primary partition--I think it's fairly straightforward, and you either
+put its loader in the Solaris partition or skip it--I haven't
+installed Solaris in awhile, but I do remember that it was pretty
+easy to decide about the bootloader. That too can be booted from Grub. 
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00662" href="msg00662.html">[tlug] new computer configuration</a></strong>
+<ul><li><em>From:</em> nitin kakkar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00681.html">Re: [tlug] Tomcat and Cocoon 2.9</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00683.html">Re: [tlug] Tomcat and Cocoon 2.9</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00685.html">Re: [tlug] new computer configuration</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00768.html">Re: [tlug] new computer configuration</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00682"><strong>Date</strong></a></li>
+<li><a href="threads.html#00682"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

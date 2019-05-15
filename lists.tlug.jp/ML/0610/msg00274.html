@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] freeze on AMD64 Dual Opteron server -->
+<!--X-From-R13: [nephf [rgmyre <zbpzNzbpz.qr> -->
+<!--X-Date: Thu, 26 Oct 2006 16:08:50 +0900 -->
+<!--X-Message-Id: 17728.24366.358697.277620@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 87mz7jsj1y.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00273.html">Date Prev</a>][<a href="msg00275.html">Date Next</a>][<a href="msg00278.html">Thread Prev</a>][<a href="msg00279.html">Thread Next</a>][<a href="maillist.html#00274">Date Index</a>][<a href="threads.html#00274">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] freeze on AMD64 Dual Opteron server</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 26 Oct 2006 09:09:34 +0200</li>
+<li><strong>From</strong>: <strong>Marcus Metzler &lt;<a href="mailto:mocm@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20freeze%20on%20AMD64%20Dual%20Opteron%20server">mocm@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] freeze on AMD64 Dual Opteron server</strong></li>
+<li>References: &lt;<a href="msg00272.html">87mz7jsj1y.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; &quot;Evan&quot; == Evan Monroig &lt;evan.monroig@example.com&gt; writes:
+
+    Evan&gt; Dear Tlug, I have a server with two AMD64 Opteron processors
+    Evan&gt; and 8GB of ram, that I use as a simulation box here at the
+    Evan&gt; laboratory.  Communitation with it is entirely through ssh.
+
+    Evan&gt; I have run simulations full time for a few days, generating
+    Evan&gt; tens of gigabytes of data at high speed, all without
+    Evan&gt; problem.
+
+    Evan&gt; But now I would like to send the data to another computer
+    Evan&gt; using rsync, and after about 20 seconds it invariably hangs.
+
+Looks like it may be a problem with your network card (or network
+chipset on the board). Since you get the lockup as soon as you start
+sending lots of data over the network.
+I used to have problems like that when the realtek GBit cards when
+there were still problems with the driver.
+
+    Evan&gt; There is no way to do anything.  The ssh connection is cut,
+    Evan&gt; the computer is doesn't appear on the network (I configured
+    Evan&gt; a static IP address).  I tried connecting a screen and
+    Evan&gt; keyboard to it while doing the rsync, but after failure the
+    Evan&gt; computer is completely hung.  Frozen screen, keyboard not
+    Evan&gt; responding (numlock, capslock..).
+
+Since you are running an SMP system, the problem with
+the network (or maybe some other) driver could be that it is not SMP save.
+
+    Evan&gt; I think that it might be a kernel panic, and looked at
+    Evan&gt; /var/log/syslog, /var/log/messages and others, and couldn't
+    Evan&gt; find anything related.
+
+Usually there is no time to flush the logs before it freezes completely.
+
+
+    Evan&gt; Here is some info about the system
+
+    Evan&gt; dmesg: <a  href="http://obakechan.net/e7Rj5pWm0N/dmesg">http://obakechan.net/e7Rj5pWm0N/dmesg</a> /proc/cpuinfo:
+    Evan&gt; <a  href="http://obakechan.net/e7Rj5pWm0N/cpuinfo">http://obakechan.net/e7Rj5pWm0N/cpuinfo</a>
+
+    Evan&gt; uname -a Linux sim2 2.6.15-27-amd64-generic #1 SMP PREEMPT
+    Evan&gt; Sat Sep 16 01:50:50 UTC 2006 x86_64 GNU/Linux
+
+    Evan&gt; The kernel is a stock kernel that comes with ubuntu dapper.
+
+    Evan&gt; Do you have any suggestion as to how to investigate the
+    Evan&gt; problem?
+
+You could try booting a kernel without SMP to see if that is the problem. 
+If possible you can try a different NIC.
+
+If you get any clue as to what part of the system or which driver could
+be responsible you can contact the maintainer of that driver.
+
+
+Hope that helps
+
+Marcus
+
+-- 
+/--------------------------------------------------------------------\
+| Dr. Marcus O.C. Metzler        |                                   |
+| mocm@example.com            | <a  href="http://www.metzlerbros.de/">http://www.metzlerbros.de/</a>        |
+\--------------------------------------------------------------------/
+ |&gt;&gt;&gt;             Quis custodiet ipsos custodes                 &lt;&lt;&lt;|
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00279" href="msg00279.html">Re: [tlug] freeze on AMD64 Dual Opteron server</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00272" href="msg00272.html">[tlug] freeze on AMD64 Dual Opteron server</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00273.html">Re: [tlug] freeze on AMD64 Dual Opteron server</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00275.html">Re: [tlug] freeze on AMD64 Dual Opteron server</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00278.html">Re: [tlug] freeze on AMD64 Dual Opteron server</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00279.html">Re: [tlug] freeze on AMD64 Dual Opteron server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00274"><strong>Date</strong></a></li>
+<li><a href="threads.html#00274"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

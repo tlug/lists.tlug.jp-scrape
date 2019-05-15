@@ -1,0 +1,180 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] ssh&#45;agent not being magical enough -->
+<!--X-From-R13: Quevfgvna Vbea <pubeaNsyhkpbvy.arg> -->
+<!--X-Date: Thu, 26 May 2011 14:56:06 +0900 -->
+<!--X-Message-Id: 20110526035601.GB18603@fluxcoil.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4DDDCC63.9000401@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00080.html">Date Prev</a>][<a href="msg00082.html">Date Next</a>][<a href="msg00079.html">Thread Prev</a>][<a href="msg00084.html">Thread Next</a>][<a href="maillist.html#00081">Date Index</a>][<a href="threads.html#00081">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] ssh-agent not being magical enough</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 26 May 2011 05:56:01 +0200</li>
+<li><strong>From</strong>: <strong>Christian Horn &lt;<a href="mailto:chorn@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ssh-agent%20not%20being%20magical%20enough">chorn@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] ssh-agent not being magical enough</strong></li>
+<li>References: &lt;<a href="mailto:4DDDCC63.9000401@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ssh-agent%20not%20being%20magical%20enough">4DDDCC63.9000401@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.20 (2009-06-14)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Thu, May 26, 2011 at 12:43:31PM +0900, Darren Cook wrote:
+&gt; 
+&gt; But, now I want to do that deliberately on a remote server and it won't
+&gt; work! What I want is:
+&gt;   $ ssh first
+&gt;   [first]$ scp abc second:~
+&gt;    --&gt; prompt for the key passphrase [2]
+&gt;   [first]$ scp abc second:~
+&gt;    --&gt; used saved passphrase
+
+You are looking into running ssh-agent on host 'first', most people run
+it on the original host from where they log onto 'first'.
+
+
+&gt; This isn't what happens - it asks for the passphrase each time I use
+&gt; scp. Whether I have started ssh-agent or not.
+&gt; 
+&gt; If I put this in .bash_profile on second:
+&gt;   eval `ssh-agent`
+&gt;   ssh-add ~/.ssh/testkey
+
+You probably think of 'first' instead of 'second' here.
+
+To get what you want in running ssh-agent on 'first' I would do this:
+
+- use only 'eval `ssh-agent`' in this .bash_profile, giving you an empty
+ssh-agent whenever logged in
+- create a file like this on first:
+cat &gt;~/autophrase&lt;&lt;EOT
+#!/bin/bash
+
+if $(/usr/bin/ssh-add -l &gt;/dev/null); then 
+        # echo &quot;key already in the agent&quot;
+        $@
+else 
+        # echo &quot;key not there&quot;
+        ssh-add
+        $@
+fi
+EOT
+- make it executable 'chmod +x ~/autophrase'
+- now in the future instead of 
+	'scp abc second:~'
+  use
+	'~/autophrase scp abc second:~'
+  which will ask you for the passphrase if the agent has not yet stored
+  the key.
+
+
+
+Further convenience:
+- better use the original host for storing the key and running ssh-agent
+  Add the key to the ssh-agent there right after login and use it as long
+  as you are logged in for all remote computers.
+- create an alias to simplify the command:
+	alias ascp='/home/username/autophrase scp'
+
+
+Christian
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00079" href="msg00079.html">[tlug] ssh-agent not being magical enough</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00080.html">Re: [tlug] Browser share in Japan?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00082.html">[tlug] -tomorrow- nomikai May 27 (Friday)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00079.html">[tlug] ssh-agent not being magical enough</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00084.html">[tlug] ssh-agent not being magical enough [Josh: C&amp;C for toshiyori]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00081"><strong>Date</strong></a></li>
+<li><a href="threads.html#00081"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

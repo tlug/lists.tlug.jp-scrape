@@ -1,0 +1,354 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Re: Security question with grep/e... -->
+<!--X-From-R13: Xvz Perra <Xvz.PerraNvasbgrpu.zbanfu.rqh.nh> -->
+<!--X-Date: Wed, 24 Mar 2004 22:17:50 +1100 (EST) -->
+<!--X-Message-Id: 200403241117.i2OBHojA015473@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00363.html">Date Prev</a>][<a href="msg00365.html">Date Next</a>][<a href="msg00354.html">Thread Prev</a>][<a href="msg00368.html">Thread Next</a>][<a href="maillist.html#00364">Date Index</a>][<a href="threads.html#00364">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: Security question with grep/e...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 24 Mar 2004 22:17:50 +1100 (EST)</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<A HREF="mailto:Jim.Breen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Re%3A%20Security%20question%20with%20grep%2Fe...">Jim.Breen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: Security question with grep/e...</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I'm going to cover a summary of responses in one hit (since I read the
+digest, so it's easier that way.)
+
+&gt;&gt; From: Brett Robson &lt;b-robson@example.com&gt;
+&gt;&gt; 
+&gt;&gt; I never used reg exps in C, how hard is it to write them in C? I'm
+&gt;&gt; thinking in term of escaping characters etc.
+
+Looking at the man page, I'd say it was designed to be fast and
+efficient rather than easy-to-use. You feed it the regex, it compiles
+it into a buffer, then you use the compiled form. There is a thicket of
+compiler and error flags.
+
+&gt;&gt; Sounds like you are running on a reasonably well adminisited server. One
+&gt;&gt; small sugestion I'd make is to make your files read only (to all). If
+&gt;&gt; you are not making a lot of updates it doesn't complicate things much
+
+Nothing's writeable-to-all. I actually do a number of updates, in fact
+there are cron jobs scrubbing and polishing in the wee hours.
+
+&gt;&gt; From: "Stephen J. Turnbull" &lt;stephen@example.com&gt;
+&gt;&gt; &gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+&gt;&gt; 
+&gt;&gt;     Jim&gt; Can you be more specific about the risks? As I understand it,
+&gt;&gt;     Jim&gt; doing a system("foobar par1 par2"); just stokes up /bin/sh
+&gt;&gt;     Jim&gt; under my account (it's usually cgiwrap or equivalent) and
+&gt;&gt;     Jim&gt; runs foobar.
+&gt;&gt; 
+&gt;&gt; ISTR that the main direct system risks come from the environment
+&gt;&gt; (especially things like LD_PRELOAD).  The indirect risks come from the
+&gt;&gt; fact that most command line apps are written assuming that the user is
+&gt;&gt; right there and authorized.  They are large with many complex options
+&gt;&gt; (especially the GNU versions), with lots of legacy code.  You really
+&gt;&gt; can't depend on all buffer and array accesses being bounds-checked,
+&gt;&gt; etc.
+
+I've checked the environment that a system()-invoked program gets, and
+there's no LD_PRELOAD. In fact it's pretty much the environment the
+httpd instance gets. As for bound-checking, well I'm far from being sin
+free on that.
+
+&gt;&gt; You also have to be sure that you get the protection against quote
+&gt;&gt; characters right.  Note that if you're using "" for the regexp
+&gt;&gt; argument in your system() call, you probably need to strip out $ and
+&gt;&gt; `, since they're interpreted and the results interpolated.  Of course,
+&gt;&gt; ` can do anything that you can, and at least some shells accept $
+&gt;&gt; extensions that call programs (although I don't know if they do if
+&gt;&gt; called as /bin/sh, but see next para).
+
+I think that goes to the crux of it. I've backed away from any thought
+of letting user-generated strings near a command-line, regardless of
+vetting. The trial version I'm running does a 
+system("egrep -i -f paramfile-nnnn text-file &gt; resultsfile-nnnn"); with
+the user string in paramfile-nnnn (nnnn is the PID). Since the user
+string never get into the command-line, and is only pulled in by egrep
+once it starts executing, I don't think there's much risk of a hack that
+way. Yes, there's always chance of an overflow once egrep starts, but
+I think it's probably no different to the case where I did my own 
+regcomp/regexec calls.
+
+&gt;&gt; Also, /bin/sh is not terribly portable; ash, bash, and zsh all flunk
+&gt;&gt; as POSIX shells in different ways.  (Maybe recent versions of ash are
+&gt;&gt; OK.)  The problems with bash and zsh are not of interest to POSIX-
+&gt;&gt; conforming scripts, they're impermissible extensions, but they are
+&gt;&gt; extensions that conceivably could be used by hackers.  (No, I don't
+&gt;&gt; know specifically; the point is that since I don't know, I have to
+&gt;&gt; assume they are a risk.)
+
+I thought /bin/sh was a sort-of lowest common denominator when it came
+to shells. Certainly I'm not asking for anything but a pipe and a simple
+redirection of STDOUT. Even DOS could do that.
+
+&gt;&gt;     Jim&gt; I'm not doing it with anything suid, etc. I don't have su
+&gt;&gt;     Jim&gt; rights on the host.
+&gt;&gt; 
+&gt;&gt; Do you have a shell account?  Does the host have a working C compiler
+&gt;&gt; on it?  If the answer to both questions is "yes", then the possibility
+&gt;&gt; of a hostile agent using a web exploit to achieve shell access via
+&gt;&gt; your account, and from there trampolining to root cannot be
+&gt;&gt; discounted.  Again, I don't know the details, but AFAICT at the time
+&gt;&gt; it's been done to me, so I know it's possible.  :-/
+
+It's yes to both, on at least one site. But I don't really think what
+I'm suggesting is raising the chance.
+
+&gt;&gt; From: Alain Hoang &lt;hoanga@example.com&gt;
+&gt;&gt; 
+&gt;&gt; 	Wow, I learned a lot myself.
+
+I always do from Stephen.
+
+&gt;&gt; 	I believe Dr. Turnbull covered everything I could possibly think of
+&gt;&gt; and more in terms of what to worry about from a security aspect of
+&gt;&gt; running a CGI script that pipes the output from an egrep (with
+&gt;&gt; proper escapes).
+
+Erm. The output from the egrep is piped through "head -nnn" simply to
+limit the results, and then goes to workfile. Then the CGI program
+opens the workfile and reads it in copying the contents into the
+generated HTML response. I don't think the risk is high.
+
+&gt;&gt; 	I would just like to add that on the surface the egrep idea seems
+&gt;&gt; portable but there seems to be those small niggling unknowns that
+&gt;&gt; bother me if I knew this was going to be mirrored across many different
+&gt;&gt; types of architectures.  Even though egrep is 'available' on all 
+&gt;&gt; machines
+&gt;&gt; as mentioned earlier, the implementation of them all slightly differs
+&gt;&gt; so one regexp that seems reasonable on your test machine behaves
+&gt;&gt; oddly on another because the egrep doesn't support one set.  Or
+&gt;&gt; perhaps another system DOES have egrep but it's located somewhere
+&gt;&gt; else and it's not the first one that is called on the PATH in the CGI.
+&gt;&gt; At this point you might decide just go with GNU egrep but then you
+&gt;&gt; now have the issue of calling GNU egrep reliably on a large
+&gt;&gt; set of machines that might have stuck GNU egrep in lots of different
+&gt;&gt; places.   You also get the problem of does GNU egrep have any
+&gt;&gt; security exploits?   Which version of GNU egrep is on that machine?
+&gt;&gt; Or you try to support a subset that all these versions of egrep support.
+&gt;&gt; That's a bit of reading on different versions of egrep.  At this point 
+&gt;&gt; you're
+&gt;&gt; probably better off writing your own program rather than trying to 
+&gt;&gt; patch up
+&gt;&gt; all these systems.  Or wondering if Perl is starting to become a more
+&gt;&gt; viable option :-)
+
+The only real alternative is to use regcomp/regexec, and from what I
+read on man pages it is as variable as egrep. Not suprising really.
+As for Perl, well apart from being a non-issue for me, my limited Perl
+experience has exposed me to masses of version differences. With a
+master site and 6-7 mirrors, I don't want to add another language to the
+equation.
+
+&gt;&gt; 	I think this brings up another good point.  The more visible
+&gt;&gt; you are the more the arrows get pointed at you.  I've found
+&gt;&gt; Monash a really useful resource for years as a student of Japanese.
+&gt;&gt; I think that visibility brings with it nuisances that think it would be 
+&gt;&gt; great
+&gt;&gt; to take down a useful site.
+
+Our sysadmins look after it well. It's a bit painful - I don't have a
+usable shell account on the server itself. I can mount the server files
+elsewhere, but the server can't mount other files, so it's an island in
+that sense. Also being a Solaris box it's not as much in the sights of
+hackers as some Linices.
+
+&gt;&gt; From: Tim Hurman &lt;kano-tlug@example.com&gt;
+&gt;&gt; 
+&gt;&gt; Would it not be easier just to do this in PERL anyway, here is my
+&gt;&gt; reasoning,
+
+Well, you have to factor in the rise time for me to learn enough Perl to
+be confident of doing it right. Then since the server itself is in C,
+I'd have to ..... Anyway, you see how I feel.
+
+&gt;&gt; 1) before doing the system(), you have to do a whole lot of messing to get
+&gt;&gt; the output of the egrep back (not to mention parsing it), this basically
+&gt;&gt; involves a fork(), but it is an expensive call and a lot of usage may
+&gt;&gt; affect the machine.
+
+Well, calling Perl from the server (in C) takes a fork. And frankly
+using efficiency of execution as a reason for moving from C to Perl is
+just a little bizarre. 
+
+&gt;&gt; 2) charsets. Even though you are passing stuff to egrep, I would presume
+&gt;&gt; you have to have it in a common charset, and the likelyhood is that you
+&gt;&gt; will get it in utf-8, which may or may not be a good thing depending on
+&gt;&gt; the charset you are comparing it to. Also you may have multiple encodings
+&gt;&gt; for a double quote.
+
+Forget charsets (and character sets) in this case. The file is in EUC-JP
+and the user string is too. Works fine right now in C and egrep.
+
+&gt;&gt; 3) egrep is going to involve a lot of file IO, are yor disks up to it?
+
+How is this any different from doing it myself in C or Perl?
+
+&gt;&gt; however a few ideas about putting it in PERL:
+&gt;&gt; 
+&gt;&gt; 1) charsets are sorted, you just let PERL handle the conversion (from 5.6
+&gt;&gt; onwards), no matter what the OS. PERL knows about broken iconvs and
+&gt;&gt; oddities on different platforms.
+
+Non-issue.
+
+&gt;&gt; 2) you can loose even the initial fork from apache(?) by using modperl.
+
+???
+
+&gt;&gt; 3) you can easily put your entire sentance list into a hash/DBM which
+&gt;&gt; could be easier to search, and depending on the size, completely memory
+&gt;&gt; resident.
+
+Effectively the whole sentence file is in RAM anyway. It's getting hit
+so often that it's almost always in cache. 
+
+&gt;&gt; 6) you get rid of SEGVs when mis-calculating the buffer size needed for a
+&gt;&gt; multibyte character strings and all the other C nasties.
+
+I think the only SEGVs I get these days are from Apache itself.
+
+&gt;&gt; From: "Stephen J. Turnbull" &lt;stephen@example.com&gt;
+&gt;&gt; 
+&gt;&gt; No.  For most sane people (and Jim is one such), working with Perl
+&gt;&gt; involves bowing to the Porcelain God.
+
+Thank you.
+
+&gt;&gt; Not to mention that if I grok his post correctly, Jim is working with
+&gt;&gt; multilingual files, and the definition of "file character set" and the
+&gt;&gt; various character classes is up for grabs.  In Jim's case, it's no big
+&gt;&gt; deal.  But relying on Perl to get this stuff right is going to cost
+&gt;&gt; you some day.  Multilingual text is hard, and POSIX didn't even try to
+&gt;&gt; deal with it (Perl has extensions, but it's based on the POSIX model).
+
+Naruhodo. As I warn in the instruction page of the server function, the
+code only currently knows about bytes; not double-bytes, so putting
+kanji or kana into [ ] won't get what you expect. At some time in the 
+distant future I may get the whole shebang migrated to UTF8 and I'll
+see if I can get wide-char grepping set up then. Maybe POSIX will be
+doing multilingual. Right now the server's working and it's fast.
+
+Whew. Far too long.
+
+Many thanks for the comments and advice.
+
+If you want to play with the server function, the testbed is at:
+
+<A HREF="http://www.csse.monash.edu.au/cgi-bin/cgiwrap/jwb/wwwjdic2?10">http://www.csse.monash.edu.au/cgi-bin/cgiwrap/jwb/wwwjdic2?10</A>
+
+Cheers
+
+Jim
+
+-- 
+Jim Breen                                <A HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>
+Computer Science &amp; Software Engineering,                Tel: +61 3 9905 9554
+Monash University, VIC 3800, Australia                  Fax: +61 3 9905 5146
+(Monash Provider No. 00008C)                ジム・ブリーン@モナシュ大学
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00368" href="msg00368.html">Re: [tlug] Re: Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00363.html">[tlug] Re: Tech Meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00365.html">Re: [tlug] Tech Meeting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00354.html">[tlug] im-ja 1.0</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00368.html">Re: [tlug] Re: Security question with grep/e...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00364"><strong>Date</strong></a></li>
+<li><a href="threads.html#00364"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

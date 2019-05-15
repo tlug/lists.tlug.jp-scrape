@@ -1,0 +1,187 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Micro&#45;SD Card Throws Me A Curve Ball -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Sun, 06 May 2007 00:30:15 +0900 -->
+<!--X-Message-Id: 20070505172945.dd0e8c02.gstewart@bonivet.net -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 463C9FB2.7020906@autotelic.com -->
+<!--X-Derived: pgpFqUJgtDaL7.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00091.html">Date Prev</a>][<a href="msg00093.html">Date Next</a>][<a href="msg00091.html">Thread Prev</a>][<a href="msg00094.html">Thread Next</a>][<a href="maillist.html#00092">Date Index</a>][<a href="threads.html#00092">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Micro-SD Card Throws Me A Curve Ball</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 5 May 2007 17:29:45 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<a href="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Micro-SD%20Card%20Throws%20Me%20A%20Curve%20Ball">gstewart@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Micro-SD Card Throws Me A Curve Ball</strong></li>
+<li>References: &lt;<a href="msg00091.html">463C9FB2.7020906@autotelic.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Sun, 06 May 2007 00:16:02 +0900, Dave M G &lt;martin@example.com&gt;
+wrote:
+
+&gt; Now I'm totally confused. What would be the difference between a
+&gt; micro-SD card and a regular sized SD card that could account for this
+&gt; difference in behavior?
+
+The first thing that comes to mind is the partition scheme.
+
+Some vendors treat the memory card like a hard disk. There's a
+partition table and all on them and when you &quot;format&quot; the card, you
+basically set up a filesysteom on the first partition.
+
+Other vendors treat the card as what's known as a &quot;superdisk&quot;. There's
+no partition table and the filesystem is plonked on the device as a
+whole, just like it is on a floppy disk, for example.
+
+I have 2 miniSD cards within reach here. One has a partition table and
+the other is a superdisk. If I watch my logs while inserting each of
+these cards I get this:
+
+First for the 1GB card with a partition table:
+
+May  5 15:24:55 dragonfly kernel: scsi3 : SCSI emulation for USB Mass Storage devices
+May  5 15:25:00 dragonfly kernel: scsi 3:0:0:0: Direct-Access     Multi    Flash Reader     1.00 PQ: 0 ANSI: 0
+May  5 15:25:00 dragonfly kernel: SCSI device sda: 1999872 512-byte hdwr sectors (1024 MB)
+May  5 15:25:00 dragonfly kernel: sda: Write Protect is off
+May  5 15:25:00 dragonfly kernel: SCSI device sda: 1999872 512-byte hdwr sectors (1024 MB)
+May  5 15:25:00 dragonfly kernel: sda: Write Protect is off
+May  5 15:25:00 dragonfly kernel:  sda: sda1
+May  5 15:25:00 dragonfly kernel: sd 3:0:0:0: Attached scsi removable disk sda
+
+Note the last but one line that says &quot;sda: sda1&quot;. It's showing me that
+the device is /dev/sda and that there's information in the partition
+table saying that there's one partition, /dev/sda1.
+
+If I now pull this card out and plop in the 64MB superdisk card, I get
+this:
+
+May  5 15:28:06 dragonfly kernel: scsi4 : SCSI emulation for USB Mass Storage devices
+May  5 15:28:11 dragonfly kernel: scsi 4:0:0:0: Direct-Access     Multi    Flash Reader     1.00 PQ: 0 ANSI: 0
+May  5 15:28:12 dragonfly kernel: SCSI device sda: 124160 512-byte hdwr sectors (64 MB)
+May  5 15:28:12 dragonfly kernel: sda: Write Protect is off
+May  5 15:28:12 dragonfly kernel: SCSI device sda: 124160 512-byte hdwr sectors (64 MB)
+May  5 15:28:12 dragonfly kernel: sda: Write Protect is off
+May  5 15:28:12 dragonfly kernel:  sda:
+May  5 15:28:12 dragonfly kernel: sd 4:0:0:0: Attached scsi removable disk sda
+
+Here, the last but one line merely says &quot;sda:&quot;. It didn't find a
+partition table and thus found no partitions.
+
+I suggest you watch your logs while performing the same experiments on
+your machine. It might point you in the right direction.
+
+--
+G. Stewart - gstewart@example.com
+
+Experience is something you don't get until just after
+you need it.
+</pre><p><strong>Attachment:
+<a href="pgpFqUJgtDaL7.pgp" ><tt>pgpFqUJgtDaL7.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00094" href="msg00094.html">Re: [tlug] Micro-SD Card Throws Me A Curve Ball</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00091" href="msg00091.html">[tlug] Micro-SD Card Throws Me A Curve Ball</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00091.html">[tlug] Micro-SD Card Throws Me A Curve Ball</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00093.html">Re: [tlug] [ADMIN] Shannon Jacobs unsubscribed</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00091.html">[tlug] Micro-SD Card Throws Me A Curve Ball</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00094.html">Re: [tlug] Micro-SD Card Throws Me A Curve Ball</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00092"><strong>Date</strong></a></li>
+<li><a href="threads.html#00092"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

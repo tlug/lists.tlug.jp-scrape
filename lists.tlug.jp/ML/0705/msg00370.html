@@ -1,0 +1,216 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] cups and networking -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Fri, 18 May 2007 19:51:35 +0900 -->
+<!--X-Message-Id: 20070518105132.GC10827@mail.scottro.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 464D04E2.1060903@dcook.org -->
+<!--X-Reference: 20070518024427.GE58681@samsara.bebear.net -->
+<!--X-Reference: 464D3190.7020407@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00369.html">Date Prev</a>][<a href="msg00371.html">Date Next</a>][<a href="msg00367.html">Thread Prev</a>][<a href="msg00366.html">Thread Next</a>][<a href="maillist.html#00370">Date Index</a>][<a href="threads.html#00370">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] cups and networking</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 May 2007 06:51:32 -0400</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20cups%20and%20networking">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] cups and networking</strong></li>
+<li>References: &lt;<a href="msg00362.html">464D04E2.1060903@dcook.org</a>&gt;	&lt;<a href="msg00364.html">20070518024427.GE58681@samsara.bebear.net</a>&gt;	&lt;<a href="msg00367.html">464D3190.7020407@dcook.org</a>&gt;</li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Fri, May 18, 2007 at 01:54:40PM +0900, Darren Cook wrote:
+&gt; &gt; 
+&gt; &gt; &lt;Location /&gt;
+&gt; &gt; Order Deny,Allow
+&gt; &gt; Deny From All
+&gt; &gt; Allow From @LOCAL
+&gt; &gt; &lt;/Location&gt;
+&gt; 
+&gt; 
+&gt; I tried adding Allow From 172.16.1.* in various places, but no luck, so
+&gt; I added a whole new Location block:
+&gt; &lt;Location /printers/HL2040&gt;
+&gt; Order Deny,Allow
+&gt; Deny From All
+&gt; Allow From 127.0.0.1
+&gt; Allow From 172.16.1.*
+&gt; AuthType None
+&gt; Allow from All
+&gt; &lt;/Location&gt;
+
+First see if that one is the key.  Allow from all, put the allow line
+before the deny line.  If that works, then you know it's something off
+with the syntax you're using.  I believe it reads it in order, so it's
+going to deny all and ignore the allow lines.  
+&gt; 
+&gt; 
+&gt; I tried Josh's suggestion of changing from that weird binary_p1 to the
+&gt; actual queue name of HL2040, but same thing.
+
+That was my suggestion, but that's ok, as long as it's Josh, I don't
+mind.  :)
+
+&gt; 
+&gt; I tried: <a  href="ipp://172.16.0.2/ipp/port1">ipp://172.16.0.2/ipp/port1</a>
+&gt; and get &quot;Unable to get printer status (client-error-forbidden)!&quot;
+
+k
+&gt; 
+&gt; 
+&gt; I'm confused. The CUPS docs says that ipp is the only supported
+&gt; protocol. 
+
+CUPS docs are known for being horrible.  
+
+
+Brother, and Josh, suggested using lpd. I wonder if I should
+&gt; bark up the ipp tree a bit more? Or maybe I should start barking up the
+&gt; smb tree as I will eventually need to get that working anyway.
+
+The lpd line should work, I suspect it's the deny all and its location
+in your conf file.  Did you see that link I posted?
+
+As I said, I would change your location to order allow deny, allow all
+and see if it prints.   (While doing that, comment out other allow
+lines as well as deny lines, and deny from none.  The chances of someone
+hacking in and printing from your printer are rather slim.)
+
+
+If it does work, then you can play with the &lt;Location&gt;
+section to figure out what's wrong.   If you have order allow deny, then
+allow from local, you might wind up not allowing anything else.  (I
+haven't done it that way, but it seems to me that various folks have run
+into problems with that.)
+
+&gt; the server, plugging into my work machine, 30 seconds of configuration,
+&gt; and getting today's important documents printed. :-). If it wasn't for
+&gt; my wife's notebook I could just live without it networked...
+
+If you don't do much printing, or if you two aren't frequently printing
+at the same time, the easiest workaround is to get a $30-40 print server 
+and just give the printer its own IP address.  Then, add it to the
+various machines as a local printer with a TCP/IP port in Windows and in
+cups use socket://xxx.xxx.xxx.xxx (where the xxx's are the IP address.)
+
+It often saves a lot of aggravation. 
+
+
+-- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Oz: Sometimes when I'm sitting in class...you know, I'm not 
+thinking about class 'cause that would never happen... I think 
+about kissing you. And it's like everything stops, it's like, 
+freeze frame: Willow kissage.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00362" href="msg00362.html">[tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00364" href="msg00364.html">Re: [tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Al Hoang</li></ul></li>
+<li><strong><a name="00367" href="msg00367.html">Re: [tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00369.html">[tlug] cups and networking</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00371.html">[tlug] [Off-topic] Newsqueak and the idea of channels.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00367.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00366.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00370"><strong>Date</strong></a></li>
+<li><a href="threads.html#00370"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

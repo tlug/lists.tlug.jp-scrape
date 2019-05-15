@@ -1,0 +1,201 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: HAN IP addresses -->
+<!--X-From: gaijin@example.com (John Little) -->
+<!--X-Date:  Fri, 28 Feb 1997 02:26:31 GMT -->
+<!--X-Message-Id: 199702280221.LAA14188@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00106.html">Date Prev</A>][<A HREF="msg00109.html">Date Next</A>][<A HREF="msg00107.html">Thread Prev</A>][<A HREF="msg00109.html">Thread Next</A>][<A HREF="maillist.html#00108">Date Index</A>][<A HREF="threads.html#00108">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: HAN IP addresses</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: HAN IP addresses</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:gaijin@example.com">gaijin@example.com</A> (John Little)</strong></LI>
+<LI>Date: Fri, 28 Feb 1997 11:21:21 +0900</LI>
+<LI>In-Reply-To: Jim Schweizer &lt;schweiz@example.com&gt;      "tlug: HAN IP addresses" (Feb 27, 18:06)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from gaijin@example.com (John Little)
+--------------------------------------------------------
+% 
+% How did you decide on local IP addresses? Is it possible that
+% you could make a naming mistake that would adversly affect your
+% ISP?
+% 
+
+Jim,
+
+   There's an RFC on ranges of IP addresses for "private", non-internet
+   connected addresses (see below), and I use an address within this
+   range for my home network.
+
+   This, of course, could confuse things even more than before (there
+   could be hundreds of other people using your "private" address
+   range instead of perhaps just one corporation using a non-private,
+   legitimate IP range which you just happen to have picked on).
+
+   The key is to prevent RIP packets from leaving your local network,
+   so you need a gateway machine (the machine which is actually
+   connected to your service provider) set up with two interfaces, IP
+   forwarding turned off and outgoing RIP packets disabled. This
+   ensures that your gateway machine is the only system visible to the
+   ISP, but also allows you to have it connected to your home network.
+
+   I have to admit to heresy here, in that my gateway machine is 
+   running Solaris. Turning off IP forwarding is a single line in
+   the /etc/inetinit file:-
+
+		ndd -set /dev/ip ip_forwarding 0
+
+   and preventing RIP packets getting out is a matter of creating an
+   /etc/gateways file specifying:-
+
+		noripout ipdptp0
+
+   (no RIP packets to be sent on the point-to-point interface). This
+   works fine for me. 
+
+
+			-John-
+
+
+_______________________________________________________________________
+
+3. Private Address Space
+
+   The Internet Assigned Numbers Authority (IANA) has reserved the
+   following three blocks of the IP address space for private networks:
+
+        10.0.0.0        -   10.255.255.255
+        172.16.0.0      -   172.31.255.255
+        192.168.0.0     -   192.168.255.255
+
+   We will refer to the first block as "24-bit block", the second as
+   "20-bit block, and to the third as "16-bit" block.  Note that the
+   first block is nothing but a single class A network number, while the
+   second block is a set of 16 contiguous class B network numbers, and
+   third block is a set of 255 contiguous class C network numbers.
+
+   An enterprise that decides to use IP addresses out of the address
+   space defined in this document can do so without any coordination
+   with IANA or an Internet registry.  The address space can thus be
+   used by many enterprises.  Addresses within this private address
+   space will only be unique within the enterprise.
+
+   As before, any enterprise that needs globally unique address space is
+   required to obtain such addresses from an Internet registry.  An
+   enterprise that requests IP addresses for its external connectivity
+   will never be assigned addresses from the blocks defined above.
+
+   In order to use private address space, an enterprise needs to
+   determine which hosts do not need to have network layer connectivity
+   outside the enterprise in the foreseeable future.  Such hosts will be
+   called private hosts, and will use the private address space defined
+   above.  Private hosts can communicate with all other hosts inside the
+   enterprise, both public and private.  However, they cannot have IP
+   connectivity to any external host.  While not having external network
+
+________________________________________________________________________
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00109" HREF="msg00109.html">Re: tlug: HAN IP addresses</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00106.html">tlug: bash ?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00109.html">Re: tlug: HAN IP addresses</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00107.html">tlug: HAN IP addresses</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00109.html">Re: tlug: HAN IP addresses</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00108"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00108"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

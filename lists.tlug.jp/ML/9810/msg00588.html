@@ -1,0 +1,184 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Internet connections from Linux -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 15 Oct 1998 10:07:02 +0900 -->
+<!--X-Message-Id: 13861.19100.328038.496454@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810131626.QAA00795@example.com -->
+<!--X-Reference-Id: 3623F3B0.41C67EA6@example.com -->
+<!--X-Reference-Id: 36248A84.FAB75629@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00587.html">Date Prev</A>][<A HREF="msg00589.html">Date Next</A>][<A HREF="msg00573.html">Thread Prev</A>][<A HREF="msg00575.html">Thread Next</A>][<A HREF="maillist.html#00588">Date Index</A>][<A HREF="threads.html#00588">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Internet connections from Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Internet connections from Linux</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 15 Oct 1998 10:06:36 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00573.html">36248A84.FAB75629@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00488.html">199810131626.QAA00795@example.com</A>&gt;&lt;<A HREF="msg00502.html">3623F3B0.41C67EA6@example.com</A>&gt;&lt;<A HREF="msg00573.html">36248A84.FAB75629@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Neil" == Neil Booth &lt;NeilB@example.com&gt; writes:
+
+    Neil&gt; You're right in that I was offline when doing it. However,
+    Neil&gt; why shouldn't I be able to type in ANY host, and it only
+    Neil&gt; complain if it can't find it when I actually use that
+
+This is related to what I was explaining before.
+
+    Neil&gt; setting by trying to post something? And then it should try
+    Neil&gt; and look it up itself if I'm online. This is, after all, the
+    Neil&gt; behaviour of the Windows version.
+
+Are you sure?  But let's assume that's true.  Netscape, although their 
+extensions to HTML gave me the hink in the past, is a pretty good
+citizen about complying to published APIs.  I don't know about
+Windows, but Unix has an elaborate set of APIs called BIND related
+to finding out Internet addresses.
+
+One big advantage for this to Windows is actually a disadvantage.
+Windows Netscape keeps _all_ the information in a local file; it
+therefore controls its use and can take shortcuts, use threads (this
+is a real advantage of the standardized Windows API) to background the
+search, etc.  By contrast, under Unix, a properly configured host on a
+well-managed network need not have an /etc/hosts at all, and normally
+will have a trivial one which only names the local host and perhaps a
+couple of important servers in case the DNS is down.  It is not
+unusual in a heavily loaded network for the various servers to be
+replicated and dynamically assigned, so the /etc/hosts approach might
+actually fail.
+
+It is unfortunate that the standard Unix API for the DNS is
+gethostby{name,address}, which are blocking calls (ie, the thread
+stops while the information is returned).  It is doubly unfortunate
+that as yet vendors like Netscape cannot rely on Unices, including
+Linux, to use standard thread APIs, so Netscape is single-threaded.
+For this reason the DNS lookup is implemented as a second process so
+that Netscape can work while the host is being looked up.
+
+    Neil&gt; The really annoying this is not only that it complains "mail
+    Neil&gt; host XXX not known", but also that you cannot leave that
+    Neil&gt; Preferences sub-screen until you put one in that it "knows"! 
+    Neil&gt; (from looking in /etc/hosts is my guess). Or you have to
+
+No, I'm sure it does a full domain lookup out on the net.  But what
+you could do to avoid all this nonsense is to configure qmail, smail,
+or sendmail to handle your outgoing mail (and similar services);
+you'll never need a DNS lookup for them again.  (Of course, if your
+DNS resolver is misconfigured, nothing will ever leave your machine
+again.)
+
+    Neil&gt; abort with the Cancel button and lose all other changes.
+
+I agree this is a bug.  However, it may be the lesser of two evils, in 
+that inter-process communication is complex, and a mismatch in the
+communications between netscape and its DNS subprocess could lock up
+netscape.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00488" HREF="msg00488.html">Re: tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00502" HREF="msg00502.html">Re: tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Howard Abbey &lt;habbey@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00573" HREF="msg00573.html">Re: tlug: Internet connections from Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00587.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00589.html">tlug: Mailer preference</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00573.html">Re: tlug: Internet connections from Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00575.html">Re: tlug: Internet connections from Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00588"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00588"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

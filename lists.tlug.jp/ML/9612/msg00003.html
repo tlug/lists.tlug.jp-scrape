@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Printing Japanese -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Mon, 2 Dec 1996 05:01:51 GMT -->
+<!--X-Message-Id: m0vUQOY&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199612010927.SAA00775@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00002.html">Date Prev</A>][<A HREF="msg00004.html">Date Next</A>][<A HREF="msg00002.html">Thread Prev</A>][<A HREF="msg00005.html">Thread Next</A>][<A HREF="maillist.html#00003">Date Index</A>][<A HREF="threads.html#00003">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Printing Japanese</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Printing Japanese</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Mon, 2 Dec 96 13:54 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00002.html">199612010927.SAA00775@example.com</A>&gt; (message from Craig Oda on Sun, 01 Dec 1996 18:27:30 +0900)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; I am unable to print using lpr.  I can print if I cat to
+    Craig&gt; /dev/lp1.
+
+[snip]
+    Craig&gt; It looks like it is ignoring my printcap or something...
+
+I had some problems with lpd, with very similar symptoms.  I don't
+remember how I fixed it; I think that I simply lprm'd everything I
+could, and then killed the daemon, rm -rf'd all the /var/spool/lp*
+(more violent than necessary, but I wanted the system to know who was
+boss ;-), recreated the relevant spool directory, and restarted the
+daemon.  I think there was something screwy in the status and or lock
+files.  Note that it could be either the lpd.lock file or the
+printer-specific lock file that might be screwy.
+
+I also recall that for some reason multiple instances of the daemon
+would appear in ps aux.  This doesn't happen now, and I don't know why 
+it did.
+
+The lpd suite does not work as advertised in the manuals (at least not
+the old Slackware versions I have).  In particular, I don't think that
+lpc actually talks to the lpd process at all.  It seems to just
+manipulate the status of the lock files.  At least, the start and stop
+commands don't touch a running lpd.
+
+For what it's worth, here is my configuration:
+
+crw-rw----   1 root     lp         6,   1 Dec  1  1993 /dev/lp1
+-rw-r--r--   1 root     root         4741 Dec  2 13:04 /etc/printcap
+drwxrwxr-x   2 root     lp           1024 Dec  2 13:11 /var/spool/lp1
+-rw-r--r--   1 root     root            5 Dec  2 13:17 /var/spool/lp1/lock
+-rw-rw-r--   1 root     root           18 Dec  2 13:17 /var/spool/lp1/status
+drwxrwxr-x   2 root     lp           1024 Oct  6  1995 /var/spool/lpd
+-rw-r--r--   1 root     root            5 Dec  2 13:10 /var/spool/lpd/lpd.lock
+
+#	@(#)etc.printcap	5.2 (Berkeley) 5/5/88
+#
+# Generic printer:
+# (Actually, this is a TI microLaser PS running in HP LJ II emulation mode;
+# I'm doing such a silly thing because the PS is level 1 and so can't
+# handle composite fonts, nor output from recent versions of dvips.
+# Yes, dvipsk 5.58f does kanji, at least under NTT JTeX.)
+lp:lp=/dev/lp1:sd=/usr/spool/lp1:sh
+
+You do have exactly one lpd running, don't you?  (lpc won't
+necessarily tell if not if my suspicions are correct.)
+
+You haven't done something silly like I did, which was to compile lp
+support as a module and then not load it?  (I guess not since
+"&gt;/dev/lp1" works, but you never can tell.)
+
+Your input filter "/var/spool/lpd/myprinter/input_filter" does exist
+and is executable by the owner or group of the lpd process?
+
+Note that the documentation says that the lock file doesn't need to be 
+removed if something goes wrong, but my experience suggests otherwise.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00005" HREF="msg00005.html">Re: Printing Japanese</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00002" HREF="msg00002.html">Re: Printing Japanese</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00002.html">Re: Printing Japanese</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00004.html">Re: Printing Japanese</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00002.html">Re: Printing Japanese</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00005.html">Re: Printing Japanese</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00003"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00003"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3] -->
+<!--X-From: Hajime Saitou <hajime@example.com&#45;tokyo.ac.jp> -->
+<!--X-Date: Fri, 21 Nov 1997 01:07:47 &#45;0500 (EST) -->
+<!--X-Message-Id: 199711210605.PAA22239@example.com&#45;tokyo.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.971121143427.29712A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00164.html">Date Prev</A>][<A HREF="msg00166.html">Date Next</A>][<A HREF="msg00162.html">Thread Prev</A>][<A HREF="msg00164.html">Thread Next</A>][<A HREF="maillist.html#00165">Date Index</A>][<A HREF="threads.html#00165">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3] </strong></LI>
+<LI><strong>From</strong>: <strong>Hajime Saitou &lt;<A HREF="mailto:hajime@example.com">hajime@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 21 Nov 1997 15:05:36 +0900</LI>
+<LI>In-reply-to: Your message of "Fri, 21 Nov 1997 14:36:52 JST."            &lt;<A HREF="msg00162.html">Pine.HPP.3.95.971121143427.29712A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+&gt; files that seems to require canna.h.  I tried including the
+&gt;  #include "canna.h" in the c source, but that didn't work either.
+
+Hmm. You could try having a look at the output gcc -E. But otherwise I 
+don't know whats happening.
+
+&gt; Can you compile it with the patches?  If you can compile it,
+&gt; I'll spend a lot more effort trying to find out what is wrong
+&gt; with my system.
+
+Yes. Like you I had to replace termcap with ncurses. But otherwise
+./build lnx compiled.
+
+Making Pine.
+cc -O2    -DLNX -DSYSTYPE=\"LNX\" -DMOUSE -DKANJI -DHELPFILE -DCANNA -I/usr/local/canna/include   -c ttyin.c -o ttyin.o
+echo "char datestamp[]="\"`date`\"";" &gt; date.c
+echo "char hoststamp[]="\"`hostname`\"";" &gt;&gt; date.c
+cc  -O2    -DLNX -DSYSTYPE=\"LNX\" -DMOUSE -DKANJI -DHELPFILE -DCANNA -I/usr/local/canna/include -o pine addrbook.o adrbklib.o args.o context.o filter.o folder.o help.o imap.o init.o mailcap.o mailcmd.o mailindx.o mailpart.o mailview.o newmail.o other.o pine.o reply.o screen.o send.o signals.o status.o strings.o ttyin.o ttyout.o os.o date.c  ../pico/libpico.a ../c-client/c-client.a -lncurses -lcanna
+
+Links to executables are in bin directory:
+text    data    bss     dec     hex     filename
+1291739 42656   38848   1373243 14f43b  bin/pine
+214457  4552    2164    221173  35ff5   bin/mtest
+226869  4664    8404    239937  3a941   bin/imapd
+196919  6340    5492    208751  32f6f   bin/pico
+195602  6240    5488    207330  329e2   bin/pilot
+Done	
+
+The system used was Debian-1.3.1. dpkg -l cpp gcc libc5 canna canna-dev gives
+Desired=Unknown/Install/Remove/Purge
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name            Version        Description
++++-===============-==============-============================================
+ii  cpp             2.7.2.1-9      The GNU C preprocessor (ELF version).
+ii  gcc             2.7.2.1-9      The GNU C compiler (ELF version).
+ii  libc5           5.4.33-6       The Linux C library version 5 (run-time libr
+ii  canna           3.5b2-2        A japanese input system.
+ii  canna-dev       3.5b2-2        A japanese input system. (Development)
+
+
+Good luck.
+
+Hajime Saito
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00162" HREF="msg00162.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00164.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00166.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00162.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00164.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00165"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00165"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

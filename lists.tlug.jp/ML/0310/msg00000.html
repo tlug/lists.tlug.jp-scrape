@@ -1,0 +1,181 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] [Kind of OT] CompactFlash cards -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Tue, 30 Sep 2003 17:36:40 +0200 -->
+<!--X-Message-Id: 20030930173640.27ff580f.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20030930135621.39d0a613.gstewart@example.com -->
+<!--X-Reference: 20030930212031.64024f7c.tlug@example.com -->
+<!--X-Reference: 20030930145201.36604c26.gstewart@example.com -->
+<!--X-Reference: 20030930220345.1c947dd7.tlug@example.com -->
+<!--X-Reference: 20030930151925.73cf751a.gstewart@example.com -->
+<!--X-Derived: pgp00000.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[Date Prev][<a href="msg00001.html">Date Next</a>][Thread Prev][<a href="msg00001.html">Thread Next</a>][<a href="maillist.html#00000">Date Index</a>][<a href="threads.html#00000">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [Kind of OT] CompactFlash cards</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 30 Sep 2003 17:36:40 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%5BKind%20of%20OT%5D%20CompactFlash%20cards">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [Kind of OT] CompactFlash cards</strong></li>
+<li>References: &lt;20030930135621.39d0a613.gstewart@example.com&gt;&lt;20030930212031.64024f7c.tlug@example.com&gt;&lt;20030930145201.36604c26.gstewart@example.com&gt;&lt;20030930220345.1c947dd7.tlug@example.com&gt;&lt;20030930151925.73cf751a.gstewart@example.com&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+And Thus Spake Godwin Stewart &lt;gstewart@example.com&gt; (on Tue, 30 Sep 2003
+15:19:25 +0200):
+
+&gt; Thanks. The problem would appear to be here:
+&gt; 
+&gt; &gt;         32 hidden sectors
+
+It definitely was.
+
+I patched the source of mkdosfs so I could specify a number of hidden
+sectors on the volume with the new &quot;-h&quot; command line option.
+
+Here's a diff against the source available from
+
+<A  HREF="http://distro.ibiblio.org/pub/Linux/distributions/sorcerer/sources/dosfstools/2.9/">http://distro.ibiblio.org/pub/Linux/distributions/sorcerer/sources/dosfstools/2.9/</A>
+
+
+diff -r dosfstools-2.9/mkdosfs/mkdosfs.c dosfstools-2.9.new/mkdosfs/mkdosfs.c
+9a10,11
+&gt;    UPDATED 30-SEP-2003 G. STEWART : New option : -h n (n hidden sectors)
+&gt;
+330c332
+&lt;
+---
+&gt; static int hidden_sectors = 0;
+888c890
+&lt;     bs.hidden = CT_LE_L(0);
+---
+&gt;     bs.hidden = CT_LE_L(hidden_sectors);
+1375c1377
+&lt;        [-F fat-size] [-r root-dir-entries] [-R reserved-sectors]\n\
+---
+&gt;        [-h hidden-sectors] [-F fat-size] [-r root-dir-entries] [-R reserved-sectors]\n\
+1435c1437
+&lt;   while ((c = getopt (argc, argv, &quot;AcCf:F:Ii:l:m:n:r:R:s:S:v&quot;)) != EOF)
+---
+&gt;   while ((c = getopt (argc, argv, &quot;AcCf:F:Ii:l:m:n:r:R:s:S:h:v&quot;)) != EOF)
+1584a1587,1595
+&gt;       case 'h':        /* h : number of hidden sectors */
+&gt;         hidden_sectors = (int) strtol (optarg, &amp;tmp, 0);
+&gt;         if ( *tmp || hidden_sectors &lt; 0 || hidden_sectors &gt; 511 )
+&gt;           {
+&gt;             printf(&quot;Bad number of hidden sectors : %s\n&quot;, optarg);
+&gt;             usage ();
+&gt;           }
+&gt;         break;
+&gt;
+diff -r dosfstools-2.9/version.h dosfstools-2.9.new/version.h
+4,5c4,5
+&lt; #define       VERSION                 &quot;2.9&quot;
+&lt; #define VERSION_DATE  &quot;15 May 2003&quot;
+---
+&gt; #define       VERSION                 &quot;2.9.1&quot;
+&gt; #define VERSION_DATE  &quot;30 Sep 2003&quot;
+
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0)
+---------------------------------------------------------------
+Doctors can be frustrating. You wait six weeks for an
+appointment and he says, &quot;I wish you'd come to me sooner.&quot;
+</pre>
+<p><strong>Attachment:
+<a href="pgp00000.pgp" ><tt>pgp00000.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Next by Date:
+<strong><a href="msg00001.html">Re: [tlug] Open office 1.1.0 kanji....</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00001.html">Re: [tlug] Open office 1.1.0 kanji....</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00000"><strong>Date</strong></a></li>
+<li><a href="threads.html#00000"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

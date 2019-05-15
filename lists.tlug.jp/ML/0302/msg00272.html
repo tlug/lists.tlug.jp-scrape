@@ -1,0 +1,192 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] im&#45;ja: A Japanese input module for GTK2 -->
+<!--X-From-R13: Pbgbaq Pbglnafmxv <9915104gNlxh.xbor&#45;h.np.wc> -->
+<!--X-Date: Mon, 17 Feb 2003 23:03:41 +0900 -->
+<!--X-Message-Id: 3E50EBBD.B88E0E5E@example.com&#45;u.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030217151621.1e74d68c.9915104t@example.com&#45;u.ac.jp -->
+<!--X-Reference: 1045482534.1976.8.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00270.html">Date Prev</a>][<a href="msg00271.html">Date Next</a>][<a href="msg00276.html">Thread Prev</a>][<a href="msg00321.html">Thread Next</a>][<a href="maillist.html#00272">Date Index</a>][<a href="threads.html#00272">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] im-ja: A Japanese input module for GTK2</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 17 Feb 2003 23:03:41 +0900</li>
+<li><strong>From</strong>: <strong>Botond Botyanszki &lt;<A HREF="mailto:9915104t@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20im-ja%3A%20A%20Japanese%20input%20module%20for%20GTK2">9915104t@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] im-ja: A Japanese input module for GTK2</strong></li>
+<li>References: &lt;<a href="msg00236.html">20030217151621.1e74d68c.9915104t@example.com</a>&gt; &lt;<a href="msg00261.html">1045482534.1976.8.camel@example.com</a>&gt;</li>
+<li>Organization: Kobe University, Japan</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Ryan Shaw wrote:
+
+&gt; On Mon, 2003-02-17 at 15:16, Botond Botyanszki wrote:
+&gt;
+&gt; &gt; Last week I have been bored at my lab, so I have hacked together a Japanese
+&gt; &gt; input module for GTK2 (and thus GNOME2).
+&gt;
+&gt; Could you explain a bit about how this works? If I
+&gt; understand correctly, GTK2 apps are supposed to be
+&gt; to dynamically load different input modules.
+
+Correct. There is a simple (GtkIMContextSimple) and a more complicated API that
+GTK2 input modules have to implement. The latter
+(<A  HREF="http://developer.gnome.org/doc/API/2.0/gtk/GtkIMContext.html">http://developer.gnome.org/doc/API/2.0/gtk/GtkIMContext.html</A>) can be used to
+implement CJK input methods.
+
+When the lib is compiled and ready, the `gtk-query-immodules-2.0` program can be
+used to get the info about the module.
+This is what needs to be added to /etc/gtk-2.0/gtk.immodules. Looks like this:
+&quot;/home/boti/im-ja/im-ja.so&quot;
+&quot;im-ja&quot; &quot;Japanese&quot; &quot;gtk+&quot; &quot;&quot; &quot;ja&quot;
+
+Basically it contains the path to the module, on the next line it has a symbolic
+name, the string that shows up in the gui for the input method, the locale it is
+intended for.
+
+&gt; ..but
+&gt; how does the user set which input module he wants
+&gt; to use? Is this set on an app-by-app basis, or
+&gt; systemwide?
+
+Gtk2 decides automatically, which is pretty simple:
+It queries the current locale and finds a suitable module intended to be used
+for that languge (based on the last field), then sets it as the default input
+method.
+In the above case if I start a gtk2 prog with LC_ALL=ja_JP, then im-ja will be
+the default. If the locale field is empty, then this automagic won't be used.
+On gtk2 widgets that support text input, the input method is selectable through
+a menu that comes up on the right mouse click. Through this interface it's
+possible to select any input method under any locale.
+Systemwide configuration is the above mentioned way, and the default input
+module can be set through an environment variable (GTK_IM_MODULE).
+
+
+&gt; It will be really great when we can ditch kinput2
+&gt; once and for all. Thanks for your work.
+
+As I mentioned before, im-ja has it's biggest disadvantage: it's only for gtk2.
+Plus something smarter than canna input mode needs to be implemented for im-ja.
+While developing the canna input mode, I realized how old (=stupid) the client
+side canna  api is. I frequently tested kinput2 with canna, how it'd compare to
+im-ja. It was pretty relieving to see that it died and was useless just as
+frequently as mine (Anyone using canna with kinput2 ?)
+So the freewnn binding is very high priority. I haven't looked much yet, if
+anyone knows good docs or sample source for [free]wnn, then please let me know.
+And also it would be cool if somebody would like to participate in the effort.
+
+
+
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00321" href="msg00321.html">Re: [tlug] im-ja: A Japanese input module for GTK2</a></strong>
+<ul><li><em>From:</em> Ryan Shaw</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00236" href="msg00236.html">[tlug] im-ja: A Japanese input module for GTK2</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00261" href="msg00261.html">Re: [tlug] im-ja: A Japanese input module for GTK2</a></strong>
+<ul><li><em>From:</em> Ryan Shaw</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00270.html">Re: [tlug] im-ja: A Japanese input module for GTK2</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00271.html">Re: [tlug] using a cross-cable</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00276.html">[tlug] Creative dependencies in gjiten</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00321.html">Re: [tlug] im-ja: A Japanese input module for GTK2</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00272"><strong>Date</strong></a></li>
+<li><a href="threads.html#00272"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Dealing with a second SSH key -->
+<!--X-From-R13: Quneyrf [hyyre <pzhyyre&#45;yfgNww.rz&#45;arg.ar.wc> -->
+<!--X-Date: Sat, 11 Oct 2008 13:23:42 +0900 -->
+<!--X-Message-Id: 20081011.132236.45158358.cmuller&#45;lst@jj.em&#45;net.ne.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081010125620.GA26072@fluxcoil.net -->
+<!--X-Reference: 48EF5669.4010405@jj.em&#45;net.ne.jp -->
+<!--X-Reference: 20081010133552.GA26167@fluxcoil.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00091.html">Date Prev</a>][<a href="msg00093.html">Date Next</a>][<a href="msg00083.html">Thread Prev</a>][<a href="msg00095.html">Thread Next</a>][<a href="maillist.html#00092">Date Index</a>][<a href="threads.html#00092">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Dealing with a second SSH key</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 11 Oct 2008 13:22:36 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Charles Muller &lt;<a href="mailto:cmuller-lst@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Dealing%20with%20a%20second%20SSH%20key">cmuller-lst@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Dealing with a second SSH key</strong></li>
+<li>References: &lt;<a href="msg00081.html">20081010125620.GA26072@fluxcoil.net</a>&gt;	&lt;<a href="msg00082.html">48EF5669.4010405@jj.em-net.ne.jp</a>&gt;	&lt;<a href="msg00083.html">20081010133552.GA26167@fluxcoil.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Christian,
+
+Before I go any further, please let me thank you for your time and patience.
+
+
+&gt; Check those requirements are met on the rsync-box:
+&gt; - modes of your homedir should be 755 or stricter
+&gt; - modes of your home/.ssh dir should be 700 or stricter
+&gt; - your homedir, home/.ssh and all its contents should be owned by 
+&gt; your user
+&gt; - modes of home/.ssh/authorized_keys (containing your pubkey) should
+&gt; be 600 or stricter
+
+I have rechecked these (I always rely on Josh Glover's eminently clear
+&quot;Quick-n-Dirty Guide&quot;)
+  
+&gt; ssh -vv -i /home/dir/.ssh/id_dsa_keyfile user@example.com
+&gt; could then be used to get a bit output from your client.
+
+Well, we certainly *do* get some output. It's considerable, but since
+I don't know what is important, I'll paste the whole thing below. One
+thing I do notice is that there seems to be a request for RSA. Maybe I
+should be generating an RSA key instead of DSA? Here it is:
+
+
+    chuck@example.com:~$ ssh -vv -i /home/acmuller/.ssh/id_dsa_sat acmuller@example.com
+    OpenSSH_5.1p1 Debian-3, OpenSSL 0.9.8g 19 Oct 2007
+    Warning: Identity file /home/acmuller/.ssh/id_dsa_sat not accessible: No such file or directory.
+    debug1: Reading configuration data /etc/ssh/ssh_config
+    debug1: Applying options for *
+    debug2: ssh_connect: needpriv 0
+    debug1: Connecting to 21dzk.l.u-tokyo.ac.jp [130.69.116.30] port 22.
+    debug1: Connection established.
+    debug1: identity file /home/chuck/.ssh/identity type -1
+    debug1: identity file /home/chuck/.ssh/id_rsa type -1
+    debug2: key_type_from_name: unknown key type '-----BEGIN'
+    debug2: key_type_from_name: unknown key type '-----END'
+    debug1: identity file /home/chuck/.ssh/id_dsa type 2
+    debug1: Checking blacklist file /usr/share/ssh/blacklist.DSA-1024
+    debug1: Checking blacklist file /etc/ssh/blacklist.DSA-1024
+    debug1: Remote protocol version 2.0, remote software version OpenSSH_4.3
+    debug1: match: OpenSSH_4.3 pat OpenSSH*
+    debug1: Enabling compatibility mode for protocol 2.0
+    debug1: Local version string SSH-2.0-OpenSSH_5.1p1 Debian-3
+    debug2: fd 3 setting O_NONBLOCK
+    debug1: SSH2_MSG_KEXINIT sent
+    debug1: SSH2_MSG_KEXINIT received
+    debug2: kex_parse_kexinit: diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+    debug2: kex_parse_kexinit: ssh-rsa,ssh-dss
+    debug2: kex_parse_kexinit: aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,arcfour128,arcfour256,arcfour,aes192-cbc,aes256-cbc,rijndael-cbc@example.com,aes128-ctr,aes192-ctr,aes256-ctr
+    debug2: kex_parse_kexinit: aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,arcfour128,arcfour256,arcfour,aes192-cbc,aes256-cbc,rijndael-cbc@example.com,aes128-ctr,aes192-ctr,aes256-ctr
+    debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@example.com,hmac-ripemd160,hmac-ripemd160@example.com,hmac-sha1-96,hmac-md5-96
+    debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@example.com,hmac-ripemd160,hmac-ripemd160@example.com,hmac-sha1-96,hmac-md5-96
+    debug2: kex_parse_kexinit: none,zlib@example.com,zlib
+    debug2: kex_parse_kexinit: none,zlib@example.com,zlib
+    debug2: kex_parse_kexinit: 
+    debug2: kex_parse_kexinit: 
+    debug2: kex_parse_kexinit: first_kex_follows 0 
+    debug2: kex_parse_kexinit: reserved 0 
+    debug2: kex_parse_kexinit: diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+    debug2: kex_parse_kexinit: ssh-rsa,ssh-dss
+    debug2: kex_parse_kexinit: aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,arcfour128,arcfour256,arcfour,aes192-cbc,aes256-cbc,rijndael-cbc@example.com,aes128-ctr,aes192-ctr,aes256-ctr
+    debug2: kex_parse_kexinit: aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,arcfour128,arcfour256,arcfour,aes192-cbc,aes256-cbc,rijndael-cbc@example.com,aes128-ctr,aes192-ctr,aes256-ctr
+    debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,hmac-ripemd160,hmac-ripemd160@example.com,hmac-sha1-96,hmac-md5-96
+    debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,hmac-ripemd160,hmac-ripemd160@example.com,hmac-sha1-96,hmac-md5-96
+    debug2: kex_parse_kexinit: none,zlib@example.com
+    debug2: kex_parse_kexinit: none,zlib@example.com
+    debug2: kex_parse_kexinit: 
+    debug2: kex_parse_kexinit: 
+    debug2: kex_parse_kexinit: first_kex_follows 0 
+    debug2: kex_parse_kexinit: reserved 0 
+    debug2: mac_setup: found hmac-md5
+    debug1: kex: server-&gt;client aes128-cbc hmac-md5 none
+    debug2: mac_setup: found hmac-md5
+    debug1: kex: client-&gt;server aes128-cbc hmac-md5 none
+    debug1: SSH2_MSG_KEX_DH_GEX_REQUEST(1024&lt;1024&lt;8192) sent
+    debug1: expecting SSH2_MSG_KEX_DH_GEX_GROUP
+    debug2: dh_gen_key: priv key bits set: 130/256
+    debug2: bits set: 513/1024
+    debug1: SSH2_MSG_KEX_DH_GEX_INIT sent
+    debug1: expecting SSH2_MSG_KEX_DH_GEX_REPLY
+    debug1: Host '21dzk.l.u-tokyo.ac.jp' is known and matches the RSA host key.
+    debug1: Found key in /home/chuck/.ssh/known_hosts:2
+    debug2: bits set: 497/1024
+    debug1: ssh_rsa_verify: signature correct
+    debug2: kex_derive_keys
+    debug2: set_newkeys: mode 1
+    debug1: SSH2_MSG_NEWKEYS sent
+    debug1: expecting SSH2_MSG_NEWKEYS
+    debug2: set_newkeys: mode 0
+    debug1: SSH2_MSG_NEWKEYS received
+    debug1: SSH2_MSG_SERVICE_REQUEST sent
+    debug2: service_accept: ssh-userauth
+    debug1: SSH2_MSG_SERVICE_ACCEPT received
+    debug2: key: /home/chuck/.ssh/identity ((nil))
+    debug2: key: /home/chuck/.ssh/id_rsa ((nil))
+    debug2: key: /home/chuck/.ssh/id_dsa (0x80060bb0)
+    debug1: Authentications that can continue: publickey,gssapi-with-mic,password
+    debug1: Next authentication method: gssapi-with-mic
+    debug1: Unspecified GSS failure.  Minor code may provide more information
+    No credentials cache found
+    
+    debug1: Unspecified GSS failure.  Minor code may provide more information
+    No credentials cache found
+    
+    debug1: Unspecified GSS failure.  Minor code may provide more information
+    
+    
+    debug2: we did not send a packet, disable method
+    debug1: Next authentication method: publickey
+    debug1: Trying private key: /home/chuck/.ssh/identity
+    debug1: Trying private key: /home/chuck/.ssh/id_rsa
+    debug1: Offering public key: /home/chuck/.ssh/id_dsa
+    debug2: we sent a publickey packet, wait for reply
+    debug1: Authentications that can continue: publickey,gssapi-with-mic,password
+    debug2: we did not send a packet, disable method
+    debug1: Next authentication method: password
+    acmuller@example.com's password: {I typed in my password
+    here}
+
+    debug2: we sent a password packet, wait for reply
+    debug1: Authentication succeeded (password).
+    debug1: channel 0: new [client-session]
+    debug2: channel 0: send open
+    debug1: Requesting no-more-sessions@example.com
+    debug1: Entering interactive session.
+    debug2: callback start
+    debug2: client_session2_setup: id 0
+    debug2: channel 0: request pty-req confirm 1
+    debug1: Sending environment.
+    debug1: Sending env LC_ALL = en_US.UTF-8
+    debug2: channel 0: request env confirm 0
+    debug1: Sending env LANG = en_US.UTF-8
+    debug2: channel 0: request env confirm 0
+    debug2: channel 0: request shell confirm 1
+    debug2: fd 3 setting TCP_NODELAY
+    debug2: callback done
+    debug2: channel 0: open confirm rwindow 0 rmax 32768
+    debug2: channel_input_confirm: type 99 id 0
+    debug2: PTY allocation request accepted on channel 0
+    debug2: channel 0: rcvd adjust 131072
+    debug2: channel_input_confirm: type 99 id 0
+    debug2: shell request accepted on channel 0
+    Last login: Fri Oct 10 21:58:28 2008 from s113.htokyofl11.vectant.ne.jp
+
+Regards,
+
+Chuck
+ 
+-------------------
+
+A. Charles Muller
+
+Graduate School of Humanities and Sociology
+Faculty of Letters
+University of Tokyo
+7-3-1 Hongo, Bunkyo-ku
+Tokyo 113-0033, Japan 
+
+Web Site: Resources for East Asian Language and Thought
+<a  href="http://www.acmuller.net">http://www.acmuller.net</a>
+
+&lt;acmuller[at]jj.em-net.ne.jp&gt;   
+Skype: charles.muller01
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00095" href="msg00095.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00081" href="msg00081.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+<li><strong><a name="00082" href="msg00082.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+<li><strong><a name="00083" href="msg00083.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00091.html">Re: [tlug] Re: Somewhat OT- open source software for US voting	machines</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00093.html">[tlug] 21dzk text database</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00083.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00095.html">Re: [tlug] Dealing with a second SSH key</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00092"><strong>Date</strong></a></li>
+<li><a href="threads.html#00092"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

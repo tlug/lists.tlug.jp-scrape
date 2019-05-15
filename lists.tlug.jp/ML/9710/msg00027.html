@@ -1,0 +1,184 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: More CDROM miseries in Wales -->
+<!--X-From: Jim Tittsler <jwt@example.com> -->
+<!--X-Date: Tue, 7 Oct 1997 00:38:05 GMT -->
+<!--X-Message-Id: 19971007093734.33268@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.93.971005202145.181B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00026.html">Date Prev</A>][<A HREF="msg00028.html">Date Next</A>][<A HREF="msg00017.html">Thread Prev</A>][<A HREF="msg00019.html">Thread Next</A>][<A HREF="maillist.html#00027">Date Index</A>][<A HREF="threads.html#00027">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: More CDROM miseries in Wales</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: More CDROM miseries in Wales</strong></LI>
+<LI><strong>From</strong>: <strong>Jim Tittsler &lt;<A HREF="mailto:jwt@example.com">jwt@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 7 Oct 1997 09:37:34 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00017.html">Pine.LNX.3.93.971005202145.181B-100000@example.com</A>&gt;; from Dennis McMurchy on Sun, Oct 05, 1997 at 08:27:22PM +0900</LI>
+<LI>Oranization: 7J1AJH/AI8A Tokyo</LI>
+<LI>Organization: 7J1AJH/AI8A</LI>
+<LI>References: &lt;<A HREF="msg00017.html">Pine.LNX.3.93.971005202145.181B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Jim Tittsler &lt;jwt@example.com&gt;
+--------------------------------------------------------
+On Sun, Oct 05, 1997 at 08:27:22PM +0900, Dennis McMurchy wrote:
+&gt; 
+&gt;   Thanks Jim for the very helpful advice regarding my Welsh friend's
+
+I suspect that there is not enough information here to continue this
+process much longer... but a few comments on his reply.
+
+&gt; &gt; &gt;   The kennel rebuild went very smoothly (though I chose rather wildly
+&gt; &gt; &gt; between the various options), and I selected ATAPI CD-Rom. And, as you
+&gt; &gt; 
+&gt; &gt; Which hopefully means he said yes to "Include IDE/ATAPI CDROM support"
+&gt; &gt; (and also yes to "ISO9660 filesystem" but that will only be a problem
+&gt; &gt; after detecting the drive :-).  You will also want to exercise caution
+&gt; &gt; if you have an IDE chipset that has only a single FIFO for both of the
+&gt; &gt; interfaces.  In particular say Yes to the CMD640 and RZ1000 configuration
+&gt; &gt; options if you have either or if you aren't sure.
+&gt; 
+&gt; I didn't get asked about any of these things --  I just selected ATAPI
+&gt; CDrom and that seemed to be an end to the matter. Perhaps there's
+&gt; something wrong with the setup program?
+
+This seems a bit confused.  Earlier he was describing rebuilding the kernel.
+Its configuration is done by 'make config', 'make menuconfig', or 
+'make xconfig' (I strongly recommend one of the last two, depending
+upon if X is available).  The "setup program" is probably in the 
+installation process for his distribution.  Two very different things.
+
+To rebuild the kernel, he should use 'make xconfig'.  Among the choices
+under "Floppy, IDE, and other block devices" he needs to say Y to
+'Include IDE/ATAPI CDROM support' (and Y to CMD640 chipset bugfix/support
+and Y to RZ1000 chipset bugfix/support if he is not sure what IDE
+controller he is using).  And among the choices under 'Filesystems'
+make sure ISO9660 cdrom filesystem support is selected.
+
+Mounting a CD with a properly configured kernel can then be done with
+mount -t iso9660 -o ro /dev/hdd /cdrom
+(assuming the /cdrom point exists).  If he adds a line like
+/dev/hdd   /cdrom  iso9660  ro,noauto 0 0
+to his /etc/fstab, mounting can be done with something like 
+mount /cdrom
+
+&gt; difficulties in Computer Shopper magazine). But I tried again, just for
+&gt; the record, and the boot goes smoothly, &amp; includes these lines:-
+&gt;   hdd: no response (status = 0xff)
+&gt;   hdd: ATAPI cdrom (?)
+
+I'm surprised it says that unless he has no drive as master on the
+secondary IDE channel (i.e. hdc).
+
+&gt; Anyway, when I booted using "linux hdd=cdrom", these ide parameters were
+&gt; correct.
+
+That's a start.
+
+&gt;   If anyone can help on this, I'd be very grateful.  I'm stumped (although
+&gt; I have wondered if this could a PnP problem - I don't if his CDROM drive
+Doesn't sound like PnP to me.
+
+-- 
+Jim Tittsler, Tokyo   jwt@example.com  <A TARGET="_top" HREF="http://www.dskk.co.jp/~jwt/">http://www.dskk.co.jp/~jwt/</A>
+
+
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00017" HREF="msg00017.html">tlug: More CDROM miseries in Wales</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00026.html">Re: tlug: FD Controller cards</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00028.html">Re: tlug: Meeting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00017.html">tlug: More CDROM miseries in Wales</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00019.html">tlug: greetings</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00027"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00027"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

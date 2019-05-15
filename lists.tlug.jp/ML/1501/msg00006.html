@@ -1,0 +1,192 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Representing a Space in a Path -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Wed, 14 Jan 2015 13:12:07 +0900 -->
+<!--X-Message-Id: 20150114041205.GA11594@scott1.scottro.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 54B5E39B.60600@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00005.html">Date Prev</a>][<a href="msg00007.html">Date Next</a>][<a href="msg00005.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a href="maillist.html#00006">Date Index</a>][<a href="threads.html#00006">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Representing a Space in a Path</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 13 Jan 2015 23:12:05 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Representing%20a%20Space%20in%20a%20Path">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Representing a Space in a Path</strong></li>
+<li>References: &lt;<a href="msg00002.html">54B5E39B.60600@gmail.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.20 (2009-12-10)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Wed, Jan 14, 2015 at 12:33:47PM +0900, CL wrote:
+&gt; There is probably a simple answer to this, but I am not finding it in my 
+&gt; Unix User's Guide:
+&gt; 
+&gt; How do you represent a space in a pathname?
+&gt; 
+&gt; Explanation:
+&gt; 
+&gt; When I installed VirtualBox, it created a directory in /home/&lt;username&gt; 
+&gt; called &quot;VirtualBox VMs&quot; and located the *.vdi files and the guest setup 
+&gt; file directories beneath it.  The *.vdi files and guest directories also 
+&gt; have spaces in their names.  When I attempt:
+&gt; 
+&gt; &gt; # cd /home/&lt;username&gt;/VirtualBox VMs/ 
+Escape it with a backslash. My CentOS-6.6 (and FreeBSD.10-1 will do this if
+I use tab completion.  I go ls Virtua (and hit tab) and get  
+
+ls VirtualBox\ VMs/
+
+See if the backslash works.  Otherwise, try quoting it.  All untested by me 
+
+But usually with a VBoxManage command, you don't even need the path just
+the filename, Again, untested but I believe you can do 
+
+VBoxManage modifyhd WIN7x664.vdi (and maybe not even use the .vdi part)
+
+(Or just cd into the directory and run the command there.  :)  )  
+
+
+&gt; 
+&gt; 
+&gt; &gt; #:~$ VBoxManage modifyhd --resize 185040 /home/&lt;username&gt;/VirtualBox 
+&gt; &gt; VMs/WIN7x64.vdi
+&gt; &gt; Oracle VM VirtualBox Command Line Management Interface Version 4.3.20
+&gt; &gt; (C) 2005-2014 Oracle Corporation
+&gt; &gt; All rights reserved.
+&gt; &gt;
+&gt; &gt; Usage:
+&gt; &gt;
+&gt; &gt; VBoxManage modifyhd         &lt;uuid|filename&gt;
+&gt; &gt;                             [--type 
+&gt; &gt; normal|writethrough|immutable|shareable|
+&gt; &gt;                                     readonly|multiattach]
+&gt; &gt;                             [--autoreset on|off]
+&gt; &gt;                             [--property &lt;name=[value]&gt;]
+&gt; &gt;                             [--compact]
+&gt; &gt;                             [--resize &lt;megabytes&gt;|--resizebyte &lt;bytes&gt;]
+&gt; &gt;
+&gt; &gt;
+&gt; &gt; Syntax error: Invalid parameter 'VMs/WIN7x64.vdi'
+&gt; Which means that modifyhd is attacking the address from the other side 
+&gt; of the space and also is not understanding my instruction.
+&gt; 
+&gt; What to I type in in place of the space(s) to complete the address so 
+&gt; that it is understood?
+
+
+To answer that part of the question, a path is escaped with a backslash.
+&gt;
+
+-- 
+Scott Robbins
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00008" href="msg00008.html">Re: [tlug] Representing a Space in a Path</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00002" href="msg00002.html">[tlug] Representing a Space in a Path</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00005.html">Re: [tlug] Representing a Space in a Path</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00007.html">Re: [tlug] Representing a Space in a Path</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00005.html">Re: [tlug] Representing a Space in a Path</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">Re: [tlug] Representing a Space in a Path</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00006"><strong>Date</strong></a></li>
+<li><a href="threads.html#00006"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

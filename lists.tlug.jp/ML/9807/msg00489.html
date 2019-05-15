@@ -1,0 +1,195 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: broken Locale support related to Netscape printing problem??? -->
+<!--X-From: <mike.fabian@example.com&#45;neckar.de> -->
+<!--X-Date:  Sun, 26 Jul 1998 21:53:16 +0900 -->
+<!--X-Message-Id: 199807261226.OAA00742@example.com&#45;neckar.de -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00488.html">Date Prev</A>][<A HREF="msg00490.html">Date Next</A>][<A HREF="msg00493.html">Thread Prev</A>][<A HREF="msg00494.html">Thread Next</A>][<A HREF="maillist.html#00489">Date Index</A>][<A HREF="threads.html#00489">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: broken Locale support related to Netscape printing problem???</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: broken Locale support related to Netscape printing problem???</strong></LI>
+<LI><strong>From</strong>: <strong>&lt;<A HREF="mailto:mike.fabian@example.com">mike.fabian@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 26 Jul 1998 14:26:56 +0200</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+皆さん今日は、
+
+on the page
+
+  <A TARGET="_top" HREF="http://home.netscape.com/eng/mozilla/4.0/relnotes/unix-4.0.html">http://home.netscape.com/eng/mozilla/4.0/relnotes/unix-4.0.html</A>
+
+I found:
+
+&gt; Linux 2.0.x only:
+&gt;       ... 
+&gt; Locale support is broken in the gnu libc2 version of Communicator. 
+&gt; One way to work around this problem is to set
+&gt; LD_PRELOAD to /usr/lib/libBrokenLocale.so before running
+&gt; Communicator. For example, LD_PRELOAD=/usr/lib/libBrokenLocale.so ;
+&gt; export LD_PRELOAD # (Bourne shell) netscape or setenv LD_PRELOAD
+&gt; /usr/lib/libBrokenLocale.so # (C shell) netscape. 
+
+But  when I set  LD_PRELOAD like  this, Netscape dumps  core. And Mule
+dumps core too. Both work without this LD_PRELOAD setting.
+
+Now I  wonder whether this "broken locale  support" has anything to do
+with the  inability  of  the Netscape  4.05  on my   computer  to save
+Japanese pages correctly to postscript.
+
+
+Kei Furuuchi was so  kind  to send me a   postscript file produced  by
+Netscape 4.05 on his computer. I  could print this file correctly, but
+I still can't print postscript files produced by  the Netscape 4.05 on
+my computer.
+
+I compared  the postscript  files and  found, that  in Kei's file  the
+prolog section contains:
+
+&gt; %%BeginProlog
+&gt; ...
+&gt; /of { /Ryumin-Light-RKSJ-H findfont exch scalefont setfont } bind def
+&gt; ...
+&gt; %%EndProlog
+
+I   don't know postscript, but  this   looks like a   definition of  a
+Japanese font to me. Further down in  Kei's postscript file, this font
+seems to be used to print Japanese:
+
+&gt; 12 f0
+&gt; (newsroom@example.com) show
+&gt; 0 348.2 moveto
+&gt; 12 of
+&gt; &lt;8b4c8e9682c991ce82b782e982b28ebf96e2814182b288d38ca982c982cd8f5a8f8a81418e8196bc81419364986294d48d8682f096be8b4c82b582c489ba82b382a28142&gt; show
+
+The Ghostscript on my computer can print this correctly.
+
+In the prolog of a postscript file produced by my Netscape 4.05,
+there is nothing wich looks like a Japanese font definition:
+
+&gt; %%BeginProlog
+&gt; ...
+&gt; /F0
+&gt;     /Times-Roman findfont
+&gt;     dup length dict begin
+&gt; 	{1 index /FID ne {def} {pop pop} ifelse} forall
+&gt; 	/Encoding isolatin1encoding def
+&gt;     currentdict end
+&gt; definefont pop
+&gt; /f0 { /F0 findfont exch scalefont setfont } bind def
+&gt; ...
+&gt; %%EndProlog
+
+And this "f0" font is used further down for both, Japanese and romaji:
+
+&gt; 10 f0
+&gt; (newsroom@example.com) show
+&gt; 2.1 81.1 moveto
+&gt; 10 f0
+&gt; (\265\255\273\366\244\313\302\320\244\271\244\353\244\264\274\301\314\344\241\242\244\264\260\325\270\253\244\313\244\317\275\273\275\352\241\242\273\341\314\276\241\242\305\305\317\303\310\326\271\346\244\362\314\300\265\255\244\267\244\306\262\274) show
+
+and of course the output of the Japanese part becomes garbled.
+
+Any Ideas what might be wrong?
+
+Mike
+
+-- 
+Mike Fabian   mike.fabian@example.com   fabian@example.com   
+Feuerbachstrasse 13, D-67122 Altrip, Telephone: +49(0)6236/398539
+
+--------------------------------------------------------------
+Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+featuring Linux on multiple platforms:
+i386, Sparc, PA-Risc, Amiga, SGI, Alpha, PalmPilot, ...
+Next Nomikai: September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00488.html">tlug: substituting a linefeed in vi</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00490.html">Re: tlug: NO ROM Basic</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00493.html">RE: tlug: substituting a linefeed in vi</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00494.html">tlug: 30-pin SIMM source</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00489"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00489"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

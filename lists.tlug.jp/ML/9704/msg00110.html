@@ -1,0 +1,257 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: "Andrew S. Howell": Japanese Email in emacs -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 30 Apr 1997 01:53:28 GMT -->
+<!--X-Message-Id: m0wMOVd&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 9704292336.AA01046@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00109.html">Date Prev</A>][<A HREF="msg00111.html">Date Next</A>][<A HREF="msg00109.html">Thread Prev</A>][<A HREF="msg00116.html">Thread Next</A>][<A HREF="maillist.html#00110">Date Index</A>][<A HREF="threads.html#00110">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: "Andrew S. Howell": Japanese Email in emacs</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: "Andrew S. Howell": Japanese Email in emacs </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 30 Apr 1997 10:48:40 +0900</LI>
+<LI>In-reply-to: Your message of "Wed, 30 Apr 1997 08:36:49 +0200."            &lt;<A HREF="msg00109.html">9704292336.AA01046@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Andrew" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+    Andrew&gt; I don't think this made it to the list the last time. If
+    Andrew&gt; it did, I appologize.
+
+I haven't seen it.  ;-)
+
+&gt;&gt;&gt;&gt;&gt; "Andrew" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+    Andrew&gt; Can anyone recomend an email package to use with emacs
+    Andrew&gt; that supports Japanese and Mime?
+
+    Andrew&gt; I been using mh-mail and its companion in emacs for a long
+    Andrew&gt; time. It is suppposed to work with Japanese (patched), but
+    Andrew&gt; I've gotten it to work. At any rate, mh-mail has a number
+    Andrew&gt; of weak points:
+
+I use MH 6.8.3 without the Japanese patches, mh-e 1.14, and metamail.
+I'm not sure what extra Japanese support you want; this setup
+occasionally gets upset when there is raw Japanese in the headers
+(where it does not belong, damn it; should be MIME quoted-printable).
+I've also known it to choke on MS-Exchange message IDs, but only from
+the Prime Minister's office so you're probably safe.  :-)  These
+problems are much rarer and less annoying (10 messages with problems
+in several thousand over the last 4 months) than junk mail....
+
+XEmacs should do a better job of handling MIME than GNU Emacs (you
+should be able to get inline images, for example) but I don't know if
+it supports Japanese even yet.  This was rumored for a few months ago
+but I've heard nothing since.
+
+Here is the relevant patch to mh-utils.el to get automatic use of
+metamail on Japanese content (where properly indicated in a
+Content-Type header).  You would need further patching, or to use a
+package like metamail.el, to get general MIME support.  metamail.el is
+clearly pretty old, and may have problems with newer versions of
+Emacs/Mule.  Also, to get on-the-fly launching of external viewers you
+will need a certain amount of fiddling with mime.types.
+
+I guess	I should probably fix this so that *any* file with a
+Content-Type header potentially gets metamail called on it, unless I
+know Mule can handle it natively.
+
+bash-2.00$ diff -U 1 /usr/local/share/emacs/19.34/lisp/mh-utils.el ~/Programs/lisp/mh-utils.el 
+--- /usr/local/share/emacs/19.34/lisp/mh-utils.el  Fri Jun 28 15:56:14 1996
++++ /home/turnbull/Programs/lisp/mh-utils.el    Fri Feb 21 18:41:09 1997
+@@ -304,8 +304,15 @@
+               (kill-local-variable 'write-contents-hooks))
+-          (if formfile
+-              (mh-exec-lib-cmd-output "mhl" "-nobell" "-noclear"
+-                                      (if (stringp formfile)
+-                                          (list "-form" formfile))
+-                                      msg-filename)
+-            (insert-file-contents msg-filename))
++          ;; SJT  Mon Feb  3 19:09:22 1997
++          (cond ((and (equal (call-process "fgrep" nil nil nil
++                                         "-i" "iso-2022-jp"
++                                         msg-filename)
++                             0)
++                      (y-or-n-p "Run metamail on this message? "))
++                 (call-process "metamail" nil t nil "-x" msg-filename))
++                (formfile
++                 (mh-exec-lib-cmd-output "mhl" "-nobell" "-noclear"
++                                         (if (stringp formfile)
++                                             (list "-form" formfile))
++                                         msg-filename))
++                (t (insert-file-contents msg-filename)))
+           (goto-char (point-min))
+
+I also use procmail to sort (eg) TLUG into a separate inbox and have
+patched mh-e to associate many folders with their own inboxes (I
+couldn't see a way to do this by configuring MH).  I have a couple of
+other minor patches (FCCs use the same algorithm to find folders that
+save does, and that has been patched to use a regexp alist the way
+RMail does).  Those are available on request (still under
+development).
+
+    Andrew&gt; File-per-message wastes disk space
+
+But makes finding needles in haystacks with glimpse much faster.
+
+    Andrew&gt; Very slow when folder contain 100+ messages
+
+I've thought about this; my current solution is to have a job that
+runs every two weeks that moves everything older than two weeks into a 
+subfolder called "Old".  This could be tarred and gzipped, fixing the
+file-per-message thing.  It would require slight reconfiguration and
+double the CPU cycles for glimpseindex.
+
+A better solution would be patch scan(mh) to keep a cache of the
+messages in a folder so that it could start quickly with a stat of
+existing files and only read new or modified ones.
+
+    Andrew&gt; Can't see at a glance, number of unread messages in a folder
+
+I use xlbiff to keep track of the unread messages in a folder.  It
+might be worth updating xlbiff to handle multiple folders
+simultaneously, as it takes up a bit of space.  It should be possible
+to configure MH to keep an "unread" sequence that you could count
+relatively easily.  xlbiff does not properly handle Japanese,
+unfortunately.  xlbiff also needs a lot of other patches as far as I'm 
+concerned.  Details on request; this post has gone on long enough.  :-)
+
+    Andrew&gt; For emaces, I've been using 19.33g mule. I've been waiting
+
+"emaxen"  :-)
+
+    Andrew&gt; 20 to come out, which includes mule support.
+
+    Andrew&gt; Whatever route I go, I want something text based, as I
+    Andrew&gt; login from home a lot to read mail. Although, if I had
+    Andrew&gt; IMAP capable mail agent, I guess I could download my
+    Andrew&gt; messages to home. I'm not too sure how this works. Anyone
+    Andrew&gt; have experience with IMAP? I seem to remember seeing
+    Andrew&gt; something on it here....
+
+Craig mentioned that he was using it.  Pine is definitely
+IMAP-capable.  I detest Pine, myself (well, I detest menus, not Pine), 
+but it could be used.  The protocol shouldn't be all that hard to
+implement.
+
+Also, I found that X-Windows over a 14.4kbit connection started slow
+and I had to run Mosaic with autoload of images off, but text and
+buttons and such weren't slow.  YMMV, but you may find it possible to
+use a GUI-based system that way.  I personally just prefer text.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00116" HREF="msg00116.html">tlug: Glimpse?</A></STRONG>
+<UL><LI><EM>From:</EM> "Francis Brian O'Carroll" &lt;ocarroll@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00109" HREF="msg00109.html">tlug: "Andrew S. Howell": Japanese Email in emacs</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00109.html">tlug: "Andrew S. Howell": Japanese Email in emacs</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00111.html">tlug: Re: Gimp</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00109.html">tlug: "Andrew S. Howell": Japanese Email in emacs</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00116.html">tlug: Glimpse?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00110"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00110"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

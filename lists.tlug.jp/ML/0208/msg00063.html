@@ -1,0 +1,185 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Parallel port driving me nuts -->
+<!--X-From-R13: Wna Pnejvpx <vnaoNLSROF.TG&#45;Preyva.RS> -->
+<!--X-Date: Wed, 7 Aug 2002 05:04:13 +0900 (JST) -->
+<!--X-Message-Id: Pine.SGI.4.44.0208062158350.40351538&#45;100000@example.com&#45;Berlin.DE -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020806183945.6a4e45da.gstewart@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00062.html">Date Prev</a>][<a href="msg00064.html">Date Next</a>][<a href="msg00061.html">Thread Prev</a>][<a href="msg00064.html">Thread Next</a>][<a href="maillist.html#00063">Date Index</a>][<a href="threads.html#00063">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Parallel port driving me nuts</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 6 Aug 2002 22:05:44 +0200</li>
+<li><strong>From</strong>: <strong>Ian Barwick &lt;<A HREF="mailto:ianb@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Parallel%20port%20driving%20me%20nuts">ianb@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Parallel port driving me nuts</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, 6 Aug 2002, Godwin Stewart wrote:
+
+&gt; Hi all,
+&gt;
+&gt; I'm trying to get my Slackware 8.0 box (2.4.18 kernel) to run as a print
+&gt; server. For this, it obviously has to be able to print...
+&gt;
+&gt; Apart from the steps which follow, I've managed to boot the box from a
+&gt; floppy with the &quot;other&quot; O/S  (...)
+
+You mean one of the *BSDs? ;-)
+
+&gt; It is detected by the kernel upon startup. Extract from /var/log/messages:
+&gt;
+&gt; Aug  6 17:54:55 spider kernel: parport0: PC-style at 0x378 [PCSPP,TRISTATE]
+&gt; Aug  6 17:54:55 spider kernel: parport0: Printer, EPSON Stylus COLOR 600
+
+Does /var/log/messages include something like
+
+Jul  7 00:54:56 ianb kernel: lp0: using parport0 (polling)
+
+and do you have the lp module?
+
+&gt; # lsmod
+&gt; Module                  Size  Used by
+&gt; n_hdlc                  6128   1 (autoclean)
+&gt; ipt_MASQUERADE          1328   1 (autoclean)
+&gt; iptable_nat            13616   1 (autoclean) [ipt_MASQUERADE]
+&gt; ip_conntrack           14192   1 (autoclean) [ipt_MASQUERADE iptable_nat]
+&gt; iptable_filter          1728   1 (autoclean)
+&gt; ip_tables              10720   5 [ipt_MASQUERADE iptable_nat iptable_filter]
+&gt; usb-uhci               21872   0 (unused)
+&gt; parport_pc             12432   0 (unused)
+&gt; parport                13760   0 [parport_pc]
+&gt; rtc                     6112   0 (autoclean)
+
+Doesn't look like it, although it may be compile into the kernel (I don't
+know Mandrake though).
+
+&gt; The /dev/lp? device nodes *do* exist:
+&gt;
+&gt; # ls -ls /dev/lp?
+&gt;    0 crw-rw----    1 root     lp         6,   0 Apr 28  1995 /dev/lp0
+&gt;    0 crw-rw----    1 root     lp         6,   1 Apr 28  1995 /dev/lp1
+&gt;    0 crw-rw----    1 root     lp         6,   2 Apr 28  1995 /dev/lp2
+&gt;
+&gt; So, in theory, I should be able to eject a sheet of paper by sending a form
+&gt; feed to the printer, right?
+&gt;
+&gt; # echo -n -e &quot;\x0C&quot; &gt; /dev/lp0
+&gt; bash: /dev/lp0: No such device
+
+Yup. Well, works here, at least with SuSE 7.0.
+
+Maybe try insmod lp ?
+
+
+Ian Barwick
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00064" href="msg00064.html">Re: [tlug] Parallel port driving me nuts</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00060" href="msg00060.html">[tlug] Parallel port driving me nuts</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00062.html">Re: [tlug] sed or awk or what?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00064.html">Re: [tlug] Parallel port driving me nuts</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00061.html">[tlug] Re: Parallel port driving me nuts</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00064.html">Re: [tlug] Parallel port driving me nuts</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00063"><strong>Date</strong></a></li>
+<li><a href="threads.html#00063"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

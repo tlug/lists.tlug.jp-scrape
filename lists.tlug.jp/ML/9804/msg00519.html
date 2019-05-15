@@ -1,0 +1,159 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: two problems -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Mon, 27 Apr 1998 02:14:22 &#45;0400 (EDT) -->
+<!--X-Message-Id: 13636.8621.933619.229833@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980425164241.1335B&#45;100000@example.com -->
+<!--X-Reference-Id: Pine.GSO.3.94.980425124346.2888A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00518.html">Date Prev</A>][<A HREF="msg00520.html">Date Next</A>][<A HREF="msg00509.html">Thread Prev</A>][<A HREF="msg00516.html">Thread Next</A>][<A HREF="maillist.html#00519">Date Index</A>][<A HREF="threads.html#00519">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: two problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: two problems</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 27 Apr 1998 15:11:57 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00509.html">Pine.GSO.3.94.980425124346.2888A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00502.html">Pine.LNX.3.96LJ1.1b7.980425164241.1335B-100000@example.com</A>&gt;&lt;<A HREF="msg00509.html">Pine.GSO.3.94.980425124346.2888A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jonathan" == Jonathan Byrne &lt;- 3Web &lt;jq@example.com&gt;&gt; writes:
+
+    Jonathan&gt; I'm having a couple of odd problems on my TurboLinux
+    Jonathan&gt; 1.4J machine at work.  The first one is I start up Pine
+    Jonathan&gt; (J) and it says it can't open the mailbox lock because
+    Jonathan&gt; it's read only.  I've looked at /var/spool/mail/jonathan
+
+The problem is not the mail _file_, it's the _lock_.  If you're using
+the usual locking convention, Pine does the equivalent of `touch
+/var/spool/mail/jonathan.lock' and a mail program will not open th
+email file if that lock file exists.  Some programs want to put that
+lock file in /var/spool/mail; others in /var/locks/somewhere.  It's
+probably the directory that is not writable by the `mail' group, or
+Pine is not in the `mail' group or is not sgid (if the latter, _don't_
+make Pine sgid until you've RTFM'd).
+
+You could also have a stale *.lock file that was created when you
+su'd, read the mail as root (picking up your non-root user's mail
+because su didn't change the $MAIL variable; I don't know if this is
+true for su under TL), and somehow left the lock file behind.  If it
+was created with root, your regular user would be hosed.  This is
+quite low probability though.
+
+&gt;&gt;&gt;&gt;&gt; "&lt;&lt;RONNIE&gt;&gt;" == &lt;&lt;RONNIE&gt;&gt;  &lt;ronalfhe@example.com&gt; writes:
+
+    &lt;&lt;RONNIE&gt;&gt;&gt; will start as the first time .... or just try with
+    &lt;&lt;RONNIE&gt;&gt;&gt; this
+
+    &lt;&lt;RONNIE&gt;&gt;&gt; YourHost:~$chmod 700 /var/spool/mail/jonathan
+
+No, the group is probably mail, and mode should be 770 in that case.
+If the group is `users' or something like that, it needs fixed, but
+RedHat-derived distributions use the group-per-user scheme.
+
+---------------------------------------------------------------
+Next Nomikai: 15 May Fri, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00502" HREF="msg00502.html">tlug: two problems</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00509" HREF="msg00509.html">Re: tlug: two problems</A></STRONG>
+<UL><LI><EM>From:</EM> "&lt;&lt;RONNIE&gt;&gt;" &lt;ronalfhe@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00518.html">Re: tlug: Re: Naiibu and other naivetes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00520.html">tlug: Key Bind and Key Convert Files</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00509.html">Re: tlug: two problems</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00516.html">Re: tlug: two problems</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00519"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00519"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

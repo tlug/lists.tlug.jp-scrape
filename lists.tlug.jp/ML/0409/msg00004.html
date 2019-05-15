@@ -1,0 +1,178 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] What's with emacs and utf&#45;8? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 02 Sep 2004 08:50:22 +0900 -->
+<!--X-Message-Id: 87ekllr1kx.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1094057403.23291.6.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00003.html">Date Prev</a>][<a href="msg00005.html">Date Next</a>][<a href="msg00003.html">Thread Prev</a>][<a href="msg00005.html">Thread Next</a>][<a href="maillist.html#00004">Date Index</a>][<a href="threads.html#00004">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] What's with emacs and utf-8?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 02 Sep 2004 08:50:22 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20What%27s%20with%20emacs%20and%20utf-8%3F">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] What's with emacs and utf-8?</strong></li>
+<li>References: &lt;<a href="msg00003.html">1094057403.23291.6.camel@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (chayote, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Stuart&quot; == Stuart Luppescu &lt;s-luppescu@example.com&gt; writes:
+
+    Stuart&gt; Hi all, I was trying to redo my little .sig template (with
+    Stuart&gt; the family information is Japanese) to save it as utf-8
+    Stuart&gt; (because that's the encoding gmail uses), but when I tried
+    Stuart&gt; to save it as utf-8 (C-x &lt;RETURN&gt; f utf-8-unix C-x C-s) it
+    Stuart&gt; told me:
+
+Heh heh heh.  That's what you get for using rmsmacs.  This is trivial
+(though not quite automated) in XEmacs.
+
+    Stuart&gt; Hasn't emacs made it into the modern world?
+
+No.  The only reason GNU Emacs has multilingual capabilities at all is
+XEmacs envy AFAICS; rms refused to put NEmacs, then Mule, into Emacs
+for 10 years---he correctly insisted on a multilingual subsystem based
+on Unicode---then simply capitulated to the Mule Lab as soon as XEmacs
+released a stable version with Mule.
+
+Problem is, Mule is designed around ISO 2022, and there simply isn't
+space in the encoding used to hold all of Unicode.  So what has been
+done in GNU Emacs is to make Mule character sets to hold the
+alphabetic blocks (up to about 0x3fff, IIRC), and symbols and specials
+in 0xE800--0xFFFF.  Tough luck if you use Han characters or Hangul.
+
+You can try to find Mule-UCS and install it, which gives full coverage
+of Unicode (although the internal code is still Mule code) or you can
+get Emacs from CVS (I _think_ it has Asian support), or if that fails,
+you can get the emacs-unicode branch from CVS.
+
+Or, if you'd rather switch than fight, install XEmacs 21.4.15 (.16 is
+due out RSN) and the regular and Mule packages, and put
+
+(require 'un-define)
+(set-coding-priority-list '(utf-8))
+(set-coding-category-system 'utf-8 utf-8)
+
+in your init file (~/.emacs, but XEmacs prefers to put it in
+~/.xemacs/init.el, and will offer to migrate it for you).  This also
+uses Mule-UCS, but in XEmacs it's a (semi-)supported package, rather
+than a third-party system.  You could also build and install XEmacs
+21.5 which has native Unicode support (although it still uses Mule
+code inside), but that's hardly an advantage over building your own
+GNU Emacs.
+
+Now, XEmacs was on track to have Unicode as the internal encoding in
+2002, but of course as soon as rms signed up with the Mule Lab, the
+Mule Lab stopped funding development in XEmacs....  Maybe in early 2005.
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00003" href="msg00003.html">[tlug] What's with emacs and utf-8?</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00003.html">[tlug] What's with emacs and utf-8?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00005.html">[tlug] Recompiling SuSE 9.x and drivers</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00003.html">[tlug] What's with emacs and utf-8?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00005.html">[tlug] Recompiling SuSE 9.x and drivers</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00004"><strong>Date</strong></a></li>
+<li><a href="threads.html#00004"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

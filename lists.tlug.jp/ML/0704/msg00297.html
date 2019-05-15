@@ -1,0 +1,170 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] OT:dual core CPUs -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Tue, 17 Apr 2007 10:24:19 +0900 -->
+<!--X-Message-Id: Pine.NEB.4.64.0704171000370.835@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4622DB5A.6050207@example.com -->
+<!--X-Reference: 20070416161827.616e2cdc.sl&#45;tlug@example.com -->
+<!--X-Reference: 46232B25.5030807@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00296.html">Date Prev</a>][<a href="msg00298.html">Date Next</a>][<a href="msg00282.html">Thread Prev</a>][<a href="msg00298.html">Thread Next</a>][<a href="maillist.html#00297">Date Index</a>][<a href="threads.html#00297">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] OT:dual core CPUs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Apr 2007 10:24:18 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20OT:dual%20core%20CPUs">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] OT:dual core CPUs</strong></li>
+<li>References: &lt;<a href="msg00271.html">4622DB5A.6050207@example.com</a>&gt;	&lt;<a href="msg00275.html">20070416161827.616e2cdc.sl-tlug@example.com</a>&gt;	&lt;<a href="msg00276.html">46232B25.5030807@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">On Mon, 16 Apr 2007, Darren Cook wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">The Athlon X2 3600 is 1.9Ghz, the Intel T7200 is 2Ghz, and the Intel
+E6300 is 1.86Ghz. This may be the dumb question of the day, but doesn't
+that make them slower than my Celeron 2.8Ghz (assuming I'm running a
+single-threaded application)?
+</pre></blockquote><pre style="margin: 0em;"><br>No, for many reasons. One of the big ones is that CPUs do varying
+amounts of work in one clock cycle.</pre><br>
+<pre style="margin: 0em;">Beyond the simple matter of a dual-core CPU executing two instructions
+simultaneously, even single-core CPUs may do simultaneous execution of
+some instructions, such as an integer and floating point operation at
+the same time (these typically using separate circuitry on the chip),
+or having two integer units and thus being able to execute two integer
+instructions simultaneously.</pre><br>
+<pre style="margin: 0em;">Modern CPUs have pipelines that allow them to be reading in new
+instructions while current ones are executing, to make the new ones
+more quickly available when the time comes to execute them. Keeping
+the pipline filled is tricky, especially when it comes to branches;
+CPUs do branch prediction to try to determine which instruction is most
+likely to be executed next (when this depends on the results of previous
+instructions) and have it available immediately when the previous
+instruction finishes. CPUs may look at the past history of instruction
+execution for a particular program in order to make these decisions.
+Many CPUs these days do out-of-order execution, executing later
+instructions before earlier ones when they happen to be available first,
+and predecitive execution, using otherwise spare capacity to execute
+instructions for which the results are not yet confirmed to be needed.
+Pipeline management can get extremely complex and sophisticated. Smart
+compilers can manipulate instruction order and types of branches to make
+a huge difference in execution speed.</pre><br>
+<pre style="margin: 0em;">Cache management is another issue; fetching an instruction or data from
+internal registers is usually several times faster than fetching it from
+L1 cache, and L1 cache is often an order of magnitude faster than L2
+cache, which is in turn that much faster again than memory. Waiting to
+get an instruction or data from RAM can waste tens of clock cycles, with
+the machine effectively sitting idle for that time. Applications that
+access a lot of data have to be very careful with their memory access
+patterns in order to take maximum advantage of the cache; bad cache
+access patterns can easily make an order-of-magnitude difference in
+execution time for some applications.</pre><br>
+<pre style="margin: 0em;">These factors lead to situations such as my 1.7 GHz single-core Pentium
+M 735 being faster, in general, than a similar generation 3 GHz
+dual-core Pentium 4.</pre><br>
+<pre style="margin: 0em;">cjs
+--
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974</pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00271" href="msg00271.html">[tlug] OT:dual core CPUs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00275" href="msg00275.html">Re: [tlug] OT:dual core CPUs</a></strong>
+<ul><li><em>From:</em> Stephen Lee</li></ul></li>
+<li><strong><a name="00276" href="msg00276.html">Re: [tlug] OT:dual core CPUs</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00296.html">Re: [tlug] OT:dual core CPUs</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00298.html">Re: [tlug] OT:dual core CPUs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00282.html">Re: [tlug] OT:dual core CPUs</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00298.html">Re: [tlug] OT:dual core CPUs</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00297"><strong>Date</strong></a></li>
+<li><a href="threads.html#00297"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

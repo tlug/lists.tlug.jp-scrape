@@ -1,0 +1,417 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: RFC submission: a case study [was: djb] -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Fri, 14 Aug 1998 14:25:01 +0900 -->
+<!--X-Message-Id: 19980814142628.43040@example.com -->
+<!--X-ContentType: multipart/mixed -->
+<!--X-Reference-Id: 13777.45048.79570.755228@example.com -->
+<!--X-Reference-Id: 199808121800.SAA00413@example.com -->
+<!--X-Reference-Id: 13779.40743.417632.837677@example.com -->
+<!--X-Reference-Id: 19980814114953.04266@example.com -->
+<!--X-Reference-Id: 13779.46412.616133.250987@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00278.html">Date Prev</A>][<A HREF="msg00280.html">Date Next</A>][<A HREF="msg00271.html">Thread Prev</A>][<A HREF="msg00309.html">Thread Next</A>][<A HREF="maillist.html#00279">Date Index</A>][<A HREF="threads.html#00279">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: RFC submission: a case study [was: djb]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: RFC submission: a case study [was: djb]</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 14 Aug 1998 14:26:28 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: multipart/mixed; boundary=HlL+5n6rz5pIUxbD</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00271.html">13779.46412.616133.250987@example.com</A>&gt;; from Stephen J. Turnbull on Fri, Aug 14, 1998 at 12:55:56PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00226.html">13777.45048.79570.755228@example.com</A>&gt; &lt;<A HREF="msg00255.html">199808121800.SAA00413@example.com</A>&gt; &lt;<A HREF="msg00264.html">13779.40743.417632.837677@example.com</A>&gt; &lt;<A HREF="msg00269.html">19980814114953.04266@example.com</A>&gt; &lt;<A HREF="msg00271.html">13779.46412.616133.250987@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Fri, Aug 14, 1998 at 12:55:56PM +0900, Stephen J. Turnbull wrote:
+&gt; 
+&gt; I think Dan's mad at me.  pobox is there, koobera is there, but it
+&gt; won't admit that any of those files exist.  'Course, maybe Dan's
+&gt; redefined the FTP?  Yup, that's exactly what he did; my usual WWW
+&gt; client wants a directory listing and he won't give it.  Netscape works
+&gt; randomly.  Check out this transcript from ncftp:
+
+...
+
+&gt; I guess actually it's not just me, Dan's mad at the world.
+
+Hee!  No, I think if you take a step back and look at it
+rationally, you're mad at Dan (for implementing EPLF -- see below)
+not the other way around.
+
+First things first: try "nlist" or "dir" rather than "ls" with
+ncftp (I think, but I'm not sure, that new versions of ncftp
+understand EPLF).  Note that you were able to retrieve the file by
+giving an explicit path (ncftp just got confused becuase it
+couldn't "see" it -- hence the strange message).
+
+Believe it or not, he is fully compliant with the FTP RFCs (with
+just two exceptions -- unrelated to your problem -- that are listed
+in his attached document).  [I know you will now take me to task
+for stating that djb tries to "just make it work" even when specs
+aren't followed to the tee, but hear me out first.]
+
+Dan is running his own anonftpd server on koobera, which uses his
+own "EPLF" format for responses to the LIST command in the FTP
+protocol.  Unfortunately, your ncftp doesn't know how to deal with
+EPLF.
+
+The obvious questions are: "Why did Dan write anonftpd instead of
+using wuftp or whatever?" and "Why did Dan create EPLF instead of
+doing what wuftpd or Sun/HP/IBM/SGI/DEC/whoever's ftpd do?".
+
+The first question is easy: "security".  He wanted a secure,
+read-only, anonymous ftp server.  He designed simple, chrooted,
+100% read-only, non-authenticating server using no shared
+libraries or administrative files.
+
+EPLF is slightly more problematic, because although in theory he
+followed the spec where it mattered, in practice he broke a lot of
+ftp clients (ncftp being a case in point).
+
+All EPLF is is a formalized, machine parseable specification for
+LIST command responses.  Quoting RFC 959 re: the LIST command:
+
+    "Since the information on a file may vary widely from system to
+    system, this information may be hard to use automatically in a
+    program, but may be quite useful to a human user."
+
+*THAT* is what he tried to address.  EPLF is meaningful, easily
+parsed, and useful (try writing an ftp client that works with
+with *every* -- not most -- ftp server in existence).  Lot's of
+servers respond differently to LIST requests -- Dan's responds
+even more differently than most.
+
+Now, as I said, in practice Dan's anonftpd actually breaks things
+for many users.  (FWIW, Netscape, squid's ftp proxy, and others
+all support EPLF these days.)  Still, that is the primary reason I
+don't run anonftp.  If I ran a serious anonymous ftp server, I
+would probably use Troll Tech's (similar to anonftp, but no EPLF).
+
+He is most definitely not forcing anonftpd or EPLF down anyone's
+throat, however.  It's commendable that he puts his own
+documentation up for public consumption at all, and he can hardly
+be faulted for using his own server and his own protocol for
+serving these documents.  Although it may take significantly more
+effort than obtaining most documents on the web (for some folks)
+ANYBODY can obtain the files.
+
+I've attached the EPLF specification to this message, in case you
+can't obtain it at "<A TARGET="_top" HREF="http://pobox.com/~djb/proto/eplf.txt">http://pobox.com/~djb/proto/eplf.txt</A>".
+
+Regards,
+-- 
+Rex
+</PRE>
+<PRE>
+Easily Parsed LIST Format (EPLF)
+D. J. Bernstein, djb@example.com
+19970413
+
+
+1. Introduction
+
+   The File Transfer Protocol (FTP) supports two commands that list
+   files: NLST and LIST. The NLST response is easy to parse but provides
+   very little information. The LIST response provides more information,
+   but in a format that varies from system to system. The most common
+   LIST formats are undocumented and impossible to parse reliably.
+
+   This document defines Easily Parsed LIST Format (EPLF), a format
+   for the LIST response that is usable by humans yet easy for programs
+   to handle. This format is supported by anonftpd, a secure FTP server.
+
+   One visible advantage of EPLF is that a browser can easily display
+   dates in the viewer's time zone and native language. EPLF also makes
+   it straightforward for an indexing program to automatically traverse
+   an FTP area and for a mirroring program to avoid downloading the same
+   file twice.
+
+   EPLF also corrects a design flaw in FTP's handling of LIST arguments.
+   An EPLF server must respond to ``LIST filename'' with information
+   about that file and no others, even if that file is a directory. A
+   client that wants an EPLF list of the contents of a directory must
+   first CWD to that directory. A client that merely wants a list of
+   file names in a different directory may use NLST.
+
+   In this document, a string of 8-bit bytes may be written in two
+   different forms: as a series of hexadecimal numbers between angle
+   brackets, or as a sequence of ASCII characters between double quotes.
+   For example, &lt;68 65 6c 6c 6f 20 77 6f 72 6c 64 21&gt; is a string of
+   length 12; it is the same as the string "hello world!".
+
+
+2. Format
+
+   An EPLF response to LIST is a series of lines, each line specifying a
+   different file. Each line begins with "+", continues with a series of
+   facts about the file, and ends with &lt;09&gt; followed by the file name.
+   Each fact is zero or more bytes of information, terminated by "," and
+   not containing &lt;09&gt;.
+
+   There are several possible facts, each of which appears at most once,
+   in any order:
+
+      "r"
+         If this file name is supplied in a RETR command, the RETR
+         should succeed. The server must supply this fact unless it is
+         aware of file type problems, permission problems, or other
+         reasons that RETR will fail. The presence of "r" does not
+         guarantee success: for example, the file may be removed or
+         renamed, or the RETR may suffer a temporary failure.
+
+      "/"
+         If this file name is supplied in a CWD command, the CWD should
+         succeed. As with "r", the server must supply this fact unless
+         it is aware of reasons that CWD will fail. The presence of "/"
+         does not guarantee success.
+
+      "i"[ident]
+         This file has identifier [ident]. [ident] is a sequence of
+         bytes not including "," or &lt;09&gt;. If two files on the same FTP
+	 server (not necessarily in the same LIST response) have the
+	 same [ident], those files have the same contents; a successful
+         RETR of each file should produce the same results, and a
+         successful CWD to each file should lead to the same working
+         directory. (Under UNIX, for example, [dev].[ino] could be used
+	 as [ident], where [dev] and [ino] are the device number and
+	 inode number of the file.)
+
+      "s"[size]
+         The size of this file is [size]. [size] is a sequence of ASCII
+         digits specifying a number. If the file is retrieved in TYPE I
+         and is not modified, it will contain exactly [size] bytes. This
+         fact should not be supplied if "r" is not supplied.
+
+      "m"[time]
+         This file was last modified at [time]. [time] is a sequence of
+         ASCII digits specifying a number of seconds, real time, since
+         the beginning of 1970 GMT. This fact cannot be used for files
+         modified before 1970 GMT.
+
+   Further facts may be defined in the future. Pieces of the fact-space
+   beginning with "x" will be parcelled out to organizations that would
+   like to define their own facts. Facts beginning with "X" are reserved
+   for experimental use.
+
+   All facts other than "/" and "r" are optional. Any statement of
+   adherence to EPLF by a server FTP implementation must include a list
+   of facts supported by that implementation other than "/" and "r".
+
+   The server is under no obligation to ensure that LISTs in different
+   directories produce disjoint lists of targets. For example, some
+   servers may list a special ".." name that refers to the parent
+   directory, or a "/" name that refers to the top directory. To avoid
+   loops, a client attempting to traverse the FTP area must notice that
+   the identifiers of these directories are the same as identifiers of
+   directories already traversed.
+
+   The server is also under no obligation to list all possible targets
+   of RETR or CWD in a LIST command. Some servers may avoid listing
+   special names such as ".." or "/". A client that wishes to return to
+   a directory must use PWD and record the reply rather than relying on
+   any useful meaning of CDUP, CWD .., or CWD /.
+
+   Operating systems support a wide variety of means for obtaining the
+   contents of a file from its name. For example, many systems support
+   symbolic links: if ONE is a link to TWO, any reference to ONE is
+   first replaced by a reference to TWO. Such information is irrelevant
+   to FTP and is not displayed by any of the above facts. (Under UNIX
+   this means that the server should use stat(), not lstat().)
+
+   Servers are permitted to use arbitrary characters in file names,
+   except for &lt;0a&gt; and &lt;0d&gt;. Beware that the characters &lt;00&gt;, &lt;09&gt;,
+   &lt;20&gt;, and &lt;ff&gt; cause all sorts of trouble, ranging from inadequacies
+   in the syntax of FTP commands to misinterpretation by some clients.
+
+
+3. Examples
+
+   Here is a typical EPLF response:
+
+      "+i8388621.48594,m825718503,r,s280," &lt;09&gt; "djb.html" &lt;0d 0a&gt;
+      "+i8388621.50690,m824255907,/," &lt;09&gt; "514" &lt;0d 0a&gt;
+      "+i8388621.48598,m824253270,r,s612," &lt;09&gt; "514.html" &lt;0d 0a&gt;
+
+   A typical EPLF-ignorant client will show the response to the user:
+
+      ftp&gt; dir
+      200 Okay.
+      150 I'm looking through the directory. Trying to connect...
+      +i8388621.48594,m825718503,r,s280,      djb.html
+      +i8388621.50690,m824255907,/,   514
+      +i8388621.48598,m824253270,r,s612,      514.html
+      226 Finished transferring 127 bytes.
+      ftp&gt; 
+
+   A more sophisticated client (in the Pacific timezone) might instead
+   display the following human-readable listing:
+
+                         Tue Feb 13 15:58:27 1996   514/
+             612 bytes   Tue Feb 13 15:14:30 1996   514.html
+             280 bytes   Fri Mar  1 14:15:03 1996   djb.html
+
+
+4. Sample code
+
+   The following C function takes a pointer to a string containing one
+   line of an EPLF response. It assumes that the original response did
+   not contain &lt;00&gt;, and that the trailing &lt;0d 0a&gt; has been replaced by
+   &lt;00&gt;. It returns a pointer to the filename, or 0 if the line does not
+   appear to be an EPLF response.
+
+      char *eplf_name(line) char *line;
+      {
+        if (*line != 43) return 0;
+        while (*line) if (*line++ == 9) return line;
+        return 0;
+      }
+
+   The following C function takes a pointer as above, and prints a
+   human-readable listing as shown in section 3. It assumes that the
+   local character set is ASCII, that file modification times fit into a
+   local time_t, and that file sizes fit into a local unsigned long. It
+   also assumes that time_t is interpreted as a number of seconds since
+   the beginning of 1970 GMT. (A more portable function could use
+   mktime() to discover the time_t representation of 1970 GMT.) Note
+   that its output is not machine-readable, since the file name might
+   contain the local newline sequence.
+
+      #include &lt;time.h&gt;
+      int eplf_readable(line) char *line;
+      {
+        int flagcwd = 0; time_t when = 0;
+        int flagsize = 0; unsigned long size;
+        if (*line++ != '+') return 0;
+        while (*line)
+          switch (*line) {
+            case '\t':
+              if (flagsize) printf("%10lu bytes   ",size);
+              else printf("                   ");
+              if (when) printf("%24.24s",ctime(&amp;when));
+              else printf("                        ");
+              printf("   %s%s\n",line + 1,flagcwd ? "/" : "");
+              return 1;
+            case 's':
+              flagsize = 1; size = 0;
+              while (*++line &amp;&amp; (*line != ','))
+                size = size * 10 + (*line - '0');
+              break;
+            case 'm':
+              while (*++line &amp;&amp; (*line != ','))
+                when = when * 10 + (*line - '0');
+              break;
+            case '/':
+              flagcwd = 1;
+            default:
+              while (*line) if (*line++ == ',') break;
+          }
+        return 0;
+      }
+
+
+5. Acknowledgments
+
+   Thanks to Scott Schwartz for pointing out that "i"[ident] was
+   originally overspecified. Thanks to Benjamin Riefenstahl for
+   several helpful suggestions.
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00226" HREF="msg00226.html">Re: tlug: Re: djb [was: ibm.net with LINUX (Red Hat)]</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00255" HREF="msg00255.html">Re: tlug: Re: djb [was: ibm.net with LINUX (Red Hat)]</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00264" HREF="msg00264.html">Re: tlug: Re: djb [was: ibm.net with LINUX (Red Hat)]</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00269" HREF="msg00269.html">tlug: RFC submission: a case study [was: djb]</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00271" HREF="msg00271.html">tlug: RFC submission: a case study [was: djb]</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00278.html">Re: tlug: Start and stop Apache on TL2.0</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00280.html">Re: tlug: Karl-Max has cool dreams [was: dual-pentium processors]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00271.html">tlug: RFC submission: a case study [was: djb]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00309.html">Re: tlug: Re: djb [was: ibm.net with LINUX (Red Hat)]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00279"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00279"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

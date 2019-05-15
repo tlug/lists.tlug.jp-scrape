@@ -1,0 +1,174 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: LILO Vs. 1024 &#45; Round 2 -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Thu, 8 Oct 1998 11:49:52 +0900 -->
+<!--X-Message-Id: 19981008114946.D13394@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981008105305.3902A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00235.html">Date Prev</A>][<A HREF="msg00237.html">Date Next</A>][<A HREF="msg00235.html">Thread Prev</A>][<A HREF="msg00237.html">Thread Next</A>][<A HREF="maillist.html#00236">Date Index</A>][<A HREF="threads.html#00236">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: LILO Vs. 1024 - Round 2</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: LILO Vs. 1024 - Round 2</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 8 Oct 1998 11:49:46 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00235.html">Pine.LNX.3.96LJ1.1b7.981008105305.3902A-100000@example.com</A>&gt;; from Jonathan Byrne - 3Web on Thu, Oct 08, 1998 at 11:08:58AM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00235.html">Pine.LNX.3.96LJ1.1b7.981008105305.3902A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Jonathan Byrne - 3Web writes:  (on 08 Oct 98)
+
+&gt; The first primary partition is a 128 meg swap.
+
+The only issue might be if mkswap complains -- a swap partition needs to
+be strictly less than 127.6875 MB (assuming x86).  You might have to
+explicitly give the number of blocks to mkswap if the partition size is
+a little too big:
+
+    mkswap /dev/hda1 130752
+
+&gt; On the BIOS side, the reported info for the disk is:
+&gt; 
+&gt; Type                      [user]  6498 MB
+&gt; Cyclinders                [12592]
+&gt; Heads                     [16]
+&gt; Sectors/track             [63]
+
+&gt; ...
+
+&gt; Fdisk is now reporting 16 heads, 63 sectors, 12592 cyclinders, so the zero
+&gt; heads problem appears to be gone.  It still gives me the warning about LILO
+&gt; and 1024, but the root partition is completely within the first 1024
+&gt; cyclinders, so I'm hoping I won't have a problem there now.
+
+You should be gold.  With the size of your filesystems, you might want
+to play with tune2fs to ensure reasonably fast boots:
+
+    # tune2fs -c 60 -C 0 /dev/hda2	# /
+    # tune2fs -c 60 -C 10 /dev/hda5	# /var
+    # tune2fs -c 60 -C 20 /dev/hda6	# /tmp
+    # tune2fs -c 60 -C 30 /dev/hda7	# /home
+    # tune2fs -c 60 -C 40 /dev/hda8	# /usr/local
+    # tune2fs -c 60 -C 50 /dev/hda9	# /usr
+
+This will ensure that you never have more than one forced-fsck at boot
+time, and that each filesystem will only be force-fsck'd every 60
+mounts.  If you don't shut down your machine every night like I do, you
+should probably increase the frequency considerably.  
+
+You should probably do this in single-user mode before everything is
+mounted.
+
+Note that by default it will still force a fsck for any filesystem that
+hasn't been fsck in 6 months.
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00237" HREF="msg00237.html">Re: tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00235" HREF="msg00235.html">tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00235.html">tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00237.html">Re: tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00235.html">tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00237.html">Re: tlug: LILO Vs. 1024 - Round 2</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00236"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00236"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

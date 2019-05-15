@@ -1,0 +1,161 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] bash/mail: stop the send if body is blank -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Sun, 23 Jan 2011 11:51:08 +0900 -->
+<!--X-Message-Id: 4D3B960A.3090305@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: mailman.1.1294801202.11388.tlug@tlug.jp -->
+<!--X-Reference: 20110112124503.GC20421@rennhak.de -->
+<!--X-Reference: 4D2EBFCB.6030203@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00095.html">Date Prev</a>][<a href="msg00097.html">Date Next</a>][<a href="msg00039.html">Thread Prev</a>][<a href="msg00025.html">Thread Next</a>][<a href="maillist.html#00096">Date Index</a>][<a href="threads.html#00096">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] bash/mail: stop the send if body is blank</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 23 Jan 2011 11:44:26 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20bash%2Fmail:%20stop%20the%20send%20if%20body%20is%20blank">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] bash/mail: stop the send if body is blank</strong></li>
+<li>References: &lt;<a href="mailto:mailman.1.1294801202.11388.tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20bash%2Fmail:%20stop%20the%20send%20if%20body%20is%20blank">mailman.1.1294801202.11388.tlug@example.com</a>&gt;	&lt;<a href="mailto:20110112124503.GC20421@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20bash%2Fmail:%20stop%20the%20send%20if%20body%20is%20blank">20110112124503.GC20421@example.com</a>&gt;	&lt;<a href="mailto:4D2EBFCB.6030203@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20bash%2Fmail:%20stop%20the%20send%20if%20body%20is%20blank">4D2EBFCB.6030203@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.13) Gecko/20101208 Thunderbird/3.1.7</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; Thanks Bjoern. Good point, and as it was already a script (rather than a
+&gt; one-liner) I've broken it up a bit as you suggest. I just made one fix,
+&gt; as noted below. Without the double quotes it treated the svn output as
+&gt; multiple parameters, not a single string.
+
+Just for the archives, the script needed some more work as Bash really
+hates line-breaks; if you don't want it to turn them into spaces you
+need to surround it with double quotes, both when creating a variable
+and when using it.
+
+  svn_status=`svn status | egrep -iv 'path/to/ignore.me.file'`
+
+needs to become:
+  svn_status=&quot;$(svn status | egrep -iv 'path/to/ignore.me.file')&quot;
+
+And
+  echo $svn_status | mail -c $cc -s $subject $to
+
+needs to become:
+  echo &quot;$svn_status&quot; | mail -c $cc -s $subject $to
+
+I've put the updated script below.
+
+Darren
+
+-------------------------
+
+svn_status=&quot;$(svn status | egrep -iv 'path/to/ignore.me.file')&quot;
+current_date=`date '+%d.%m.%Y'`
+subject=&quot;\&quot;SubVersion Status Report ($current_date)\&quot;&quot;
+to=&quot;blah@example.com&quot;
+cc=&quot;someone@example.com someone2@example.com&quot;
+if [ -n &quot;$svn_status&quot; ]
+then
+  echo &quot;$svn_status&quot; | mail -c $cc -s $subject $to
+fi
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00033" href="msg00033.html">Re: [tlug] bash/mail: stop the send if body is blank</a></strong>
+<ul><li><em>From:</em> Bjoern Rennhak</li></ul></li>
+<li><strong><a name="00039" href="msg00039.html">Re: [tlug] bash/mail: stop the send if body is blank</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00095.html">Re: [tlug] New Sound Card</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00097.html">Re: [tlug] Slooooooow down: SSH [SOLVED]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00039.html">Re: [tlug] bash/mail: stop the send if body is blank</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00025.html">[tlug] Forcing programs to run in another language</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00096"><strong>Date</strong></a></li>
+<li><a href="threads.html#00096"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

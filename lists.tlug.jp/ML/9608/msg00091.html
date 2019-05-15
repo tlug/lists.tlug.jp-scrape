@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Printing w/ LPR -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 27 Aug 1996 04:49:35 GMT -->
+<!--X-Message-Id: m0uvG2a&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 0095000006048967000002*@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00090.html">Date Prev</A>][<A HREF="msg00092.html">Date Next</A>][<A HREF="msg00080.html">Thread Prev</A>][<A HREF="msg00101.html">Thread Next</A>][<A HREF="maillist.html#00091">Date Index</A>][<A HREF="threads.html#00091">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Printing w/ LPR</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Printing w/ LPR</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 27 Aug 96 13:46 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00080.html">0095000006048967000002*@example.com</A>&gt; (LNJPTYO1.MDARCY01@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Mark" == LNJPTYO1 MDARCY01 &lt;LNJPTYO1.MDARCY01@example.com&gt; writes:
+
+    Mark&gt; ) running. Computer A has an a remote printer in its
+    Mark&gt; printcap ( HP 4V with a Jet Direct Access card ). On
+
+That is, you have three devices on the network:  computers A and B and 
+a dedicated printer host (the Jet Direct card), and the printer is not 
+directly connected to any computer?  How does this printer handle
+authentication (ie, the equivalent of the hosts.lpd file)?  I assume
+this shouldn't matter, since the connection comes from A whether it is
+direct from A or indirect from B, but who knows?
+
+    Mark&gt; Computer B, I have a remote printer printcap entry for the
+    Mark&gt; Computer A's "lp" queue and IP address.
+
+so B's printcap looks something like
+
+hp4v|JetDirect|HP4V with Jet Direct served by Computer A:\
+    :lp=:       # you need this for some reason, I think lpd will try \
+                # to use a local printer \
+    :rm=A.sub.top:\
+    :rp=hp4v:
+
+and A's looks like
+
+hp4v|JetDirect|HP4V with Jet Direct served by me:\
+    :lp=:       # you need this for some reason, I think lpd will try \
+                # to use a local printer \
+    :rm=JetDirect.sub.top:\
+#   :rp=hp4v:   # presumably this defaults to lp, and the JetDirect
+                # card knows how to handle it?
+
+and A's hosts.lpd contains
+
+B.sub.top
+
+and `ls -l /var/spool' on B says (inter alia)
+
+  drwxrwxr-x   2 root     lp           1024 Aug 23 15:05 hp4v
+
+and `ls -l /var/spool' on A says (inter alia)
+
+  drwxrwxr-x   2 root     lp           1024 Aug 23 15:05 hp4v
+
+I *assume* (I haven't done this myself) you need spool directories on
+BOTH hosts if you are using lpr (surprise!) and you need lpd running
+on BOTH hosts because lpr simply sets up the queue (writing daemon
+control files, copying or symlinking the print job files, to the spool
+directories, etc); it is lpd's job to hang around waiting for the
+resource to become available (suppose either the network or computer A
+is down?  B's lpr queues the jobs and B's lpd then squirts it out when
+the connection to A becomes available.)
+
+    Mark&gt; I have no problems printing from Computer A. When I send
+    Mark&gt; something from Computer B to the printer, LPC status command
+    Mark&gt; tells me that Computer B is waiting for Computer A's queue
+    Mark&gt; to be enabled, which it is.
+
+I think this must be because computer B needs to enable its own queue
+for computer A.  Note that `man lpc(8)' says that `lpc command'
+operates on the *local* queue and daemon, not on the remote queue and
+daemon.
+
+If I'm completely wrong about the division of labor between lpr and
+lpd, the only other thing I can think of is that when lpr calls up the 
+remote lpd (I don't think it does that, but if I'm wrong and it does), 
+the answering lpd gets assigned a user-id that doesn't have enough
+privilege to write the spool directories.  But this doesn't fit the
+lpc error message.
+
+Good luck....
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00080" HREF="msg00080.html">Printing w/ LPR</A></STRONG>
+<UL><LI><EM>From:</EM> LNJPTYO1.MDARCY01@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00090.html">Re: wierd scenes inside the gold mine</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00092.html">Re: wierd scenes inside the gold mine</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00080.html">Printing w/ LPR</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00101.html">Re: Printing w/ LPR</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00091"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00091"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

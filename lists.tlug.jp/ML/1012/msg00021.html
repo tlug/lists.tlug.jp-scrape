@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] When is a line feed really a line feed? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 04 Dec 2010 16:17:21 +0900 -->
+<!--X-Message-Id: 87aakmxbvw.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4CF92E9D.3020004@articlass.org -->
+<!--X-Reference: 1291400314.14141.1408520355@webmail.messagingengine.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00039.html">Date Prev</a>][<a href="msg00022.html">Date Next</a>][<a href="msg00022.html">Thread Prev</a>][<a href="msg00023.html">Thread Next</a>][<a href="maillist.html#00021">Date Index</a>][<a href="threads.html#00021">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] When is a line feed really a line feed?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 04 Dec 2010 15:58:27 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20When%20is%20a%20line%20feed%20really%20a%20line%20feed%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] When is a line feed really a line feed?</strong></li>
+<li>References: &lt;<a href="mailto:4CF92E9D.3020004@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20When%20is%20a%20line%20feed%20really%20a%20line%20feed%3F">4CF92E9D.3020004@example.com</a>&gt;	&lt;<a href="mailto:1291400314.14141.1408520355@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20When%20is%20a%20line%20feed%20really%20a%20line%20feed%3F">1291400314.14141.1408520355@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>David J Iannucci writes:
+
+ &gt; I'm no authority on this stuff, but I think that \n doesn't refer to an
+ &gt; actual character... I think it is an abstraction referring to whatever
+ &gt; is the line terminator used by the OS at hand (making the other guy's
+ &gt; statement somewhat tautological :-)
+
+No, it refers to LF.  Indeed the &quot;n&quot; is probably supposed to be
+mnemonic for &quot;newline&quot;, but in every language I know of it means LF.
+The language definitions (eg, ISO C, Python Language Reference, Emacs
+Lisp Reference, ...) say so.
+
+However, in files that are declared as &quot;text&quot; this will be silently
+converted by the I/O subsystem to the platform EOL market.  That's
+(mostly) why Unix doesn't need to distinguish text vs. binary files,
+and (I would guess) why Mac doesn't use CR as a line terminator any
+more.
+
+It's possible that because of platform-specific I/O behavior the
+interpretation you give is widespread, but technically it's incorrect.
+
+ &gt; The actual characters are CR (ASCII 13) and LF (ASCII 10).
+
+In fact there is a whole pile of such characters, including CR, LF, NL
+(IIRC ISO 6429 0x85), and Unicode LINE SEPARATOR (U+2028 or U+2029,
+IIRC, the other one is Unicode PARAGRAPH SEPARATOR).
+
+ &gt; Mac uses only CR
+
+Not since the introduction of Mac OS X, it doesn't.
+
+Note:
+
+In many modern environments, there is a &quot;universal newlines&quot; mode
+(Python's name for it) which conforms more or less to UAX #9 (now part
+of the standard) &quot;The Unicode Line-Breaking Algorithm&quot; regarding
+parsing of newlines.  In summary, *all* of CR, LF, CRLF, LINE
+SEPARATOR, and PARAGRAPH SEPARATOR are regarded as separating lines.
+There are also a few relatively unusual characters which Unicode
+doesn't assign other semantics to that act as line separators, such as
+ASCII VT (vertical tabulation, ASCII 11) and ASCII FF (form feed,
+ASCII 12).  However these do often get other semantics in
+applications.  So gedit and Emacs also conform, by detecting the EOL
+convention in use and displaying them as newlines.  Emacs at least
+also treats VT and FF as line breaks, plus additional semantics in
+some modes.
+
+Output of newlines is still hairy, because most environments don't
+come close to conforming to Unicode (which strongly recommends use of
+the unambiguous LINE SEPARATOR for hard line breaks and PARAGRAPH
+separator where you expect the software to provide appropriate line
+breaks for you at display time).  So all user-friendly environments
+convert to platform convention by default.  As Dave observes this can
+be annoying because it's hard to see what convention is used in the
+editor.
+
+Emacs provides an EOL indicator in the mode line, and if you're worried
+about mixed EOL conventions, you can specify the coding system as
+&quot;undecided-unix&quot; to enforce Unix EOL, in which case CF displays as
+&quot;^M&quot; in the buffer.  It becomes *really* obvious which lines have
+which convention. :-)  While I can't necessarily recommend Emacs to
+everybody, there's a very good chance that you usually use YFE[1], and
+I've heard that YFE has a similar feature. :-)
+
+
+Footnotes: 
+[1]  Your Favorite Editor.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00015" href="msg00015.html">[tlug] When is a line feed really a line feed?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00017" href="msg00017.html">Re: [tlug] When is a line feed really a line feed?</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00039.html">[tlug] Job Post - A Technical Account Manager position for cable &amp; telecom in Tokyo</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00022.html">Re: [tlug] When is a line feed really a line feed?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00022.html">Re: [tlug] When is a line feed really a line feed?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00023.html">Re: [tlug] When is a line feed really a line feed?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00021"><strong>Date</strong></a></li>
+<li><a href="threads.html#00021"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

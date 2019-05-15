@@ -1,0 +1,212 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] SSH Issues -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Tue, 18 Nov 2008 16:30:31 +0900 -->
+<!--X-Message-Id: 871vx9o5b1.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081117161020.GB10314@lucky.cynic.net -->
+<!--X-Reference: 20081117193740.2d38af12@ronin.larsko.net -->
+<!--X-Reference: 20081117235804.GF10314@lucky.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00196.html">Date Prev</a>][<a href="msg00198.html">Date Next</a>][<a href="msg00193.html">Thread Prev</a>][<a href="msg00199.html">Thread Next</a>][<a href="maillist.html#00197">Date Index</a>][<a href="threads.html#00197">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] SSH Issues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 18 Nov 2008 16:34:58 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20SSH%20Issues">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] SSH Issues</strong></li>
+<li>References: &lt;20081117161020.GB10314@lucky.cynic.net&gt;	&lt;20081117193740.2d38af12@ronin.larsko.net&gt;	&lt;<a href="msg00193.html">20081117235804.GF10314@lucky.cynic.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Curt Sampson writes:
+
+ &gt; If you set up bind9
+
+BIND is normally not installed on Linux boxen configured as
+workstations.  I would guess that the standard resolver in glibc is
+based on BIND 8.  It's hard to be sure because both glibc's resolv.h
+and my Mac's resolv.h have a SCCS keyword referring to to BIND 8.1.
+However, the glibc file uses #define _RESOLV_H_ to prevent multiple
+inclusion, while Apple uses _RESOLVE_9_H_, and optionally includes
+resolv8_compat.h.
+
+ &gt; (e.g., with dig and possibly the +dnssec option at the end of the
+ &gt; command line) the &quot;ad&quot; bit is now set, indicating that the records
+ &gt; have been authenticated.
+
+Not on Gentoo.  (By &quot;set bit&quot;, you mean either the &quot;flags&quot; in the header
+or the &quot;flags&quot; in the OPTIONS PSEUDO-SECTION, I assume.)  There's no
+ad flag in either list of flags.  The +adflag option doesn't help either.
+
+BTW, you apparently need to use &quot;dig @ns1.cynic.net&quot;.  With +dnssec I
+get a bunch of spew (ie, RRSIG records) from ns1, but I don't get that
+stuff when I use a recursive query via our local server.
+
+I assume the spew means that for some reason (probably linking against
+the BIND 8 resolver) dig is unable to authenticate, and so just
+returns all the resource records it received.
+
+ &gt; For whatever reason, the Debian folks or the Gnu libc folks or
+ &gt; whomever have not for the last several years seen fit to include the
+ &gt; RES_USE_DNSSEC bit in their /usr/include/resolv.h or add to their
+ &gt; resolver the ability to turn this bit on in the request. So, despite
+ &gt; distributing a version of ssh that supports this functionality, many
+ &gt; (most? all?) Linux users can't use it.
+
+I don't know what happens if I install BIND 9 on my system.  I'll
+check later, I guess.  But on Gentoo there doesn't even seem to be a
+USE flag for resolver v9 for bind-tools (ie, the package that provides
+dig).  Maybe configure handles that, I dunno....
+
+ &gt; One thing that would be very cool would be to have a stand-alone program
+ &gt; with a working resolver library (or one just calling dig, which uses its
+ &gt; own non-broken resolver code, even under Ubuntu)
+
+Er, that doesn't seem to be true on Gentoo.  At least, I couldn't get
+authentication to happen, even with an explicitly specified +adflag.
+
+ &gt; look up SSHFP records, ensure that they're validated, and generate
+ &gt; known_hosts entries for them. Unfortunately, I don't see how to do
+ &gt; this.
+
+Borrow enough of the OpenSSH code to get the host's public key, say
+&quot;thank you&quot;, maybe-replace the key into the known_hosts file, and call
+SSH for real, maybe?  That much of the protocol can't be all that hard
+to get &quot;good enough&quot;, can it?
+
+ &gt; Any other thoughts? Has anybody got enough influence with all of the
+ &gt; various groups responsible for the Gnu libc issue to get this fixed and
+ &gt; deployed in any reasonably short period of time.
+
+Getting it fixed is hard enough, but forget about getting it
+deployed.  A real fix would involve a full move to BIND 9 resolver in
+glibc, and that is not going to get into Debian or Ubuntu stable very
+quickly.  A halfway fix would be to provide the BIND 9 resolver as an
+optional library.
+
+ &gt; It's particularly frustrating because if there were an issue like this
+ &gt; in NetBSD, I could have a fix commited to the NetBSD-current branch
+ &gt; immediately,
+
+&gt;From the &quot;Throwing cold water on hot heads&quot; Department:
+
+If you're serious, you just cost me a lot of faith in NetBSD.
+
+Geez, Curt, you of all people should know that that is presumably
+exactly the braindamaged process that led to the current impasse:
+people unwilling to wait for a full move to BIND 9 adding a few
+features *they* thought were &quot;critical bug fixes&quot; (because they'd been
+personally inconvenienced) to the resolver code, eventually resulting
+in a full-blown fork.  But a move to BIND 9 is not the kind of thing
+you can do in a quickie patch, especially not if you want to claim the
+security stuff is going to work.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00199" href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00201" href="msg00201.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Lars Kotthoff</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00193" href="msg00193.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00196.html">Re: Remote Light Control with Linux and other remotes (was: Re:	[tlug] [OT] Any hobbyist electrical engineers around Tokyo?)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00198.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00193.html">[tlug] SSH Issues</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00197"><strong>Date</strong></a></li>
+<li><a href="threads.html#00197"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

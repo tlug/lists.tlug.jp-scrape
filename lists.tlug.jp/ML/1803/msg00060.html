@@ -1,0 +1,210 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Chrome ate my profile -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Sun, 18 Mar 2018 10:44:45 +0900 -->
+<!--X-Message-Id: 20180318014444.i5wg6pbq6b4fqwsm@idyllic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 23205.16405.527594.15212@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Reference: 20180311165823.GA1669@wismut -->
+<!--X-Reference: ba01bbb1&#45;32d0&#45;7b3c&#45;b3b3&#45;b4d0ed4c6d9a@dcook.org -->
+<!--X-Reference: 23210.6885.521848.717987@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Reference: 20180315104007.26t7l46c6hqfrdxm@iambic.cynic.net -->
+<!--X-Reference: 23211.61661.137765.239583@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00059.html">Date Prev</a>][<a href="msg00061.html">Date Next</a>][<a href="msg00057.html">Thread Prev</a>][<a href="msg00061.html">Thread Next</a>][<a href="maillist.html#00060">Date Index</a>][<a href="threads.html#00060">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Chrome ate my profile</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 18 Mar 2018 10:44:44 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Chrome%20ate%20my%20profile">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Chrome ate my profile</strong></li>
+<li>References: &lt;<a href="msg00039.html">23205.16405.527594.15212@turnbull.sk.tsukuba.ac.jp</a>&gt;	&lt;20180311165823.GA1669@wismut&gt;	&lt;<a href="msg00050.html">ba01bbb1-32d0-7b3c-b3b3-b4d0ed4c6d9a@dcook.org</a>&gt;	&lt;<a href="msg00054.html">23210.6885.521848.717987@turnbull.sk.tsukuba.ac.jp</a>&gt;	&lt;<a href="msg00056.html">20180315104007.26t7l46c6hqfrdxm@iambic.cynic.net</a>&gt;	&lt;<a href="msg00057.html">23211.61661.137765.239583@turnbull.sk.tsukuba.ac.jp</a>&gt;</li>
+<li>User-agent: NeoMutt/20170113 (1.7.2)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2018-03-17 01:29 +0900 (Sat), Stephen J. Turnbull wrote:
+
+&gt; FWIW, that wasn't my use case.
+
+Right. Actually, I had assumed you had a different use case, so was
+just warning the other guy.
+
+&gt; I would frequently be working on some task, and notice a minor,
+&gt; non-reviewable defect (typo in a comment) or one of those defects
+&gt; that really annoys pedants but if you fix them people bitch about VC
+&gt; churn (trailing whitespace) or that it's hard to figure out what you
+&gt; actually did in the diff...
+
+I fully agree with the folks who say that these sorts of changes
+shouldn't be mixed into the same commit with functionality changes or
+fixes.
+
+However, I also agree with you that they ought to be fixed. There's an
+easier way to do it though. (Or at least, I think it's easier, if I
+understand correctly what you're doing.)
+
+Every time you see something like this that needs to be fixed, just
+fix it and commit it as a separate commit. You can do this via `git
+add -p` to add and commit bits of your changes, or just `stash save`,
+fix, commit and `stash pop`. Eventually you'll have a bunch of these
+in your unpushed history.
+
+Then you call on your bestest friend ever and forever, `git rebase
+--interactive`. Move all of these little fixes up before your regular
+work, squash as necessary, and now you have one or a few commits that
+all come before your feature work. Fetch, rebase all this on to
+`origin/master`, and push just those commits up on to your remote's
+master branch to improve the world immediately.
+
+How I combine them depends on what I'm trying to say to the other
+developers. If it's a bunch of formatting or similar problems that I
+know were just accidents and the devs really know what they should be
+doing, I may push it all up as a large &quot;fix lot o' formatting&quot; blob,
+expecting everybody to skip reading the diff. If there are particular
+cases that developers need to learn from, I'll do separate commits
+with readable diffs for those so that they can see &quot;this is what it
+was, and this is what it should be.&quot;
+
+This technique I also use for refactorings. As I get deep into a
+feature that's taking a long time (often hours! :-)) I'll find
+refactorings I want to do to make implementing the feature easier.
+These I'll also collect up, move them before all my feature changes,
+and push up to origin's master earlier rather than later so that other
+developers get the benefit of them sooner (and so that if they see the
+refactorings are going the wrong way for something else, we can talk
+about it now rather than later).
+
+If you ever get things wrong, `git rebase --interactive` helps hide
+this, too. Rather than pushing up to master a commit with an error
+followed by another commit fixing it, move the fix back to just after
+the commit with the error and squash or fixup. You may go through many
+cycles of this on your dev branch, but by the time you're ready to
+push your stuff onto master you'll have a byuuutiful series of
+incredibly clear commits that make it look as if you knew exactly what
+you were doing all along and never made a wrong turn.
+
+(This last technique is not one I've ever needed myself, of course. :-))
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00061" href="msg00061.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00039" href="msg00039.html">[tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00041" href="msg00041.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Jens John</li></ul></li>
+<li><strong><a name="00050" href="msg00050.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00054" href="msg00054.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00056" href="msg00056.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00057" href="msg00057.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00059.html">Re: [tlug] NOT SOLVED: BIOS / Video not fixed</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00061.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00057.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00061.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00060"><strong>Date</strong></a></li>
+<li><a href="threads.html#00060"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

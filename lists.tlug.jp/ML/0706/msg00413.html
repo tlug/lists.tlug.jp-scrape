@@ -1,0 +1,158 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] XEmacs and MMM&#45;Mode: The Hack&#45;tacular Saga Continues -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 20 Jun 2007 14:45:02 +0900 -->
+<!--X-Message-Id: 871wg76ugu.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: d8fcc0800706191913m76754603l198f35ac3596bb0@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00412.html">Date Prev</a>][<a href="msg00414.html">Date Next</a>][<a href="msg00410.html">Thread Prev</a>][<a href="msg00414.html">Thread Next</a>][<a href="maillist.html#00413">Date Index</a>][<a href="threads.html#00413">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Jun 2007 14:55:13 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20XEmacs%20and%20MMM-Mode:%20The%20Hack-tacular%20Saga%20Continues">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</strong></li>
+<li>References: &lt;<a href="msg00410.html">d8fcc0800706191913m76754603l198f35ac3596bb0@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Josh Glover writes:
+ &gt; I have solved a few more MMM-Mode problems, but this one still plagues me.
+ &gt; 
+ &gt; I like my code folded, and indent-mode
+
+&gt;From which library?
+
+ &gt; ; Add code folding to Perl mode (but not in mmm-mode, due to hack-cakes)
+ &gt; (add-hook    'cperl-mode-hook        'my-fold-hook)
+ &gt; (remove-hook 'mmm-mason-submode-hook 'my-fold-hook)
+
+This just stops mmm-mason-submode from invoking my-fold-hook, it
+doesn't turn anything OFF.  If you enter cperl mode, my-fold-hook will
+be invoked regardless, and the conflicting mode will be on.
+
+What you would need to do is write my-fold-hook as something like
+
+(defun my-fold-hook ()
+  (cond ((eq major-mode 'mmm-mode)) ; pass
+        ((memq minor-modes 'mmm-mason-submode)) ; pass
+        ((eq major-mode 'cperl-mode) (indent-mode 1))
+        ;; etc
+  ))
+
+Don't take that too seriously, the minor-modes variable doesn't exist,
+and I'm pretty sure that mmm-mode isn't a real major mode, it's a mode
+multiplexer (ie, when you're in a cperl part of the buffer, the major
+mode is cperl-mode).
+
+ &gt; Is there an easy way to accomplish what I want, namely just turning
+ &gt; indent-mode off for mmm-mode or mmm-mason-submode?
+
+This depends on internals.  mmm-mode should provide a
+post-mode-invocation hook for this purpose, and you could turn it off
+there.  The problem you may run into is that &quot;never turn it on&quot; and
+&quot;turn it on then turn it right off&quot; may not be semantically
+equivalent.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00410" href="msg00410.html">[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00412.html">Re: [tlug] [OT?]A Hard Drive Question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00414.html">[tlug] Re: font encoding question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00410.html">[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00414.html">[tlug] Re: font encoding question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00413"><strong>Date</strong></a></li>
+<li><a href="threads.html#00413"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Re: Hostname questions -->
+<!--X-From-R13: Fubznf A'Rbjq <gbzNabbcre.pbz> -->
+<!--X-Date: Tue, 17 Jul 2001 15:24:12 +0900 -->
+<!--X-Message-Id: 20010717152412.C5321@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F184g3Sv0YKpDS7hx270001bcb0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00373.html">Date Prev</a>][<a href="msg00375.html">Date Next</a>][<a href="msg00372.html">Thread Prev</a>][<a href="msg00377.html">Thread Next</a>][<a href="maillist.html#00374">Date Index</a>][<a href="threads.html#00374">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: Hostname questions</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: Hostname questions</strong></li>
+<li><strong>From</strong>: <strong>Thomas O'Dowd &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 17 Jul 2001 15:24:12 +0900</li>
+<li>Content-Disposition: inline</li>
+<li>Content-Type: text/plain; charset=us-ascii</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00369.html">F184g3Sv0YKpDS7hx270001bcb0@example.com</a>&gt;; from jean_christian@example.com on Tue, Jul 17, 2001 at 03:39:01AM -0000</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;tom@example.com&gt;</li>
+<li>References: &lt;<a href="msg00369.html">F184g3Sv0YKpDS7hx270001bcb0@example.com</a>&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;9V7OkC.A.iRB.5r9U7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+<li>Sender: Thomas O'Dowd &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</li>
+<li>User-Agent: Mutt/1.2.5i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, Jul 17, 2001 at 03:39:01AM -0000, Jean-Christian Imbeault wrote:
+&gt; &gt;Did you reboot? It is written by the startup scripts.
+&gt; &gt;I think it is only there for informational purposes, though,
+&gt; &gt;so you are not in trouble if it's not there.
+&gt; 
+&gt; Yes, I did reboot. It's still empty. Glad to know it's not really needed. 
+&gt; But then that begs the question . . . why is it there at all?
+
+Probably you put it there at some stage :) It is not used on 7.1
+
+&gt; &gt;Some do, but that's not really proper. They should get it by
+&gt; &gt;calling /bin/hostname or something like calling gethostbyaddr(3)
+&gt; &gt;on their own socket.
+&gt; 
+&gt; That's what I've been waiting for someone to say!! So now I know that 
+&gt; /etc/hosts doesn't need and shouldn't need an entry for my machine.
+&gt; 
+&gt; But I have to put as a hack against bad-mannered apps :)
+
+Hang on a minute... The machine name and ip address *should* be put in
+/etc/hosts, if you want your machine to work correctly. This is not because
+of bad-mannered apps (who would be crazy to parse /etc/hosts themselves)
+but because, if DNS drops off the face of the earth, your machine still
+needs to be able to resolve its hostname/address. Forget about it finding
+it in /etc/sysconfig/network, it just reads that at the start to know
+how to set networking up... The machine on the kernel and driver level
+is happy from the setup.
+
+The problem is where applications need to know how names map to ip addresses
+and vice-versa. They make standard library calls to functions like
+gethostbyaddr() to resolve names/addresses as they go a long, this library
+is responsible for resolving these and it uses either hosts.conf or 
+nsswitch.conf to find out what databases to use to resolve hosts with.
+This means it will probably look at the /etc/hosts &quot;database&quot; first and
+then DNS. If your machine name/ip is in /etc/hosts all will be fine even
+if DNS is down. If it is not there, the library is not going to be able
+to find it and apache mightn't start and sendmail mightn't start and 
+a whole host of other things mightn't start...
+
+The moral of the story is, put it in /etc/hosts and /etc/sysconfig/network
+not for no reason nor a bad reason but because that's how it is...
+
+Tom.
+-- 
+Thomas O'Dowd. - Nooping - <A  HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A  HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00377" href="msg00377.html">Re: Hostname questions</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich &lt;ranma@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00369" href="msg00369.html">Re: Hostname questions</a></strong>
+<ul><li><em>From:</em> &quot;Jean-Christian Imbeault&quot; &lt;jean_christian@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00373.html">Re: Hostname questions</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00375.html">Re: Hostname questions</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00372.html">Re: Hostname questions</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00377.html">Re: Hostname questions</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00374"><strong>Date</strong></a></li>
+<li><a href="threads.html#00374"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

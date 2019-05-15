@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Q: Mini&#45;LAN with PPP -->
+<!--X-From: Manuel Chakravarty <chak@example.com> -->
+<!--X-Date: Mon, 16 Feb 1998 03:40:53 &#45;0500 (EST) -->
+<!--X-Message-Id: 199802160840.RAA16449@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0y4LYZ&#45;00012bC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00133.html">Date Prev</A>][<A HREF="msg00135.html">Date Next</A>][<A HREF="msg00133.html">Thread Prev</A>][<A HREF="msg00135.html">Thread Next</A>][<A HREF="maillist.html#00134">Date Index</A>][<A HREF="threads.html#00134">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Q: Mini-LAN with PPP</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Q: Mini-LAN with PPP</strong></LI>
+<LI><strong>From</strong>: <strong>Manuel Chakravarty &lt;<A HREF="mailto:chak@example.com">chak@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 16 Feb 1998 17:40:17 +0900</LI>
+<LI>CC: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-reply-to: &lt;<A HREF="msg00133.html">m0y4LYZ-00012bC@example.com</A>&gt; (turnbull@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull wrote,
+
+&gt; &gt;&gt;&gt;&gt;&gt; "ASH" == Andrew S Howell &lt;andy@example.com&gt; writes:
+&gt; 
+&gt; &gt;&gt;&gt;&gt;&gt; "Manuel" == Manuel Chakravarty &lt;chak@example.com&gt; writes:
+&gt; 
+&gt;     Manuel&gt; Hi!  Yesterday I played a bit with PPP and tried to set up
+&gt;     Manuel&gt; a kind of mini-LAN between two Linux machine (neither of
+&gt; 
+&gt; I assume you mean using the serial interface with a null-model cable?
+
+Yep.
+
+&gt;     ASH&gt; The "network not reachable" is saying that there isn't an
+&gt;     ASH&gt; interface over which to route packets to your destination.
+&gt; 
+&gt;     ASH&gt; To set a default route do:
+&gt; 
+&gt;     ASH&gt; 	route add default gw ppp-ip-addres
+&gt; 
+&gt; PPP should be doing that automatically.  (On second thought, that
+&gt; depends on the PPP package you're using.  Debian 1.3 certainly does,
+&gt; though.)  Furthermore, as far as I know `ping' gets its routing
+&gt; information from the same place as any other IP program.  Finally, as
+&gt; long as there is a host-to-host route in place, a two-host LAN using
+&gt; PPP should not need any network routing information other than that
+&gt; provided automatically by PPP.
+&gt; 
+&gt; I would modify that to 
+&gt; 
+&gt; 	       route add -host REMOTE-IP dev INTERFACE
+&gt;              route add default gw REMOTE-IP
+&gt; 
+&gt; where things in caps are variables.  INTERFACE should be `ppp0'.  It
+&gt; probably doesn't need to be specified.
+
+Usually, you can advice the `pppd' to add a default route
+using the option `defaultroute'.  I specified this option
+and it doesn't help anything.  But, I am not sure what
+exactly `pppd' does when given this option (I am mean which
+routing commands it issues -- this also not specified in
+detail in the man page).  So, I'll try your commands and
+check whether they change anything.
+
+The PPP-HOWTO, in the section ``27.  Using PPP across a null
+modem (direct serial) connection'' says,
+
+  pppd -detach crtscts lock &lt;local IP&gt;:&lt;remote IP&gt; /dev/cua4 38400 &amp;
+
+  This will bring up the link - but as yet you have no routing
+  specified. You can test the link by pinging to and fro to each
+  machine.
+
+This is the part that works. Latter the HOWTO says, 
+
+  So on the Ethernet equipped machine, the pppd command would be
+
+  pppd -detach crtscts lock proxyarp &lt;local IP&gt;:&lt;remote IP&gt; /dev/cua4 38400 &amp;
+
+  and on the other machine
+
+  pppd -detach crtscts lock defaultroute &lt;local IP&gt;:&lt;remote IP&gt; /dev/cua4 38400 &amp;
+
+As I don't have an Ethernet, I thought that maybe issuing
+the second command on both machines helps (thereby
+establishing the default route).  But actually, this didn't
+change anything.
+
+I'll try your commands and get the output of `ifconfig' and
+`netstat' (the machines are at home).  So far, many thanks
+for your suggestions and comments :-)
+
+Cheers,
+
+Manuel
+
+
+---------------------------------------------------------------
+Next TLUG Nomikai: 11 March Wed 1998 Tengu TokyoEkiMae 19:30
+Chuo-ku, Kyobashi 1-1-6, EchiZenYa Bld. B1/B2 03-3275-3691
+Next TLUG Meeting: 11 April 1998 Saturday, Tokyo Station
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00133" HREF="msg00133.html">Re: tlug: Q: Mini-LAN with PPP</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00133.html">Re: tlug: Q: Mini-LAN with PPP</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00135.html">tlug: RH 5.0 and ISDN woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00133.html">Re: tlug: Q: Mini-LAN with PPP</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00135.html">tlug: RH 5.0 and ISDN woes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00134"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00134"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

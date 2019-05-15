@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Kinput2 and Wnn6 -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Sat, 10 Oct 1998 13:04:15 +0900 -->
+<!--X-Message-Id: m3ww696p0p.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981009160844.2090E&#45;100000@example.com -->
+<!--X-Reference-Id: 19981009171557O.hhasebe@example.com -->
+<!--X-Reference-Id: m3btnm848p.fsf@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 13854.43829.460163.613583@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00348.html">Date Prev</A>][<A HREF="msg00350.html">Date Next</A>][<A HREF="msg00342.html">Thread Prev</A>][<A HREF="msg00350.html">Thread Next</A>][<A HREF="maillist.html#00349">Date Index</A>][<A HREF="threads.html#00349">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Kinput2 and Wnn6</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Kinput2 and Wnn6</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 10 Oct 1998 13:04:38 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: "Stephen J. Turnbull"'s message of "Sat, 10 Oct 1998 09:32:53 +0900 (JST)"</LI>
+<LI>References: &lt;<A HREF="msg00323.html">Pine.LNX.3.96LJ1.1b7.981009160844.2090E-100000@example.com</A>&gt;&lt;<A HREF="msg00325.html">19981009171557O.hhasebe@example.com</A>&gt;&lt;<A HREF="msg00328.html">m3btnm848p.fsf@example.com</A>&gt;&lt;<A HREF="msg00342.html">13854.43829.460163.613583@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"Stephen J. Turnbull" &lt;turnbull@example.com&gt; writes:
+
+&gt;     Frank&gt; ... But why would Emacs and Kinput2
+&gt;     Frank&gt; behave differently (in both instances Emacs and Applixware
+&gt;     Frank&gt; respectively were running solo, by themselves)?
+&gt; 
+&gt; The interfaces are different, so they'll behave differently.
+
+Sorry, I should have stated the point more explicitly: why should
+the _server_ behave differently when it is accessed via different
+clients?  On the server side there should _not_ be a difference.
+I've solved the user interface problem on the client side ---
+that was an earlier thread.
+
+&gt; One possibility is that kinput2 is a server, and therefore running as
+&gt; a specific user, especially if it's in xinitrc or similar.
+
+It is an X client that waits around for connections from other X
+clients connected to the same display.  It is owned by the user
+ID in effect when the .xinitrc .xsession script decorates the
+user's window with initial processes (including the lurking
+Kinput2).
+
+&gt; I don't
+&gt; know how kinput2 passes private dictionary information to Wnn.
+
+Neither do I.  The private dictionaries, though, are owned by
+Wnn6, not the user.  They are created and maintained
+automagically in the Wnn6 filespace.
+
+&gt; But if
+&gt; it just passes its effective ID, then wnn thinks that kinput2 is user
+&gt; kinput, while Emacs is almost certainly running as your personal user.
+&gt; This would result in the dictionaries getting decoupled.  Take a look
+&gt; at ps aux and see what userid kinput2 is using.
+
+Nope.  As indicated above, Kinput2 is owned by the user who is
+running the display.  But a failure of this sort seems the most
+likely cause of the problem --- Wnn6 ends up adding the Kinput2
+data in a "dunno" stack, or into the root dictionary.
+
+Here's the result of test:
+
+[bennett@example.com bennett]$ ps aux | grep kinput2
+bennett  14572  0.0  4.2  3068  1300  ?  S   11:24   0:00 kinput2 -wnn -jserver
+
+&gt;     Frank&gt; The server certainly _claims_ to be willing to speak with
+&gt;     Frank&gt; anyone, without conditions:
+&gt; 
+&gt; I don't trust such messages to mean what I think they mean.
+
+That's why I put emphasis on _claims_.
+
+&gt;     Frank&gt; Is this due to some limitation in Kinput2 --- maybe the
+&gt;     Frank&gt; patch for Wnn6 is missing something?
+&gt; 
+&gt; Could be.  Gotta love proprietary softo.
+
+That's very helpful, thanks :)
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00350" HREF="msg00350.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00402" HREF="msg00402.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00323" HREF="msg00323.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00325" HREF="msg00325.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> Hiroshi Hasebe &lt;hhasebe@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00328" HREF="msg00328.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00342" HREF="msg00342.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00348.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00350.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00342.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00350.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00349"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00349"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

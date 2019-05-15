@@ -1,0 +1,223 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] building ghc 6.10.1 under amd64 hardened Gentoo -->
+<!--X-From-R13: Sqjneq [vqqyrgba <rzvqqyrgbaNororne.arg> -->
+<!--X-Date: Fri, 30 Jan 2009 15:43:30 +0900 -->
+<!--X-Message-Id: 4982A17C.7020001@bebear.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00143.html">Date Prev</a>][<a href="msg00145.html">Date Next</a>][<a href="msg00140.html">Thread Prev</a>][<a href="msg00146.html">Thread Next</a>][<a href="maillist.html#00144">Date Index</a>][<a href="threads.html#00144">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] building ghc 6.10.1 under amd64 hardened Gentoo</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 30 Jan 2009 15:43:08 +0900</li>
+<li><strong>From</strong>: <strong>Edward Middleton &lt;<a href="mailto:emiddleton@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20building%20ghc%206.10.1%20under%20amd64%20hardened%20Gentoo">emiddleton@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] building ghc 6.10.1 under amd64 hardened Gentoo</strong></li>
+<li>User-agent: Thunderbird 2.0.0.17 (X11/20080929)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I am looking for help debugging a problem with compiling the latest ghc
+6.10.1 on amd64 hardened Gentoo.  I am using the ebuild provided at
+code.haskell.org[1].  There are a number of references in the ebuild to
+hardened gcc so I presume it has worked for some version of hardened
+Gentoo in the past.  The relivant part of the first compile error
+message is below.
+
+-----------------------------------------------------------------------------------------------------------------------------
+[ebuild     U ] dev-lang/ghc-6.10.1 [6.8.2] USE=&quot;-bash-completion
+-binary* -doc ghcbootstrap -ghcquickbuild%&quot; 0 kB [0=&gt;1]
+
+./configure --prefix=/usr --host=x86_64-pc-linux-gnu
+--mandir=/usr/share/man --infodir=/usr/share/info --datadir=/usr/share
+--sysconfdir=/etc --localstatedir=/var/lib --libdir=/usr/lib64
+--build=x86_64-pc-linux-gnu
+...
+..
+checking for nhc98... no
+checking for hbc... no
+checking for ld... /usr/bin/ld
+checking for path to top of build tree...
+/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/../../../../x86_64-pc-linux-gnu/bin/ld:
+pwd.o: relocation R_X86_64_32S against
+`ghczmprim_GHCziTypes_ZC_con_info' can not be used when making a shared
+object; recompile with -fPIC
+pwd.o: could not read symbols: Bad value
+collect2: ld returned 1 exit status
+./configure: line 3291: utils/pwd/pwd: No such file or directory
+configure: error: cannot determine current directory
+-----------------------------------------------------------------------------------------------------------------------------
+
+A Google hasn't turned up anything particularly useful, accept
+references to possibly related issues with FreeBSD 7.0. with ghc 6.8.2. 
+The error appears to be caused by linking object files compiled without
+the -fPIC (Position Independent Code[2]) to -fPIC library files.   The
+ebuild seems to be filtering the -fPIC flag from the CFLAGS environment
+variable, however removing the filter had no effect on the compile failure.
+
+The suggestion I found was to disable the compiling of pwd and use the
+system pwd, which the following patch does[3].
+
+-----------------------------------------------------------------------------------------------------------------------------
+diff -ur ghc-6.10.1.orig/aclocal.m4 ghc-6.10.1/aclocal.m4
+--- ghc-6.10.1.orig/aclocal.m4  2009-01-30 12:56:39.000000000 +0900
++++ ghc-6.10.1/aclocal.m4       2009-01-30 12:57:37.000000000 +0900
+@@ -1210,20 +1210,7 @@
+ AC_DEFUN([FP_FIND_ROOT],[
+ AC_MSG_CHECKING(for path to top of build tree)
+ 
+-dnl This would be
+-dnl     make -C utils/pwd clean &amp;&amp; make -C utils/pwd
+-dnl except we don't want to have to know what make is called. Sigh.
+-if test ! -f utils/pwd/pwd &amp;&amp; test ! -f utils/pwd/pwd.exe; then
+-  cd utils/pwd
+-  rm -f *.o
+-  rm -f *.hi
+-  rm -f pwd
+-  rm -f pwd.exe
+-  $WithGhc -v0 --make pwd -o pwd
+-  cd ../..
+-fi
+-
+-hardtop=`utils/pwd/pwd forwardslash`
++hardtop=`pwd`
+-----------------------------------------------------------------------------------------------------------------------------
+
+this got me a bit further but the compile still dies on what looks like
+the same error later on
+
+-----------------------------------------------------------------------------------------------------------------------------
+cp ifBuildable.hs ifBuildable/
+cd ifBuildable &amp;&amp; /var/tmp/portage/dev-lang/ghc-6.10.1/work/usr/bin/ghc
+-Wall --make ifBuildable -o ifBuildable
+[1 of 1] Compiling Main             ( ifBuildable.hs, ifBuildable.o )
+Linking ifBuildable ...
+/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/../../../../x86_64-pc-linux-gnu/bin/ld:
+ifBuildable.o: relocation R_X86_64_32S against `stg_CAF_BLACKHOLE_info'
+can not be used when making a shared object; recompile with -fPIC
+ifBuildable.o: could not read symbols: Bad value
+collect2: ld returned 1 exit status
+make[1]: *** [ifBuildable/ifBuildable] Error 1
+make[1]: Leaving directory
+`/var/tmp/portage/dev-lang/ghc-6.10.1/work/ghc-6.10.1/libraries'
+-----------------------------------------------------------------------------------------------------------------------------
+
+I tried with the *ghbootstrap* use flags but got the same result.
+
+The ebuild *binary* use flag worked but that just installs the prebuilt
+compiler, which wouldn't run without disabling PAX MPROTECT[4] i.e.
+
+# paxctl -m /usr/lib64/ghc-6.10.1/ghc
+
+Is anyone else running ghc-6.10.1 on a similar system?  This is starting
+to look like major build system surgery rather the minor adjustments.
+
+Cheers,
+
+Edward
+
+1. <a  href="http://code.haskell.org/gentoo/gentoo-haskell/dev-lang/ghc/">http://code.haskell.org/gentoo/gentoo-haskell/dev-lang/ghc/</a>
+2. <a  href="http://www.gentoo.org/proj/en/hardened/pic-guide.xml">http://www.gentoo.org/proj/en/hardened/pic-guide.xml</a>
+3. it is obviously necessary to also rerun autoconf after patching the
+file for the changes to take effect.
+4. <a  href="http://pax.grsecurity.net/docs/mprotect.txt">http://pax.grsecurity.net/docs/mprotect.txt</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00146" href="msg00146.html">Re: [tlug] building ghc 6.10.1 under amd64 hardened Gentoo</a></strong>
+<ul><li><em>From:</em> Alexander Danilov</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00143.html">Re: [tlug] Re: Job Posting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00145.html">[tlug] Japanese in Wine??</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00140.html">[tlug] Today's TSAC Meeting</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00146.html">Re: [tlug] building ghc 6.10.1 under amd64 hardened Gentoo</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00144"><strong>Date</strong></a></li>
+<li><a href="threads.html#00144"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

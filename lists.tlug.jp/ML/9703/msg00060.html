@@ -1,0 +1,198 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: About libraries -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Sun, 16 Mar 1997 11:40:17 GMT -->
+<!--X-Message-Id: 9703161133.AA22717@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0w6Coj&#45;000PaYC@example.com&#45;direct.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00059.html">Date Prev</A>][<A HREF="msg00061.html">Date Next</A>][<A HREF="msg00059.html">Thread Prev</A>][<A HREF="msg00065.html">Thread Next</A>][<A HREF="maillist.html#00060">Date Index</A>][<A HREF="threads.html#00060">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: About libraries</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: About libraries </strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 16 Mar 1997 20:33:18 JST</LI>
+<LI>In-Reply-To: Your message of "Sun, 16 Mar 1997 11:08:31 +0100."            &lt;<A HREF="msg00059.html">m0w6Coj-000PaYC@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Andrew S. Howell" &lt;andy@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Chistophe" == Chistophe Gimenez &lt;chris@example.com&gt; writes:
+
+    Chistophe&gt; I would to know if somebody can help me with libraries
+    Chistophe&gt; files under Linux ?
+
+The .a libraries are used when you statically link your
+application. This means that all the code you need to run you
+application is included in the application.  
+
+The .so files are shared libraries. Applications linked against these
+do not need to include the contents of the library in the program,
+just the name of the library. This makes the program much
+smaller. Since many programs can use the same .so, the system can make
+better use of memory.
+
+When an application starts, if it is linked against shared libraries,
+it calls ld.so to load the shared libraries. To find you what shared
+libraries a program uses, you can use ldd:
+
+ldd /usr/bin/X11/fvwm
+        libXpm.so.4 =&gt; /usr/X11R6.1/lib/libXpm.so.4
+        libXext.so.6 =&gt; /usr/X11R6.1/lib/libXext.so.6
+        libX11.so.6 =&gt; /usr/X11R6.1/lib/libX11.so.6
+        libc.so.5 =&gt; /lib/libc.so.5.3.12
+
+Separate from this, there are two main formats for executable files,
+both programs and libraries, The old format is called a.out, which is
+where the linux-aout comes from. The new format is called ELF.
+
+    Chistophe&gt; when I launch lddconfig, it search for a directories
+    Chistophe&gt; named linux-aout-...  and another named something like
+    Chistophe&gt; 'old.so'
+
+The purpose of lddconfig is cache the location of the libraries, to
+make finding them quicker. /etc/ld.so.conf as tells lddconfig where to
+look for them in the first place.
+
+    Chistophe&gt; Can I delete theses directories ?
+
+This depends. You need to make sure that your current applications to
+not need any of the shared libraries in them. You can use ldd to find
+out which libs a program is using. If you don't have anything that is
+using a particular lib, you can delete it. I would recommend moving
+"old" lib to some place that is not listed in /etc/ld.so.conf, until
+you are sure that you don't need it anymore.
+
+Although not used to often. If is possible for a program to load
+shared libs after it is up and running. Perl 5, I believe, does this
+to dynamicaly load extra Perl modules. In this case, ldd will NOT
+report these libraries, hence one reason you don't want to just delete
+libraries. You can delete old .a libs, as they are only used when you
+compile a program.
+
+If you want to find out the type binary, you can use "file"
+
+file *
+su:            setuid Linux/i386 demand-paged executable (ZMAGIC)
+sync:          ELF 32-bit LSB executable i386 (386 and up) Version 1
+tar:           Linux/i386 demand-paged executable (QMAGIC)
+
+I've got a bunch of different executable types. If you have a recent gcc,
+will generate ELF binaries by default. This is the preferred
+format. Someday, I'll have everything moved to ELF, but its not a
+priority.
+
+    Chistophe&gt; Another question :
+
+    Chistophe&gt; what are the .a lib files ? .so if the shared librarie
+    Chistophe&gt; but what about the a ?
+
+See above.
+
+Sorry this is a bit long.... I think I've got this all right, but
+someone please correct me if I messed it up.
+
+Andy
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00059" HREF="msg00059.html">tlug: About libraries</A></STRONG>
+<UL><LI><EM>From:</EM> "Chistophe Gimenez" &lt;chris@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00059.html">tlug: About libraries</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00061.html">Re: tlug: NFS + AMD + SPARC = :(</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00059.html">tlug: About libraries</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00065.html">Re: tlug: About libraries</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00060"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00060"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

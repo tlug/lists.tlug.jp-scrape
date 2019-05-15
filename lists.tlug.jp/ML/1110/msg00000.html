@@ -1,0 +1,184 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Bash 4.1 question -->
+<!--X-From-R13: "Rnavry O. Dnznyrl" <qnavry.enznyrlNqenxr.rqh> -->
+<!--X-Date: Sat, 01 Oct 2011 06:05:29 +0900 -->
+<!--X-Message-Id: 201109301548.32233.daniel.ramaley@drake.edu -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 201109280944.23816.daniel.ramaley@drake.edu -->
+<!--X-Reference: 87r530h55u.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[Date Prev][<a href="msg00001.html">Date Next</a>][Thread Prev][<a href="msg00001.html">Thread Next</a>][<a href="maillist.html#00000">Date Index</a>][<a href="threads.html#00000">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Bash 4.1 question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 30 Sep 2011 15:48:32 -0500</li>
+<li><strong>From</strong>: <strong>&quot;Daniel A. Ramaley&quot; &lt;<a href="mailto:daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Bash%204.1%20question">daniel.ramaley@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Bash 4.1 question</strong></li>
+<li>References: &lt;<a href="mailto:201109280944.23816.daniel.ramaley@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Bash%204.1%20question">201109280944.23816.daniel.ramaley@example.com</a>&gt;	&lt;<a href="mailto:87r530h55u.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Bash%204.1%20question">87r530h55u.fsf@example.com</a>&gt;</li>
+<li>Organization: Drake University</li>
+<li>User-agent: KMail/1.13.7 (Linux/3.0.0-1-amd64; KDE/4.6.5; x86_64; ; )</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2011-09-28 at 13:51:09, Stephen J. Turnbull wrote:
+&gt;Daniel A. Ramaley writes:
+&gt; &gt; to add control-backspace to that list. Unfortunately, it seems bash
+&gt; &gt; thinks backspace is really control-h so it is difficult to map an
+&gt; &gt; extra control onto that.
+&gt;
+&gt;Maybe it *really* is control-h.  Try fixing your terminal?
+
+That got me to research some more. I found that by typing ctrl-v and 
+then some other key, Bash will tell me what it thinks that other key is.
+
+When running under gnome-terminal (my terminal of choice) i get these:
+	backspace: ^?
+	ctrl-backspace: ^?
+	delete: ^[[3~
+	ctrl-delete: ^[[3;5~
+
+So, it seems the control key does change the keystroke for the delete 
+key, but it doesn't do anything for backspace.
+
+I tried running an xterm and i get something different for ctrl-
+backspace:
+	backspace: ^?
+	ctrl-backspace: ^H
+	delete: ^[[3~
+	ctrl-delete: ^[[3;5~
+
+Note that both gnome-terminal and xterm report their TERM variable as 
+&quot;xterm&quot;, so they *should* be the same to the shell... i can see some 
+differences in &quot;stty -a&quot; output though that tells me reality is slightly 
+more complicated than that, however.
+
+Anyway, when running under xterm, it should be possible to get the 
+behavior i want, since Bash can distinguish between the keystrokes. But 
+what about gnome-terminal? I guess i do need to fix the terminal. In 
+gnome-terminal's &quot;Compatibility&quot; settings i can choose from these 
+options to send for the backspace and delete keys: Automatic, Control-H, 
+ASCII DEL, Escape sequence, TTY Erase. &quot;ASCII DEL&quot; is the default for 
+the backspace key. I've tried all of the others, though. And they all 
+suffer from the same problem: the terminal sends the same thing for 
+backspace and ctrl-backspace. By choosing different options for what it 
+sends for backspace, i can get it to change what it sends. But backspace 
+and ctrl-backspace are always the same, regardless of what they happen 
+to be. Since Bash always sees the same character, i think the only 
+solution would be to change terminals, or get the bug in gnome-terminal 
+fixed.
+
+Now having a deeper understanding of the issue, i was even able to find 
+a (fairly old) bug report on it, and a patch to fix it:
+	<a  rel="nofollow" href="https://bugzilla.gnome.org/show_bug.cgi?id=420039">https://bugzilla.gnome.org/show_bug.cgi?id=420039</a>
+
+So i guess now i have to decide whether this problem annoys me enough to 
+patch gnome-terminal and maintain my custom version of it, or if i 
+should just live with it.
+
+Thanks for the nudge in the right direction.
+
+__
+Daniel A. Ramaley
+Network Engineer 2
+
+Dial Center 112, Drake University
+2407 Carpenter Ave / Des Moines IA 50311 USA
+Tel: +1 515 271-4540
+Fax: +1 515 271-1938
+E-mail: daniel.ramaley@example.com
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">Re: [tlug] Bash 4.1 question</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Next by Date:
+<strong><a href="msg00001.html">Re: [tlug] Bash 4.1 question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00001.html">Re: [tlug] Bash 4.1 question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00000"><strong>Date</strong></a></li>
+<li><a href="threads.html#00000"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

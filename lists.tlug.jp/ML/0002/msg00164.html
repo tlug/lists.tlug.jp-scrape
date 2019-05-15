@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Horizontal diff? -->
+<!--X-From: simon@example.com (Simon Cozens) -->
+<!--X-Date:  Wed, 16 Feb 2000 19:19:53 +0900 -->
+<!--X-Message-Id: slrn8aku86.gdl.simon@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: lists.tlug/20000216082758.A13697@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00163.html">Date Prev</A>][<A HREF="msg00165.html">Date Next</A>][<A HREF="msg00162.html">Thread Prev</A>][<A HREF="msg00165.html">Thread Next</A>][<A HREF="maillist.html#00164">Date Index</A>][<A HREF="threads.html#00164">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Horizontal diff?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Horizontal diff?</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:simon@example.com">simon@example.com</A> (Simon Cozens)</strong></LI>
+<LI>Date: 16 Feb 2000 10:16:38 GMT</LI>
+<LI>Delivered-To: simon-outgoing@example.com</LI>
+<LI>Organization: Earth.li Origins</LI>
+<LI>References: &lt;lists.tlug/<A HREF="msg00155.html">20000216082758.A13697@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+<LI>User-Agent: slrn/0.9.5.3 (UNIX)</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Frank Bennett (lists.tlug):
+&gt;I would like to identify the diffs between the two sets, but reg'lar diff
+&gt;will just turn up discrepancies line by line.  What I would like to do is
+&gt;get a more fine-grained return on differences *within* the line, so I can
+&gt;get a bead on how much has actually changed.
+
+Sounds fun. Here's a fairly bad-but-correct way of doing it in Perl.
+It has *no* smartness at all; if you have lines:
+foo123456
+foob123456
+it will tell you that everything after foo differs. If you want to
+avoid that, read up about the Wu-Mamber algorithm and prepare to waste
+a good number of days implementing it for character-by-character matching. 
+Here, though, you get what you pay for:
+
+#!/usr/bin/perl -w
+use strict;
+open (ONE, $ARGV[0]) or die $!; open (TWO, $ARGV[1]) or die $!;
+my $line=0;
+while (1) {
+	my ($one,$two) = (scalar &lt;ONE&gt;,scalar &lt;TWO&gt;);
+	$line++;
+	last unless defined $one and defined $two;
+	if ($one ne $two) {
+		print "Lines differ, line $line: "; # $. doesn't work?
+		print " (differing length, this won't be pretty)" 
+			if length $one != length $two;
+		print "\n";
+		my @example.com=split //,$one; my @example.com = split //,$two; my $p=0;
+		LINE: while (@example.com) {
+			my ($aline, $bline);
+			my ($a, $b);
+			$p++ while (($a = shift @example.com) eq ($b = shift @example.com) and @example.com and @example.com); 
+			last unless @example.com and @example.com;
+			print "At position $p:\n";
+			while ($a ne $b and @example.com and @example.com) {
+		    		$aline.=$a; $bline.=$b;
+				$a=shift @example.com; $b=shift @example.com; ++$p;
+			}
+			print "$ARGV[0]: $aline\n$ARGV[1]: $bline\n\n";
+		}
+	}	
+}
+
+Given a file "one":
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafhfhfhfasdddddddddddaaaaaaaaaaaaaaaaaaaaaaas
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbfeefehfbbbbbbbbbbbbbbbbbbbbbasdasdadsbabdbfefbbb
+
+And a file "two":
+aaaaaasdddsdsaaaaaaaaaaaaaaaaaafhfhfhfasdddddvddddddaaaaaaaaaaaaaaaaaaaaaaas
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbfeefehfbbbbbbbbb  bbbbbbbbbbasdasdadsbabdbfefbbb
+
+bastard:simon ~ % perl hdiff.pl one two
+Lines differ, line 1:
+At position 6:
+one: aaaaaaa
+two: sdddsds
+At position 30:
+one: afhfhfhfas
+two: fhfhfhfasd
+At position 43:
+one: d
+two: v
+
+Lines differ, line 2:
+At position 44:
+one: bb
+two:
+
+
+-- 
+"By golly, I'm beginning to think Linux really *is* the best thing since
+sliced bread."
+(By Vance Petree, Virginia Power)
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00163.html">tlug: HotJava 3.0</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00165.html">Re: tlug: Horizontal diff?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00162.html">tlug: Horizontal diff?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00165.html">Re: tlug: Horizontal diff?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00164"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00164"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

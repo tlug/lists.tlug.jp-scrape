@@ -1,0 +1,224 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Nasty Problem: searching for strings that span newlines -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Fri, 13 Jan 2006 23:14:48 &#45;0500 -->
+<!--X-Message-Id: 20060113231448.712006df.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200601130511.k0D5BxWg015897@example.com -->
+<!--X-Reference: 43C84B5A.7000703@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00129.html">Date Prev</a>][<a href="msg00131.html">Date Next</a>][<a href="msg00125.html">Thread Prev</a>][<a href="msg00131.html">Thread Next</a>][<a href="maillist.html#00130">Date Index</a>][<a href="threads.html#00130">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Nasty Problem: searching for strings that span newlines</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 13 Jan 2006 23:14:48 -0500</li>
+<li><strong>From</strong>: <strong>Jim &lt;<A HREF="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Nasty%20Problem%3A%20searching%20for%20strings%20that%20span%20newlines">jep200404@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Nasty Problem: searching for strings that span newlines</strong></li>
+<li>References: &lt;200601130511.k0D5BxWg015897@example.com&gt;&lt;<a href="msg00121.html">43C84B5A.7000703@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+David Riggs wrote:
+
+&gt; I need to find short ... strings in a giant haystack of texts. Grep 
+&gt; does not work because the haystack (the CBETA canon of Buddhist texts) 
+&gt; adds punctuation characters, and inserts newline characters and line 
+&gt; numbers.
+
+&gt; ... string which spans a new line, ... I am not sure that sed ... 
+
+Matches spanning newlines is the hard part. 
+
+Punctuation is not a big deal. Line numbers are a bit more work, 
+but spanning newlines is the nasty part. There are workarounds. 
+Many are awkward. For the cleaner solutions, see &quot;Anchoring&quot;, p81 of 
+
+   Mastering Regular Expressions (MRE) by Jeffrey E. F. Friedl
+   <A  HREF="http://www.oreilly.com/catalog/regex/">http://www.oreilly.com/catalog/regex/</A>
+
+Strings spanning newlines is a common limitation of classic regex tools. 
+MRE says that in ed and grep, the regex always works one line at a time. 
+(I.e., don't play well with strings that span lines.) 
+&quot;Other tools, however, often allow arbitrary text to be matched.&quot; 
+
+p82 of MRE has a chart that shows that 
+dot matches a newline for Tcl, sed, and awk. 
+
+p81 of MRE: &quot;Perl can do both line- and string-oriented matches, ...&quot;
+
+I would look hard at those tools, especially Perl. Perl regexes are 
+known for being more powerful than most other regex flavors. 
+There are many subtleties in regex stuff, 
+especially with the serious complication of spanning newlines. 
+
+&gt; One approach is to make a pipeline to grep for the first kanji, strip 
+&gt; out the punctuation characters with sed, and search again for the rest 
+&gt; of the kanji:
+&gt; 
+&gt; grep first-ji * | sed  -e 's/[,;]//g' | grep later-kanjis
+
+   grep 'first-ji[,;]*later-jis' 
+
+would be as effective and have fewer false positives 
+(such as when later-kanjis precede first-ji on a line), 
+but neither your grep nor my grep would find strings that span newlines. 
+I'm not good at regexes, so someone else will have to correct 
+my regex mistakes. If you can get sed to suck in a whole file 
+in one gulp (as opposed to line at a time), I would consider something like: 
+
+   sed -e 's/first-ji((,|;|\n\w*[0-9]+:\w*)*)second-ji((,|;|\n\w*[0-9]+:\w*)*)third-ji/markerfirst-ji\1second-ji\3third-ji/g' &lt;file \
+   | grep -A 2 marker | sed -e 's/marker//g'
+
+where marker is some rather unique string. I might also consider something like: 
+
+   tr -d ';,' &lt;file | sed -e 's/^\w*[0-9]*:+\w*//g' \
+   | tr '\n' '%' | sed -e 's/first-ji(%*)second-ji(%*)third-ji/markerfirst-ji\1second-ji\2third-ji/g' \
+   | tr '%' '\n' | grep -A 2 'marker' | sed -e 's/marker//g'
+
+of course, that doesn't handle '%'s in the file well.    
+
+The following will strip the newlines (or any other single byte 
+characters) easily enough: 
+
+   tr -d ',;\n\r' | grep first-jilater-kanjis...
+
+but the lines would get too long for grep. 
+Also, if each file becomes one big long line, 
+then grep would always report a match as being on line 1, 
+which is not very meaningful. 
+
+I would NOT use tr to delete multi-byte characters. 
+tr is one tool for which I would expect UTF-8 to not 
+solve the multi-byte character issues. 
+However, tr would be fine for deleting single byte characters 
+from a UTF-8 stream. If all your punctuation and newline 
+characters that you would consider deleting are single 
+byte characters in UTF-8, then tr would be OK.  
+
+&gt; I need to find short ... strings in a giant haystack of texts. Grep 
+&gt; does not work because the haystack (the CBETA canon of Buddhist texts) 
+&gt; adds punctuation characters, and inserts newline characters and line 
+&gt; numbers.
+
+Examples of such short strings and a good size (few paragraphs) 
+chunk of the text (with annoying punctuation and newline characters 
+and line numbers) you're searching through would help. The more 
+we know about your data, the more the searches can be optimized. 
+
+By the way, Jeffrey E. F. Friedl worked in Kyoto for eight years 
+and has some CJK sprinkled through the book. 
+
+I don't know regexes well, so I look forward learning from 
+others' corrections of my junk regexes and others' 
+completely different solutions that are just better. 
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00131" href="msg00131.html">Re: [tlug] Searching: Understanding the Problem Better</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00144" href="msg00144.html">Re: [tlug] Nasty Problem: searching for strings that span newlines</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00121" href="msg00121.html">[tlug] [tlug-digest] searching for kanji strings, ignore punctuation and end of lines.  Text indexing and retrival in unicode.</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00129.html">Re: [tlug] Linspire as a senior citizen's first computer...     whatdoyou think?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00131.html">Re: [tlug] Searching: Understanding the Problem Better</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00125.html">Re: [tlug] [tlug-digest] Regex Efficiency</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00131.html">Re: [tlug] Searching: Understanding the Problem Better</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00130"><strong>Date</strong></a></li>
+<li><a href="threads.html#00130"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

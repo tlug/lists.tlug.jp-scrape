@@ -1,0 +1,187 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] grep, sed, and cat &#45; oh my! -->
+<!--X-From-R13: @vpbynf Zvzner <avpbynf+gyhtNyvzner.arg> -->
+<!--X-Date: Fri, 17 Sep 2010 02:16:54 +0900 -->
+<!--X-Message-Id: 20100916170709.GI2124@senbei.tech.limare.net -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 4C924ACE.9000707@articlass.org -->
+<!--X-Derived: pgpzc5idhpLOY.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00060.html">Date Prev</a>][<a href="msg00062.html">Date Next</a>][<a href="msg00060.html">Thread Prev</a>][<a href="msg00063.html">Thread Next</a>][<a href="maillist.html#00061">Date Index</a>][<a href="threads.html#00061">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] grep, sed, and cat - oh my!</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 16 Sep 2010 19:07:09 +0200</li>
+<li><strong>From</strong>: <strong>Nicolas Limare &lt;<a href="mailto:nicolas%2Btlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20grep%2C%20sed%2C%20and%20cat%20-%20oh%20my%21">nicolas+tlug@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] grep, sed, and cat - oh my!</strong></li>
+<li>References: &lt;<a href="mailto:4C924ACE.9000707@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20grep%2C%20sed%2C%20and%20cat%20-%20oh%20my%21">4C924ACE.9000707@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.20 (2009-06-14)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave,
+
+&gt; Javascript/fileA.js
+&gt; Javascript/fileB.js
+&gt; Javascript/subdir1/fileC.js
+&gt; Javascript/subdir1/fileD.js
+&gt; Javascript/subdir2/fileE.js
+&gt; Javascript/subdir2/fileF.js
+&gt; 
+&gt; I came across a command which supposedly might do the trick:
+&gt; 
+&gt; ls -1R|grep :$|sed 's/:$//g'| awk '{print $1&quot;/*&quot;}'|xargs cat &gt; all.js
+
+You can make better:
+
+find ./ -name &quot;*.js&quot;
+-&gt; gives you all the *.js files in the current directory
+
+cat $( find ./ -name &quot;*.js&quot; ) &gt; all.js
+-&gt; concatenates all these files into all.js
+
+&gt; For step 4, editing the HTML files, I think I need to run the following 
+&gt; command:
+&gt; 
+&gt; sed 's/.*&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; 
+&gt; src=&quot;javascript/includes.js&quot;&gt;&lt;/script&gt;.*/&lt;script type=&quot;text/javascript&quot; 
+&gt; charset=&quot;utf-8&quot; src=&quot;all-min.js&quot;&gt;&lt;/script&gt;/g'
+
+You obviously want to use this substitution command:
+  &quot;s/something/something else/g&quot;
+
+But the '/' in your sunstritution strings are clashing with the '/' in
+the substitution command. But, in fact, you can use any character in a
+sed command, so let's use one not appearing in your substritution
+strings. '%' for example.
+
+This version may work:
+
+sed 's%.*&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;javascript/includes.js&quot;&gt;&lt;/script&gt;.*%&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;all-min.js&quot;&gt;&lt;/script&gt;%g'
+
+&gt; ... and I thought I would need to use &quot;grep&quot; so that my line-replacing 
+&gt; would happen on multiple files... but does &quot;sed&quot; already act on multiple 
+&gt; files?
+
+no. sed works line by line
+
+&gt; And in either case, can I tweak it to only act on files with a &quot;.html&quot; 
+&gt; extension?
+
+Only give sed html files to work on, like
+
+find ./ -name *.html | while read FILE; do sed -i 's%...%...%g' $FILE; done
+
+-- 
+Nicolas LIMARE
+<a  rel="nofollow" href="http://nicolas.limare.net/">http://nicolas.limare.net/</a>                         pgp:0xFA423F4F
+</pre><p><strong>Attachment:
+<a href="pgpzc5idhpLOY.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> Digital signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00063" href="msg00063.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+<ul><li><em>From:</em> Mattia Dongili</li></ul></li>
+<li><strong><a name="00068" href="msg00068.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00060" href="msg00060.html">[tlug] grep, sed, and cat - oh my!</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00060.html">[tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00062.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00060.html">[tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00063.html">Re: [tlug] grep, sed, and cat - oh my!</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00061"><strong>Date</strong></a></li>
+<li><a href="threads.html#00061"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

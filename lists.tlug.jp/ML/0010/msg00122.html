@@ -1,0 +1,227 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: German umlauts in japanese RedHat 6.2 don't work -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Mon, 9 Oct 2000 10:54:37 +0900 (JST) -->
+<!--X-Message-Id: 14817.9565.336269.215028@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 003c01c030e0$f885cde0$afcb21ca@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00121.html">Date Prev</A>][<A HREF="msg00123.html">Date Next</A>][<A HREF="msg00121.html">Thread Prev</A>][<A HREF="msg00126.html">Thread Next</A>][<A HREF="maillist.html#00122">Date Index</A>][<A HREF="threads.html#00122">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>German umlauts in japanese RedHat 6.2 don't work</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>German umlauts in japanese RedHat 6.2 don't work</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 9 Oct 2000 10:54:37 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00118.html">003c01c030e0$f885cde0$afcb21ca@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00118.html">003c01c030e0$f885cde0$afcb21ca@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;Olt9i.A.eO.XkS45@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Gerhard" == Gerhard Schuck &lt;geschu@example.com&gt; writes:
+
+    Gerhard&gt; Can anybody give me any hints how to configure a japanese
+    Gerhard&gt; version of linux (in my case RedHat 6.2J) to support
+
+Ditch the Japanese version.  There is nothing you need in the Japanese
+version, and most likely a lot of braindeadness intended to make it
+easy to cope with Japanese unwillingness to comply with (their own)
+standards.  It will cause you some annoyance in dealing with Japanese
+correspondents, but the solutions to that are generally simple (you
+just translate the messages from Shit-JIS to ISO-2022-JP).  Dealing
+with a misdesigned and intentionally misconfigured system requires
+true wizardry.
+
+Red Hat is most likely to be nearly correct, since both Drepper and
+Havill (card-carrying standards bigots both) work for them.  Still I
+would avoid Japanese versions for multilingual work.  Japan-localized
+systems are intended to make Japanese use transparent.  This is
+unfortunately incompatible with multilingual processing.  It is much
+better to get Japanese working on a vanilla system.
+
+If the Japanese version comes with freebies like dictionaries and so
+on, then go ahead, install it, and start ruthlessly ripping out
+anything with a "ja" or "jp" in the version string, and replace it
+with non-Japanese versions.
+
+If you think you need a Japanized version of an application[1], ask, you
+probably don't, but there are exceptions.
+
+With *terms, you _will_ have a problem.  rxvt may work the same as
+kterm, but kterm is the only reliable solution I've found (rxvt I've
+never managed to configure correctly, and it doesn't seem worth the
+effort to me, so YMMV and with luck an rxvt advocate will tell you
+how to do it).  The problem is that you _must_ work in ISO-2022-JP for
+Japanese; it is _not_ possible for EUC-JP or Shit-JIS to coexist in
+the same document with ISO-8859-*, because both the Japanese and the
+ISO-8859 coding systems assert exclusive claim to the 8-bit
+characters.  The safest solution is to use 7-bit ISO-2022-JP.  This by
+definition (sort of; I'm cheating here but it works) gives 8-bit
+characters over to the Latin-1 character set, and forces ISO 2022
+escape sequences for both Japanese and ASCII.  (For the character sets
+that kterm supports, which is a subset of the Mule character sets,
+etc/HELLO can be made to display properly on a kterm using this
+technique; that's about a dozen different character sets.)
+
+It may be possible to use the Unicode xterm, but you will have to cope
+with ugly fonts for sure, and I'm not use that Unicode xterms actually
+deal with double-width fonts properly yet.  And you have all the
+problems that come with lack of Unicode support in most applications.
+
+    Gerhard&gt; german special characters (umlauts) AND japanese input
+    Gerhard&gt; (kinput2). I can only get one of them working, depending
+    Gerhard&gt; on the LANG variable.
+
+    Gerhard&gt; I don't know whether it is a general problem
+
+This is POSIX-standard braindeadness, not a Japanese-only problem.
+It's a general problem.  The currently more or less widely implemented
+standards (POSIX)  are not intended for multilingual use.  Unicode
+only gets halfway there as normally implemented, and it doesn't deal
+at all with the problems introduced by POSIX conformance.
+
+Set LANG=POSIX, and use `LANG=de_DE command ...' to invoke commands
+where you only need one of the languages.  Where you need both in the
+same document ...
+
+... probably the only reasonable answer is Emacs/Mule.  I recommend
+XEmacs 21.1, of course, but mainline GNU Emacs 20.4 and up are all
+good solutions as well.
+
+This may also be a workaround for the *term problem; when I must deal
+with multilingual texts in a command-line context, I use shell-mode.
+This gives access to all the charset-transformation functions of Emacs
+LISP.  It would probably be possible to cook up a mode to do those
+things with keystroke bindings, but I just access the LISP interpreter
+on the fly since I do it rarely.  That is probably not a solution for
+you, but if Emacs sounds like a reasonable solution to you I'd be
+happy to help with Emacs configuration to make this reasonably
+painless, at least for Japanese + German.
+
+In order to get a bilingual (neither of them English) system working,
+you either have to cope with ISO 2022 in all its complexity, or use
+Unicode.  Neither is an optimal solution as yet (and ISO 2022 is on
+its way out), since almost nothing supports them properly.  However,
+it should be reasonably easy to do TeX (with CJK) and email.[2]  Lyx is
+out, as are almost all WYSIWYG apps.  Yudit is a possibility if you can
+find a TeX supporting Unicode (Omega?).
+
+
+
+Footnotes: 
+[1]  I admit it, I still use pTeX.  It's very high on my list of
+priorities to replace.
+
+[2]  I've only done any of this kind of thing as proof-of-concept;
+I've never needed it in a production context.  So there are probably a
+lot of traps I haven't encountered yet.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00126" HREF="msg00126.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+<UL><LI><EM>From:</EM> Tony Laszlo &lt;laszlo@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00127" HREF="msg00127.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00163" HREF="msg00163.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+<UL><LI><EM>From:</EM> "Gerhard Schuck" &lt;geschu@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00118" HREF="msg00118.html">German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+<UL><LI><EM>From:</EM> "Gerhard Schuck" &lt;geschu@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00121.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00123.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00121.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00126.html">Re: German umlauts in japanese RedHat 6.2 don't work</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00122"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00122"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

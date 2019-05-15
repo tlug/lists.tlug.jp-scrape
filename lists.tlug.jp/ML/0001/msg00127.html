@@ -1,0 +1,208 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: J email from linux to Win98 -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 24 Jan 2000 09:50:30 +0900 -->
+<!--X-Message-Id: 14475.41400.711346.146483@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.000122132831.s&#45;luppescu@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00126.html">Date Prev</A>][<A HREF="msg00128.html">Date Next</A>][<A HREF="msg00126.html">Thread Prev</A>][<A HREF="msg00148.html">Thread Next</A>][<A HREF="maillist.html#00127">Date Index</A>][<A HREF="threads.html#00127">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: J email from linux to Win98</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG list &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: J email from linux to Win98</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 24 Jan 2000 09:50:00 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00118.html">XFMail.000122132831.s-luppescu@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00118.html">XFMail.000122132831.s-luppescu@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Stuart" == Stuart Luppescu &lt;s-luppescu@example.com&gt; writes:
+
+    Stuart&gt; When I send mail to people with Japanese systems, they are
+    Stuart&gt; able to read the mail fine, it seems. However, when I send
+    Stuart&gt; mail to my wife, who uses US Windows 98, with Outlook with
+    Stuart&gt; the Japanese IME, it appears to her as dollar signs,
+    Stuart&gt; graphics symbols and alphanumeric characters.
+
+This is because your mail is going out in EUC-JP (I see your
+.signature has reverted to EUC-JP).  As is typical of Japanese
+standards, EUC-JP (alone among the Asian EUC encodings if rumor is
+correct) _assumes_ that 8-bit characters are JIS.  (All rumors that
+places like Beijing and Paris exist on the same Internet as the
+University of Tokyo should be ignored.)
+
+Japanese Windows of course makes the same mistake (that's why Japanese
+mail labeled as Croatian is correctly read by Japanese Outhouse
+Excess &lt;DAVE_BARRY&gt;I am NOT making this up!&lt;/DAVE_BARRY&gt;).  US Windows
+makes the equally ugly but (outside of Japan) much more plausible
+mistake of presuming ISO-8859-1.  Thus the mojibake.
+
+You probably can't fix this reliably with a MIME header, since Outhose
+commonly ignores them in favor of its own prejudices.
+
+    Stuart&gt; Does anyone have any suggestions
+
+1.  Teach your wife to use Linux.
+2.  Teach GNU Emacs not to send mail in EUC (no guarantee, but will
+    work with high probability).
+3.  Use TM (not recommended, it is no longer supported and has a long
+    track record of screwing up other applications within Emacs).
+4.  Use Gnus with TM or SEMI.  TM has the same problems as with normal
+    Emacs Mail-mode, and SEMI-Gnus is known to do some very strange
+    things on occasion (same author as TM; Tomo cares far more about
+    the rights of characters (ie, moji) than he does about those of
+    human readers).
+5.  Use Mew.
+6.  Learn Esperanto together.  Then you can both suffer.  ;-)
+7.  Manually convert the mail text to ISO-2022-JP (see the
+    documentation for `encode-coding-region') and add the headers
+
+    MIME-Version: 1.0
+    Content-Type: text/plain;charset=iso-2022-jp
+
+(OK, OK, that's not very friendly.  Add
+
+(defun mule-to-iso-2022-jp ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (if (search-forward mail-header-separator nil t)
+        (encode-coding-region (point) (point-max) 'iso-2022-jp)
+      (error "um, excuse me, but this doesn't seem to be a mail buffer!"))))
+(define-key global-map [(control ?c) (?i)] 'mule-to-iso-2022-jp)
+
+to your .emacs.)
+
+I probably should go back to work now....  but there's more where
+those came from.
+
+    Stuart&gt; (aside from using VM, which I can't use because my mail
+    Stuart&gt; server is IMAP)?
+
+Never say "can't" with respect to Emacs.  ;-)  One possibility would
+be to defeat VM's reading capabilities by putting
+
+		     (setq vm-auto-get-new-mail nil)
+
+in ~/.vm and using VM to send mail only.  I believe that once you load
+VM, it customizes Mail mode to use VM functions.  If not, put
+
+	 (define-key global-map [(control ?x) (?m)] 'vm-mail)
+
+in .emacs.  That might actually work without loading VM, depending on
+how the autoloading is set up Emacs.  Or use `(load-library "vm-mail")'.
+
+VM does IMAP now, but it treats it like POP3 and downloads it all.
+This might be unacceptable to you, but also might be worth a try.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00148" HREF="msg00148.html">Re: tlug: J email from linux to Win98</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mike.fabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00118" HREF="msg00118.html">tlug: J email from linux to Win98</A></STRONG>
+<UL><LI><EM>From:</EM> Stuart Luppescu &lt;s-luppescu@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00126.html">Re: tlug: J email from linux to Win98</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00128.html">Re: tlug: SmartMedia and Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00126.html">Re: tlug: J email from linux to Win98</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00148.html">Re: tlug: J email from linux to Win98</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00127"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00127"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  Git challenged (maintaining an Android build) -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 31 Aug 2009 21:30:09 +0900 -->
+<!--X-Message-Id: 87d46cupio.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 2000d7bd0908310407l6b33550qcf872e7eda927d8e@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00502.html">Date Prev</a>][<a href="msg00504.html">Date Next</a>][<a href="msg00502.html">Thread Prev</a>][<a href="msg00505.html">Thread Next</a>][<a href="maillist.html#00503">Date Index</a>][<a href="threads.html#00503">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  Git challenged (maintaining an Android build)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 31 Aug 2009 21:38:39 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Git%20challenged%20%28maintaining%20an%20Android%20build%29">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  Git challenged (maintaining an Android build)</strong></li>
+<li>References: &lt;<a href="mailto:2000d7bd0908310407l6b33550qcf872e7eda927d8e@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Git%20challenged%20%28maintaining%20an%20Android%20build%29">2000d7bd0908310407l6b33550qcf872e7eda927d8e@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Shawn Brown writes:
+ &gt; Hi,
+ &gt; 
+ &gt; I want to build Android from source overtime as it changes.  I also
+ &gt; need to add in the Google applications that I can pull from my phone
+ &gt; now but aren't in the Android source (there is other proprietary stuff
+ &gt; for the camera and audio etc that isn't in source).
+ &gt; 
+ &gt; How can I do that in Git.  I really don't have my head around this.
+
+1. clone the git repository
+2. switch to a new branch, say 'git checkout -b mystuff'
+3. cp the files you need into place
+4. add them with 'git add .'
+5. git commit -m &quot;added my files&quot;
+6. fix up the build infrastructure
+7. git commit -a -m &quot;build infra changes to support my version&quot;
+
+Then when there's a new version
+
+8. git fetch $ANDROID-REPO master:master
+9. git rebase master
+
+Fix any conflicts (these should be very few as you describe your
+scenario) and commit any changes.
+
+Note that after step 2 you never leave your branch.  That's why in
+step 7 you 'fetch' rather than 'pull' (pull would proceed to merge;
+this should work just as well, except that any changes you make to
+your private configuration over time get spread out in history; the
+fetch-and-rebase method clumps them together at the recent end of
+history).
+
+It's possible that there's an even simpler way to do this:
+
+1. clone the git repository
+2. cp the files you need into place
+3. add them with 'git add .'
+4. git commit -m &quot;added my files&quot;
+5. fix up the build infrastructure
+6. git commit -a -m &quot;build infra changes to support my version&quot;
+
+Then when there's a new version
+
+7. git pull --rebase
+
+I haven't tried this myself, though (it's a relatively new option).
+
+ &gt; I'm on the cupcake branch now but when things go over to donut, then
+ &gt; I'll need to reapply the same changes to build files and include the
+ &gt; same packages for addition.
+
+1. git fetch $ANDROID_REPO donut
+2. git rebase --onto donut cupcake master
+
+should do the trick.
+
+ &gt; Sorry if this seems like a simple question but even after reading how
+ &gt; people advise using branches to select just the essential of something
+ &gt; they developed, I'm not sure in a simple case like mine if that is the
+ &gt; best.  I mean I'm going to have uncommitted stuff when/if I go to
+ &gt; switch branches.
+
+&quot;Uncommitted&quot;?  Why?  Do you mean &quot;unpushed&quot;?
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00505" href="msg00505.html">Re: [tlug] Git challenged (maintaining an Android build)</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00502" href="msg00502.html">[tlug] Git challenged (maintaining an Android build)</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00502.html">[tlug] Git challenged (maintaining an Android build)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00504.html">[tlug] Method/tools to create a video from images,	but with control of when the images and for how long they show.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00502.html">[tlug] Git challenged (maintaining an Android build)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00505.html">Re: [tlug] Git challenged (maintaining an Android build)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00503"><strong>Date</strong></a></li>
+<li><a href="threads.html#00503"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

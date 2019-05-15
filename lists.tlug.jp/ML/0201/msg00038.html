@@ -1,0 +1,311 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] RE: need help: Orinoco wireless card setup -->
+<!--X-From-R13: [nxbgb Enqnuveb <fnqnuvebNpf.hgrknf.rqh> -->
+<!--X-Date: Mon, 21 Jan 2002 11:18:07 +0900 (JST) -->
+<!--X-Message-Id: Pine.GSO.4.33.0201202015020.3636&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00037.html">Date Prev</a>][<a href="msg00039.html">Date Next</a>][<a href="msg00041.html">Thread Prev</a>][<a href="msg00043.html">Thread Next</a>][<a href="maillist.html#00038">Date Index</a>][<a href="threads.html#00038">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] RE: need help: Orinoco wireless card setup</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] RE: need help: Orinoco wireless card setup</strong></li>
+<li><strong>From</strong>: <strong>Makoto Sadahiro &lt;<A HREF="mailto:sadahiro@DOMAIN.HIDDEN">sadahiro@example.com</A>&gt;</strong></li>
+<li>Date: Sun, 20 Jan 2002 20:18:06 -0600 (CST)</li>
+<li>Content-type: TEXT/PLAIN; charset=US-ASCII</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+RE: need help: Orinoco wireless card setup
+From: Makoto Sadahiro &lt;sadahiro@example.com&gt;
+ To: tlug@example.com
+ Date: Sun, 20 Jan 2002 19:47:36 -0600
+
+Hi,
+
+someone just sent me a message asking if I managed to set this up
+successfully. I deleted the message(with email address) by mistake so I am
+responding to the group.
+
+I use SuSE 7.3 with IBM A21p. SuSE pretty much supported Orinoco wireless
+card out of box. I just had to edit few lines in
+/etc/pcmcia/wireless.opts.
+Here is my wireless.opts. Please note that I do not have any encription
+turned on.
+
+# Wireless LAN adapter configuration
+#
+# Theory of operation :
+#
+# The script attempts to match a block of settings to the specific
+wireless
+# card inserted, the *first* block matching the card is used.
+# The address format is &quot;scheme,socket,instance,hwaddr&quot;, with * as a
+wildcard.
+# 'scheme' is the pcmcia scheme (set via 'cardctl scheme XXX').
+# 'hwaddr' is the unique MAC address identifier of the wireless card.
+# The MAC address is usually printed on the card,
+# or can be found via ifconfig.
+# Some examples here use only half of the MAC address with a wildcard to
+# match a whole family of cards...
+#
+# All the Wireless specific configuration is done through the Wireless
+# Extensions, so we will just call 'iwconfig' with the right parameters
+# defined below.
+# Of course, you need to have iwconfig installled on your system.
+# To download iwconfig, or for more info on Wireless Extensions :
+#<A  HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html">http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html</A>
+#
+# Note : you don't need to fill all parameters, leave them blank, in most
+# cases the driver will initialise itself with sane defaults values or
+# automatically figure out the value... And no drivers do support all
+# possible settings...
+#
+# If you make any mistakes, you'll get a cryptic message in the system
+# log. You'll need to figure out on your own which parameter was wrong:
+#   cardmgr[310]: executing: './network start wvlan0'
+#   cardmgr[310]: + SIOCSIWMODE: Invalid argument
+# I've tried to give more troubleshooting help at :
+#<A  HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html#debug">http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html#debug</A>
+# In case of doubts, just check &quot;/etc/pcmcia/wireless&quot; for the gory
+details...
+#
+# Note also that this script will work only with the original Pcmcia
+scripts,
+# and not with the default Red Hat scripts. Send a bug report to Red Hat
+;-)
+#
+# Finally, send comments and flames to me, Jean Tourrilhes &lt;jt@example.com&gt;
+#
+
+case &quot;$ADDRESS&quot; in
+
+# Here is an example of scheme matching
+# Activate with &quot;cardctl scheme essidany&quot;
+
+# Pick up any Access Point, should work on most 802.11 cards
+essidany,*,*,*)
+  INFO=&quot;Any ESSID&quot;
+  ESSID=&quot;any&quot;
+  MODE=&quot;Infrastructure&quot;
+#  MODE=&quot;Ad-Hoc&quot;
+  ;;
+
+# Here are a few examples with a few Wireless LANs supported...
+# The matching is done on the first 3 bytes of the MAC address
+
+# Lucent Wavelan IEEE (+ Orinoco, RoamAbout and ELSA)
+# Note : wvlan_cs driver only, and version 1.0.4+ for encryption support
+*,*,*,00:60:1D:*|*,*,*,00:02:2D:*)
+  INFO=&quot;Wavelan&quot;
+  ESSID=&quot;any&quot;
+  MODE=&quot;Infrastructure&quot;
+#  MODE=&quot;Ad-Hoc&quot;
+#  MODE=&quot;Managed&quot;
+  RATE=&quot;auto&quot;
+  KEY=&quot;off&quot;
+#  KEY=&quot;s:secu1&quot;
+# To set all four keys, use :
+#  KEY=&quot;s:secu1 [1] key s:secu2 [2] key s:secu3 [3] key s:secu4 [4] key
+[1]&quot;
+# For the RG 1000 Residential Gateway: The ESSID is the identifier on
+# the unit, and the default key is the last 5 digits of the same.
+#  ESSID=&quot;084d70&quot;
+#  KEY=&quot;s:84d70&quot;
+  ;;
+
+# Cisco/Aironet 4800/340
+# Note : MPL driver only (airo/airo_cs), version 1.3 or later
+*,*,*,00:40:96:*)
+  INFO=&quot;Cisco/Aironet example (Cisco default settings)&quot;
+  ESSID=&quot;any&quot;
+# To set all four ESSID, use iwconfig v21 and the same trick as above
+  MODE=&quot;Managed&quot;
+#  RATE=&quot;11M auto&quot;
+#  KEY=&quot;off&quot;
+  ;;
+
+# Samsung MagicLan (+ some other PrismII cards)
+# Note : Samsung binary library driver, version 1.20 or later
+*,*,*,00:00:F0:*|*,*,*,00:02:78:*)
+  INFO=&quot;Samsung MagicLan example (Samsung default settings)&quot;
+  ESSID=&quot;any&quot;
+  MODE=&quot;Managed&quot;
+  CHANNEL=&quot;4&quot;
+  RATE=&quot;auto&quot;
+#  KEY=&quot;883e-aa67-21 [1] key 5501-d0da-87 [2] key 91f5-3368-6b [3] key
+2d73-31b7-96 [4]&quot;
+#  IWCONFIG=&quot;power on&quot;
+  ;;
+
+# Raytheon Raylink/WebGear Aviator2.4
+# Note : doesn't work yet, please use for debugging only :-(
+*,*,*,00:00:8F:*|*,*,*,00:00:F1:*)
+  INFO=&quot;Raylink/Aviator2.4 example (Aviator default ad-hoc setting)&quot;
+  ESSID=&quot;ADHOC_ESSID&quot;
+  MODE=&quot;Ad-Hoc&quot;
+  RATE=&quot;auto&quot;
+  IWPRIV=&quot;set_framing 1&quot;
+  ;;
+
+# Old Lucent Wavelan
+*,*,*,08:00:0E:*)
+  INFO=&quot;Wavelan example (Lucent default settings)&quot;
+  NWID=&quot;0100&quot;
+  MODE=&quot;Ad-Hoc&quot;
+  FREQ=&quot;2.425G&quot;
+  KEY=&quot;off&quot;
+  ;;
+
+# Netwave (Xircom Netwave/Netwave Airsurfer)
+*,*,*,00:80:C7:*)
+  INFO=&quot;Netwave example (Netwave default settings)&quot;
+  NWID=&quot;100&quot;
+  KEY=&quot;00&quot;
+  ;;
+
+# Proxim RangeLan2/Symphony (what is the MAC address ???)
+*,*,*,XX:XX:XX:*)
+  INFO=&quot;Proxim RangeLan2/Symphony example&quot;
+  NWID=&quot;0&quot;
+  MODE=&quot;Master&quot;
+  CHANNEL=&quot;15&quot;
+  IWPRIV=&quot;setsubchan 1&quot;
+  ;;
+
+# No Wires Needed Swallow 550 and 1100 setting (what is the MAC address
+???)
+*,*,*,XX:XX:XX:*)
+  INFO=&quot;NWN Swallow example&quot;
+  ESSID=&quot;session&quot;
+  KEY=&quot;0000-0000-00 open&quot;
+  ;;
+
+# Symbol Spectrum24 setting (what is the MAC address ???)
+*,*,*,XX:XX:XX:*)
+  INFO=&quot;Symbol Spectrum24 example&quot;
+  ESSID=&quot;Essid string&quot;
+  ;;
+
+# Generic example (decribe all possible settings)
+*,*,*,*)
+  INFO=&quot;Fill with your own settings...&quot;
+  # ESSID (extended network name) : My Network, any
+  ESSID=&quot;&quot;
+  # NWID/Domain (cell identifier) : 89AB, 100, off
+  NWID=&quot;&quot;
+  # Operation mode : Ad-Hoc, Managed, Master, Repeater, Secondary, auto
+  MODE=&quot;&quot;
+  # Frequency or channel : 1, 2, 3 (channel) ; 2.422G, 2.46G (frequency)
+  FREQ=&quot;&quot;
+  CHANNEL=&quot;&quot;
+  # Sensitivity (cell size + roaming speed) : 1, 2, 3 ; -70 (dBm)
+  SENS=&quot;&quot;
+  # Bit rate : auto, 1M, 11M
+  RATE=&quot;&quot;
+  # Encryption key : 4567-89AB-CD, s:password
+  KEY=&quot;&quot;
+  # RTS threshold : off, 500
+  RTS=&quot;&quot;
+  # Fragmentation threshold : off, 1000
+  FRAG=&quot;&quot;
+  # Other iwconfig parameters : power off, ap 01:23:45:67:89:AB
+  IWCONFIG=&quot;&quot;
+  # iwspy parameters : + 01:23:45:67:89:AB
+  IWSPY=&quot;&quot;
+  # iwpriv parameters : set_port 2, set_histo 50 60
+  IWPRIV=&quot;&quot;
+  ;;
+esac
+
+
+--
+Makoto Sadahiro
+ sadahiro@example.com  www.cs.utexas.edu/users/sadahiro
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00037.html">RE: [tlug] Newly compiled Kernel woes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00039.html">Re: [tlug] Newly compiled Kernel woes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00041.html">RE: [tlug] Newly compiled Kernel woes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00043.html">[tlug] compiling kernel 2.5</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00038"><strong>Date</strong></a></li>
+<li><a href="threads.html#00038"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 11 May 2001 01:34:07 +0900 -->
+<!--X-Message-Id: 15098.49919.150560.596952@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104120117.KAA05815@example.com -->
+<!--X-Reference-Id: 20010412122715.A19988@example.com -->
+<!--X-Reference-Id: s3ty9t6o9n6.fsf@example.com -->
+<!--X-Reference-Id: 15062.46553.961039.412030@example.com -->
+<!--X-Reference-Id: s3tlmozkf7e.fsf@example.com -->
+<!--X-Reference-Id: 15071.5243.25519.159705@example.com -->
+<!--X-Reference-Id: s3t8zk5xrx2.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00174.html">Date Prev</A>][<A HREF="msg00177.html">Date Next</A>][<A HREF="msg00173.html">Thread Prev</A>][<A HREF="msg00188.html">Thread Next</A>][<A HREF="maillist.html#00175">Date Index</A>][<A HREF="threads.html#00175">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:mfabian@example.com">mfabian@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 11 May 2001 01:34:07 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00173.html">s3t8zk5xrx2.fsf@example.com</A>&gt;</LI>
+<LI>References: &lt;200104120117.KAA05815@example.com&gt;&lt;20010412122715.A19988@example.com&gt;&lt;s3ty9t6o9n6.fsf@example.com&gt;&lt;15062.46553.961039.412030@example.com&gt;&lt;s3tlmozkf7e.fsf@example.com&gt;&lt;15071.5243.25519.159705@example.com&gt;&lt;<A HREF="msg00173.html">s3t8zk5xrx2.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;ybeIm.A.WaB.CUs-6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Mike" == Mike Fabian &lt;mfabian@example.com&gt; writes:
+
+    Mike&gt; Same for XEmacs,
+
+    Mike&gt;     mfabian@example.com:~$ LC_CTYPE=de_DE xemacs
+
+    Mike&gt; won't switch on XIM either. And gives me German in the
+    Mike&gt; menubar, which is certainly wrong!
+
+Well, screw you too X11R6.  (Sorry, Mike, I've had a bad day ... I'm
+not yelling at you.)  Here are all the setlocale calls (and some pithy
+comments) in XEmacs 21.4.2:
+
+input-method-motif.c:     routine calls setlocale(LC_ALL, lang) which fucks up our lower-level
+input-method-motif.c:  if ((locale = setlocale (LC_ALL, "")) == NULL)
+input-method-motif.c:      if ((locale = setlocale (LC_ALL, "C")) == NULL)
+input-method-motif.c:      if ((locale = setlocale (LC_ALL, "C")) == NULL)
+input-method-motif.c:  setlocale(LC_NUMERIC, "C");
+input-method-xlib.c:     routine calls setlocale(LC_ALL, lang) which fucks up our lower-level
+input-method-xlib.c:  if ((locale = setlocale (LC_ALL, "")) == NULL)
+input-method-xlib.c:      if ((locale = setlocale (LC_ALL, "C")) == NULL)
+input-method-xlib.c:      if ((locale = setlocale (LC_ALL, "C")) == NULL)
+input-method-xlib.c:  setlocale(LC_NUMERIC, "C");
+intl.c:  setlocale (LC_ALL, "");
+intl.c:  setlocale(LC_NUMERIC, "C");
+redisplay-x.c:	    text).  You could maybe call setlocale() frequently
+
+So the setlocale(LC_ALL,"") calls are picking up the LC_CTYPE setting
+in the environment.  But setlocale(LC_CTYPE,"") would do the same thing.
+
+Obviously I need to do some research here.  Thank you very much for
+finding this.  I haven't a _clue_ why the X implementers decided to do
+things this way.
+
+    Mike&gt; Hmm, I'm not yet convinced. I don't understand why kterm and
+    Mike&gt; rxvt use setlocale(LC_CTYPE, "") instead of
+    Mike&gt; setlocale(LC_ALL, "") though.
+
+I would call it a Basically Undocumented Given in X11.
+
+What's going on is that X11 for whatever reason (I _will_ read the XIM
+docs but I doubt it's there) is apparently making its decision about
+various things including which XIM and which font from an XFontSet
+will be chosen based on LC_CTYPE.  These programs are thus resetting
+LC_CTYPE to reflect what the user wants to see and type, and accepting
+that sorting and character classes may get bollixed up.
+
+I _think_ that what could be done here for XIM is
+
+  char save_locale[A_BIG_ENOUGH_NUMBER];
+  strcpy(save_locale, setlocale(LC_CTYPE,NULL));
+  setlocale(LC_CTYPE,getenv("LANG"));
+  /* initialize the XIM, and maybe the XIC */
+  setlocale(LC_CTYPE, save_locale);
+
+because XIM once initialized has no need to care about the locale, it
+saves it in the XIM object.  A similar dodge should work for
+XFontSets, as they are "bound to a locale" when they are created.
+By doing this, the rest of your program can ignore the need to cater
+to BUGs in X.
+
+    Mike&gt; I don't think it makes sense to make kterm work only for the
+    Mike&gt; first locale in this internal list. How should the user know
+    Mike&gt; that kterm has an internal list of locales and that he
+    Mike&gt; *must* set lang to the first value of this internal list to
+    Mike&gt; make it work.
+
+[Jim Breen, are you paying attention here?  This is a typical result of
+an attempt to guess what the user wants and force it to happen.
+
+It doesn't _have_ to be this way, but generally it does work out this
+way.  This is why I oppose "Do What The User Means" programming in
+practice.]
+
+    Mike&gt; I think this is nonsense and therefore my
+    Mike&gt; patch makes sense.
+
+Well, I don't know if your patch makes sense, but I'm about ready to
+do "dpkg --remove kterm" after reading your post.  What a crock!
+
+My hat's off to you, Mike, if you can get that pile of s--t to work
+reliably.
+
+    Mike&gt; When does Debian start an input method for X11 like kinput2?
+    Mike&gt; Does Debian check for LANG to decide whether to start an XIM
+    Mike&gt; server?
+
+It doesn't as far as I know ... that's still up to the user in Debian.
+But I'll investigate.
+
+    Mike&gt; Considering that, it is probably not very nice that KDE and
+    Mike&gt; GNOME don't use the X11 resources mechanism but have their
+    Mike&gt; setup in ~/.kde2/, ~/.gnome/, ~/.gtkrc and files like that.
+
+I agree in principle.  However, the X resource mechanism is very
+hairy.  There is an Emacs xrdb mode of some sort, but I'm sure it's
+not very intelligent.
+
+Also, it doesn't matter to GNOME/GTK+ at this stage: they are single-
+display systems.  Just like Windows.  Are you surprised?  I don't know
+about KDE/Qt.  There's no reason why they couldn't use the same kind
+of mechanism (basically, just put the whole file in a GNOME_RESOURCES
+property on the root window of the display).
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00173" HREF="msg00173.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00174.html">Announce May 11th Tech Meeting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00177.html">Re: Familiar Distribution for iPAQ</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00173.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00188.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00175"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00175"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

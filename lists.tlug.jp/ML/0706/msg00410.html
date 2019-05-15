@@ -1,0 +1,156 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] XEmacs and MMM&#45;Mode: The Hack&#45;tacular Saga Continues -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Wed, 20 Jun 2007 11:20:55 +0900 -->
+<!--X-Message-Id: d8fcc0800706191913m76754603l198f35ac3596bb0@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00409.html">Date Prev</a>][<a href="msg00411.html">Date Next</a>][<a href="msg00400.html">Thread Prev</a>][<a href="msg00413.html">Thread Next</a>][<a href="maillist.html#00410">Date Index</a>][<a href="threads.html#00410">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 20 Jun 2007 11:13:58 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20XEmacs%20and%20MMM-Mode:%20The%20Hack-tacular%20Saga%20Continues">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">I have solved a few more MMM-Mode problems, but this one still plagues me.</pre><br>
+<pre style="margin: 0em;">I like my code folded, and indent-mode does a good job of this (from a
+user's perspective; SJT's hatred of the implementation
+notwithstanding). But, as we know from a previous thread[1],
+indent-mode and mmm-mode do not play nicely.</pre><br>
+<pre style="margin: 0em;">So I thought I'd be clever:</pre><br>
+<pre style="margin: 0em;"><br>; Add code folding to Perl mode (but not in mmm-mode, due to hack-cakes)
+(add-hook    'cperl-mode-hook        'my-fold-hook)
+(remove-hook 'mmm-mason-submode-hook 'my-fold-hook)</pre><br>
+<pre style="margin: 0em;"><br>But this does not work as expected. Nor does:</pre><br>
+<pre style="margin: 0em;"><br>(remove-hook 'mmm-mode-hook 'my-fold-hook)
+(remove-hook 'mmm-major-mode-hook 'my-fold-hook)</pre><br>
+<pre style="margin: 0em;"><br>I'm afraid I'll have to try something like the following example from
+the XEmacs Lisp Reference[2]:
+	</pre><br>
+<pre style="margin: 0em;">(add-hook 'text-mode-hook
+ (function (lambda ()
+             (setq modeline-format
+                   '(modeline-modified
+                     &quot;Emacs: %14b&quot;
+                     &quot;  &quot;
+                     default-directory
+                     &quot; &quot;
+                     global-mode-string
+                     &quot;%[(&quot;
+                     mode-name
+                     minor-mode-alist
+                     &quot;%n&quot;
+                     modeline-process
+                     &quot;) %]---&quot;
+                     (-3 . &quot;%p&quot;)
+                     &quot;-%-&quot;)))))</pre><br>
+<pre style="margin: 0em;"><br>But I fear that.</pre><br>
+<pre style="margin: 0em;">Is there an easy way to accomplish what I want, namely just turning
+indent-mode off for mmm-mode or mmm-mason-submode?</pre><br>
+<pre style="margin: 0em;">TIA,
+Josh</pre><br>
+<pre style="margin: 0em;">[1] <a  href="http://www.tlug.jp/ML/0706/msg00383.html">http://www.tlug.jp/ML/0706/msg00383.html</a>
+[2] <a  href="http://www.xemacs.org/Documentation/21.5/html/lispref_34.html#SEC433">http://www.xemacs.org/Documentation/21.5/html/lispref_34.html#SEC433</a></pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00413" href="msg00413.html">[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00409.html">Re: [Lingo] Re: [tlug] Correct particle to use</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00411.html">Re: [tlug] [OT?]A Hard Drive Question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00400.html">[tlug] Guido van Rossum cracks me up!</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00413.html">[tlug] XEmacs and MMM-Mode: The Hack-tacular Saga Continues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00410"><strong>Date</strong></a></li>
+<li><a href="threads.html#00410"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

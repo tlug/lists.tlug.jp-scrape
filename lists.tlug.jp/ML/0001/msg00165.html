@@ -1,0 +1,180 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: ppa, -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 26 Jan 2000 19:03:06 +0900 -->
+<!--X-Message-Id: 14478.50749.877119.388245@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.10001250117240.21004&#45;100000@example.com -->
+<!--X-Reference-Id: 3.0.5.32.20000126183240.0080abc0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00164.html">Date Prev</A>][<A HREF="msg00166.html">Date Next</A>][<A HREF="msg00164.html">Thread Prev</A>][<A HREF="msg00169.html">Thread Next</A>][<A HREF="maillist.html#00165">Date Index</A>][<A HREF="threads.html#00165">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: ppa,</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: ppa, </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 26 Jan 2000 19:02:37 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00164.html">3.0.5.32.20000126183240.0080abc0@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00146.html">Pine.LNX.4.10.10001250117240.21004-100000@example.com</A>&gt;&lt;<A HREF="msg00164.html">3.0.5.32.20000126183240.0080abc0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;798a5047@example.com&gt; writes:
+
+    Ulrike&gt; Up to now I did not know that lsmod existed. This is what
+    Ulrike&gt; I get after all this insmod et al.:
+
+    Ulrike&gt; [root@example.com /root]# lsmod
+    Ulrike&gt; Module                  Size  Used by
+    Ulrike&gt; parport_probe           2980   0  (autoclean) (unused)
+    Ulrike&gt; parport                 7060   0  [parport_probe]
+
+I don't understand why parport_pc isn't there; try "modprobe
+partport_pc".  If that works, then "modprobe ppa".  If they don't
+work, use the "insmod /path/to/modules/partport_pc.o" versions of the
+commands.  If that doesn't work, mail us the error messages.
+
+On another matter, check whether /etc/modules.conf (or possibly
+/etc/conf.modules) contains the line "alias parport_lowlevel
+parport_pc".  If not, that probably explains why parport_pc doesn't
+get loaded at boot.  (In fact, I don't understand why you say you had
+to insmod; the parport stuff normally gets loaded at boot AFAIK.  I'm
+not sure when, my uptime is too long on the box where parport is a
+module and the logs have rolled over about elevnty-three times since
+boot :-)
+
+(parport_pc is what talks directly to the hardware.  According to the
+system there are several other possible lowlevel drivers.  This is why
+parport, which cannot talk to the hardware without the help of a
+lowlevel driver, doesn't depend on parport_pc---it might not be the
+right one for your hardware.  I don't know if it could depend
+indirectly through the alias above; but apparently not, probably
+there's no interface for an alias---which doesn't actually have any
+code to define symbols!---to export symbols so that dependencies could
+be determined.  So modprobe doesn't pull it in.)
+
+    Austin&gt; might be a good idea, plus a quick grep shows that the
+    Austin&gt; parport driver is exporting the symbol in question so...).
+
+    Ulrike&gt; Aha?
+
+Well, up to the hash at the end of the name which is used to make
+absolutely sure that you can't use the module except with the kernel
+it was compiled for.  So that doesn't really tell you anything.
+
+I don't see anything strange in your .config (quick skim, maybe Austin
+will find something?).  If the modprobes above don't work, send us the
+error messages.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00169" HREF="msg00169.html">Re: tlug: ppa, -&gt; success!!!</A></STRONG>
+<UL><LI><EM>From:</EM> Ulrike Schmidt &lt;798a5047@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00146" HREF="msg00146.html">Re: tlug: ppa,</A></STRONG>
+<UL><LI><EM>From:</EM> "Austin K. Kurahone" &lt;austin@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00164" HREF="msg00164.html">Re: tlug: ppa,</A></STRONG>
+<UL><LI><EM>From:</EM> Ulrike Schmidt &lt;798a5047@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00164.html">Re: tlug: ppa,</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00166.html">Re: tlug: Gateway P3-500 is freaking me out (install)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00164.html">Re: tlug: ppa,</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00169.html">Re: tlug: ppa, -&gt; success!!!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00165"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00165"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

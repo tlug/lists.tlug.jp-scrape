@@ -1,0 +1,173 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] git: push from behind the firewall -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Mon, 11 Jul 2011 15:09:23 +0900 -->
+<!--X-Message-Id: 4E1A91F4.9090809@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00004.html">Date Prev</a>][<a href="msg00006.html">Date Next</a>][<a href="msg00015.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a href="maillist.html#00005">Date Index</a>][<a href="threads.html#00005">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] git: push from behind the firewall</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 11 Jul 2011 15:02:28 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20git:%20push%20from%20behind%20the%20firewall">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] git: push from behind the firewall</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.17) Gecko/20110424 Thunderbird/3.1.10</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Another git question, that has me wondering if I'm trying to use it
+wrongly, or missing out on some clever command that only the gurus know
+about. [1]
+
+For context, I'm thinking about a development website, behind a
+firewall, and a live website. What I want to be able to do, on my
+development machine, is type:
+  git push live.example.com:~/www/
+
+And it would create the repository on live.example.com just as if I'd
+done git clone from there.
+
+Thinking it through, I don't even want the .git directory on the live
+server (no edits will be done there). So, how about:
+
+# The git equivalent of &quot;svn export&quot;
+git checkout-index -a --prefix=&quot;tmp/&quot;
+# Copy the files
+rsync -avz --delete tmp/ live.example.com:~/www/
+# Tidyup
+rm -rf tmp/
+
+
+Getting more sophisticated, I don't want documentation, examples, etc.
+uploaded, and also don't want the live server error logs and data
+deleted, so this may be better:
+
+git checkout-index -a --prefix=&quot;tmp/&quot;
+rsync -avz --delete tmp/{lib,myapp} live.example.com:~/www/
+rm -rf tmp/
+
+Now, only the two specified directories are kept in sync but, for
+instance, ~/www/logs/ is not touched.
+
+Thoughts, comments, advice all welcomed,
+
+Darren
+
+[1]: I started this email thinking I needed some clever ssh pipe
+solution to allow me to do something like &quot;git clone 127.0.0.1&quot; from the
+live server. Or, give up, and set up a central repository on a public
+IP. But after a bit more research, and thinking about the actual goal, I
+rather like the rsync solution I ended up with.
+
+
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00008" href="msg00008.html">[tlug]  git: push from behind the firewall</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00031" href="msg00031.html">Re: [tlug] git: push from behind the firewall</a></strong>
+<ul><li><em>From:</em> Jim Tittsler</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00004.html">[tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00006.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00015.html">Re: [tlug] Git: bring in a file from another branch</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">[tlug]  git: push from behind the firewall</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00005"><strong>Date</strong></a></li>
+<li><a href="threads.html#00005"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

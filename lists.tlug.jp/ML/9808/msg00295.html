@@ -1,0 +1,185 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: PCMCIA problem during TurboLinux install -->
+<!--X-From: Marcus Metzler <mocm@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Fri, 14 Aug 1998 18:09:56 +0900 -->
+<!--X-Message-Id: 13779.64648.888902.159998@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19980814174849U.chak@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00294.html">Date Prev</A>][<A HREF="msg00296.html">Date Next</A>][<A HREF="msg00293.html">Thread Prev</A>][<A HREF="msg00305.html">Thread Next</A>][<A HREF="maillist.html#00295">Date Index</A>][<A HREF="threads.html#00295">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: PCMCIA problem during TurboLinux install</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: PCMCIA problem during TurboLinux install</strong></LI>
+<LI><strong>From</strong>: <strong>Marcus Metzler &lt;<A HREF="mailto:mocm@example.com">mocm@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 14 Aug 1998 18:07:12 +0900 (JST)</LI>
+<LI>Content-Type: text/plain; charset=ISO-2022-JP</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00293.html">19980814174849U.chak@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00293.html">19980814174849U.chak@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Manuel M. T. Chakravarty writes:
+ &gt; Hi!
+ &gt; 
+ &gt; A colleague of me asked me about installing Linux on his
+ &gt; Sharp Mebius PJ (Sharp's B5 notebook).  As it has a NeoMagic
+ &gt; graphics chip, I told him that it should be no problem and
+ &gt; claimed that a TurboLinux install shouldn't take much longer
+ &gt; than an hour...but, much to my embarrassment, we ran into
+ &gt; some serious problems.
+ &gt; 
+ &gt; The machine doesn't have a builtin CD-ROM, so we need to use
+ &gt; some PCMCIA services.  I wanted to try an ftp install and we
+ &gt; tried using a PCMCIA Ethernet card (3com) that I used
+ &gt; successfully to install TL on my VAIA 505 -- so there is
+ &gt; definitely no problem with the card itself.  However, the
+ &gt; PCMCIA package didn't recognize the card, claiming it is an
+ &gt; `anonymous memory card'.  Nevertheless, in the log that I
+ &gt; get on one of the alternative consoles it seems that
+ &gt; pcmcia-cs recognizes the `i82365' and successfully loads the
+ &gt; corresponding module.
+ &gt; 
+ &gt; &gt;From the PCMCIA FAQ and a similar experience with some other
+ &gt; machine, I know that when probing the memory area fails,
+ &gt; pcmcia-cs always comes up with the idea that it found an
+ &gt; `anonymous memory card'.  So, I am quite sure it is just
+ &gt; this automatic probing that fails.  On a running Linux
+ &gt; machine I could `insmod' `i82365.o' with some explicit
+ &gt; arguments or edit /etc/pcmcia/config.opts to change the
+ &gt; probed memory area, interrupts etc, but it is not so easy
+ &gt; during an install.
+ &gt; 
+ &gt; Any ideas about what I can do?  Can I somehow give some
+ &gt; options to `i82365.o' or is there a /etc/pcmcia/config.opts
+ &gt; in the ramdisk image (there is none on the extrahw and supp
+ &gt; disks as far as I saw).  Do I have to create a new
+ &gt; initrd.img file *shiver*?  Does anybody have experience with
+ &gt; Linux on a Sharp Mebius PJ?
+ &gt; 
+You have to patch the pcmcia-cs sources. The PJ uses a new Ricoh
+controller which is of course not recognized by the i82365.o module. I just
+patched the i82365.c and some other files, so that it would be
+recognized as the known ricoh controller which is supported by
+pcmcia.cs (I forgot the number). After that the normal PCIC support
+worked the cardbus support doesn`t, yet.
+I gave Scott an image of a new extrahw disk which allows you to
+install Turbolinux. Unfortunately I found out that this only works for 
+the 1.9beta2 version. If you use that image and the 2.0 install disk
+it doesn`t work. There is some problem with the kernel version, but
+you can install the TL2.0 version with the beta disks. I could also
+make a new extrahw image foe the 2.0, but I was too lazy (or better to 
+busy :) ) to do that yet. If you really need it, I can try to do it
+over the weekend.
+
+Marcus
+
+----------------------------------------------------------------------------
+Dr. Marcus Metzler
+Department of Physics    | $B")(B $B#2#7#4!<#8#5#1#0(B
+Toho University          | $B@example.com)A%66;T;0;3#2!<#2!<#1(B
+Miyama 2-2-1, Funabashi, | $BElK.Bg3X(B  $BM}3XIt(B  $BJ*M}(B
+Chiba 274-8510           | 
+Japan			 |
+e-mail : mocm@example.com
+----------------------------------------------------------------------------  
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00305" HREF="msg00305.html">Re: tlug: PCMCIA problem during TurboLinux install</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00293" HREF="msg00293.html">tlug: PCMCIA problem during TurboLinux install</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00294.html">Re: Let's Note + TLJ2.0 (Re: tlug: gratitude)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00296.html">tlug: Re: Linux as Trade Mark</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00293.html">tlug: PCMCIA problem during TurboLinux install</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00305.html">Re: tlug: PCMCIA problem during TurboLinux install</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00295"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00295"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

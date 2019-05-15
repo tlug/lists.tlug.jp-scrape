@@ -1,0 +1,178 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: multi&#45;processor linux configuration ? -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 12:56:21 +0900 -->
+<!--X-Message-Id: 19981014125247K.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19981014120924M.chak@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00542.html">Date Prev</A>][<A HREF="msg00544.html">Date Next</A>][<A HREF="msg00541.html">Thread Prev</A>][<A HREF="msg00545.html">Thread Next</A>][<A HREF="maillist.html#00543">Date Index</A>][<A HREF="threads.html#00543">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: multi-processor linux configuration ?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:chak@example.com">chak@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: multi-processor linux configuration ?</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 12:52:47 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:darren@example.com">darren@example.com</A>, <A HREF="mailto:sali@example.com">sali@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Wed, 14 Oct 1998 12:09:24 +0900"&lt;<A HREF="msg00541.html">19981014120924M.chak@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00541.html">19981014120924M.chak@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Manuel" == Manuel M T Chakravarty &lt;chak@example.com&gt; writes:
+
+    Manuel&gt; "Andrew S. Howell" &lt;andy@example.com&gt; wrote,
+    &gt;&gt; &gt;&gt;&gt;&gt;&gt; "Darren" == Darren Cook &lt;darren@example.com&gt; writes:
+    &gt;&gt; 
+    Darren&gt; One interesting thing I read - the more machines you have,
+    Darren&gt; the more often you'll seem to have machine failures. So
+    Darren&gt; make sure the machines are easy to replace, and that your
+    Darren&gt; application can adapt to machines coming and going.
+    &gt;&gt;  I would just setup one master machine and then use rdist to
+    &gt;&gt; keep them all in sync. Keeping all the file systems ( partions
+    &gt;&gt; ) the same will make life a lot simpler. You should be able to
+    &gt;&gt; do the install of a new machine over then local net. Once a
+    &gt;&gt; very basic system is installed, rdist from the master machine
+    &gt;&gt; and your set.
+
+    Manuel&gt; I'd use `rsync':
+
+    Manuel&gt;   <A TARGET="_top" HREF="http://samba.anu.edu.au/rsync/">http://samba.anu.edu.au/rsync/</A>
+
+    Manuel&gt; Saves a lot of network traffic in case you apply some
+    Manuel&gt; changes, ie., only the changes are transferred (like with
+    Manuel&gt; diff).
+
+I tried it once. It used so much CPU that I gave up. 
+
+If I were really worried about bandwidth, I think I design something
+different. I would have the master machine broadcast the time-stamps
+of each file in the tree and have the clients send back a list of
+which ones they are interested in. After receiving the replies for all
+the clients, I would then broadcast out the files. The individual
+client machines would then pick off the files they are interested in.
+
+Having said that, we have used rdist on large trading floors ( several
+hundred machines ) with good results. This is usually done at night,
+so the fact that it takes a couple hours is not a problem.
+
+If you are updating just one machine, such as when adding a new one,
+you can do the rdist only to that one machine.
+
+For a set of machines that are usually in sync with one another, the
+number of files that change tend to be rather small. More bandwidth is
+probably used in figuring out what to send. One could probably speed
+up rdist a bit by having the master create a file containing the
+structure and time-stamps of the tree it wants to propagate, send that
+to the clients ( compressed ), and have the clients make requests for
+the files from the server. As rdist is now, it walks down the tree and
+sends the time-stamps to the client, which then decides if it needs
+that file or not( I think... ). Over a slow link, that part of the
+process could consume a bit of time.
+
+Sorry to ramble on....
+
+Andy
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00545" HREF="msg00545.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00541" HREF="msg00541.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00542.html">Re: tlug: It's STORY time</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00544.html">Re: tlug: Locale mess</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00541.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00545.html">Re: tlug: Re: multi-processor linux configuration ?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00543"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00543"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

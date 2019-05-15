@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Developing Games under Linux -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 11 Jan 1996 05:26:42 GMT -->
+<!--X-Message-Id: m0taFPo&#45;0004RFC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.3.88.9601101943.A9018&#45;0100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00052.html">Date Prev</A>][<A HREF="msg00054.html">Date Next</A>][<A HREF="msg00050.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00053">Date Index</A>][<A HREF="threads.html#00053">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Developing Games under Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Developing Games under Linux</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 11 Jan 96 14:19 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00050.html">Pine.3.88.9601101943.A9018-0100000@example.com</A>&gt; (message from Norihide Kise on Wed, 10 Jan 1996 19:22:11 -0600 (CST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I wrote:
+
+&gt; One possibility for games under Linux is to use the LIBGRX package
+&gt; that comes with DJGPP (DJ Delorie's port of GCC to DOS; uses the GO32
+&gt; DOS extender that he wrote).  LIBGRX is an excellent fast graphics
+&gt; package for use with DJGPP, and supposedly is being ported to the
+&gt; Linux environment.  DJGPP is not as good for writing games as some of
+&gt; the DOS environments (in particular Watcom and Turbo C both usually
+&gt; produce smaller and faster executables), but it usually is close in
+&gt; both size and speed to the best that the commercial compilers can do.
+&gt; 
+&gt; I don't know what the status of the Linux port is.
+&gt; 
+&gt; The DJGPP version of Ghostscript running under DESQview/X 2.1 is quite 
+&gt; competitive with the Linux versions running on XFree86 3.1.
+
+&gt;&gt;&gt;&gt;&gt; and "Kise" == Norihide Kise &lt;s100234@example.com&gt; replies:
+
+    Kise&gt; Thank you much for telling me very valuable information. Is
+    Kise&gt; there any dedicated book which describes how to develop
+    Kise&gt; games under Linux? In the U.S. there are more than a dozen
+    Kise&gt; of books which explain how to program computer games under
+    Kise&gt; DOS and Windows 3.1/95, but I've never seen similar books
+    Kise&gt; for Linux. If anyone knows such a book, please let me know.
+
+I would guess that techniques for Windows would work fairly well under
+X, but the functions you need to call are different, and that basic
+techniques for DOS using grphics libraries such as Zortech/Symantec
+FlashGraphics or Borland's BGI should work with libsvga under Linux.
+But remember that under DOS or Windows you can grab direct access to
+the screen (yes, you can address the screen directly under most
+implementations of DPMI 0.9; AFAIK only Linux DOSemu's DPMI does not
+permit this).  I don't know how you would go about getting direct
+access to the graphics screen or card accelerator functions under
+Linux.
+
+I've looked at several graphics (not games) programming books for DOS,
+and the quality is extremely uneven.  I would imagine that the games
+literature is the same.  In general, my feeling is that "how to" books
+are generally best used for kindling or toilet paper.  They can't help
+you with design, not very much anyway, and beyond the basic principles
+of implementation, a lot of what makes a good game great is going to
+be hardware-specific: the closer you can get to the common hardware,
+the faster and slicker those implementations are going to be.  But
+most of the books don't go beyond very basic cookbook approaches to
+direct screen writes.
+
+Probably the best place to start is to look at the implementation of
+libsvga; the source is available.  The implementation of the XFree86
+servers for the various cards would be an even better source for
+learning about graphics programming, but this is going to be a huge
+piece of code, and I don't know how easy it will be to find the
+games-relevant portions.  Note that font-handling code is likely to be
+somewhat similar to sprite-handling code; similar analogies probably
+abound.  DOSemu might also have some useful techniques; I don't know.
+
+If I were going to book up on game techniques, I would probably get
+whatever book was recommended as best across all the systems (Mac,
+Windowze, Linux, DOS, X); the techniques aren't that different so it
+doesn't matter if it's not the one I'm actually going to use.  Then I
+would look at industrial-strength graphics code, such as an X server,
+to learn the graphics techniques relevant to my hardware/OS
+environment.  Then (to the extent that code was public domain) I would
+specialize it to my application.
+
+Note that if you want to write commercial games, you need to be
+careful about this approach; you may not legally be able to keep your
+source code private if you are using GPL code as an example.
+
+[Any comments from the professionals in the peanut gallery---the ones
+who got bcc'd to protect the guilty, you know who you are, and you
+know you are guilty!---are welcome.]
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00058" HREF="msg00058.html">Re: Developing Games under Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Norihide Kise &lt;s100234@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00050" HREF="msg00050.html">Developing Games under Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Norihide Kise &lt;s100234@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00052.html">Re: Rewriting Java</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00054.html">Re: Linux and Multimedia Processors</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00050.html">Developing Games under Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">Re: Developing Games under Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00053"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00053"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

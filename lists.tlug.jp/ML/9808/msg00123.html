@@ -1,0 +1,232 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re:MO & SCSI Logitec LMO&#45;640E / Fujitsu + Mouse Problem -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date:  Sun, 9 Aug 1998 04:58:05 +0900 -->
+<!--X-Message-Id: 199808081649.QAA00485@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 35CBB918.96BE8239@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00121.html">Date Prev</A>][<A HREF="msg00125.html">Date Next</A>][<A HREF="msg00116.html">Thread Prev</A>][<A HREF="msg00106.html">Thread Next</A>][<A HREF="maillist.html#00123">Date Index</A>][<A HREF="threads.html#00123">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 8 Aug 1998 16:49:16 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00116.html">35CBB918.96BE8239@example.com</A>&gt; from "Yuval" at Aug 8, 98 11:34:00 am</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; Question 1:
+&gt; 
+&gt; I used these options in make config:
+&gt; 
+&gt; NCR53C8XX SCSI support
+&gt; (CONFIG_SCSI_NCR53C8XX) [Y/m/n/?]
+&gt;  detect and read serial NVRAMs (CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT) [Y/n/?]
+&gt; 
+&gt;   enable tagged command queueing (CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE)
+&gt; [Y/n/?]
+&gt;   use normal IO
+&gt; (CONFIG_SCSI_NCR53C8XX_IOMAPPED) [Y/n/?]
+&gt;   maximum number of queued commands
+&gt; (CONFIG_SCSI_NCR53C8XX_MAX_TAGS) [4]
+&gt; synchronous transfers frequency in MHz
+&gt; (CONFIG_SCSI_NCR53C8XX_SYNC) [5]
+&gt;  assume boards are SYMBIOS compatible
+&gt; (CONFIG_SCSI_NCR53C8XX_SYMBIOS_COMPAT) [Y/n/?]
+OK.
+&gt; kernel:
+&gt; Serial driver version 4.13 with no serial options enabled
+&gt; tty00 at 0x03f8 (irq = 4) is a 16550A
+&gt;  tty01 at 0x02f8 (irq = 3) is a 16550A
+&gt; lp1 at 0x0378, (polling)
+&gt; PS/2 auxiliary pointing device detected -- driver installed.
+&gt; Floppy drive(s): fd0 is 1.44M
+&gt; FDC 0 is a National Semiconductor PC87306
+&gt; ncr53c8xx: at PCI bus 0, device 13, function 0
+&gt; ncr53c8xx: 53c875 detected with Symbios NVRAM
+&gt; ncr53c875-0: rev=0x03, base=0xfffbff00, io_port=0xfc00, irq=9
+&gt; ncr53c875-0: Symbios format NVRAM, ID 7, Fast-20, Parity Checking
+&gt; ncr53c875-0: on-board RAM at 0xfffbe000
+&gt; ncr53c875-0: restart (scsi reset). kernel: ncr53c875-0-&lt;5,0&gt;:
+&gt; FAST-10 SCSI 10.0 MB/s (100 ns, offset 15)
+This was the detection of the adapter itself ! Detection of
+attached devices comes afterwards.
+&gt; to mount /dev/sda1 :
+&gt; mount -t vfat /dev/sda1 /mo
+Not good. Under DOS and Windows the partition name very often is
+"/dev/sda4". Nobody knows why, but weirdness is the M$ way....
+
+Better do a "fdisk /dev/sda" and when you are inside the program
+a "p" for print. You get a partition list then. If not, this is
+your great chance to install an ext2 partition now and write it
+to disk.
+
+You quit with "q" ( no writing ) or with "w" ( with writing ).
+
+If fdisk barfs your MO wasn't recognized. You probably have to
+do some kernel massaging then ( I think there's the issue of non
+standard blocksizes or so. Not a big deal, anyway ).
+
+There are some low level SCSI tools for Linux but for using them
+you better know really well what you are up to or you run into
+serious trouble. Low level manipulation of SCSI devices requires
+in depth knowledge of the underlying hardware.
+
+&gt; These are the make config settings
+&gt; (My mouse is a three button PS/2 type (psaux) according to my working
+&gt; 2.0.0)
+&gt;  *
+&gt; * Character devices
+&gt; *
+&gt; Standard/generic serial support (CONFIG_SERIAL) [Y/m/n/?]
+OK.
+&gt; Digiboard PC/Xx Support (CONFIG_DIGI) [N/y/?]
+OK.
+&gt; Cyclades async mux support (CONFIG_CYCLADES) [N/y/m/?]
+OK.
+&gt; Stallion multiport serial support (CONFIG_STALDRV) [N/y/?]
+OK.
+&gt; SDL RISCom/8 card support (CONFIG_RISCOM8) [N/y/m/?]
+OK.
+&gt; Parallel printer support (CONFIG_PRINTER) [Y/m/n/?]
+OK.
+&gt; Specialix IO8+ card support (CONFIG_SPECIALIX) [N/y/m/?]
+Not required.
+&gt; Mouse Support (not serial mice) (CONFIG_MOUSE) [Y/n/?]
+&gt; ATIXL busmouse support (CONFIG_ATIXL_BUSMOUSE) [Y/m/n/?]
+Not required.
+&gt; Logitech busmouse support (CONFIG_BUSMOUSE) [Y/m/n/?]
+&gt; Microsoft busmouse support (CONFIG_MS_BUSMOUSE) [Y/m/n/?]
+Not required.
+&gt; PS/2 mouse (aka "auxiliary device") support (CONFIG_PSMOUSE) [Y/m/n/?]
+&gt; C&amp;T 82C710 mouse port support (as on TI Travelmate) (CONFIG_82C710_MOUSE)
+&gt; [Y/n/?]
+Oh no ! Hands off that !!!!! Use it ONLY if really required or
+you're in for trouble !!!!!
+
+Better: compile all the above stuff as a module. The kernel will
+load everything it needs automatically. I personally only
+compile the stuff in required to get the machine up, everything
+else is a module - including the serial and paralell port
+drivers, all mouse drivers and all file systems not required for
+booting ( i.e. all except ext2 ). This provides you always with
+a clean setup without any unnecessary clutter in the kernel: it
+is not a secret that some parts interfere with each other and
+that the ensuing kernel may suffer from all sorts of weird
+behaviour.
+
+Another problem: With some installations with PS/2 mice X gets
+into some weird sort of competition with gpm when starting up.
+This may be your problem, too. Try killing gpm before starting
+up X. You can also put a line doing that into the "startx"
+script and restart it at the end of it ( it only gets there when
+the X server terminates ).
+
+I had this kind of problem with the Apricot Qi 300 and Qi 600
+machines. These are MCA machines and MCA machines aren't exactly
+brilliant.....
+
+                                  Karl-Max Wagner
+                                  karlmax@example.com
+--------------------------------------------------------------
+Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+featuring Linux on multiple platforms:
+i386, Sparc, PA-Risc, Amiga, SGI, Alpha, PalmPilot, ...
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00116" HREF="msg00116.html">tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</A></STRONG>
+<UL><LI><EM>From:</EM> Yuval &lt;yuval@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00121.html">Re: tlug: Japanese extensions on Sparc</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00125.html">tlug: Re: setting up accounts</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00116.html">tlug: Re:MO &amp; SCSI Logitec LMO-640E / Fujitsu + Mouse Problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00106.html">Re: tlug: MO SCSI Drivers-Logitec LMO-640E / Fujitsu</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00123"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00123"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

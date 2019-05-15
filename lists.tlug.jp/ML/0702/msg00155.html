@@ -1,0 +1,174 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23] -->
+<!--X-From-R13: "Seva R. Vhturf" <reva&#45;uhturfNtzb.wc> -->
+<!--X-Date: Tue, 20 Feb 2007 13:38:51 +0900 -->
+<!--X-Message-Id: 45DA7B32.2060309@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: E1HJLEb&#45;0005mP&#45;9n@example.com -->
+<!--X-Reference: 200702200304.l1K3461q011320@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00154.html">Date Prev</a>][<a href="msg00156.html">Date Next</a>][<a href="msg00154.html">Thread Prev</a>][<a href="msg00156.html">Thread Next</a>][<a href="maillist.html#00155">Date Index</a>][<a href="threads.html#00155">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 20 Feb 2007 13:38:10 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Erin D. Hughes&quot; &lt;<a href="mailto:erin-hughes@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20rsync%20vs%20dd%20%5Bwas%20Tlug%20Digest%2C%20Vol%2014%2C%20Issue%2023%5D">erin-hughes@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23] </strong></li>
+<li>References: &lt;E1HJLEb-0005mP-9n@example.com&gt;	&lt;<a href="msg00154.html">200702200304.l1K3461q011320@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.9 (X11/20070212)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<tt>Tribble Phillip J SrA 374 LRS/LGRTT wrote:
+</tt><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">Good Morning,</pre><br>
+<pre style="margin: 0em;">Does anyone know a good way to backup a hard drive? dd if=/dev/had
+of=/dev/hdc will make a image exactly the size of my hard drive. Is
+there a way to use DVD and make the image small?</pre><br>
+<tt>  
+</tt></blockquote><pre style="margin: 0em;">Philip,</pre><br>
+<tt>I am not sure what you are trying to accomplish here.<br>
+Do you mean you want to compress the entire contents of the HD and then 
+write it to a DVD?</tt><br>
+<br>
+<tt>dd will copy the hd from one location to another exactly as is same size.<br>
+If your looking to copy it and  have a  compressed  version  for use 
+later ... say writing to a DVD  you could use  rsync  with the -z option 
+and that will compress your data.  I am not 100% on the compression 
+format but  you could do something like:<br>
+rsync -avz / /tmp</tt><br>
+<br>
+<tt>Which would copy your root file assuming you have the permission and the 
+space to the /tmp folder.<br>
+I would also suggest not copying the proc/ folder because of the fact 
+that running process are there including your rsync process and it will 
+just keep copying the instance of itself till it eats up all your disc 
+space. So add  --exclude=/proc and you will be good.</tt><br>
+<br>
+<tt>This isn't the only way but I think it is a step in the right 
+direction.  If you have a question you could always ask the man.</tt><br>
+<br>
+<pre style="margin: 0em;">#man rsync
+&lt;snip&gt;
+from the rsync man page</pre><br>
+<pre style="margin: 0em;">rsync -avz foo:src/bar /data/tmp</pre><br>
+<tt>      This would recursively transfer all files from the directory 
+src/bar  on<br>
+      the  machine  foo into the /data/tmp/bar directory on the local 
+machine.<br>
+      The files are transferred in &quot;archive&quot; mode, which ensures that 
+symbolic<br>
+      links,  devices, attributes, permissions, ownerships, etc. are 
+preserved<br>
+      in the transfer.  Additionally, compression will be used to  
+reduce  the<br>
+      size of data portions of the transfer.<br>
+&lt;/snip&gt;</tt><br>
+<br>
+<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00156" href="msg00156.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+<li><strong><a name="00157" href="msg00157.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00154" href="msg00154.html">[tlug] RE: Tlug Digest, Vol 14, Issue 23</a></strong>
+<ul><li><em>From:</em> Tribble Phillip J SrA 374 LRS/LGRTT</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00154.html">[tlug] RE: Tlug Digest, Vol 14, Issue 23</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00156.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00154.html">[tlug] RE: Tlug Digest, Vol 14, Issue 23</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00156.html">Re: [tlug] rsync vs dd [was Tlug Digest, Vol 14, Issue 23]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00155"><strong>Date</strong></a></li>
+<li><a href="threads.html#00155"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] timeconv.pl -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Mon, 19 Dec 2005 16:55:49 +0900 -->
+<!--X-Message-Id: d8fcc0800512182355q61e4bf77h@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00436.html">Date Prev</a>][<a href="msg00438.html">Date Next</a>][<a href="msg00449.html">Thread Prev</a>][<a href="msg00440.html">Thread Next</a>][<a href="maillist.html#00437">Date Index</a>][<a href="threads.html#00437">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] timeconv.pl</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 19 Dec 2005 16:55:49 +0900</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20timeconv.pl">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] timeconv.pl</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Here is a fun little Perl script that I hacked together (BSD licence,
+so got nuts!):
+
+#!/bin/env perl
+#
+# =========================================================================
+# File: timeconv.pl
+#
+# Copyright (c) 2005 and onwards, Josh Glover &lt;jglover@example.com&gt;
+#
+# LICENCE:
+#
+#   This file is distributed under the terms of the BSD-2 License.
+#   See the COPYING file, which should have been distributed with
+#   this file, for details. If you did not receive the COPYING file,
+#   see:
+#
+#   <A  HREF="http://www.jmglov.net/opensource/licenses/bsd.txt">http://www.jmglov.net/opensource/licenses/bsd.txt</A>
+#
+# DESCRIPTION:
+#
+#   Converts time from one zone to another
+#
+# USAGE:
+#
+#   See USAGE, below
+#
+# EXAMPLES:
+#
+#   timeconv.pl toyko los_angeles 2005/12/19 19:00
+#
+#   ln -s timeconv.pl tokyo2los_angeles
+#   tokyo2los_angeles 2005/12/19 19:00
+#
+# TODO:
+#
+#   - Nothing, this code is perfect
+#
+# DEPENDENCIES:
+#
+#   Perl 5
+#   CPAN modules: DateTime, DateTime::Format::Strptime, and
+#                 DateTime::TimeZone
+#
+# MODIFICATIONS:
+#
+#   Josh Glover &lt;jmglov@example.com&gt; (2005/12/19): Initial revision
+# =========================================================================
+
+use strict;
+use warnings;
+
+use DateTime;
+use DateTime::Format::Strptime;
+use File::Basename;
+
+use constant EXEC_NAME =&gt; File::Basename::basename( $0 );
+
+use constant USAGE =&gt;
+  &quot;Usage: &quot;.&amp;EXEC_NAME.&quot; [&lt;from_zone&gt; &lt;to_zone&gt;] \%Y/\%m/\%d \%H:\%M\n&quot;;
+
+# See if we have from and to timezone names in the args
+my $from_name = shift @example.com if $ARGV[0] and $ARGV[0] =~ /^[[:alpha:]_\/]+$/;
+my $to_name   = shift @example.com if $ARGV[0] and $ARGV[0] =~ /^[[:alpha:]_\/]+$/;
+
+# If not, the executable itself could contain the names
+if (not $from_name and &amp;EXEC_NAME =~ /(\w+)2(\w+)/) {
+
+  $from_name = $1;
+  $to_name   = $2;
+
+} # if (locating zone names in)
+
+my $str = join ' ', @example.com;
+
+# Make sure we have timezone names
+die &amp;USAGE unless $from_name and $to_name;
+
+# Search for timezones by name (we will need an object for this)
+my $tz_obj  = DateTime::TimeZone-&gt;new( name =&gt; &quot;floating&quot; );
+my $from_tz = $from_name if $tz_obj-&gt;is_olson( $from_name );
+my $to_tz   = $to_name   if $tz_obj-&gt;is_olson( $to_name   );
+
+# If either timezone could not be resolved by name, search for it
+unless ($from_tz and $to_tz) {
+
+  my $names = DateTime::TimeZone-&gt;all_names;
+
+  foreach my $name (@$names) {
+
+    $from_tz = $name if not $from_tz and $name =~ /\/$from_name$/i;
+    $to_tz   = $name if not $to_tz   and $name =~ /\/$to_name$/i;
+
+  } # foreach (searching for timezones by name)
+
+} # unless (must search for a name)
+
+# Make sure we have proper timezones
+die( &amp;EXEC_NAME.&quot;: could not find a matching from timezone: $from_name\n&quot; )
+  unless $from_tz;
+die( &amp;EXEC_NAME.&quot;: could not find a matching to timezone: $to_name\n&quot; )
+  unless $to_tz;
+
+# Do the conversion already!
+my $dt =
+  DateTime::Format::Strptime-&gt;new( pattern =&gt; '%Y/%m/%d %H:%M',
+                                   time_zone =&gt; $from_tz )
+    -&gt;parse_datetime( $str )
+      or die &amp;USAGE;
+
+printf &quot;%30s: %s %02d:%02d\n&quot;, $from_tz, $dt-&gt;ymd( '/' ), $dt-&gt;hour, $dt-&gt;min;
+
+$dt-&gt;set_time_zone( $to_tz );
+
+printf &quot;%30s: %s %02d:%02d\n&quot;, $to_tz, $dt-&gt;ymd( '/' ), $dt-&gt;hour, $dt-&gt;min;
+
+
+Here is some example usage:
+
+: jglover@example.com; timeconv.pl tokyo los_angeles 2005/12/19 16:30
+                    Asia/Tokyo: 2005/12/19 16:30
+           America/Los_Angeles: 2005/12/18 23:30
+: jglover@example.com; which timeconv.pl
+/home/jglover/bin/timeconv.pl
+: jglover@example.com; cd bin
+: jglover@example.com; ln -s timeconv.pl tokyo2los_angeles
+: jglover@example.com; ln -s timeconv.pl los_angeles2tokyo
+: jglover@example.com; cd
+: jglover@example.com; tokyo2los_angeles 2005/12/19 16:30
+                    Asia/Tokyo: 2005/12/19 16:30
+           America/Los_Angeles: 2005/12/18 23:30
+: jglover@example.com; los_angeles2tokyo 2005/12/19 16:30
+           America/Los_Angeles: 2005/12/19 16:30
+                    Asia/Tokyo: 2005/12/20 09:30
+
+Fun with the DateTime CPAN module. Feel free to suggest improvements,
+etc. That is why I stuck it inline instead of attaching it. :)
+
+Cheers,
+Josh
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00440" href="msg00440.html">Re: [tlug] timeconv.pl</a></strong>
+<ul><li><em>From:</em> ITSUMI ken-ichi</li></ul></li>
+<li><strong><a name="00524" href="msg00524.html">Re: [tlug] timeconv.pl</a></strong>
+<ul><li><em>From:</em> sjs</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00436.html">Re: [tlug] timing for geeks II.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00438.html">[tlug] kobesearch.cpan.org search plugin for Mozilla / Firefox</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00449.html">Re: [tlug] how do you 'web password' ?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00440.html">Re: [tlug] timeconv.pl</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00437"><strong>Date</strong></a></li>
+<li><a href="threads.html#00437"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

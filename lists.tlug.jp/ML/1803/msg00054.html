@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Chrome ate my profile -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyy.fgrcura.sjNh.gfhxhon.np.wc> -->
+<!--X-Date: Thu, 15 Mar 2018 16:04:06 +0900 -->
+<!--X-Message-Id: 23210.6885.521848.717987@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 23205.16405.527594.15212@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Reference: 20180311165823.GA1669@wismut -->
+<!--X-Reference: ba01bbb1&#45;32d0&#45;7b3c&#45;b3b3&#45;b4d0ed4c6d9a@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00053.html">Date Prev</a>][<a href="msg00055.html">Date Next</a>][<a href="msg00050.html">Thread Prev</a>][<a href="msg00056.html">Thread Next</a>][<a href="maillist.html#00054">Date Index</a>][<a href="threads.html#00054">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Chrome ate my profile</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 15 Mar 2018 16:04:05 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull.stephen.fw@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Chrome%20ate%20my%20profile">turnbull.stephen.fw@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Chrome ate my profile</strong></li>
+<li>References: &lt;<a href="msg00039.html">23205.16405.527594.15212@turnbull.sk.tsukuba.ac.jp</a>&gt;	&lt;20180311165823.GA1669@wismut&gt;	&lt;<a href="msg00050.html">ba01bbb1-32d0-7b3c-b3b3-b4d0ed4c6d9a@dcook.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Darren Cook writes:
+
+ &gt; Now, assuming I have got rid of most of the noise, what I really need is
+ &gt; a 30 minute cronjob to automate the git commits... 'cos I just looked
+ &gt; and my last commit was 6 weeks ago. :-)
+
+I don't use this anymore, but for posterity's sake:
+
+(defun autocommit-function ()
+  &quot;Add this to 'after-save-hook with #'add-hook.&quot;
+  (when (= 0 (shell-command &quot;git branch | grep auto-commits &gt;/dev/null 2&gt;&amp;1&quot;))
+    (let ((current-branch
+           (substring (shell-command-to-string &quot;git branch | grep
+           '^*'&quot;) 2)))
+      (shell-command &quot;git checkout auto-commits&quot;)
+      (shell-command &quot;git commit -a -m 'auto-commit'&quot;)
+      (shell-command (format &quot;git checkout %s&quot; current-branch)))))
+
+I do use this for updating my schedule page:
+
+schedule.html: schedule.txt
+	$(RST2HTML) $&lt; &gt; $@
+	-git commit -m &quot;Update schedule.&quot; schedule.txt
+
+This turned out not to work as planned.  I started out by doing test
+builds with M-! rst2html schedule.txt &gt;schedule.html &amp;&amp; open schedule.html,
+and only doing make when I wanted to upload (make upload depends on
+schedule.html), but it turns out to be easier to type &quot;make upload&quot;
+and hit the refresh on the page from my webserver. ;-)
+
+ &gt; My git commit entry says:
+ &gt; 
+ &gt;     Removed opera, chromium, Slack, Code from the git
+ &gt;     repository (as they were putting cache data in here,
+ &gt;     not just config)
+ &gt; 
+ &gt; I should probably have persevered with a more fine-grained
+ &gt; .gitignore.
+
+Yeah, I would agree with that, although it's strange that they do
+that.  It's especially strange for Chromium since it *also has a
+directory in ~/.cache*!
+
+-- 
+Associate Professor              Division of Policy and Planning Science
+<a  rel="nofollow" href="http://turnbull/sk.tsukuba.ac.jp/">http://turnbull/sk.tsukuba.ac.jp/</a>     Faculty of Systems and Information
+Email: turnbull@example.com                   University of Tsukuba
+Tel: 029-853-5175                 Tennodai 1-1-1, Tsukuba 305-8573 JAPAN
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00056" href="msg00056.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00039" href="msg00039.html">[tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00041" href="msg00041.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Jens John</li></ul></li>
+<li><strong><a name="00050" href="msg00050.html">Re: [tlug] Chrome ate my profile</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00053.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00055.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00050.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00056.html">Re: [tlug] Chrome ate my profile</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00054"><strong>Date</strong></a></li>
+<li><a href="threads.html#00054"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

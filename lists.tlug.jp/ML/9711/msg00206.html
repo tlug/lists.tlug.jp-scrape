@@ -1,0 +1,180 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Yutex -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 25 Nov 1997 19:38:29 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xaVJR&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.971125232124.2275A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00205.html">Date Prev</A>][<A HREF="msg00207.html">Date Next</A>][<A HREF="msg00205.html">Thread Prev</A>][<A HREF="msg00207.html">Thread Next</A>][<A HREF="maillist.html#00206">Date Index</A>][<A HREF="threads.html#00206">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Yutex</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Yutex</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 26 Nov 1997 09:26:41 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00205.html">Pine.LNX.3.96LJ1.1b7.971125232124.2275A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00205.html">Pine.LNX.3.96LJ1.1b7.971125232124.2275A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; I'll probably give the compile a shot in a few days.  I
+    Craig&gt; have an old copy of Mootiff with Motif 2.0 from March 1995.
+    Craig&gt; I'm not even sure if these are elf binaries or not.
+
+If it's the same Mootiff I have (I think it is), you get both.
+
+    Craig&gt; I'm also looking at lesstif <A TARGET="_top" HREF="http://www.lesstif.org">http://www.lesstif.org</A>.  Gaspar
+    Craig&gt; mentioned that Motif was needed to input Japanese.
+
+    Craig&gt; I read on fj.os.linux that mule now compiles with Lesstif,
+    Craig&gt; so I'm thinking of giving Lesstif a shot.  Gaspar or anyone
+    Craig&gt; else give this a try yet?
+
+I wouldn't bet on Lesstif supporting XIM properly.  XIM is the only
+reason I can think of that Motif would be useful in supporting
+Japanese.
+
+I don't know about That Other Emacs, but XEmacs has compiled with
+Motif for years now, and Lesstif works with it as well as Lesstif ever
+works.  Many people on the XEmacs beta list swear by the Motif
+versions on proprietary, well-supported platforms like Sun.  Until
+Lesstif 0.81, the event loop was extremely buggy, making XEmacs almost
+unusable for anything but developing XEmacs---make sure you get the
+most recent Lesstif.  Menubars and stuff with Motif are a no-no, more
+core dumps.  I think the dialogs work ok though.
+
+    Craig&gt; Also, any help on the core dumps would be nice.
+
+bash$ gdb myutex core
+... gdb splash screen ...
+gdb&gt; where
+
+gives a backtrace.  Probably you will need to go deep into it to find
+where in myutex it's happening, typically these things wend their way
+through various libraries before actually exploding.  Often it will be
+something like a NULL pointer to a string function, or an
+uninitialized pointer anywhere.
+
+If it stopped due to a signal, that's useful information.  SIGSEGV
+almost surely means a bogus pointer, while SIGBUS means an alignment
+problem (I think); this is also typically a bogus pointer.  In garbage 
+collecting environments, the low bits of a pointer may be used for
+mark bits; this would also generate that signal.
+
+gdb of course gives lots of other information if you know how to use
+it, but that often depends on intimate knowledge of implementation
+and/or hardware details.
+
+A useful trick for getting a log of your gdb session (gdb may
+implement logs internally, but I couldn't find it) is
+
+gdb myutex core | tee gdb.log
+
+This has the disadvantage that gdb does not use its internal pager,
+but OTOH you can review the log later and even mail it to TLUG.
+
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00205" HREF="msg00205.html">tlug: Yutex</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00205.html">tlug: Yutex</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00207.html">Re: tlug: Yutex</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00205.html">tlug: Yutex</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00207.html">Re: tlug: Yutex</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00206"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00206"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

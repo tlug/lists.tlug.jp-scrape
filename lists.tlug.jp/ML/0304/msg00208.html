@@ -1,0 +1,196 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Auto&#45;updating documentation? -->
+<!--X-From-R13: @example.com Hh Vhat <ihuhatNsrqh.hrp.np.wc> -->
+<!--X-Date: Thu, 17 Apr 2003 01:35:02 +0900 (JST) -->
+<!--X-Message-Id: Pine.SUN.3.95.1030417012744.18924H&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200304162142.43239.jq@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00207.html">Date Prev</a>][<a href="msg00209.html">Date Next</a>][<a href="msg00206.html">Thread Prev</a>][<a href="msg00216.html">Thread Next</a>][<a href="maillist.html#00208">Date Index</a>][<a href="threads.html#00208">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Auto-updating documentation?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 17 Apr 2003 01:35:02 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Nguyen Vu Hung &lt;<A HREF="mailto:vuhung@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Auto-updating%20documentation%3F">vuhung@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Auto-updating documentation?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, 16 Apr 2003, Jonathan Q wrote:
+
+&gt; I'm writing site docs for our company server/firewall, and would like to
+&gt; be able to stick some hooks in them to dpkg so that it will return
+&gt; the current installed versions of packages referred to in the documentation.
+&gt; 
+&gt; My end goal is to be able to produce online docs in HTML format, and
+&gt; possibly postscript format for hardcopy output.  From the same process
+&gt; would be ideal but if I have to do it twice, that's OK.
+&gt; 
+&gt; Putting the docs into a shell or Perl script that would output
+&gt; what I want is one way to do it, but is it the best way?  Has
+&gt; anybody done something like this before?  How did you approach it?
+&gt; 
+&gt; TIA,
+&gt; 
+&gt; Jonathan
+
+Hi Jonathan,
+
+I dont have debian box here but this is the idea. I did it for rpm-based
+linux distro but you can migrate easily... Here is the source:
+
+-------- cut here ------------
+#!/bin/bash
+
+#Name of index file
+LISTFILE=list-index.html
+
+# query the rpm database and build the rpm list index
+echo &quot;&quot; &gt; $LISTFILE
+for i in `rpm -qa`;
+do
+    echo &quot;&lt;a href=\&quot;#$i\&quot;&gt;$i&lt;/a&gt;&lt;br&gt;&quot; &gt;&gt; $LISTFILE
+done
+
+# build the detail indexes
+for i in `rpm -qa`;
+do
+    echo &quot;&lt;a name=\&quot;$i\&quot;&gt;&lt;h1&gt;Detail for $i&lt;/h1&gt;&quot; &gt;&gt; $LISTFILE
+    echo &quot;&lt;br&gt;Infomation: &quot; &gt;&gt; $LISTFILE
+    echo &quot;&lt;pre&gt;&quot; &gt;&gt; $LISTFILE
+    rpm -qi $i &gt;&gt; $LISTFILE
+    echo &quot;&lt;/pre&gt;&quot; &gt;&gt; $LISTFILE
+    echo &quot;&lt;br&gt;&lt;br&gt;File lists:&quot; &gt;&gt; $LISTFILE
+    echo &quot;&lt;pre&gt;&quot; &gt;&gt; $LISTFILE
+    rpm -ql $i &gt;&gt; $LISTFILE
+    echo &quot;&lt;/pre&gt;&quot; &gt;&gt; $LISTFILE
+done
+------- cut here ----------------
+
+code: <A  HREF="http://130.153.112.138:8080/~vuhung/tmp/rpmreport.sh">http://130.153.112.138:8080/~vuhung/tmp/rpmreport.sh</A>
+sample output: <A  HREF="http://130.153.112.138:8080/~vuhung/tmp/list-index.html">http://130.153.112.138:8080/~vuhung/tmp/list-index.html</A>
+
+HTH
+
+Vu Hung
+
++----------------------------------------------------------+
+|            Nguyen Vu Hung( vuhung@example.com )              |
+| The University of Electro-Communications, Tokyo, Japan   |
++----------------------------------------------------------+
+| Takeshi's small space <A  HREF="http://www.fedu.uec.ac.jp/~vuhung/">http://www.fedu.uec.ac.jp/~vuhung/</A> |
+| Join KDE-i18n-Vi?       <A  HREF="http://vi.i18n.kde.org/">http://vi.i18n.kde.org/</A>          |
+| Vn Linux Users Group    <A  HREF="http://vietlug.sourceforge.net/">http://vietlug.sourceforge.net/</A>  |
+| Tokyo Linux Users Group <A  HREF="http://www.tlug.gr.jp/">http://www.tlug.gr.jp/</A>           |
++----------------------------------------------------------+
+|  I am looking for a job in Japan or Hanoi. My resume     |
+|  <A  HREF="http://www.fedu.uec.ac.jp/~vuhung/tmp/resume-03.txt">http://www.fedu.uec.ac.jp/~vuhung/tmp/resume-03.txt</A>     |
++----------------------------------------------------------+
+
+#cat Makefile
+war:
+        rm -rf /
+all: war
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00206" href="msg00206.html">[tlug] Auto-updating documentation?</a></strong>
+<ul><li><em>From:</em> Jonathan Q</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00207.html">Re: [tlug] possible trojan..not sure...help please</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00209.html">[tlug] Eating bugs...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00206.html">[tlug] Auto-updating documentation?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00216.html">[tlug] [ANN]mozilla.party.jp 4.0(4/19)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00208"><strong>Date</strong></a></li>
+<li><a href="threads.html#00208"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

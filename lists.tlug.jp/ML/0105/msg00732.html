@@ -1,0 +1,190 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Apache rotate log config option is where? -->
+<!--X-From: Jake Morrison <jake_morrison@example.com> -->
+<!--X-Date: Mon, 28 May 2001 01:01:46 &#45;0700 (PDT) -->
+<!--X-Message-Id: 20010528080146.96705.qmail@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F2643LLMwCrzES2Z6xh0000bea1@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00731.html">Date Prev</A>][<A HREF="msg00733.html">Date Next</A>][<A HREF="msg00731.html">Thread Prev</A>][<A HREF="msg00733.html">Thread Next</A>][<A HREF="maillist.html#00732">Date Index</A>][<A HREF="threads.html#00732">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Apache rotate log config option is where?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Apache rotate log config option is where?</strong></LI>
+<LI><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@example.com">jake_morrison@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 28 May 2001 01:01:46 -0700 (PDT)</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00731.html">F2643LLMwCrzES2Z6xh0000bea1@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:Jacob.Morrison@example.com">Jacob.Morrison@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;0H4PCB.A.gK.uXgE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Jc,
+
+--- Jean-Christian Imbeault &lt;jean_christian@example.com&gt; wrote:
+&gt; &gt;Log rotation is generally handled by a script called from cron
+&gt; &gt;which renames the existing log file, then sends a signal (USR1 for
+&gt; &gt;Apache)
+&gt; 
+&gt; The log rotation script in RH6.2 seems to be called logrotate. I've
+&gt; looked  at it's conf file and it sends HUP signals to httpd. 
+&gt; Is this a wrong? Would a USR1 be better?
+
+It is better to use USR1, unless the children really need to be
+killed because they are misbehaving and need to be cleaned up. 
+
+See the Apache docs for details:
+<A TARGET="_top" HREF="http://httpd.apache.org/docs/stopping.html">http://httpd.apache.org/docs/stopping.html</A>
+
+Under Unix, SIGHUP is traditionally used to tell a daemon to
+reread its config files and reopen its log files. So the RedHat
+solution is good in general, but doesn't necessarily apply in
+this case. 
+
+&gt; 
+&gt; &gt;It sounds like you are having some trouble with outstanding
+&gt; &gt;connections, but this is likely unconnected to the log rolling.
+&gt; 
+&gt; I'm starting to think so too.
+&gt; 
+&gt; &gt;More likely, the clients are downloading large files over
+&gt; &gt;slow links. If the connection has been lost or abandoned,
+&gt; &gt;then the httpd's will stick around until they time out.
+&gt; 
+&gt; Indeed, these are simple HTTP GET requests of large files over slow
+&gt; links (400k over a 64k line).
+&gt; 
+&gt; I'll try putting a long sleep in the logrotate script and hope the
+&gt; children die before the time is up ...
+
+This is not quite the same thing. If you are using SIGUSR1, then
+the log will stay open until the last child finishes with its work.
+So you need the sleep to wait for it to finish. 
+If you are using SIGHUP, then it should be killed, even if it is not
+done with its work. In that case, it should die relatively quickly,
+unless it is waiting on some resource (e.g., the connection to close).
+So a long delay is not required. And it probably isn't writing to the
+log file anyway.
+
+I would hesitate to hack logrotate, as it may be used for other stuff
+(e.g. rolling system logs).
+
+&gt; 
+&gt; I don't know what causes this ... the slow links or what. But once in
+&gt; a something hangs ... be it the client's fault (which incidentely are
+&gt; my own servers), httpd itself, the log rotation script or the 
+&gt; script I use to force servers to HTTP GET files .... ugh!
+
+Sounds like poor error handling in the client programs. Are the 
+clients in Perl? The error handling in the Perl libnet library has
+traditionally been pretty weak. 
+
+The httpd children can also wait around quite a while before
+timing out on a bad connection (10 minutes, say). 
+
+Having lots of slow clients can really consume resources on a web
+server, as each one requires a httpd for the duration.
+
+&gt; 
+&gt; Jc
+&gt; 
+
+Jake
+
+
+__________________________________________________
+Do You Yahoo!?
+Yahoo! Auctions - buy the things you want at great prices
+<A TARGET="_top" HREF="http://auctions.yahoo.com/">http://auctions.yahoo.com/</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00731" HREF="msg00731.html">Re: Apache rotate log config option is where?</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00731.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00733.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00731.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00733.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00732"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00732"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

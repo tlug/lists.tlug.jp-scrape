@@ -1,0 +1,154 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Problem displaying Japanese chars on Linux -->
+<!--X-From-R13: "[nnegra Xnafba" <znnegrawnafbaNubgznvy.pbz> -->
+<!--X-Date: Wed, 13 Feb 2002 01:17:44 +0900 (JST) -->
+<!--X-Message-Id: DAV74mO030Ws6Wxm5LE000051e3@example.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00117.html">Date Prev</a>][<a href="msg00119.html">Date Next</a>][<a href="msg00111.html">Thread Prev</a>][<a href="msg00120.html">Thread Next</a>][<a href="maillist.html#00118">Date Index</a>][<a href="threads.html#00118">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Problem displaying Japanese chars on Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Problem displaying Japanese chars on Linux</strong></li>
+<li><strong>From</strong>: <strong>&quot;Maarten Janson&quot; &lt;<A HREF="mailto:maartenjanson@DOMAIN.HIDDEN">maartenjanson@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 12 Feb 2002 16:19:52 -0000</li>
+<li>Content-type: multipart/alternative;boundary=&quot;----=_NextPart_000_0023_01C1B3E1.19A17630&quot;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<table width="100%"><tr><td bgcolor="#ffffff" style="background-color: #ffffff; ">
+
+
+<DIV><FONT face=Arial size=2><FONT size=-1>Hi,</FONT></FONT></DIV>
+<DIV><FONT face=Arial size=2><FONT size=-1></FONT></FONT>&nbsp;</DIV>
+<DIV><FONT face=Arial size=2>I'm involved in&nbsp;</FONT><FONT face=Arial 
+size=2><FONT size=-1>localizing an application that uses servlets to send data 
+to client browsers.</FONT></FONT></DIV>
+<DIV><FONT face=Arial size=2><FONT size=-1>The Application is an Agent that runs 
+as a deamon on Linux(Turbo and RH). The Agent in written in java and works like 
+this:<BR><BR>from a Windows client you point a web browser to the Agent on the 
+Japanese Linux machine and the Agent determines the locale of the client and 
+uses this info to return the correct strings by using resource bundles. 
+<BR><BR>The problem is that when the Agent is started during boot of the 
+Japanese Linux machine and you point the browser on a Japanese windows machine 
+to it you see questionmarks. If I then stop the Agent on the Linux machine and 
+restart then the client displays proper Japanese characters. I did some 
+debugging and wrote a small java program (test_resource.java) to display this 
+behaviour, I have listed test_resource.java below, together with the 2 
+properties files. <BR><BR>If you run test_resource during boot (create S99Test 
+in /etc/rc5.d and have S99Test to run test_resource and redirect output to a 
+file) then you will see that the correct properties file is loaded and that the 
+english chars in the resource string appear fine but the japanese chars appear 
+as ????? If you then run test_resource from an xterm window the the japanese 
+chars display fine as well.<BR><BR>In test_resource I set the default Locale in 
+order to make sure it is set correctly (see bug ID4127375)<BR><BR>Does anyone 
+have an idea what happens here? Is there a reason for the fact that if the agent 
+gets started during boot that it can not display japanese chars and if started 
+from a console it can?<BR><BR>Thanks<BR><BR>Maarten<BR><BR>---- 
+test_resource.java ----<BR>import java.text.*;<BR>import 
+java.util.*;<BR><BR>public class test_resource<BR>{<BR>public static void 
+main(String args[])<BR>{<BR>String theResourceFile = "test_prop";<BR>String 
+kName = "name";<BR><BR>String[] theResourceKeys 
+=<BR>{<BR>kName<BR>};<BR>System.out.println("Locale.getDefault = " + 
+Locale.getDefault().toString());<BR>Locale theLocale = new 
+Locale("ja","JP");<BR><BR>Locale.setDefault(theLocale);<BR>System.out.println("Locale.getDefault 
+after setDefault = " + Locale.getDefault().toString()); 
+<BR><BR><BR>ResourceBundle bundle = ResourceBundle.getBundle(theResourceFile, 
+theLocale);<BR>System.out.println("bundle = ResourceBundle.getBundle(test_prop, 
+Locale(ja,JP))");<BR>String Name = 
+bundle.getString(kName);<BR>System.out.println("String Name = 
+bundle.getString(kName);");<BR>System.out.println("Name = " + 
+Name);<BR><BR><BR><BR>} <BR><BR><BR>}<BR><BR>---- 
+test_prop_ja.properties<BR>name=begin \uff95\uff70\uff7b\uff9e\u540d 
+end<BR><BR>--- 
+test_prop.properties<BR>name=name<BR><BR><BR></DIV></FONT></FONT>
+</td></tr></table>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00120" href="msg00120.html">Re: [tlug] Problem displaying Japanese chars on Linux</a></strong>
+<ul><li><em>From:</em> Antony Stace</li></ul></li>
+<li><strong><a name="00145" href="msg00145.html">Re: [tlug] Problem displaying Japanese chars on Linux</a></strong>
+<ul><li><em>From:</em> BOTi</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00117.html">Re: TLUG ML prob Q (was Re: [tlug] writing to USB storage device ...)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00119.html">Re: [tlug] Making new boot image for RH cd...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00111.html">[tlug] Open Source Database Conference</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00120.html">Re: [tlug] Problem displaying Japanese chars on Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00118"><strong>Date</strong></a></li>
+<li><a href="threads.html#00118"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

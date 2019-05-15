@@ -1,0 +1,206 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Making big ones out of little ones [was: tlug: Debian install...] -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 18 Apr 2000 14:29:50 +0900 -->
+<!--X-Message-Id: 14587.62131.542299.103433@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000417094538.1D0DF4058@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00108.html">Date Prev</A>][<A HREF="msg00110.html">Date Next</A>][<A HREF="msg00098.html">Thread Prev</A>][<A HREF="msg00100.html">Thread Next</A>][<A HREF="maillist.html#00109">Date Index</A>][<A HREF="threads.html#00109">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Making big ones out of little ones [was: tlug: Debian install...]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Making big ones out of little ones [was: tlug: Debian install...]</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 18 Apr 2000 14:29:23 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00098.html">20000417094538.1D0DF4058@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00098.html">20000417094538.1D0DF4058@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;ulrike@example.com&gt; writes:
+
+    Ulrike&gt; I have Windose completely erased
+
+Aha, a convert!
+
+    Ulrike&gt; ... booted with a system-disc but it does not recognise
+    Ulrike&gt; any drives besides a: and b:, guess this does not count as
+    Ulrike&gt; a test
+
+No, those drivers will normally live in C:\WINDOWS somewhere.
+
+    Ulrike&gt; ... I am completely ignorant when it comes to hardware and
+    Ulrike&gt; so I won't touch the box today, but just a minute ago
+    Ulrike&gt; someone came in, told me that there is a spare scsi-board
+    Ulrike&gt; somewhere and probably also a spare cdrom and that I
+    Ulrike&gt; should ask my sensei about those when he is back, so I
+    Ulrike&gt; have to postpone this probably until Thursday.
+
+    Ulrike&gt; What a pity, they were having doubts about Linux and
+    Ulrike&gt; hardware and I said "no problem!" ... :-(
+
+You need to borrow Austin or Jim for a couple hours ;-)
+
+    Ulrike&gt; Now this sounds interesting ... I was wondering how I
+    Ulrike&gt; could treat some of my hardiscs as a single one,
+
+MD (RAID) is probably not the way.  There are applications with very
+large (I'm talking order of terabytes) single files, and other
+applications where doubling (or x8) the speed of burst disk I/O is
+important.  In those cases larger than individual disk-sized files can
+be achieved by using linear appends of more disks to a single
+partition, or partitions can be "striped" so that all bit0 for each
+byte comes from disk0, bit1 from disk1, etc, which (with appropriate
+OS software, firmware in the disk controller, and a fast CPU) allows
+you to read 8x as fast.  Or for high reliability, you can arrange that
+disk0 and disk1 always do exactly the same writes off the controller,
+so that they are always exact mirrors of each other.
+
+But that's not really sensible for most setups: few people need 1GB
+files, let alone 1TB files, long bursts of disk I/O at 8x normal
+rates, or submicrosecond backups.  Eg, I'm looking at a 1GB partition
+mounted on /usr, and that's just not going to cut it if Debian keeps
+adding packages at the current rate.  So I can add 33% free space to
+that partition by creating a 500MB partition somewhere (say
+/dev/sdb1), formatting it, mounting it to /tmp/share, copying
+/usr/share recursively to /tmp/share, then adding
+
+/dev/sdb1 /usr/share ext2 defaults 0 2
+
+to /etc/fstab, and doing `diff -rq /usr/share /tmp/share &gt;
+/tmp/just-for-grins' to make sure everything's OK before doing rm -rf
+/usr/share; mkdir /usr/share; umount /tmp/share; mount /usr/share.
+
+    Ulrike&gt; just took the mountpoints for each drive as suggested by
+    Ulrike&gt; the installation disks, but I guess I have a weird
+    Ulrike&gt; partition setup now ... The suggestions for partition
+    Ulrike&gt; sizes in the handbook that came with the Debian CDs gave
+    Ulrike&gt; some examples but said these setups were not optimal, why
+    Ulrike&gt; didn't they give a better example then? Maybe "as many
+    Ulrike&gt; suggestions as sysadmins" or something along these lines
+
+Partly that, but partly it depends on your usage.  I, for example,
+have 350MB in ~/Projects/XEmacs alone, and if I'm not careful about
+doing make cleans that can easily balloon to 500MB.  ;-)  But most
+people can get along with 500MB for all of /home on a multiuser
+system.  The Coda network file system is most efficient with 3
+partitions of its own for the server (one of which only needs to be
+50MB or so but should be on a separate disk!), and at least one extra
+partition for the client.  Surely you don't expect the Debian guys to
+handle such oddball situations in the initial install!!  But the thing
+is, just about everybody has some idiosyncracy that demands special
+treatment.
+
+    Ulrike&gt; ... I will check the tlug archives, I remember partition
+    Ulrike&gt; sizes have been discussed here before. But how do I make
+    Ulrike&gt; one out of two?
+
+Don't, just pick an appropriate subtree and move it to an empty
+partition.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00098" HREF="msg00098.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00108.html">Re: tlug: Samba Installation</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00110.html">tlug: Samba Installation</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00098.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00100.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00109"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00109"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

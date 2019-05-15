@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Please Help with FVWM -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Sun, 12 Nov 1995 13:48:30 GMT -->
+<!--X-Message-Id: m0tEcg7&#45;0004PyC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199511120249.SAA16917@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00028.html">Date Prev</A>][<A HREF="msg00030.html">Date Next</A>][<A HREF="msg00026.html">Thread Prev</A>][<A HREF="msg00030.html">Thread Next</A>][<A HREF="maillist.html#00029">Date Index</A>][<A HREF="threads.html#00029">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Please Help with FVWM</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Please Help with FVWM</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Sun, 12 Nov 95 22:42 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00026.html">199511120249.SAA16917@example.com</A>&gt; (message from Shigeru Abe on Sat, 11 Nov 1995 18:49:22 -0800 (PST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Shige" == Shigeru Abe &lt;sabe@example.com&gt; writes:
+
+    Shige&gt; "Ujis.fvwmrc" is apparently the Japanese version of
+    Shige&gt; system.fvwmrc.  All the menus are in Japanese (its readable
+    Shige&gt; using KON).
+
+Which suggests the infamous "can't use KON if I'm not root" bug.  I
+don't recall exactly what the problem was, but apparently the
+permissions on the KON fonts were set so that only root could use
+them, or something easy to check but easy to miss like that.  Have you
+checked all X font permissions?  I'm not a tar wizard, but I know that 
+tar does not necessarily give the right permissions to everything that 
+gets unpacked.
+
+Try configuring everything to use the same fonts.  If JE-fvwm uses
+k14, then make XKlock use k14.  If XKlock still works, your X Windows
+installation is OK, and the bug is clearly in JE-fvwm or in its
+setup.  If XKlock then fails, it's probably something peculiar about
+the font.
+
+Try using a different font from k14 in fvwmrc, too.
+
+    &gt;&gt; (0) I assume that Japanese works everywhere but fvwm ....
+
+    Shige&gt; So far. XKlock will display Japanese but XCalendar will
+    Shige&gt; not. Mosaic and Netscape 2.0 b2 work, but nothing else
+
+I assume you mean Mosaic L10N.  Both that and Netscape have
+multi-localization support built in.  I assume XKlock is a patched
+version of XClock, and again would have the support built in.  These
+all would probably work whether you have JE installed or not.
+
+    Shige&gt; will.  There is a locale directory and I wonder if I need
+    Shige&gt; to do anything with that.  (usr/lib/X11/locale)
+
+Multi-localization is not simply a matter of changing fonts,
+unfortunately.  This is OK if all charsets are the same size
+(bit-width) and the languages are all the same directionality (Hebrew
+is multi-directional, text reads right-to-left, numbers left-to-
+right!  Good grief).  Even so, dates and such will have the wrong
+format.
+
+However, the locale directory should simply describe the locales
+available to multi-localized programs on your system.  It doesn't
+imply that programs will be able to handle them, nor provide them with
+the tools to do so.  Also, most programs should have defaults compiled
+in for the locale.  Then even if the locale is not fully specified,
+they can produce output (although not necessarily pretty).  If Mosaic
+and Netscape don't core on you, then probably your locale directory is
+OK.  (I don't know if they still do that.  But they used to.)
+
+Motif is much better about transparent localization than Athena or
+(gulp!) Xt.  But even Motif programs are not easy to localize.
+
+    &gt;&gt; (1) Even if it does, it is not necessarily true that
+    &gt;&gt; ujis.fvwmrc uses your preferred fonts.  Try changing the fonts
+    &gt;&gt; specified there.
+
+    Shige&gt; I'm using the fvwm that comes with JE.  It allows multiple
+    Shige&gt; fonts so you can select both a Japanese and Latin alphabet.
+
+    Shige&gt; ie. Font k14,a14
+
+    Shige&gt; Normal fvwm will give an error after the comma.
+
+Well, JE's clearly using a patched fvwm, then.  So it should work,
+although not necessarily anywhere but the author's machine :-(.
+Locale is selectable on a per program basis.  Presumably locale is set
+somewhere in the ujis.fvwmrc, although it might be inferred from the
+Fontset.  I guess at this point, though, you're going to have to ask
+somebody more familiar with the patched version of fvwm, like the
+author.  If you get no joy by 11/22 (that happens to be the date of
+the last final exam I need to give this term :-), send me mail
+personally and I'll try installing the JE and see what I can find.
+
+I can't promise I'll do it before then (I already owe Craig Wada-fonts 
+installation instructions for GS), and by then I'll probably forget I
+promised (my stack is the size size as that of the old HP calculators:
+4), so please do remind me.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Socio-Economic Planning                         Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00030" HREF="msg00030.html">Re: Please Help with FVWM</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeru Abe &lt;sabe@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00026" HREF="msg00026.html">Re: Please Help with FVWM</A></STRONG>
+<UL><LI><EM>From:</EM> Shigeru Abe &lt;sabe@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00028.html">OmniMoni-1.0 release</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00030.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00026.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00030.html">Re: Please Help with FVWM</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00029"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00029"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

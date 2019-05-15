@@ -1,0 +1,227 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: setting up scsi drives and lilo -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 3 Oct 1996 23:04:07 GMT -->
+<!--X-Message-Id: m0v8gnt&#45;000025C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199610030508.OAA00282@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00004.html">Date Prev</A>][<A HREF="msg00006.html">Date Next</A>][<A HREF="msg00001.html">Thread Prev</A>][<A HREF="msg00006.html">Thread Next</A>][<A HREF="maillist.html#00005">Date Index</A>][<A HREF="threads.html#00005">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: setting up scsi drives and lilo</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: setting up scsi drives and lilo</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 3 Oct 96 14:58 JST</LI>
+<LI>CC: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-reply-to: &lt;<A HREF="msg00001.html">199610030508.OAA00282@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Sign me 'confused again'
+
+Well, LILO *is* confusing.  Aren't you glad it's not 1970 and you
+don't have to do what LILO does by hand?
+
+    Jim&gt; It seems lilo is the only option left that I can think of to
+    Jim&gt; get the new kernels to recognize the scsi drives BUT...
+
+    Jim&gt; Do I boot the backup Linux on C: to install lilo since the
+    Jim&gt; Linux on /dev/sda1 doesn't recognize (can't see) the IDE
+    Jim&gt; drive (I can manually mount it to /mnt if I need it
+    Jim&gt; temporarily.) or do I mount the IDE drive and install lilo
+    Jim&gt; from /dev/sda1 (where I want the root partition to go.)
+
+    Jim&gt; I guess what I'm trying to ask is where do I put lilo to get
+    Jim&gt; the Compaq Prolinea to boot into Linux on /dev/sda and not
+    Jim&gt; into DOS on C:?
+
+The basic answer is "leave LILO alone, just edit the lilo.conf and run
+/sbin/lilo".  If you already have LILO running, and don't have a
+specific need to make a boot disk, it's much easier to add a new
+kernel by reconfiguring LILO.  It could actually easily be automated
+with a rather simple Perl or shell script.  In fact, it is---that's
+what "/sbin/liloconfig" is.  Why don't you just 'su' and
+'/sbin/liloconfig'?  If that doesn't seem to work, you can do it by
+hand.
+
+When I upgraded from 2.0.0 to 2.0.20, I built the new kernel, and
+placed in /boot with an appropriate name.  lilo.conf looked like this
+before the upgrade (I leave out some standard stuff from the Slackware
+lilo.conf that I've never needed to change):
+
+boot = /dev/sda
+# 1st Linux stanza - default because it's first
+image = /boot/vmlinuz-2.0.0
+  root = /dev/sda6
+  label = linux200
+# DOS stanza
+other = /dev/sda1
+  label = dos
+  table = /dev/sda
+# end of lilo.conf
+
+and after the upgrade:
+
+# 1st Linux stanza - default because it's first
+image = /boot/vmlinuz-2.0.20-960924.1
+  root = /dev/sda6
+  label = linux2020
+# 2nd Linux stanza
+image = /boot/vmlinuz-2.0.0
+  root = /dev/sda6
+  label = linux200
+# DOS stanza
+other = /dev/sda1
+  label = dos
+  table = /dev/sda
+# end of lilo.conf
+
+Note that (1) the labels must all be unique and (2) there can be no
+typos in the "image =" directives, or /sbin/lilo will do nothing.
+Also note that since only the kernel is different, the "root ="
+directive is the same for both kernels.
+
+Theory:
+
+LILO comes in three parts: a master boot record (MBR; it lives in the
+same physical place on every PC-compatible disk), a bootloader
+(/boot/boot.b), and the configuration tool (/sbin/lilo).
+
+Because the PC BIOS does the initial booting of the system, the MBR
+must live on a drive that the BIOS can see, presumably /dev/hda1 (ie,
+DOS's C: drive).  The MBR is very small (512 BYTES); its only job is
+to find the right boot.b.  /sbin/lilo finds this automatically, and
+tells the MBR where it is.  You don't need to worry about it.
+
+/sbin/lilo has no role in booting; it just needs to be anywhere on
+your Linux $PATH when you decide to reconfigure.
+
+boot.b must live in the file system in the root partition of the boot
+drive specified in lilo.conf.  There are a couple of places it might
+live, but /boot/boot.b is the standard one.  To find it, all you need
+is to put the directive
+
+boot = /dev/sda
+
+at the top of lilo.conf.  Note that this does *not* depend on LILO
+using the file system to find boot.b at boot time; /sbin/lilo finds it
+in the file system, then determines the location in terms of the DOS
+BIOS functions.  It places this BIOS pointer in the MBR.
+
+This is all theory; DON'T edit the "boot =" directive unless other
+things fail.  If there is already a "boot =" directive in lilo.conf,
+leave it alone.  If there isn't, don't add one.  All you should need
+to do is put the new kernel in the same directory as the old one (with
+a unique name), copy the old kernel's stanza in /etc/lilo.conf, change
+the "label =" and "image =" directives, and run /sbin/lilo as root.
+
+Good luck,
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00001" HREF="msg00001.html">setting up scsi drives and lilo</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00004.html">Ghostscript 4.01 and Wadalab Kanji fonts</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00006.html">Re: setting up scsi drives and lilo</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00001.html">setting up scsi drives and lilo</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00006.html">Re: setting up scsi drives and lilo</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00005"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00005"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

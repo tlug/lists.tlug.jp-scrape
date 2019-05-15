@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] How to figure out which files are duplicates . . . . . . . . . (was Re: Seeking recommendations for file consolidation) -->
+<!--X-From-R13: <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 18 Aug 2006 09:55:47 +0900 -->
+<!--X-Message-Id: 17637.4426.735144.408271@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 44E44C72.4050509@example.com -->
+<!--X-Reference: 20060817135036.716b39e1.jep200404@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00243.html">Date Prev</a>][<a href="msg00245.html">Date Next</a>][<a href="msg00235.html">Thread Prev</a>][<a href="msg00236.html">Thread Next</a>][<a href="maillist.html#00244">Date Index</a>][<a href="threads.html#00244">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] How to figure out which files are duplicates . . . . . . . . . (was Re: Seeking recommendations for file consolidation)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 Aug 2006 10:00:58 +0900</li>
+<li><strong>From</strong>: <strong>&lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20How%20to%20figure%20out%20which%20files%20are%20duplicates%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20Seeking%20recommendations%20for%20file%20consolidation%29">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] How to figure out which files are duplicates . . . . . . . . . (was Re: Seeking recommendations for file consolidation)</strong></li>
+<li>References: &lt;<a href="mailto:44E44C72.4050509@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20How%20to%20figure%20out%20which%20files%20are%20duplicates%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20Seeking%20recommendations%20for%20file%20consolidation%29">44E44C72.4050509@example.com</a>&gt;	&lt;<a href="mailto:20060817135036.716b39e1.jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20How%20to%20figure%20out%20which%20files%20are%20duplicates%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20Seeking%20recommendations%20for%20file%20consolidation%29">20060817135036.716b39e1.jep200404@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Jim writes:
+
+ &gt; &gt; I know that there's the command line &quot;diff&quot; command. But my 
+ &gt; &gt; understanding of that is that it compares two individual files and you 
+ &gt; &gt; can learn how different they are. 
+
+ &gt; Yup. You don't care what the differences are, 
+ &gt; only that the files are exactly the same or not. 
+ &gt; 
+ &gt;    cmp is the command for that. 
+
+diff -q --text is hardly any less efficient than cmp, and diff has an
+-r switch (but that probably doesn't help Dave terribly much, since
+there is still going to be a lot of pairs of directories).
+
+ &gt; Timestamps on files might be misleading. 
+ &gt; People often unnecessarily 'touch' files. 
+ &gt; Which is the latest version of some library file? 
+
+This is why I recommend git; that way he can save the versions,
+automatically &quot;link&quot; dupes together, and only have the heuristically
+latest visible.  If for some reason the heuristically latest seems
+unsatisfactory, he can trivially recover &quot;older&quot; versions of the file
+with `git checkout'.
+
+ &gt; BTW, to compare between _directories_, you might have to do something like: 
+ &gt; 
+ &gt;    find /mnt/cd1 -type f -exec md5sum {} \; | sort &gt;cd1.md5sum.sort
+ &gt;    find /mnt/cd2 -type f -exec md5sum {} \; | sort &gt;cd2.md5sum.sort
+ &gt; 
+ &gt; Then I hack a script to compare cd1.md5sum.sort and cd2.md5sum.sort, 
+ &gt; and take whatever action is appropriate. As a hedge, I've usually 
+ &gt; decided to rename the duplicates as originalname.duplicate, so as 
+ &gt; not to prematurely burn bridges. After I'm satisfied that the 
+ &gt; right duplicates have been identified, then I
+
+Why do all this hacking on a per-case basis when most of it has been
+done by linus and junkio?  With a much stronger hash function?
+
+ &gt; Instead of rm'ing duplicates, you could hard or soft link them 
+ &gt; (with ln), so that the extra space is freed. Of course, the 
+ &gt; different information _about_ the file (such as date or permissions) 
+ &gt; is lost. 
+
+git has no such problem.
+
+ &gt; &gt; Can anyone recommend something suitable?
+ &gt; 
+ &gt; Just keep the CDs in a shoe box until the contents are irrelevant, 
+ &gt; then dispose of them. 
+
+Mostly they already are; Dave doesn't know which, and that's what he
+wants to find out.
+
+N.B. A shoe box's worth of space in Japan is enough to be worth
+budgeting.  Ask Josh, who's in pain because he needs to buy CDs to
+rip, and has no place to put them used media.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00220" href="msg00220.html">[tlug] Seeking recommendations for file consolidation</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00234" href="msg00234.html">[tlug] How to figure out which files are duplicates . . . . . . . . . (was Re: Seeking recommendations for file consolidation)</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00243.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00245.html">Re: [tlug] New Custom Server for Linux - Advice Needed</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00235.html">Re: [tlug] How to figure out which files are duplicates</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00236.html">Re: [tlug] Seeking recommendations for file consolidation</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00244"><strong>Date</strong></a></li>
+<li><a href="threads.html#00244"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

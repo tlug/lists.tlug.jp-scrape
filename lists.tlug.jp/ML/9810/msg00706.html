@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS question -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Sat, 17 Oct 1998 20:24:53 +0900 -->
+<!--X-Message-Id: m3g1cnv39e.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810151427.OAA00673@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00705.html">Date Prev</A>][<A HREF="msg00707.html">Date Next</A>][<A HREF="msg00698.html">Thread Prev</A>][<A HREF="msg00722.html">Thread Next</A>][<A HREF="maillist.html#00706">Date Index</A>][<A HREF="threads.html#00706">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS question</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 17 Oct 1998 20:25:49 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: Karl-Max Wagner's message of "Thu, 15 Oct 1998 14:27:16 +0000 (GMT)"</LI>
+<LI>References: &lt;<A HREF="msg00698.html">199810151427.OAA00673@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Karl-Max Wagner &lt;karlmax@example.com&gt; writes:
+
+Thank you for putting in time on this.
+
+&gt; IMHO everything suggested so far is unnecessary complex. I'd do
+&gt; it the following way:
+&gt; 
+&gt; On the server in /etc/exports:
+&gt; 
+&gt; I enter the user machines and the directories that are exported
+&gt; to them ( their home directories, maybe some directories ro with
+&gt; tools for general use ).
+
+If the size of the exported directory does not itself impose
+significant overhead, I'll just export /home once, to keep
+maintenance simple.  Clients will pick up /home, and bypass other
+user's accounts in that space, just as they would if logging into
+the server.
+
+&gt; I also create the home directories for the users
+
+Yes, on the server: but only /home or its link point need be
+created on the clients.  Again, this keeps maintenance simple.
+
+&gt; On the clients in /etc/fstab:
+&gt; 
+&gt; I add the nfs directories that are to be mounted at boot time
+&gt; from the server.
+
+Again, only /home will be needed.
+
+&gt; Appropriate application of the above should pretty much solve
+&gt; all problems. 
+
+Except security, which is what Rex's postings were about.
+In some way we have to assure that clients share consistent
+/etc/passwd file data, and that that data is consistent with the
+expectations of the server's filesystem.
+
+However, the mounting business is set up, I need to be sure that
+users cannot access other users' home directories.  I thought
+about this again, and it seems to me that it IS a pretty serious
+problem under NFS.  If the server doesn't know anything about
+usernames, it is going to trivial for someone to boot a
+workstation (or adjust the IP in their laptop), login as root,
+change their own user ID to that of the person whose data they
+would like to snoop, and mount the NFS directories from the
+server.
+
+To protect against this, I figure that each subdirectory needs a
+file like ~/.checkname, owned by root but readable to everyone
+else.  The /etc/profile script that runs before ~/.bash_profile
+will check the content of this, and compare it with the result of
+"whoami".  If there's a discrepancy, the server knows that the
+user is spoofing his identity, and script issues an immediate
+"exit", killing the shell.
+
+Can anyone see obvious holes in this?
+
+&gt; To distribute config files: either you use rdist or the like or
+&gt; you put them into the home directory of the users and have a
+&gt; script copy them onto the client machine at boot time. you ncan
+&gt; also use links pointing to them directly ( however, I have a
+&gt; bias against pointing links into nfs mounted directories - it's
+&gt; not particularly secure because all authentication requests are
+&gt; sent over nfs ).
+
+Rdist certainly sounds like something I need to study.
+
+For machine-specific configuration data (the X config file, and
+the list of kernel drivers needed for a given workstation), I
+figure I can just make subdirectories in /home with the IP
+address of the workstation.  Then we set up links something like
+/home/$IP_ADDRESS/Xconfig.  This is a one-time access at startup,
+so there's no problem with overhead.
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00722" HREF="msg00722.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00698" HREF="msg00698.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00705.html">Re: tlug: sendmail question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00707.html">Re: tlug: Kinput2 and Wnn6</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00698.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00722.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00706"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00706"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

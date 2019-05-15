@@ -1,0 +1,279 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: Mike Fabian <mfabian@example.com> -->
+<!--X-Date: 10 May 2001 15:19:37 +0200 -->
+<!--X-Message-Id: s3t8zk5xrx2.fsf@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104120117.KAA05815@example.com -->
+<!--X-Reference-Id: 20010412122715.A19988@example.com -->
+<!--X-Reference-Id: s3ty9t6o9n6.fsf@example.com -->
+<!--X-Reference-Id: 15062.46553.961039.412030@example.com -->
+<!--X-Reference-Id: s3tlmozkf7e.fsf@example.com -->
+<!--X-Reference-Id: 15071.5243.25519.159705@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00172.html">Date Prev</A>][<A HREF="msg00174.html">Date Next</A>][<A HREF="msg00186.html">Thread Prev</A>][<A HREF="msg00175.html">Thread Next</A>][<A HREF="maillist.html#00173">Date Index</A>][<A HREF="threads.html#00173">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>Mike Fabian &lt;<A HREF="mailto:mfabian@example.com">mfabian@example.com</A>&gt;</strong></LI>
+<LI>Date: 10 May 2001 15:19:37 +0200</LI>
+<LI>Cc: "Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: "Stephen J. Turnbull"'s message of "Fri, 20 Apr 2001 01:38:19 +0900"</LI>
+<LI>References: &lt;200104120117.KAA05815@example.com&gt;&lt;20010412122715.A19988@example.com&gt; &lt;s3ty9t6o9n6.fsf@example.com&gt;&lt;15062.46553.961039.412030@example.com&gt;&lt;s3tlmozkf7e.fsf@example.com&gt;&lt;15071.5243.25519.159705@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:mfabian@example.com">mfabian@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;jnQvf.A.nMB.uVp-6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>Sender: <A HREF="mailto:mfabian@example.com">mfabian@example.com</A></LI>
+<LI>User-Agent: Gnus/5.0808 (Gnus v5.8.8) XEmacs/21.4 (Copyleft)</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"Stephen J. Turnbull" &lt;turnbull@example.com&gt; writes:
+
+&gt; &gt;&gt;&gt;&gt;&gt; "Mike" == Mike Fabian &lt;mfabian@example.com&gt; writes:
+&gt; 
+&gt;     Mike&gt; kterm doesn't use [LC_CTYPE] for conversion purposes, it
+&gt;     Mike&gt; just uses it to decide whether to use XIM:
+&gt; 
+&gt; I understand that; the point is that LC_CTYPE is about the internal
+&gt; structure (classification into alpha, num, hex; collation order, etc)
+&gt; of the character set, something quite different from the question of
+&gt; I/O protocols.
+
+rxvt does the same:
+
+    mfabian@example.com:/sugi/mfabian/cvs/rxvt-cvs/src$ grep setlocale *
+    grep: CVS: ディレクトリです
+    grep: graphics: ディレクトリです
+    init.c:    locale = setlocale(LC_CTYPE, "");
+    Binary file init.o matches
+    Binary file rxvt matches
+    grep: test: ディレクトリです
+    mfabian@example.com:/sugi/mfabian/cvs/rxvt-cvs/src$ 
+
+i.e.
+
+    ~$ LC_CTYPE=de_DE rxvt
+
+will not switch on XIM, even if the rest of the locale related
+variables are set to Japanese:
+
+    mfabian@example.com:~$ LC_CTYPE=de_DE locale
+    LANG=ja_JP
+    LC_CTYPE=de_DE
+    LC_NUMERIC="ja_JP"
+    LC_TIME="ja_JP"
+    LC_COLLATE=POSIX
+    LC_MONETARY="ja_JP"
+    LC_MESSAGES="ja_JP"
+    LC_PAPER="ja_JP"
+    LC_NAME="ja_JP"
+    LC_ADDRESS="ja_JP"
+    LC_TELEPHONE="ja_JP"
+    LC_MEASUREMENT="ja_JP"
+    LC_IDENTIFICATION="ja_JP"
+    LC_ALL=
+    mfabian@example.com:~$ 
+
+Same for XEmacs,
+
+    mfabian@example.com:~$ LC_CTYPE=de_DE xemacs
+
+won't switch on XIM either. And gives me German in the menubar, which
+is certainly wrong!
+
+Many programs seem to do this, not only kterm and rxvt, therefore
+I thought it is probably OK to decide whether to use XIM or not
+by using LC_CTYPE.
+
+&gt; XEmacs, for example, will internally reset LC_CTYPE in certain cases
+&gt; to guarantee that programs that parse natural language text will see
+&gt; the expected ordering after sorting.
+&gt; 
+&gt;     Mike&gt; There are no setlocale() calls in kterm using LANG. I this
+&gt;     Mike&gt; wrong?
+&gt; 
+&gt; I think so.
+
+Hmm, I'm not yet convinced. I don't understand why kterm and rxvt use
+setlocale(LC_CTYPE, "") instead of setlocale(LC_ALL, "") though.
+
+&gt;     Mike&gt; I patched it with the following patch to make it work with
+&gt;     Mike&gt; glibc 2.2:
+&gt; 
+&gt; Kterm evidently goes to some effort to flexibly work with the
+&gt; locales.  Why do you short-circuit kterm's facilities this way?
+
+No, I don't think that what Kterm did here was an effort to work
+flexibly with the locales. It had a build-in list of locales:
+
+    ptyx.h, line 264:
+
+    #ifdef KTERM_XIM
+    # define EUCJPLOCALE	"ja_JP.eucJP,ja_JP.ujis,ja_JP.EUC,japanese.euc,Japanese-EUC,ja,japan"
+    #endif /* KTERM_XIM */
+
+Then it tried in a loop to call "setlocale(LC_CTYPE, *locales)" for
+all the locales in this list and stop at the first successfull
+setlocale call. On Linux, with glibc 2.2 or glibc 2.1.x + japanese
+locale extensions, the first call setlocale(LC_CTYPE,"ja_JP.eucJP")
+will already be successful therefore the other ones won't be tried.
+
+I.e. the parameter used in the successful setlocale call is not
+necessarily the same as the one set in the environment of the user.
+The user may have set LANG=ja_JP, which is perfectly legal, ja_JP
+is an alias to ja_JP.eucJP.
+
+With glibc 2.1.x, this didn't matter, kterm worked OK even if the user
+did set LANG=ja_JP or LANG=ja_JP.ujis. With glibc 2.2 this didn't work
+anymore, the user had to set LANG=ja_JP.eucJP, otherwise kterm would
+not work correctly.
+
+When  I changed the above internal locale list in kterm to have
+ja_JP.ujis as the first entry, then again the first call
+setlocale(LC_CTYPE,"ja_JP.ujis") was successful, but then kterm
+would work correctly only if the user did set LANG=ja_JP.ujis
+as well. 
+
+But when I just replace this loop over the list to a single call to
+setlocale(LC_CTYPE,""), then the locale value which the user did set
+in the environment is used, i.e. after my patch the user can set *any*
+Japanese locale supported by glibc and it will work.
+
+I don't think it makes sense to make kterm work only for the first
+locale in this internal list. How should the user know that kterm
+has an internal list of locales and that he *must* set lang
+to the first value of this internal list to make it work. I think
+this is nonsense and therefore my patch makes sense.
+
+&gt;     Mike&gt; RedHat (6.2 and 7.0) checks in /etc/X11/xinit/xinitrc.d/xinput
+&gt;     Mike&gt; for the value of LC_CTYPE to decide whether to start kinput2.
+&gt; 
+&gt;     Mike&gt; Is this wrong?
+&gt; 
+&gt; You ask a Debian user if Red Hat does wrong?  :-)
+
+When does Debian start an input method for X11 like kinput2?  Does
+Debian check for LANG to decide whether to start an XIM server?
+
+&gt;     Mike&gt; Is it that bad? Aren't the keybindings to start XIM a user
+&gt;     Mike&gt; specific setup? So why not put in into $HOME? if $HOME is
+&gt;     Mike&gt; nfs mounted,
+&gt; 
+&gt; Yes.  They're user-specific.  _Not_ host-specific.  _Not_ filesystem
+&gt; specific.
+
+Yes I see.
+
+&gt; X11 has a standard way to ensure that your Xserver is set up
+&gt; correctly, no matter where your home is or where the X server is:
+&gt; xrdb -display $DISPLAY &lt; ~/.Xresources.  If you use that, you never
+&gt; have to say:
+&gt; 
+&gt;     Mike&gt; I only thought that it was very confusing that nicolatter
+&gt;     Mike&gt; did put the keybindings to start XIM in case of Wnn into the
+&gt;     Mike&gt; file ~/.nicolatter/global, but in case of Canna reads them
+&gt;     Mike&gt; from ~/.canna. I couldn't find that in nicolatters
+&gt;     Mike&gt; documentation, so I was surprised why changes to
+&gt;     Mike&gt; ~/.nicolatter/global didn't work in case of Canna.
+
+:-)
+
+Considering that, it is probably not very nice that KDE and GNOME
+don't use the X11 resources mechanism but have their setup in
+~/.kde2/, ~/.gnome/, ~/.gtkrc and files like that.
+
+-- 
+Mike Fabian   &lt;mfabian@example.com&gt;   <A HREF="http://www.suse.de/~mfabian">http://www.suse.de/~mfabian</A>
+睡眠不足はいい仕事の敵だ。
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00175" HREF="msg00175.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00172.html">Re: [hughes@example.com: English RH300 course to be held by Red Hat K.K. 25-29 June, 2001.]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00174.html">Announce May 11th Tech Meeting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00186.html">Re: Familiar Distribution for iPAQ</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00175.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00173"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00173"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

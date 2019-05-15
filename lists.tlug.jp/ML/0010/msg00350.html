@@ -1,0 +1,232 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Python discussion, anybody? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 27 Oct 2000 16:49:18 +0900 (JST) -->
+<!--X-Message-Id: 14841.13182.409147.227175@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14840.56067.908544.308032@example.com -->
+<!--X-Reference-Id: Pine.GSO.4.21.0010271326000.13029&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00348.html">Date Prev</A>][<A HREF="msg00351.html">Date Next</A>][<A HREF="msg00349.html">Thread Prev</A>][<A HREF="msg00351.html">Thread Next</A>][<A HREF="maillist.html#00350">Date Index</A>][<A HREF="threads.html#00350">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Python discussion, anybody?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Python discussion, anybody?</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 27 Oct 2000 16:49:18 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00345.html">Pine.GSO.4.21.0010271326000.13029-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00338.html">14840.56067.908544.308032@example.com</A>&gt;&lt;<A HREF="msg00345.html">Pine.GSO.4.21.0010271326000.13029-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;OZ_xMB.A.8jE.ffT-5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Todd" == Todd Rudick &lt;Todd.Rudick@example.com&gt; writes:
+
+    Todd&gt;  I have a half-baked idea that this sort of checking belongs
+    Todd&gt; to a separate lint-type utility.
+
+But who would run it?  The typical result would be that the code would
+be delivered to the customer today, while checking over the lint
+output (6 times as long as the source code ;-) won't be done until
+next week!
+
+Also, you should try capturing the make output from v19-era Emacs
+build sometime.  The number of byte-compiler errors (this isn't
+defined, this isn't used) thrown is quite impressive---so impressive,
+in fact, that they normally never get fixed, people just ignore them.[1]
+That's LISP, of course, but the principles apply to scripting
+languages.
+
+    Todd&gt;   Does that make sense? Do any of the smalltalk like
+    Todd&gt; "see-what-happens" weakly typed OO languages have this sort
+    Todd&gt; of feature/utility?
+
+Lisp byte-compilers do this.
+
+But gcov is more what you want in a RAD environment.
+
+    Todd&gt; P.S. On the original point, I agree that not catching typos
+    Todd&gt; until runtime (worse, not catching them at all) is a recipe
+    Todd&gt; for disaster. That little 'my' in Perl goes a long way.
+
+First, there is _no_ equivalent to `my' in Python because all
+assignments in a Python function take place in the local namespace.
+You can play tricks to get access to the global namespace, but it's
+very obvious what you're doing.  And class names can't leak; you have
+to qualify them explicitly, even inside the class definition.  (Python
+programmers conventionally use the Smalltalk term "self" for this
+purpose, rather than C++'s "this".)
+
+Second, in languages like LISP and Python, "from now until runtime"
+can and should be shorter than "from now until compile" in languages
+like C.
+
+When developing in Emacs LISP, you can actually evaluate any
+sexp, in the editing buffer, with one key sequence C-x C-e:
+
+(insert (format "%u" (* 256 256 256)))^X^E --&gt;
+
+(insert (format "%u" (* 256 256 256)))16777216
+
+It's, like, RAD, you know, man.  Other LISPs are handled by the
+so-called "inferior LISP" mode[2], and similarly allow you to build your
+LISP environment incrementally by evaluating individual forms.  I
+think Python mode provides a similar facility, communicating with a
+persistent Python process, but I haven't done that much Python
+programming to use that feature yet.  (I typically pollute the
+environment so much with my mistakes I need to restart a fresh
+interpreter every time; not all that big a penalty.)
+
+Third, as for not catching syntax errors at all, Watts Humphrey points
+out that 9% of C syntax typos (in a sample of his own programs) are
+not caught by the compiler because the result of the typo is still
+valid C syntax.  (The = vs == in conditionals that GCC is so urusai
+about probably accounts for most of them.)  It's surely much worse in
+Perl.
+
+Simon gave me an example the other day:
+
+		 perl -e 'print reverse "backwards"'
+
+produces
+
+			      backwards
+
+on output.  Why?  Reverse operates on arrays.  "backwards" is a
+string, and therefore scalar.  But Perl promotes that scalar to a
+one-element array, and reverses it.  And then, covering its tracks,
+converts the result back to a scalar and returns it.  Ouch.
+
+Does "use strict" fix that?  "my" certainly won't, since it didn't
+use any variables.  ;-)
+
+    Todd&gt; * The next step is editor support for displaying a big
+    Todd&gt; left-side bracket or verticle bar to highlight your
+    Todd&gt; blocks. Then let people fold (open/close) those
+    Todd&gt; blocks. Anything (i.e., in a vi or emacs) like this yet?
+
+In Emacs, I don't know how to do it cc-mode, but in PSGML you can fold
+any SGML element; it would be easy to do the same for LISP sexps.
+There is allegedly an editor which changes the background color
+according to the depth of nesting.  I came into the thread, which
+proposed adding the feature to [X]Emacs's font-lock, in the middle, so
+I don't know what the name of it is. :(
+
+
+
+Footnotes: 
+[1]  XEmacs isn't as impressive, sorry.  rms glories in those
+warnings.  Us anal XEmacs types actually try to fix, or at least
+reduce, the chatter so the warnings that do come up are significant.
+
+[2]  "Inferior" refers to the fact that the LISP interpreter lives in
+a subprocess of the Emacs, not to the LISP's quality.  ;-)
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00351" HREF="msg00351.html">Re: Python discussion, anybody?</A></STRONG>
+<UL><LI><EM>From:</EM> Todd.Rudick@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00353" HREF="msg00353.html">Re: Python discussion, anybody?</A></STRONG>
+<UL><LI><EM>From:</EM> Simon Cozens &lt;simon@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00338" HREF="msg00338.html">Python discussion, anybody?</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00345" HREF="msg00345.html">Re: Python discussion, anybody?</A></STRONG>
+<UL><LI><EM>From:</EM> Todd.Rudick@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00348.html">Re: Setting to limit number of telnet sessions</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00351.html">Re: Python discussion, anybody?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00349.html">TK &amp; Japanese--was: Python discussion, anybody?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00351.html">Re: Python discussion, anybody?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00350"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00350"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

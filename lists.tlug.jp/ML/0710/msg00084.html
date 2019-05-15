@@ -1,0 +1,178 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Email Storage -->
+<!--X-From-R13: Evzba Qbmraf <fvzbaNfvzba&#45;pbmraf.bet> -->
+<!--X-Date: Sun, 14 Oct 2007 14:29:32 +0900 -->
+<!--X-Message-Id: 4711A8FA.70103@simon&#45;cozens.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1192321409.3599.21.camel@smudge.wuts.nu -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00083.html">Date Prev</a>][<a href="msg00085.html">Date Next</a>][<a href="msg00083.html">Thread Prev</a>][<a href="msg00114.html">Thread Next</a>][<a href="maillist.html#00084">Date Index</a>][<a href="threads.html#00084">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Email Storage</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 14 Oct 2007 14:28:26 +0900</li>
+<li><strong>From</strong>: <strong>Simon Cozens &lt;<a href="mailto:simon@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Email%20Storage">simon@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Email Storage</strong></li>
+<li>References: &lt;<a href="msg00083.html">1192321409.3599.21.camel@smudge.wuts.nu</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.6 (Macintosh/20070728)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Jason Hall wrote:
+&gt; What do people here use for long term personal email storage/archiving?
+
+I spent several years trying to find a good answer to this question. :)
+
+Currently, I use gmail for backup and searching, (by rights I should be
+using Buscador and Email::Store, but, well, I don't...) and a rather
+clever exim filter:
+
+--------SNIP-------
+# Exim filter
+logfile /home/simon/.audit_log
+
+# Catch mailing list mail and file by date
+# Put all mails from, e.g., tlug in tlug-yyyymm
+if  not delivered
+and (   $h_List-Id: matches &quot;&lt;([^\.]+).*&gt;&quot;
+    or  $sender_address: matches &quot;owner-([^@example.com)[@example.com&quot;
+    or  $sender_address: matches &quot;(.*)-request@&quot;
+    )
+then
+    if  &quot;$1:$tod_log&quot; matches &quot;([^:]+):(....-..)&quot;
+    then    save Maildir/.$1-$2/
+        logwrite  &quot;$header_from::$header_subject::List $1&quot;
+    endif
+endif
+
+# Put all mails not apparently to me (circulars, etc.) into
+# questionable-yyyymm
+if not delivered and $header_to: does not contain $local_part then
+    if  &quot;$tod_log&quot; matches &quot;(.......)&quot; then save Maildir/.questionable-$1/
+        logwrite  &quot;$header_from::$header_subject::Questionable&quot;
+    endif
+endif
+
+# Put everything else in the inbox
+if not delivered then
+    save Maildir/
+        logwrite  &quot;$header_from::$header_subject::Accepting&quot;
+endif
+--------SNIP-------
+
+I then move things to read-mail-yyyymm also have a rather clever
+Thunderbird extension which automatically sets the outbox to outbox-yyyymm.
+
+Either I know what month things happened in, in which case scanning a
+limited number of mails is easy, or I don't, in which case I use gmail's
+search.
+
+-- 
+Jenkinson's Law:
+	It won't work.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00114" href="msg00114.html">Re: [tlug] Email Storage</a></strong>
+<ul><li><em>From:</em> Sigurd Urdahl</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00083" href="msg00083.html">[tlug] Email Storage</a></strong>
+<ul><li><em>From:</em> Jason Hall</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00083.html">[tlug] Email Storage</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00085.html">[tlug] xen and windows</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00083.html">[tlug] Email Storage</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00114.html">Re: [tlug] Email Storage</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00084"><strong>Date</strong></a></li>
+<li><a href="threads.html#00084"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

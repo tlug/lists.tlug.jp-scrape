@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Install languages -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 29 Oct 2015 00:20:40 +0900 -->
+<!--X-Message-Id: 22064.59335.633285.759475@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 56306E7D.7040005@hb.tp1.jp -->
+<!--X-Reference: CAAhy3dunPZx9quWj29VKa6bRoC2e52iYO5Cpuu42f2_fKarwjQ@mail.gmail.com -->
+<!--X-Reference: 56308E10.4010208@hb.tp1.jp -->
+<!--X-Reference: 22064.48981.186970.880561@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Reference: 5630D008.9030300@hb.tp1.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00038.html">Date Prev</a>][<a href="msg00040.html">Date Next</a>][<a href="msg00037.html">Thread Prev</a>][<a href="msg00027.html">Thread Next</a>][<a href="maillist.html#00039">Date Index</a>][<a href="threads.html#00039">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Install languages</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 29 Oct 2015 00:20:39 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Install%20languages">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Install languages</strong></li>
+<li>References: &lt;<a href="msg00025.html">56306E7D.7040005@hb.tp1.jp</a>&gt;	&lt;<a href="msg00026.html">CAAhy3dunPZx9quWj29VKa6bRoC2e52iYO5Cpuu42f2_fKarwjQ@mail.gmail.com</a>&gt;	&lt;<a href="msg00028.html">56308E10.4010208@hb.tp1.jp</a>&gt;	&lt;<a href="msg00035.html">22064.48981.186970.880561@turnbull.sk.tsukuba.ac.jp</a>&gt;	&lt;<a href="msg00037.html">5630D008.9030300@hb.tp1.jp</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Thomas Blasejewicz writes:
+
+ &gt; The following information may help to resolve the situation:
+ &gt; 
+ &gt; The following packages have unmet dependencies:
+ &gt;   language-pack-gnome-ja-base : Depends: language-pack-gnome-ja (&gt;= 
+ &gt; 1:14.04+20140410) but it is not going to be installed
+ &gt;   language-pack-ja-base : Depends: language-pack-ja (&gt;= 
+ &gt; 1:14.04+20140410) but it is not going to be installed
+ &gt; E: Unable to correct problems, you have held broken packages.
+
+Bingo!
+
+ &gt; This is not a DIFFERENT package.
+
+Yes, it is.  The dependency is *reversed*.
+
+Try
+
+    sudo apt-get install language-pack-ja-base language-pack-ja
+    sudo apt-get install language-pack-gnome-ja-base language-pack-gnome-ja
+
+NOTE: apt-get is a low-level, stupid application.  It does what it is
+told to do, and expects you to know what to do if it gets blocked.
+aptitude or synaptic should be smart enough to handle the reversed
+dependencies.
+
+If that doesn't work, most likely it will complain that the language
+packs don't exist at the source site.  (This is based on Naruhiko
+Ogasawara's message.)  Then try
+
+    sudo apt-get install language-pack-ja-base=1:14.04+20140410 language-pack-ja=1:14.04+20140410
+
+and the same for the GNOME version.
+
+ &gt; sudo apt-get install language-pack-gnome-jp language-pack-gnome-jp
+
+Did I type ...-jp?  It should be ...-ja.  &quot;JP&quot; is the country, &quot;JA&quot; is
+the language (different from &quot;DE&quot; Germany and &quot;DE&quot; German&quot; for reasons
+I don't understand, maybe as a country &quot;JA&quot; is Jamaica or something?)
+
+ &gt; And this finally:
+ &gt; dpkg -s language-pack{-gnome,}-ja{-base,}
+ &gt; dpkg-query: package 'language-pack-gnome-ja-base' is not installed and 
+ &gt; no information is available [etc, etc, for 3 more packages] 
+ &gt; 
+ &gt; I could not make these last two commands work.
+
+No, the last command worked as expected.  The packages aren't broken,
+they're just not installed.  I think that the commands installing a
+language pack base and the language pack at the same time should do
+the trick.
+
+ &gt; LibreOffice - after removing and then reinstalling it, the problem(s) 
+ &gt; seem to be gone (hopefully).
+
+Maybe you don't want to mess with the language-pack-ja stuff then,
+until you need to.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00025" href="msg00025.html">[tlug] Install languages</a></strong>
+<ul><li><em>From:</em> Thomas</li></ul></li>
+<li><strong><a name="00026" href="msg00026.html">Re: [tlug] Install languages</a></strong>
+<ul><li><em>From:</em> Raymond Wan</li></ul></li>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] Install languages</a></strong>
+<ul><li><em>From:</em> Thomas Blasejewicz</li></ul></li>
+<li><strong><a name="00035" href="msg00035.html">Re: [tlug] Install languages</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00037" href="msg00037.html">Re: [tlug] Install languages</a></strong>
+<ul><li><em>From:</em> Thomas Blasejewicz</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00038.html">Re: [tlug] Install languages</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00040.html">Re: [tlug] Install languages</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00037.html">Re: [tlug] Install languages</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00027.html">Re: [tlug] Install languages</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00039"><strong>Date</strong></a></li>
+<li><a href="threads.html#00039"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

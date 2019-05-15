@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 6 Apr 2001 14:13:42 +0900 -->
+<!--X-Message-Id: 15053.20614.184744.863735@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104060145.KAA14553@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00040.html">Date Prev</A>][<A HREF="msg00042.html">Date Next</A>][<A HREF="msg00040.html">Thread Prev</A>][<A HREF="msg00066.html">Thread Next</A>][<A HREF="maillist.html#00041">Date Index</A>][<A HREF="threads.html#00041">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI><strong>Subject</strong>: <strong>XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 6 Apr 2001 14:13:42 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00039.html">200104060145.KAA14553@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00039.html">200104060145.KAA14553@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;uBlbDC.A.74.bHVz6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt;  Needless to say, the documentation for I18N is totally
+    Jim&gt; silent on this.
+
+Er, well, the O'Reilly X manuals cover it pretty well.  Except that
+AFAICT they haven't really tried the more esoteric stuff, so whether
+it works as documented in the fine points is questionable.
+
+Here's the theory:
+
+(1) An XIM-using app enables XIM by setting up an event filter that
+    redirects X events of interest (including all keypress and
+    keyrelease, grabs, focus, etc, and usually certain window events)
+    to the XIM functions.
+
+(2) It explicitly opens an X Input Method:
+
+    (a) It sets the program's locale using the standard library
+        function setlocale(), either from the environment (default) or
+        explicitly.  Eg, "ja_JP.eucJP".  I think it specifically looks
+        at the LANG and LC_ALL variables, but not at any of the
+        subcategories.
+
+    (b) It gets the (possibly program-augmented) contents of the
+        XMODIFIERS environment variable.  This is a string of the form
+
+        "@example.com=value;@example.com=value..."
+
+        AFAIK the only implemented tag is @example.com  Then it extracts the
+        order list of input methods such as "@example.com=isoaccent;@example.com=kinput2".
+
+    (c) Then it does XOpenIM(...).  XOpenIM walks the list, attempting
+        to contact each method in turn, and on success asking "do you
+        do $LANG?"  isoaccent says "ja? bu-wha-ha-ha!".  XOpenIM
+        translates that to "iie"[1], and goes on to kinput2.  Kinput2
+        says "hai!", they shake hands, and XOpenIM returns a struct
+        _xim or something like that that Xlib will use to control
+        console input thereafter.
+
+(3) Then it does further processing.
+
+Note that VALUE is IM-specified; I don't know how it is implemented,
+but kinput2 could register itself as "Alfred E. Neumann" if it wanted
+to, and the XIM protocol would look up "Alfred E. Neumann" and somehow
+know to contact kinput2.  Fortunately most input methods use their
+names (in particular, XMODIFIERS="@example.com=kinput2" finds kinput2), but
+they don't have to.  (The reason for this is so that a single server
+can register itself multiple times; Xlib itself implements several
+methods internally.)  IIRC case is significant.
+
+Also note that if XMODIFIERS="@example.com=atok;@example.com=kinput2" you will get ATOK,
+not kinput2.
+
+Finally, there is no standard for processing $LANG, either.  In the
+previous example, it's actually possible that ATOK insists on
+"ja_JP.utf8" while kinput2 accepts "ja*", in which case kinput2 would
+win if $LANG==ja_JP.eucJP.  Or ATOK could depend on the rarely used
+modifier field in the locale spec, and look for "ja*@example.com", thus
+losing on "ja_JP.eucJP".
+
+In your case, you need (a) XMODIFIERS="@example.com=kinput2" and (b)
+LANG="ja_JP.eucJP" (probably, works for me but YYMV) in your
+environment or you will lose.  Of course, you may lose anyway; this is
+XIM.
+
+This is all an excellent idea, really it is.  Trust me.  Eh, Chris?
+Pay no attention to the note at the bottom of the screen!  :-)
+
+
+Footnotes: 
+[1]  XIM is of course a Japanese invention.  Hideki used to be insane,
+but then it got better and he wrote a much better spec for Java, IIIMF
+or IIIMP or something like that (I forget which is implementation and
+which is spec).
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00040.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00042.html">Re: Linux mags in Japan</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00040.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00066.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00041"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00041"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

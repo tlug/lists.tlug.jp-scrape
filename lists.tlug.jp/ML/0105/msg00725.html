@@ -1,0 +1,176 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Apache rotate log config option is where? -->
+<!--X-From: Jake Morrison <jake_morrison@example.com> -->
+<!--X-Date: Sun, 27 May 2001 23:06:36 &#45;0700 (PDT) -->
+<!--X-Message-Id: 20010528060636.24545.qmail@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F139qtQvAauNjVuMhvq00014e96@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00724.html">Date Prev</A>][<A HREF="msg00726.html">Date Next</A>][<A HREF="msg00722.html">Thread Prev</A>][<A HREF="msg00723.html">Thread Next</A>][<A HREF="maillist.html#00725">Date Index</A>][<A HREF="threads.html#00725">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Apache rotate log config option is where?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Apache rotate log config option is where?</strong></LI>
+<LI><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@example.com">jake_morrison@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 27 May 2001 23:06:36 -0700 (PDT)</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00722.html">F139qtQvAauNjVuMhvq00014e96@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:Jacob.Morrison@example.com">Jacob.Morrison@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;i3LTzC.A.i5H.xreE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Jc,
+
+Log rotation is generally handled by a script called from cron
+which renames the existing log file, then sends a signal (USR1 for
+Apache) to the main process which tells it to close and reopen 
+its log files. 
+
+USR1 does a "gracefull" restart, which allows child processes to
+complete processing of outstanding requests before restarting.
+This is normally what you want, as it prevents disruption to 
+existing clients on a busy website. 
+
+It sounds like you are having some trouble with outstanding
+connections, but this is likely unconnected to the log rolling. 
+If these are CGIs, then there may be some coding problems. 
+More likely, the clients are downloading large files over 
+slow links. If the connection has been lost or abandoned, 
+then the httpd's will stick around until they time out. 
+
+You might look at your Apache logs to see what the server
+usage pattern is normally. Or you could look at the output
+of netstat to see what clients are connected.
+
+Regards,
+Jake
+
+--- Jean-Christian Imbeault &lt;jean_christian@example.com&gt; wrote:
+&gt; My apache server is being shutdown and brought back up once a week. I
+&gt; think this has to do with log rotation. However it is causing 
+&gt; problems.
+&gt; 
+&gt; It seems some of the httpd spawns are not diying off 
+&gt; properly, become zombies and keep an open connection to 
+&gt; the machine that was in the process of doing an HTTP request. 
+&gt; This causes the machine at the other end to hang 
+&gt; and become incredibly slow and unresponsive. Furthermore it 
+&gt; seems to be clogging up my network bandwith ... don't know why 
+&gt; this would but it's a definite symptom.
+&gt; 
+&gt; How can I configure this weekly rebooting of the apache server?
+&gt; 
+&gt; Jc
+&gt;
+_________________________________________________________________________
+&gt; Get Your Private, Free E-mail from MSN Hotmail at
+&gt; <A TARGET="_top" HREF="http://www.hotmail.com">http://www.hotmail.com</A>.
+&gt; 
+&gt;
+-----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30- 
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt;
+-----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online
+&gt; Japan
+&gt; 
+
+
+
+__________________________________________________
+Do You Yahoo!?
+Yahoo! Auctions - buy the things you want at great prices
+<A TARGET="_top" HREF="http://auctions.yahoo.com/">http://auctions.yahoo.com/</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00722" HREF="msg00722.html">Apache rotate log config option is where?</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00724.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00726.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00722.html">Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00723.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00725"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00725"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

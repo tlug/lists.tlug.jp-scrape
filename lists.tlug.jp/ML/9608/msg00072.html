@@ -1,0 +1,244 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Building a new kernel -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Mon, 26 Aug 1996 07:08:01 GMT -->
+<!--X-Message-Id: m0uuvjv&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199608260621.PAA24793@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00071.html">Date Prev</A>][<A HREF="msg00073.html">Date Next</A>][<A HREF="msg00070.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00072">Date Index</A>][<A HREF="threads.html#00072">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Building a new kernel</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Building a new kernel</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Mon, 26 Aug 96 16:05 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00070.html">199608260621.PAA24793@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi all, Getting back to the kernal problem:
+
+    Jim&gt; When I type 'make config' I get dissed with:
+    Jim&gt; make: *** No rule to make target 'config'. Stop.
+
+    ST&gt; Question 1: Can you read the Makefile?  Question 2: Can you
+    ST&gt; read the Makefile?
+
+    Jim&gt; Answer 1: Yes Answer 2: No, not really.
+
+OK ... it's really not that hard to read basic make rules.  In the
+basic format, it's
+
+target: dependency
+	action
+
+and you read that "if &lt;target&gt; doesn't exist, or &lt;target&gt; is older
+than &lt;dependency&gt;, then rebuild &lt;target&gt; via &lt;action&gt;."  There really
+ought to be a tool which reads complicated makefiles and builds an
+HTML file so that you can follow a link from a dependency to the
+target that builds it.  Unfortunately, there isn't.  So you just have
+to use search functions in a text editor.
+
+You can also tell make to do a dry run on your Makefile, which might
+be interesting to watch with `less':
+
+&gt;From `info make':
+
+`-n'
+`--just-print'
+`--dry-run'
+`--recon'
+     Print the commands that would be executed, but do not execute them.
+     *Note Instead of Executing the Commands: Instead of Execution.
+
+`-p'
+`--print-data-base'
+     Print the data base (rules and variable values) that results from
+     reading the makefiles; then execute as usual or as otherwise
+     specified.  This also prints the version information given by the
+     `-v' switch (see below).  To print the data base without trying to
+     remake any files, use `make -p -f /dev/null'.
+
+[The "-f /dev/null" actually prints the database of defaults, since it
+doesn't read any Makefiles.  To not remake files, use '-n'.  '-p' is
+hellaciously verbose, even with trivial makefiles---among other
+things, it prints out the whole environment---so do use 'less' or
+something like that!]
+
+`-W FILE'
+`--what-if=FILE'
+`--assume-new=FILE'
+`--new-file=FILE'
+     "What if".  Each `-W' flag is followed by a file name.  The given
+     files' modification times are recorded by `make' as being the
+     present time, although the actual modification times remain the
+     same.  You can use the `-W' flag in conjunction with the `-n' flag
+     to see what would happen if you were to modify specific files.
+
+[Be careful with the '-W' and '-p' flag[s]; make will actually execute
+the relevant actions unless you use '-n' too.]
+
+    JWT&gt; And if it your answer was yes to both, you might consider:
+    JWT&gt; Question 3: Do I have an old version of GNU make which had a
+    JWT&gt; bug that was masked by the old libc library?
+
+    Jim&gt; I was just reading the release note for the 2.0 kernel and
+    Jim&gt; saw:
+
+    &gt;&gt; The latest stable Linux C Library release is 5.2.18.  If you
+    &gt;&gt; upgrade to this from 5.0.9 or earlier, be sure to read the
+    &gt;&gt; `release.libc-5.2.18' file, since GNU make and a few other
+    &gt;&gt; fairly important utils can be broken by the upgrade
+
+    Jim&gt; When I installed jdk1.01 (someday I WILL learn how to use
+    Jim&gt; it!) I grabbed libc.5.2.18.bin.tar.gz and uncompressed,
+    Jim&gt; untarred and copied the files in the lib subdirectory of the
+    Jim&gt; top level of the heirarchy to /lib. (I followed the
+    Jim&gt; directions to the T) So, now I have both 5.0.9 and 5.2.18 in
+    Jim&gt; /lib. There was nothing in the java-HOWTO about this breaking
+    Jim&gt; make!
+
+I don't understand ld.so (the dynamic linking loader which actually
+runs most programs) or ldconfig (which builds the kernel caches
+necessary to use ld.so) well.  However, you should not have a problem
+with having both libc-5.2.18 and libc-5.0.9 around; recent ld.so
+versions understand this (and also automatically recognize a.out
+vs. ELF).  (You should have a recent version of ld.so (and its
+companions ldd and ldconfig).  I think all ELF systems have pretty
+up-to-date loaders.  'ldd -V' (case is important) will tell you what
+the version of ld.so is.  For the dynamic linking work properly among
+ELF, a.out, and multiple versions of single libraries, you probably
+want a 1.7.x version of ld.so.  1.7.14 is working fine for me.  If you
+want to replace the ld.so suite, get advice first if you don't fully
+understand the instructions; it's quite easy to wedge yourself into a
+situation where you can't do anything, and have to boot from a rescue
+floppy.)
+
+    Jim&gt; Should I try upgrading GNU make and hope it doesn't break the
+    Jim&gt; jdk?
+
+Yes, do upgrade.  No, don't waste any effort worrying about the JDK.
+I have not heard of any problems with GNU make in terms of backward
+compatibility with Makefiles; GNU make basically is a standalone
+program, and is not integrated into any other package (even GNU C) in
+any complicated way.  GNU make only cares that (1) the exec calls work
+(since it runs other programs), (2) the directory calls to test file
+existence and age work, and (3) the Makefile being parsed follow its
+syntax.  It was the file system calls that got broken in the library
+upgrade.  (1) and (2) are OS features, and (3) is a public interface
+that the GNU project is pretty careful not to change.
+
+Probably you already have make 3.7.x, maybe even 3.7.4 (do "make --
+version" to find out).  The only difference between the original make
+3.7.4 and the fixed distribution is that it was linked against a fixed
+library.
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00070" HREF="msg00070.html">Re: Building a new kernel</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00071.html">Re: xjdic22 problems</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00073.html">Re: Zaurus</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00070.html">Re: Building a new kernel</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">Japanese Resources</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00072"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00072"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

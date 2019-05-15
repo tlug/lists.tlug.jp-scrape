@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Apache "Surprise Feed" -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 15 Jun 2000 15:18:02 +0900 -->
+<!--X-Message-Id: 14664.29887.833288.303818@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200006150433.VAA07012@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00223.html">Date Prev</A>][<A HREF="msg00225.html">Date Next</A>][<A HREF="msg00223.html">Thread Prev</A>][<A HREF="msg00237.html">Thread Next</A>][<A HREF="maillist.html#00224">Date Index</A>][<A HREF="threads.html#00224">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Apache "Surprise Feed"</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Apache "Surprise Feed"</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 15 Jun 2000 15:16:31 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00223.html">200006150433.VAA07012@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00223.html">200006150433.VAA07012@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Shawn" == Shawn Gray &lt;shawn@example.com&gt; writes:
+
+    Shawn&gt; Today, I found a site where someone has stuck my BBS into
+    Shawn&gt; the bottom frame on his page, making it appear as if it is
+    Shawn&gt; part of his site.
+
+I've noticed a lot of this kind of stuff recently.
+
+Actually, this may be more than credit stealing.  He may be counting
+hits to your site as hits to his, and reporting them to his
+advertisers.  (This just requires a simple rewrite of all the URLs,
+easy with a Perl script.)  Check to see if you are getting a lot of
+repeated hits from his site.
+
+OTOH, if he's not borrowing your hits, you could just make sure your
+site is boldly advertised every few lines in the BBS ;-)  And mention
+his little felony.  "I'm glad to see that butt.head.or.jp likes my
+site so much that he uses it as if it were his own!
+
+    Shawn&gt; I could probably figure out how to block access from his
+    Shawn&gt; site to prevent my page from being served to him,
+
+Since it's a BBS page, presumably it's a CGI or other script anyway.
+Scripts have direct access to all the information (originating host,
+full URL, cookies, user agent, etc).  So you could just test for it in
+the script.  But this doesn't protect any ordinary HTML pages.
+
+Apache can do access blocking natively (have you RFTM'd today?)  But a
+quick alternative hack, if you own the Linux box running the
+webserver, would involve an Apache running on a different port and
+IPchains (OR whatever will replace them in 2.4).  I like this because
+it means the beavis never gets near your real home pages, ever, and
+you don't have to make potentially buggy changes in your real
+configuration.
+
+Of course, if he's running as an ordinary user on a big ISP, I don't
+know how you'd get an ID for him, either with IP chains or native
+Apache config.  The problem is you probably don't want to block other
+users on that system.  The only thing I can think of would be some
+kind of cookie-based scheme to get hold of the real originator, and
+that is kinda offensive.
+
+With ipchains, blocking access is easy:
+
+# REJECT tells him he's been blocked, maybe he'll give up quicker
+# DENY may make him think his network is fsck'ing, and it'll come back
+# later.
+# The /24 gets all his neighbors, too :-P
+# Remove the `--destination www.greycastle.com http' to block ALL access.
+ipchains -A input --source butt.head.or.jp/24 \
+                  --destination www.greycastle.com http -j REJECT
+
+Redirection isn't much harder:
+
+ipchains -A input --source butt.head.or.jp/24 \
+                  --destination www.greycastle.com http -j REDIRECT 666
+
+Now you set up your second Apache server on port 666, and his ass is
+harassed.  You might even want to `nice 19' that httpd ... or just add
+a 10 sec delay to the BBS script ;-)
+
+いいじゃないか
+いいじゃないか
+
+It is obviously "bad attitude Thursday" in Tsukuba....
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+-----------------------------------------------------------------------
+Next Meeting (w/ YLUG): June 16 (Fri) 19:00 Mizonoguchi Marui Family 12F
+Next Technical Meeting: July 8 (Sat)  13:30 Topic: TBA
+-----------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00223" HREF="msg00223.html">tlug: Apache "Surprise Feed"</A></STRONG>
+<UL><LI><EM>From:</EM> "Shawn Gray" &lt;shawn@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00223.html">tlug: Apache "Surprise Feed"</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00225.html">RE: tlug: Apache "Surprise Feed"</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00223.html">tlug: Apache "Surprise Feed"</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00237.html">Re: tlug: Apache "Surprise Feed"</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00224"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00224"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

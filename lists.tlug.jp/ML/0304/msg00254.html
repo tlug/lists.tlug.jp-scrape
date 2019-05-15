@@ -1,0 +1,216 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Broken PPP connection to GOL &#45;> Fusion -->
+<!--X-From-R13: Rraavf [p[hepul <qravfzpzNtby.pbz> -->
+<!--X-Date: Tue, 29 Apr 2003 19:09:13 +0900 (KST) -->
+<!--X-Message-Id: Pine.LNX.4.33.0304291840530.1960&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00253.html">Date Prev</a>][<a href="msg00255.html">Date Next</a>][<a href="msg00252.html">Thread Prev</a>][<a href="msg00255.html">Thread Next</a>][<a href="maillist.html#00254">Date Index</a>][<a href="threads.html#00254">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Broken PPP connection to GOL -&gt; Fusion</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 29 Apr 2003 19:09:13 +0900 (KST)</li>
+<li><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Broken%20PPP%20connection%20to%20GOL%20-%3E%20Fusion">denismcm@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Broken PPP connection to GOL -&gt; Fusion</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+  Hi All,
+
+  Nice to see that many familiar names are still part of the TLUG group.
+I haven't been able to keep up with the flow and have been off the list
+for the last two years.
+
+  Coming to the point:  I'm unable to make a PPP connection to the new
+local GOL (now FUSION) ISP number that will be my only option come May
+31.  I've been connecting happily for years to the old number with the
+following script:
+
+----------------------------------------------------
+# look in /etc/pap-secrets for password info
+# in /etc/ppp/options  only 'lock' is specified
+
+/usr/sbin/pppd connect '/usr/sbin/chat -v &quot;&quot; ATDT7241745 CONNECT &quot;&quot; \
+ ' /dev/ttyS1 115200 -detach debug crtscts modem \
+ defaultroute noipdefault noccp nodeflate nobsdcomp user denismcm   &gt; ~/pppd.logold &amp;
+----------------------------------------------------
+
+  I'm connecting over POTS with a 56K modem, I should probably add. Anyhow,
+I assumed that I could just change the number (and make a few adjustments
+for the change in authentication procedures) and I'd be all set.  Wrong.
+
+  From the 'pppd' logfiles, it seems that the GOL host is just not responding
+to LCP requests, so I never do get a chance to try and authenticate myself
+in CHAP (the new protocol):
+
+Serial connection established.
+using channel 2
+Using interface ppp0
+Connect: ppp0 &lt;--&gt; /dev/ttyS1
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0x91584863&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0x91584863&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0x91584863&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0x91584863&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+Modem hangup
+Connection terminated.
+
+  At the old number, I get a response after the second of these 'sent [LCP'
+lines.
+
+  I've tried extending the timeout period with the 'local' option to 'pppd'.
+This does produce - finally - some response from the GOL host, but eventually
+everything times out again anyway:
+
+Using interface ppp0
+Connect: ppp0 &lt;--&gt; /dev/ttyS1
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+# normally we time out right here, but persistence yields a response, after
+# all
+sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+rcvd [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt; &lt;magic 0xa4a2d3f3&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfNak id=0x1 &lt;magic 0x5d53644c&gt;]
+rcvd [LCP ConfNak id=0x1 &lt;magic 0x5d53644c&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+sent [LCP ConfReq id=0x2 &lt;asyncmap 0x0&gt; &lt;magic 0x4ea41884&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+# here we reach our maximum number of LCP configuration requests (the
+# here we reach our maximum number of LCP configuration requests (the
+# default of 10) and so time out
+Terminating on signal 2.
+
+  GOL support has dropped my case after concluding - obviously wrongly -
+that my dialup software (RH7.1's 'pppd') was not capable of coping with
+CHAP authentication.  Of course, that's ridiculous.  And from what I see in
+the log files, I'm not even being given a chance to authenticate, anyway.
+
+  I do hope that someone has an answer out there.  'noauth' seems to make
+no difference, nor do any of the other options to 'pppd' that I have tried.
+I actually gave up on this for a few weeks, assuming that the new GOL server
+was grossly misconfigured and that they would fix the problem on their
+end, but maybe I'm wrong.  And I do apologize if this has been covered
+in TLUG  discussion already.  A Google search turns up nothing on this
+problem and GOL, and I haven't been able to check the TLUG archive,
+which is now password-protected.
+
+  I think that on principle I'm going to part company with GOL, anyway,
+but I really do want to solve this problem first.
+
+  Cheers,  Dennis
+-- 
+Dennis McMurchy,
+Sointula, B.C. / Tojinmachi, Fukuoka
+Canada           Japan
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00255" href="msg00255.html">Re: [tlug] Broken PPP connection to GOL -&gt; Fusion</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00253.html">Re: [tlug] Kind of OT, Oku no Hosomichi</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00255.html">Re: [tlug] Broken PPP connection to GOL -&gt; Fusion</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00252.html">[tlug] Japanese fonts in VIM</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00255.html">Re: [tlug] Broken PPP connection to GOL -&gt; Fusion</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00254"><strong>Date</strong></a></li>
+<li><a href="threads.html#00254"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

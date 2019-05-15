@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Afraid to boot -->
+<!--X-From: Neil Booth <NeilB@example.com> -->
+<!--X-Date:  Thu, 10 Dec 1998 21:04:02 +0900 -->
+<!--X-Message-Id: 366FB8D9.5B497F1B@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 366A819F.5C23BD80@example.com -->
+<!--X-Reference-Id: 13930.38679.785178.307806@example.com -->
+<!--X-Reference-Id: 366C56CF.185A0696@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00240.html">Date Prev</A>][<A HREF="msg00242.html">Date Next</A>][<A HREF="msg00147.html">Thread Prev</A>][<A HREF="msg00242.html">Thread Next</A>][<A HREF="maillist.html#00241">Date Index</A>][<A HREF="threads.html#00241">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Afraid to boot</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Afraid to boot</strong></LI>
+<LI><strong>From</strong>: <strong>Neil Booth &lt;<A HREF="mailto:NeilB@example.com">NeilB@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 10 Dec 1998 21:04:41 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: ...</LI>
+<LI>References: &lt;<A HREF="msg00104.html">366A819F.5C23BD80@example.com</A>&gt; &lt;<A HREF="msg00105.html">13930.38679.785178.307806@example.com</A>&gt; &lt;<A HREF="msg00137.html">366C56CF.185A0696@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Neil Booth wrote:
+
+&gt; You and Scott are both right. It wouldn't boot by itself; even when I
+&gt; unplugged the IDE drive.
+
+I have finally figured out exactly what is going on here, and what the
+LILO warning really means.
+I'm not sure anyone's interested, but I'll relate it just in case. It
+could be useful for those people creating distributions, or if someone
+comes across this themselves in the future, maybe...
+
+The BIOS assigns the first drive 0x80, and the second 0x81. All the
+conflicts and boot failures I saw are explained by
+
+1) the fact that LILO always assumes IDE=0x80, and the SCSI=0x81 in the
+presence of both, and
+2) the way the BIOS figures out what is the "first" drive isn't
+immediately obvious, and isn't as simple as IDE=0x80.
+
+When /sbin/lilo -ing the SCSI drive boot sector, LILO issues a warning
+because it's writing its boot sector with BIOS calls referring to the
+SCSI as 0x81, the 2nd drive. When sbin/lilo -ing the IDE, it does all
+those calls with 0x80 instead. The solution is to have in the SCSI lilo
+config file the following global paramters:
+
+disk=/dev/sda
+  boot=0x80
+
+to override LILO's assumption. This also supresses the warning.
+
+All my original attempts at booting off the SCSI drive were before I'd
+read about the "disk" global parameter, so at boot LILO was passing BIOS
+0x81 as the drive reference.
+
+The interesting bit is that if the BIOS is set to boot from SCSI, the
+SCSI gets the 0x80 label and the IDE the 0x81 label, hence why the boot
+always failed when I did that.
+
+What I couldn't work out is how I could boot from SCSI just after I'd
+installed the IDE, because the installed LILO in the SCSI boot sector
+was still referring to it as 0x80. Well, it appears that the BIOS, in
+attempting to detect errors, will overlook the IDE drive and instead
+assign 0x80 to the SCSI and attempt a boot from there if either of the
+following is true, even if the BIOS is set to boot from IDE:
+
+a) there is no active partition on the IDE
+b) there is an active partition, but it cannot recognise a magic number
+in the boot sector.
+
+Worse, even if set to boot from SCSI or either of the above are true,
+the BIOS hardware display at bootup ALWAYS shows the SCSI as 0x81 if the
+IDE is present!
+
+Interesting, if you're into that kind of thing.
+
+Neil.
+------------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 at Temple Univ. Japan
+*NEW LOCATION* a map is available at <A TARGET="_top" HREF="http://www.tuj.ac.jp/maps.html">http://www.tuj.ac.jp/maps.html</A>
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00242" HREF="msg00242.html">Re: tlug: Afraid to boot</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00243" HREF="msg00243.html">Re: tlug: Afraid to boot</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00104" HREF="msg00104.html">tlug: Afraid to boot</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00105" HREF="msg00105.html">tlug: Afraid to boot</A></STRONG>
+<UL><LI><EM>From:</EM> Kei Furuuchi &lt;kfur@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00137" HREF="msg00137.html">Re: tlug: Afraid to boot</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00240.html">tlug: package managers (was  Apache + mod_speling)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00242.html">Re: tlug: Afraid to boot</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00147.html">Re: tlug: Afraid to boot</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00242.html">Re: tlug: Afraid to boot</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00241"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00241"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: qustions about Apache setup -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Fri, 27 Sep 1996 07:21:08 GMT -->
+<!--X-Message-Id: m0v6X3y&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199609270411.NAA24764@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00081.html">Date Prev</A>][<A HREF="msg00083.html">Date Next</A>][<A HREF="msg00081.html">Thread Prev</A>][<A HREF="msg00083.html">Thread Next</A>][<A HREF="maillist.html#00082">Date Index</A>][<A HREF="threads.html#00082">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: qustions about Apache setup</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: qustions about Apache setup</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Fri, 27 Sep 96 16:10 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00081.html">199609270411.NAA24764@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi all, Thanks Steve for the imagemap info. What are 'skinny
+    Jim&gt; boys' anyway?
+
+Alex Bevan is a blues/folk singer from Northeastern Ohio.  His
+"signature song" (actually made the national charts) was "Skinny,"
+about the "skinny little boy from Cleveland Ohio / who's gonna chase
+your women and drink your beer" and cause a fair amount of other
+mayhem, but mostly drink: "run outta Wild Turkey? Jack Daniels' is
+fine / but keep your gin &amp; tonic and your Ripple wine".
+
+I grabbed "Skinny Boy Associates" as a name for my (non-existent)
+consulting firm.  Just in case it ever actually gets off the
+ground....
+
+    &gt;&gt; Do other CGI scripts work?  If not, your ScriptAlias (or
+    &gt;&gt; equivalent) is wrong.
+
+    Jim&gt; Arrgh. I enabled Server Side Includes and they don't work
+    Jim&gt; either.
+
+Symptoms?  If your document does *nothing* unusual at SPML directives
+(ie, treats them as comments), then you need to check:
+  o Do you have the "AddType text/html .shtml" and "AddHandler
+    server-parsed .shtml" directives uncommented in srm.conf?  (I
+    assume that's what you meant by enabled, but just checking....)
+  o Do you have "Options Includes ..." in access.conf (or in an 
+    .htaccess for the relevant directory)?  The Apache docs are very
+    unclear about this....  Why these things need to be enabled in
+    both srm.conf and access.conf I don't know.
+
+If your server chokes stone-cold dead on SPML directives, and refuses
+to give anything after them, it's because Apache HTTPd is extremely
+sensitive to the syntax of those directives.  It insists that most
+attribute values be enclosed in double quotes.  Any typos in the "--&gt;"
+closing brace cause the server to choke there.  (The error log shows a
+message of "premature EOF in parsed file".)
+
+I haven't tried .shtml with the NCSA 1.3 HTTPd (and probably won't, I
+don't see any reason not to go to Apache or NCSA 1.5.2 in the near
+future), but NCSA HTTPd 1.5.2 seems to have better error checking.  At 
+least, when an Apache-specific directive was encountered, it told me
+that it found an error while parsing the file.  (Most of the stuff
+that Apache says to use, eg, the virtual attribute for #include, is
+non-portable; of course "include file=" works for both.)  My test file 
+lives at "<A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/sparse.shtml">http://turnbull.sk.tsukuba.ac.jp/sparse.shtml</A>".
+
+    Jim&gt; In /usr/local/etc/httpd/conf/srm.conf:
+
+    Jim&gt; ScriptAlias /cgi-bin/ /usr/local/etc/httpd/cgi-bin
+
+Well, mine has a trailing slash; I don't remember whether that was
+important or not, but it might be.  This is different from
+DocumentRoot and so on.  I believe that the trailing slash was
+essential for the /icons/ alias.  I suspect that the server is not
+very bright about matching these.
+
+Are the relevant directories (all the way up the tree) and files
+world-readable (httpd usually accesses them as "nobody")?
+
+    Jim&gt; In http.conf I have a question about ServerName...
+
+    Jim&gt; I've tried setting it to localhost and 127.0.0.1 and wormhole
+    Jim&gt; none has any effect. What DNS name am I supposed to use?
+
+Don't use one; leave that directive commented out.  What happens is
+that by default httpd calls uname(2) (directly or indirectly) to get
+the domainname.  That's why when you call up "www.somedomain.net"
+you'll often see a message about "ralph.somedomain.net" or
+"31.41.59.26" instead of "www.somedomain.net".  The ServerName
+directive allows you to change this, in case you have several aliases
+(the same box is jim's-box.dom.or.jp and ftp.dom.or.jp and
+www.dom.or.jp, for example, a common situation since it allows you to
+"hot-swap" hosts later, without telling everybody in the world to move
+their links, if eg the ftp/www box gets overloaded and you want to
+separate the functions).  uname(2) will probably not give the right
+answer for this situation (you don't want to see "ftp.*.*.*" instaed
+of "www.*.*.*").  However, if it is not a valid DNS name, it will
+screw up the connection negotiations.
+
+I append a unified context diff (without context ;) of my *.conf files
+against the distribution versions.  (These are my Apache .conf's, of
+course.)  Note that to use the server-info and server-status handlers,
+you must add the appropriate modules; they're not in the default.
+I've fixed the permissions, you *can* check them out.  (The URLs are
+an exercise for the reader.)  The reason for the funky ServerRoot and
+DocumentRoot locations is that I want my WWW and FTP servers in their
+own partitions (I've had people dump 10MB files in my FTP /incoming,
+despite the fact that it's write-only :-( ).  This arrangement also
+aids upgrading to new servers, you can run them both in parallel and
+their config files don't trip on each other :-)
+
+Regards,
+Steve
+
+--- /WWW/Servers/apache_1.1.1/conf/access.conf-dist Thu Jul  4 02:18:11 1996
++++ /WWW/Servers/apache_1.1.1/conf/access.conf	    Fri Sep 27 15:12:55 1996
+@@ -15 +15 @@
+-&lt;Directory /usr/local/etc/httpd/htdocs&gt;
++&lt;Directory /WWW/htdocs&gt;
+@@ -23 +23 @@
+-Options Indexes FollowSymLinks
++Options Indexes FollowSymLinks Includes
+@@ -41 +41 @@
+-&lt;Directory /usr/local/etc/httpd/cgi-bin&gt;
++&lt;Directory /WWW/cgi-bin&gt;
+@@ -49,2 +49,2 @@
+-#&lt;Location /status&gt;
+-#SetHandler server-status
++&lt;Location /status&gt;
++SetHandler server-status
+@@ -52,4 +52,4 @@
+-#order deny,allow
+-#deny from all
+-#allow from .nowhere.com
+-#&lt;/Location&gt;
++order deny,allow
++deny from all
++allow from turnbull.sk.tsukuba.ac.jp localhost
++&lt;/Location&gt;
+@@ -58,0 +59,8 @@
++
++&lt;Location /config&gt;
++SetHandler server-info
++
++order deny,allow
++deny from all
++allow from turnbull.sk.tsukuba.ac.jp localhost
++&lt;/Location&gt;
+
+--- /WWW/Servers/apache_1.1.1/conf/httpd.conf-dist Sat Jun  8 05:56:47 1996
++++ /WWW/Servers/apache_1.1.1/conf/httpd.conf	   Wed Sep 25 18:31:57 1996
+@@ -19 +19 @@
+-Port 80
++Port 8080
+@@ -36 +36 @@
+-ServerAdmin you@example.com
++ServerAdmin turnbull@example.com
+@@ -41 +41 @@
+-ServerRoot /usr/local/etc/httpd
++ServerRoot /WWW/Servers/apache_1.1.1
+
+--- /WWW/Servers/apache_1.1.1/conf/srm.conf-dist Thu Jun 13 11:04:43 1996
++++ /WWW/Servers/apache_1.1.1/conf/srm.conf	 Wed Sep 25 18:36:43 1996
+@@ -15 +15 @@
+-DocumentRoot /usr/local/etc/httpd/htdocs
++DocumentRoot /WWW/htdocs
+@@ -134 +134 @@
+-#Alias /icons/ /usr/local/etc/httpd/icons/
++Alias /icons/ /WWW/icons/
+@@ -139 +139 @@
+-#ScriptAlias /cgi-bin/ /usr/local/etc/httpd/cgi-bin/
++ScriptAlias /cgi-bin/ /WWW/cgi-bin/
+@@ -157,2 +157,2 @@
+-#AddType text/html .shtml
+-#AddHandler server-parsed .shtml
++AddType text/html .shtml
++AddHandler server-parsed .shtml
+@@ -165 +165 @@
+-#AddHandler imap-file map
++AddHandler imap-file map
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+TLUG September 28th meeting is sponsored by Fusion Systems Japan, Inc.,
+a global professional services firm.  <A TARGET="_top" HREF="http://www.fsj.co.jp">http://www.fsj.co.jp</A>
+No. 2 Toshin Aobadai Building 9F, 3-17-13 Aobadai,
+Meguro-ku, Tokyo 153, Japan
+Tel: (03)5456-7561   Fax: (03)5458-4422   info@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00081" HREF="msg00081.html">qustions about Apache setup</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00081.html">qustions about Apache setup</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00083.html">Re: tlug-digest V1 #163</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00081.html">qustions about Apache setup</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00083.html">Re: tlug-digest V1 #163</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00082"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00082"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

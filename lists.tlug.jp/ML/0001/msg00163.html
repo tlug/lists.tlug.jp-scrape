@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: ppa -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 26 Jan 2000 14:10:28 +0900 -->
+<!--X-Message-Id: 14478.33189.962942.806356@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200001231251.e0NCpgV18284@example.com -->
+<!--X-Reference-Id: 3.0.5.32.20000126013846.0082e940@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00162.html">Date Prev</A>][<A HREF="msg00164.html">Date Next</A>][<A HREF="msg00154.html">Thread Prev</A>][<A HREF="msg00111.html">Thread Next</A>][<A HREF="maillist.html#00163">Date Index</A>][<A HREF="threads.html#00163">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: ppa</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: ppa</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 26 Jan 2000 14:09:57 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00154.html">3.0.5.32.20000126013846.0082e940@example.com</A>&gt;</LI>
+<LI>References: &lt;200001231251.e0NCpgV18284@example.com&gt;&lt;<A HREF="msg00154.html">3.0.5.32.20000126013846.0082e940@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;798a5047@example.com&gt; writes:
+
+    &gt;&gt; Also make sure that the kernel config file belongs to the same
+    &gt;&gt; kernel version.
+
+    Ulrike&gt; How do I check this?
+
+By doing `make oldconfig'.  If this goes through without asking any
+new questions, ./.config was generated from ./arch/i386/defconfig.
+
+Or maybe there was no ./.config, I'm not sure what make does then.
+But you should either get a fresh config (lots of questions) or an
+error from make.
+
+    &gt;&gt; You can also check this quickly with "egrep 'SCSI_(PPA|IMM)'
+    &gt;&gt; /usr/src/linux/.config".  You will probably see that neither is
+    &gt;&gt; set in your current configuration.
+
+    Ulrike&gt; When I tried this first I got "No such file or
+    Ulrike&gt; directory". So I used menuconfig and found the following
+    Ulrike&gt; settings:
+
+Hm.  Either you never had a config (in which case you shouldn't be
+able to start a make) or you did `make mrproper' or something which
+will delete .config.
+
+    Ulrike&gt;   x x&lt;M&gt; IOMEGA parallel port (ppa - older drives)
+    Ulrike&gt;   x x&lt;M&gt; IOMEGA parallel port (imm - newer drives)
+
+Bingo!
+
+    Ulrike&gt; But when I look at it now I guess this change was not
+    Ulrike&gt; really relevant, was it?
+
+Probably not, since your problem is not from a kernel with the
+facility "almost" working, it's a nonexistent facility.
+
+    Ulrike&gt; Anyway, after finishing this I all of a sudden did have a
+    Ulrike&gt; .config file
+
+&lt;POSE TYPE="guts"&gt;Yes!&lt;/POSE&gt;
+
+    Ulrike&gt; Now I am sitting and waiting since quite a while for this
+    Ulrike&gt; computer to finish compiling ... It is probably much
+    Ulrike&gt; quicker to download a compiled kernel from somewhere
+
+Not if it's bedtime anyway; this is called "multitasking" (with the
+driver process sleeping ;-)
+
+    Ulrike&gt; ... uhm, RedHat, maybe?
+
+Probably.  But even with RedHat et al building your own is probably a
+good idea, getting all the SCSI drivers and cruft out of there
+(although recent Red Hat et al have started using modules for even
+SCSI drivers IIRC, which speeds things up considerably once you have a
+good install).  And there are some things that are often modules that
+you might want to put back _in_, like your Ethernet driver and the
+SCSI subsystem if you use it.[1]
+
+
+Footnotes: 
+[1]   Eg, I ran out of space in / the other day and deleted an
+obsolete /lib/modules/2.2.11 hierarchy, except that oops, the 2.2.13
+kernel wasn't working and I was actually running 2.2.11 after all.  I
+had sources and stuff---for 2.2.13---but I didn't have the MSDOS file
+system to install a new kernel on the floppy (for hysterical reasons,
+my root is not on the first hard drive) or an ethernet driver for that
+kernel so that I could install a generic kernel from the distro.  Fun,
+fun, fun (I figured out a way to get around the problems, point of
+honor, you know), but a big waste of time; if I'd had those drivers in
+the kernel life woulda been a lot easier.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00154" HREF="msg00154.html">Re: tlug: ppa</A></STRONG>
+<UL><LI><EM>From:</EM> Ulrike Schmidt &lt;798a5047@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00162.html">RE: tlug: LAN Card: Part 2</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00164.html">Re: tlug: ppa,</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00154.html">Re: tlug: ppa</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00111.html">tlug: pine and Japanese</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00163"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00163"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

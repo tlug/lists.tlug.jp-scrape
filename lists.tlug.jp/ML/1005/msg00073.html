@@ -1,0 +1,204 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] [Resolved] Replacing software&#45;raided disks with dd,	underlying&#45;partitions&#45;and&#45;all: Will this work? -->
+<!--X-From-R13: Sqzhaq Sqtne <yvfgfNrqbpuna.pbz> -->
+<!--X-Date: Wed, 12 May 2010 22:23:56 +0900 -->
+<!--X-Message-Id: AANLkTikUMeBRjjXIu25SmZBoDiUxWF57cO5ZLRK3EnP&#45;@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: n2tb4d277191003252301g10938cb0x8f98cc581289269b@mail.gmail.com -->
+<!--X-Reference: 4BADA799.8080100@vortorus.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00072.html">Date Prev</a>][<a href="msg00074.html">Date Next</a>][<a href="msg00068.html">Thread Prev</a>][<a href="msg00088.html">Thread Next</a>][<a href="maillist.html#00073">Date Index</a>][<a href="threads.html#00073">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] [Resolved] Replacing software-raided disks with dd,	underlying-partitions-and-all: Will this work?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 12 May 2010 22:23:21 +0900</li>
+<li><strong>From</strong>: <strong>Edmund Edgar &lt;<a href="mailto:lists@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BResolved%5D%20Replacing%20software-raided%20disks%20with%20dd%2C%09underlying-partitions-and-all:%20Will%20this%20work%3F">lists@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] [Resolved] Replacing software-raided disks with dd,	underlying-partitions-and-all: Will this work?</strong></li>
+<li>References: &lt;<a href="mailto:n2tb4d277191003252301g10938cb0x8f98cc581289269b@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BResolved%5D%20Replacing%20software-raided%20disks%20with%20dd%2C%09underlying-partitions-and-all:%20Will%20this%20work%3F">n2tb4d277191003252301g10938cb0x8f98cc581289269b@example.com</a>&gt;	&lt;<a href="mailto:4BADA799.8080100@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5BResolved%5D%20Replacing%20software-raided%20disks%20with%20dd%2C%09underlying-partitions-and-all:%20Will%20this%20work%3F">4BADA799.8080100@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Thanks to the people who replied to this. Here's how I resolved it in
+case anyone else has to do something similar:
+
+
+A) Getting the new disks in Server A:
+
+1) Shut down the server and switched out the broken disk (/dev/sda)
+with one of the new, big ones, then followed Pier's advice:
+
+# Cloned the boot record:
+dd if=/dev/sdb of=/dev/sda bs=512 count=1
+
+# Cloned the partition table:
+sfdisk --dump /dev/sdb | sfdisk /dev/sda
+
+# Added the new disk to the array:
+mdadm --manage /dev/md0 --add /dev/sda1
+mdadm --manage /dev/md1 --add /dev/sda7
+...etc
+
+# Rebooted to prove everything worked.
+
+2) Shut down the server and switched out the previously live disk
+(/dev/sdb) with one of the new, big ones and did the same as in step
+(1) but the other way around.
+
+3) Tried to add a new partition so that I could use to new space on
+the bigger disk, and got told &quot;No space left on device&quot; or something
+similar. Realized that my extended partition was the right a size to
+fill up the old disk but too small to fill up the new one, so I'd have
+to grow the extended partition before I could add a new logical one to
+it. Parted told me that the extended partition (partition 4) started
+at 12127.192 and that the disk ended at 152587.890. So I did:
+
+parted /dev/sda resize 4 12127.192 152587.890
+fdisk /dev/sda]
+[n, create a logical partition to fill all available space, which
+appeared as /dev/sda9]
+[w, write the partition table and exit]
+
+parted /dev/sdb resize 4 12127.192 152587.890
+fdisk /dev/sdb
+[n, create a logical partition to fill all available space, which
+appeared as /dev/sdb9]
+[w, write the partition table and exit]
+
+4) Added a RAID partition with my new partitions:
+
+/sbin/mdadm --create /dev/md7 --verbose --level=1 --raid-devices=2
+/dev/sda9 /dev/sdb9
+
+# Updated /etc/mdadm.conf
+
+# Made a directory to mount it on and added the new partition to /etc/fstab
+
+# Rebooted to prove it all worked.
+
+
+B) Put the old still-working disk that I took out of Server 1 into Server 2:
+
+1) Shut down the server and switched the dead disk for the working one
+from Server 1.
+
+2) Booted from a live CD and erased the RAID superblock, following
+Edward's advice.
+(Edward suggested zeroing the original disk before taking it out of
+Server 1, which would make sense, but I decided to hang on to it for a
+bit in its original state in case I discovered I'd done something
+wrong and I wanted to put it back in its original server, then zero it
+later on Server 2 with Knoppix.)
+mdadm --zero-superblock /dev/sda1
+mdadm --zero-superblock /dev/sda2
+...etc
+
+3) Rebooted the server and did the same as for A1 above.
+
+-- 
+Edmund Edgar
+Founder, KK Social Minds
+Educational Technology for the Web and Virtual Worlds
+
+ed@example.com
++81 090 3912 3380
+Skype: edmundedgar
+Second Life: Edmund Earp
+Linked In: edmundedgar
+Twitter: @edmundedgar
+<a  rel="nofollow" href="http://www.socialminds.jp">http://www.socialminds.jp</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00072.html">Re: [tlug] to pad or not to pad, thats the question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00074.html">Re: [tlug] to pad or not to pad, thats the question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00068.html">Re: [tlug] An MMORPG Ultima Online on Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00088.html">[tlug] hadoop ruby dsl</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00073"><strong>Date</strong></a></li>
+<li><a href="threads.html#00073"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

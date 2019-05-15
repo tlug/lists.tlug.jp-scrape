@@ -1,0 +1,164 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: ppp, pmcia and isdn question -->
+<!--X-From: urs roesch <urs@example.com&#45;mines.com> -->
+<!--X-Date: Mon, 11 Sep 2000 07:40:39 +0900 -->
+<!--X-Message-Id: 20000911074039.B7860@example.com&#45;mines.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000901c01b2b$03abac60$bc2ad8cb@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00144.html">Date Prev</A>][<A HREF="msg00146.html">Date Next</A>][<A HREF="msg00143.html">Thread Prev</A>][<A HREF="msg00146.html">Thread Next</A>][<A HREF="maillist.html#00145">Date Index</A>][<A HREF="threads.html#00145">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: ppp, pmcia and isdn question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: ppp, pmcia and isdn question</strong></LI>
+<LI><strong>From</strong>: <strong>urs roesch &lt;<A HREF="mailto:urs@example.com">urs@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 11 Sep 2000 07:40:39 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00142.html">000901c01b2b$03abac60$bc2ad8cb@example.com</A>&gt;; from ulrike@example.com on Sun, Sep 10, 2000 at 10:28:03PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00142.html">000901c01b2b$03abac60$bc2ad8cb@example.com</A>&gt;</LI>
+<LI>Reply-To: urs roesch &lt;<A HREF="mailto:urs@example.com">urs@example.com</A>&gt;</LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;EelnG.A.nLH.8_Av5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Uli,
+
+usually you can treat a TA like a modem with the exception of the NEC ones[1]. If you look at the documentation of the NEC TA and go through the list of AT commands you'll find a command called $N that is for setting the data port. To be able to do PPP you have to send $N1=1 when initializing the TA. 
+
+Here is my ppp.chat.it50dsu for your reference
+
+TIMEOUT 10
+ABORT "NO CARRIER"
+ABORT BUSY
+ABORT "NO DIALTONE"
+ABORT ERROR
+"" +++ATZ
+OK "AT Q0 V1 X3 $N9=10 $N1=1 &amp;D1 "
+OK "ATDT &lt;your number here&gt;"
+TIMEOUT 60
+"CONNECT 64000" ""     
+
+
+Hope that helps.
+
+--urs
+
+
+[1] Take with a grain of salt, I haven't tested them all.
+
+
+Ulrike Schmidt [ulrike@example.com] wrote:
+&gt; I am trying to connect to my ISP from my notebook running debian potato with two methods: pcmcia-modem (USRobotics, Megahertz 33.6) and isdn (NEC Aterm IT55DSU). If possible I would like to be able to use both. 
+&gt; 
+&gt; I first tried to get the pcmcia-modem working. Cardinfo says "Serial or Modem", dev "ttyS2", but when I used pppconfig and had it autodetect the modem it did not find it, so entered ttyS2 by hand. I also used PAP, although I don't know whether this is correct. Anyway, somehow I cannot get a connection. I read something about pppd and debug, but "pppd debug" says "The remote system is required to authenticate itself but I couldn't find any suitable secret (password) for it to use to do so. (None of the available passwords would let it use an IP adress.)" I did not quite understand this message and I guess I also did not get the syntax right (just tried "pppd -debug" but it does not recognize the option). 
+&gt; 
+&gt; Anyway, I gave up on this one for the moment and tried my luck with isdn. pppconfig detects the ISDN adaptor, and when I run pon there seems to be some communication, lights blink, but after a while the connection terminates. I tried PAP and Chat and CHAP and everything is the same.
+&gt; 
+&gt; I got doubts that I can just pretend the ISDN adaptor is a modem, although I thought I remembered someone saying so on tlug, so I searched the archives, but got too many or not the right hits. In some ISDN docs I then saw that Terminal Adaptors are to be treated different from ISDN cards, e.g.: "However, isdn4linux can not make use of any devices connected via a serial or parallel interface (which are called 'terminal adaptors'), ..." and the HOWTO.isdnutils also spoke about cards, so I thought now I better ask first on this list:
+&gt; 
+&gt; If cardinfo detects the pcmcia-card as a modem, why doesn't pppconfig?
+&gt; Can I treat the ISDN adapter just like a modem without installing anything else?
+&gt; Should I use PAP, Chat or CHAP?
+&gt; How can I find out where the problem lies with failing connections? plog printed out a lot of strange strings will the lights were blinking but not much informative information about why the connection failed in the end.
+&gt; 
+&gt; Best, Uli
+&gt; 
+&gt; 
+&gt; 
+
+-- 
+u r s  r o e s c h                                   t o k y o
+--------------------------------------------------------------
+Turbocharge your Japanese skills: <A TARGET="_top" HREF="http://speaking-japanese.com">http://speaking-japanese.com</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00142" HREF="msg00142.html">ppp, pmcia and isdn question</A></STRONG>
+<UL><LI><EM>From:</EM> "Ulrike Schmidt" &lt;ulrike@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00144.html">Re: user cgi-bin configuration</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00146.html">ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00143.html">Re: ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00146.html">ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00145"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00145"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

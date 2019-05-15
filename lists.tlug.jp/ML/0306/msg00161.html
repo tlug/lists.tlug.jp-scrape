@@ -1,0 +1,206 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] ov511 under Gentoo? -->
+<!--X-From-R13: Xnxr [beevfba <wnxr_zbeevfbaNlnubb.pbz> -->
+<!--X-Date: Thu, 19 Jun 2003 08:43:39 &#45;0700 (PDT) -->
+<!--X-Message-Id: 20030619154339.39370.qmail@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3EF18C3C.8030702@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00160.html">Date Prev</a>][<a href="msg00162.html">Date Next</a>][<a href="msg00152.html">Thread Prev</a>][<a href="msg00156.html">Thread Next</a>][<a href="maillist.html#00161">Date Index</a>][<a href="threads.html#00161">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] ov511 under Gentoo?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 19 Jun 2003 08:43:39 -0700 (PDT)</li>
+<li><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20ov511%20under%20Gentoo%3F">jake_morrison@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] ov511 under Gentoo?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+David,
+
+--- David Oftedal &lt;david@example.com&gt; wrote:
+&gt; Has anyone used an ov511-based webcam under Gentoo before?
+
+I have used webcams happily under Gentoo, mostly Logitech 
+QuickCam Zoom (very nice, recommended) and Logitech QuickCam 
+Express (picture not as good). If you get a QuickCam Zoom, 
+make sure you get the latest drivers from the website; the 
+drivers in the kernel source tree for 2.4.20 are not the latest.
+
+&gt; 
+&gt; I used to do this under other distros... I would load usb-ohci as a 
+&gt; kernel module, and subsequently ov511. I've always enabled V4L 
+&gt; information in the /proc directory, but I don't know if it's any use.
+&gt; 
+&gt; Anyway, loading usb-ohci and ov511 should make the camera light up
+&gt; and start sending video to /dev/video0. But it doesn't do 
+&gt; either. Both usb-ohci and ov511 are listed as loaded, but 
+&gt; unused. At least the camera was turned on when I had 
+&gt; usb-ohci compiled into the kernel.
+&gt;
+I assume that usb-ohci is right for your motherboard; some use
+usb-uhci. 
+
+I bet you need to change the definition of char-major-81 from
+bttv to videodev in /etc/modules.d/aliases. 
+Mine looks like this:
+ 
+#alias char-major-81    bttv
+alias char-major-81     videodev
+alias char-major-81-0   pwc
+#options        pwc size=vga leds=250,250 fps=25 mbufs=3 compression=0
+# Load the pwc binary module for compression
+#post-install pwc /sbin/insmod --force -k /lib/modules/usb/pwcx-i386.o
+&gt;/dev/null 2&gt;&amp;1  || :
+post-install pwc /sbin/insmod --force -k /lib/modules/usb/pwcx-gcc32.o
+&gt;/dev/null 2&gt;&amp;1  || :
+
+For your reference, my /etc/modules.autoload looks like this:
+ne2k-pci
+8390
+ext3
+es1371
+ac_97_codec
+soundcore
+r128
+agpgart
+hid
+uhci
+usbcore
+mousedev
+usbmouse
+input
+ide-scsi
+apm
+snd-pcm-oss
+ide-scsi\nsg\nsr_mod
+ip_tables
+v4l1-compat
+v4l2-common
+usb-storage
+printer
+audio
+pwc
+
+You might also need to add this to /etc/devfsd.conf
+# Video4Linux devices
+REGISTER       v4l/.*       PERMISSIONS root.video 660
+
+&gt; Also, even after I used ./MAKEDEV, /dev/video0 can't be opened. 
+&gt; I even use devfs.
+
+You should not need to use MAKEDEV if you are using devfs.
+
+&gt; 
+&gt; Anyone know how I could get it to work?
+&gt; 
+&gt; I hate Linux.
+
+I know what you mean :-)
+But I had just as much trouble getting the camera running 
+on Windows 98...
+
+Jake 
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00152" href="msg00152.html">[tlug] ov511 under Gentoo?</a></strong>
+<ul><li><em>From:</em> David Oftedal</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00160.html">[tlug] [OT] Come again?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00162.html">Re: [tlug] Tweaking the kernel</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00152.html">[tlug] ov511 under Gentoo?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00156.html">[tlug] a re-introduction</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00161"><strong>Date</strong></a></li>
+<li><a href="threads.html#00161"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

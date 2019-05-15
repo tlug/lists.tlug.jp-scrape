@@ -1,0 +1,209 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Coda filesystem -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Fri, 23 Oct 1998 12:58:56 +0900 -->
+<!--X-Message-Id: m3btn453nb.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.95.981023034554.187B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00984.html">Date Prev</A>][<A HREF="msg00986.html">Date Next</A>][<A HREF="msg00966.html">Thread Prev</A>][<A HREF="msg00935.html">Thread Next</A>][<A HREF="maillist.html#00985">Date Index</A>][<A HREF="threads.html#00985">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Coda filesystem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Coda filesystem</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 23 Oct 1998 13:00:08 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: "J. David Beutel"'s message of "Fri, 23 Oct 1998 03:53:07 +0000 (GMT)"</LI>
+<LI>References: &lt;<A HREF="msg00966.html">Pine.LNX.3.95.981023034554.187B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"J. David Beutel" &lt;jdb@example.com&gt; writes:
+
+&gt; &gt; couple of neat extra features like server replication and
+&gt; &gt; disconnected operation out of client file-cache.
+&gt; 
+&gt; Server replication sounds interesting.  Is that like an automated
+&gt; local mirror of a whole tree, which many clients can access via LAN,
+&gt; to save WAN bandwidth?  Then, are changes from one site distributed
+&gt; efficiently, instead of copying the whole tree?
+
+My understanding of Coda's data structures still has serious
+holes in it -- which means I can answer this really briefly and
+"completely", in a very local sense.  :)
+
+"Server replication" means keeping a hot copy of server data on
+another machine, complete with a running Coda server.  In the
+event that the master machine fails, the replica (or one of them
+if there are several) steps up to bat in its place.  It's a
+strategy for providing high availability of services.
+
+In Coda, the unit for handling data sync between servers is the
+"volume".  A volume is, in Unix terms, something like a
+filesystem mounted with loopback.  Therefore, in hardware terms,
+it should be a good deal smaller than the disk partition, so that
+it's possible to balance disk loading by shifting volumes between
+partitions on a Coda server.
+
+So although the top-level docs in the Coda archive talk about
+"server replication", it looks like you can dice up a server into
+its volumes, and replicate a monster server piecemeal across a
+bunch of smaller machines.  The whole cluster, scattered out
+across the Internet, should function as a single filesystem when
+mounted by a Coda client.
+
+For a practical example, the idea is that you have maybe one
+machine running Coda, and containing all of your users' data.
+Your users are, say, emergency relief workers in the field, and
+it's not good enough to restore the server data from tape if it's
+been destroyed in the earthquake that they're supposed to be busy
+coping with.  You need everything working throughout the crisis
+without missing a beat.
+
+By replicating server data to a bunch of different sites, you can
+provide this high availability.  What I'm not yet clear on
+(because I haven't read enough yet) is how the changeover is
+handled.  I assume that clients are given a list of servers, and
+the servers provide info on who's-on-first, what's-on-second so
+that clients can fetch and push their data to the right machine
+or machines.
+
+In Coda, replication can be done read-only or read-write.  With
+read-only, servers handling the same volume are in a master-slave
+relationship, and data in the slave always lags behind the master
+server.  This is said to be a quick and efficient means of
+providing backup of data that doesn't change very often; because
+most accesses are read accesses, clients accessing data from a
+server in New York get the same stuff as clients contacting the
+Tokyo server.
+
+Read-write replication is meant for user volumes -- home
+directories.  Here, the user in an multinational organization
+(corporation or NGO :) might be in the New York or Tokyo or Dar
+Es Salaam office.  Wherever she is, she needs to be able to write
+to her home directory as well as read.  In read-write
+replication, therefore, all servers handling the volume are able
+to act as master in the relationship with the others, so the
+write into "the server" can be to the nearest available hardware.
+(Read-write replication requires more CPU and more bandwidth,
+which is why we also have read-only replication.)
+
+The process of updating takes place at the filesystem level, so
+yes, it is going to be more "efficient" over a short interval of
+time than sending a burst of all the data in a filesystem to
+another machine (that is, it will cost less in bandwidth).
+
+For info from people who actually know what they're talking
+about (unlike me on this occasion :) see:
+
+  <A TARGET="_top" HREF="http://www.coda.cs.cmu.edu/">http://www.coda.cs.cmu.edu/</A>
+
+Seems to me that for consultants and administrative staff, this
+could be good for one's career in a country that is, uh,
+expecting a major earthquake to strike sometime soon?  Depends on
+the Complacency Index, I suppose.
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00966" HREF="msg00966.html">Re: tlug: Coda filesystem</A></STRONG>
+<UL><LI><EM>From:</EM> "J. David Beutel" &lt;jdb@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00984.html">RE: tlug: HTML again</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00986.html">Re: tlug: Coda filesystem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00966.html">Re: tlug: Coda filesystem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00935.html">tlug: usenet news groups</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00985"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00985"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

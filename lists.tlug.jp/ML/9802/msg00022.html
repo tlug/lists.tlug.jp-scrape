@@ -1,0 +1,234 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: PPP&RH5.0 (was: Infoworld Review) -->
+<!--X-From: "A.Tomita,Jr." <alberto@example.com> -->
+<!--X-Date: Tue, 3 Feb 1998 12:40:32 &#45;0500 (EST) -->
+<!--X-Message-Id: 199802031739.CAA22408@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0xzfHK&#45;00014KC@example.com -->
+<!--X-Reference-Id: 199802030814.RAA04310@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.980203082950.24460A&#45;100000@example.com -->
+<!--X-Reference-Id: 199802031544.AAA16418@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00021.html">Date Prev</A>][<A HREF="msg00023.html">Date Next</A>][<A HREF="msg00021.html">Thread Prev</A>][<A HREF="msg00027.html">Thread Next</A>][<A HREF="maillist.html#00022">Date Index</A>][<A HREF="threads.html#00022">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</strong></LI>
+<LI><strong>From</strong>: <strong>"A.Tomita,Jr." &lt;<A HREF="mailto:alberto@example.com">alberto@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 04 Feb 1998 02:38:21 +0900</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00021.html">199802031544.AAA16418@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00015.html">m0xzfHK-00014KC@example.com</A>&gt;&lt;<A HREF="msg00012.html">199802030814.RAA04310@example.com</A>&gt;&lt;<A HREF="msg00009.html">Pine.LNX.3.96.980203082950.24460A-100000@example.com</A>&gt;&lt;<A HREF="msg00012.html">199802030814.RAA04310@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Does anybody know what a "PPP frame with bad fcs" is ?
+
+I'm starting to suspect that the problem with my machine may
+not be related to the routing table after all. I watched the
+packets going thru ppp0 with "tcpdump -i ppp0 -n" while
+pinging a machine outside and got:
+
+02:28:36.193011 165.76.88.78 &gt; 133.34.19.33: icmp: echo request
+02:28:37.193011 165.76.88.78 &gt; 133.34.19.33: icmp: echo request
+02:28:38.193011 165.76.88.78 &gt; 133.34.19.33: icmp: echo request
+02:28:39.193011 165.76.88.78 &gt; 133.34.19.33: icmp: echo request
+
+So, I suspect the problem is between 165.76.88.78 (that's the
+machine's local PPP assigned address) and the other end of the
+PPP link. Raising the pppd debug level, I found these "bad fcs" 
+errors that were registered in /var/log/messages with exactly the
+same time stamp. Just a coincidence?
+
+Feb  4 02:26:35 neutron pppd[544]: Serial connection established.
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to 10000
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to 10000
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set xasyncmap
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set xmit asyncmap ffffffff
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to 10000
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set mru to 5dc
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set rcv asyncmap ffffffff
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to 10000
+Feb  4 02:26:36 neutron pppd[544]: Using interface ppp0
+Feb  4 02:26:36 neutron pppd[544]: Connect: ppp0 &lt;--&gt; /dev/modem
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 10 bytes, flags =
+f0100
+00
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 20 bytes, flags =
+f0100
+00
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 12 bytes, flags =
+f0100
+00
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set xmit asyncmap 0
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to f010000
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set mru to 5dc
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set rcv asyncmap ffffffff
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to f010010
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 14 bytes, flags =
+f0100
+10
+Feb  4 02:26:36 neutron pppd[544]: Remote message: Welcome
+Feb  4 02:26:36 neutron pppd[544]: local  IP address 165.76.88.78
+Feb  4 02:26:36 neutron pppd[544]: remote IP address 165.76.88.30
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to f010050
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 11 bytes, flags =
+f0100
+50
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 18 bytes, flags =
+f0100
+50
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 12 bytes, flags =
+f0100
+50
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 6 bytes, flags =
+f01005
+0
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 12 bytes, flags =
+f0100
+50
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 18 bytes, flags =
+f0100
+50
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set maxcid to 16
+Feb  4 02:26:36 neutron kernel: ppp_tty_ioctl: set flags to f010054
+Feb  4 02:26:36 neutron kernel: ppp: channel ppp0 going up for IP packets!
+Feb  4 02:26:36 neutron kernel: ppp: successfully queued 6 bytes, flags =
+f01005
+4
+Feb  4 02:28:23 neutron kernel: ppp: channel ppp0 mtu = 1524, mru = 1500
+Feb  4 02:28:29 neutron kernel: ppp: frame with bad fcs, excess = b819
+Feb  4 02:28:34 neutron kernel: ppp: frame with bad fcs, excess = d873
+Feb  4 02:28:35 neutron kernel: ppp: frame with bad fcs, excess = 22b5
+Feb  4 02:28:36 neutron kernel: ppp: frame with bad fcs, excess = dbd6
+Feb  4 02:28:37 neutron kernel: ppp: frame with bad fcs, excess = d508
+Feb  4 02:28:38 neutron kernel: ppp: frame with bad fcs, excess = 72f8
+Feb  4 02:28:39 neutron kernel: ppp: frame with bad fcs, excess = 2a38
+Feb  4 02:28:40 neutron kernel: ppp: frame with bad fcs, excess = 257f
+Feb  4 02:28:41 neutron kernel: ppp: frame with bad fcs, excess = 281c
+Feb  4 02:28:42 neutron kernel: ppp: frame with bad fcs, excess = 4411
+Feb  4 02:28:43 neutron kernel: ppp: frame with bad fcs, excess = 1cc1
+Feb  4 02:28:44 neutron kernel: ppp: frame with bad fcs, excess = 9d0c
+Feb  4 02:28:45 neutron kernel: ppp: frame with bad fcs, excess = acd0
+Feb  4 02:28:46 neutron kernel: ppp: frame with bad fcs, excess = 12cf
+Feb  4 02:28:47 neutron kernel: ppp: frame with bad fcs, excess = 72e9
+Feb  4 02:28:48 neutron kernel: ppp: frame with bad fcs, excess = 9149
+Feb  4 02:28:48 neutron kernel: ppp: frame with bad fcs, excess = bb08
+Feb  4 02:28:49 neutron kernel: ppp: frame with bad fcs, excess = 3d1a
+Feb  4 02:28:50 neutron kernel: ppp: frame with bad fcs, excess = 54d0
+
+---
+A.Tomita,Jr.   atomita@example.com
+               atomita@example.com
+
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00027" HREF="msg00027.html">Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Tomita,Jr." &lt;alberto@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00015" HREF="msg00015.html">Re: tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00012" HREF="msg00012.html">Re: tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Tomita,Jr." &lt;Alberto@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00009" HREF="msg00009.html">tlug: Infoworld Review</A></STRONG>
+<UL><LI><EM>From:</EM> joem &lt;joem@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00021" HREF="msg00021.html">tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Tomita,Jr." &lt;alberto@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00021.html">tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00023.html">Re: tlug: Hello...</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00021.html">tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00027.html">Re: tlug: PPP&amp;RH5.0 (was: Infoworld Review)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00022"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00022"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

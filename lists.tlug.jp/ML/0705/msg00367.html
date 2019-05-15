@@ -1,0 +1,185 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] cups and networking -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Fri, 18 May 2007 13:55:05 +0900 -->
+<!--X-Message-Id: 464D3190.7020407@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 464D04E2.1060903@dcook.org -->
+<!--X-Reference: 20070518024427.GE58681@samsara.bebear.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00366.html">Date Prev</a>][<a href="msg00368.html">Date Next</a>][<a href="msg00364.html">Thread Prev</a>][<a href="msg00370.html">Thread Next</a>][<a href="maillist.html#00367">Date Index</a>][<a href="threads.html#00367">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] cups and networking</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 May 2007 13:54:40 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20cups%20and%20networking">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] cups and networking</strong></li>
+<li>References: &lt;<a href="msg00362.html">464D04E2.1060903@dcook.org</a>&gt;	&lt;<a href="msg00364.html">20070518024427.GE58681@samsara.bebear.net</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.10 (X11/20070301)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; 2. Check to see if  your cupsd.conf is only willing to
+&gt; accept jobs from the machine connected to the printer directly but not
+&gt; remote machines.  You might want to muck with /etc/cups/cups.conf or
+&gt; wherever it is stored on your system and check for something like...
+&gt; 
+&gt; &lt;Location /&gt;
+&gt; Order Deny,Allow
+&gt; Deny From All
+&gt; Allow From @LOCAL
+&gt; &lt;/Location&gt;
+
+Thanks for the various replies. I think this might be key. In the
+server's /var/log/cups/access_log every 10 seconds I see my workstation
+is trying to connect every 10 seconds to &quot;POST /printers/HL2040
+HTTP/1.1&quot; and getting a 403.
+(I've yet to work out *what* is trying to make that connection, as it
+happens even if I shutdown cups on my workstation.)
+
+I tried adding Allow From 172.16.1.* in various places, but no luck, so
+I added a whole new Location block:
+&lt;Location /printers/HL2040&gt;
+Order Deny,Allow
+Deny From All
+Allow From 127.0.0.1
+Allow From 172.16.1.*
+AuthType None
+Allow from All
+&lt;/Location&gt;
+
+and now the 403 has turned into a 200! Yeah. Party, party, party.
+
+But, I still get the same error when trying to print a test page. Party
+cancelled.
+
+I tried Josh's suggestion of changing from that weird binary_p1 to the
+actual queue name of HL2040, but same thing.
+
+I tried: <a  href="ipp://172.16.0.2/ipp/port1">ipp://172.16.0.2/ipp/port1</a>
+and get &quot;Unable to get printer status (client-error-forbidden)!&quot;
+
+So, back to lpd://172.16.0.2/HL2040. The help page says lpd listens on
+port 515. I cannot telnet to that. My server has nothing listening on
+port 515. I don't have a service called lpd to start.
+
+I'm confused. The CUPS docs says that ipp is the only supported
+protocol. Brother, and Josh, suggested using lpd. I wonder if I should
+bark up the ipp tree a bit more? Or maybe I should start barking up the
+smb tree as I will eventually need to get that working anyway.
+
+Anyway, I showed my mastery of lateral thinking by unplugging it from
+the server, plugging into my work machine, 30 seconds of configuration,
+and getting today's important documents printed. :-). If it wasn't for
+my wife's notebook I could just live without it networked...
+
+Darren
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00370" href="msg00370.html">Re: [tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00362" href="msg00362.html">[tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00364" href="msg00364.html">Re: [tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Al Hoang</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00366.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00368.html">Re: [tlug] Nice reply by Torvalds</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00364.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00370.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00367"><strong>Date</strong></a></li>
+<li><a href="threads.html#00367"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

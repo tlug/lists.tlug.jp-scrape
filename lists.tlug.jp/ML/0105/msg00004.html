@@ -1,0 +1,170 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Firewall setting -->
+<!--X-From: Jonathan Q <jq@example.com> -->
+<!--X-Date: Tue, 1 May 2001 05:23:50 +0900 -->
+<!--X-Message-Id: 20010501052350.G16433@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20010501032652.E16433@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00003.html">Date Prev</A>][<A HREF="msg00005.html">Date Next</A>][<A HREF="msg00003.html">Thread Prev</A>][<A HREF="msg00014.html">Thread Next</A>][<A HREF="maillist.html#00004">Date Index</A>][<A HREF="threads.html#00004">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Firewall setting</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Firewall setting</strong></LI>
+<LI><strong>From</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@example.com">jq@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 1 May 2001 05:23:50 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00003.html">20010501032652.E16433@example.com</A>&gt;; from jq@example.com on Tue, May 01, 2001 at 03:26:52AM +0900</LI>
+<LI>References: &lt;<A HREF="msg00003.html">20010501032652.E16433@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;tpL0KD.A.MEG.4oc76@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+P.S.  This is my /etc/sysconfig/ipchains:
+
+# Firewall configuration written by lokkit
+# Manual customization of this file is not recommended.
+# Note: ifup-post will punch the current nameservers through the
+#       firewall; such entries will *not* be listed here.
+:input ACCEPT
+:forward ACCEPT
+:output ACCEPT
+-A input -s 0/0 -d 0/0 25 -p tcp -y -j ACCEPT
+-A input -s 0/0 -d 0/0 22 -p tcp -y -j ACCEPT
+-A input -s 0/0 -d 0/0 -i lo -j ACCEPT
+-A input -p tcp -s 0/0 -d 0/0 0:1023 -y -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 2049 -y -j REJECT
+-A input -p udp -s 0/0 -d 0/0 0:1023 -j REJECT
+-A input -p udp -s 0/0 -d 0/0 2049 -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 6000:6009 -y -j REJECT
+-A input -p tcp -s 0/0 -d 0/0 7100 -y -j REJECT
+
+The first rule allows tcp port 25 (smtp)
+The second allows tcp port 22 (ssh)
+The third probably allows everything on loopback (just a guess,
+I haven't read the docs myself).
+4 rejects everything &lt;1023 tcp
+5 rejects 2049 tcp
+6 rejects everything &lt;1023 udp
+7 rejects 2049 udp
+8 rejects 6000-6009 tcp (X uses these ports)
+9 rejects 7100 tcp (don't know what that is offhand).
+
+This is the medium security firewalling in Red
+Hat 7.1, plus my customizations to allow 25 and 22.
+
+These rules operate on a first-match-exits principal,
+so if an ssh connection comes in, all rules after 
+the second one will not be processed.  If an http
+connection comes in, it will get as far as rule 4, 
+which will match it as a reject (80 tcp).  
+
+Ordering is important; if the rules allowing 22 and 25
+were positioned after rule 4, 22 and 25 would still
+be filtered because the rejectino of 0-10323 tcp would
+come first, 22 and 25 would match, and rule processing
+would exit.
+
+So if you write your own, the quick and dirty is to put
+your accepts first.  If you anticpate most of your
+traffic to be port 80 tcp (http), put that one ahead of
+port 22.  You should be able to just copy the rule
+allowing 22 or 25 in the ruleset above and change the 
+port to 80 if you want to allow http connections to your
+box.  But do read the docs anyway, and don't believe anything
+I've said here until you've verified it :-)
+
+Jonathan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00003" HREF="msg00003.html">Re: Firewall setting</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00003.html">Re: Firewall setting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00005.html">RE: Firewall setting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00003.html">Re: Firewall setting</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00014.html">RE: Firewall setting</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00004"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00004"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

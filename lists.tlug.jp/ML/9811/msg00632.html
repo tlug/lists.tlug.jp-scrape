@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Syncing NT and Linux passwords -->
+<!--X-From: Hiroshi MIURA <miura@example.com> -->
+<!--X-Date:  Tue, 24 Nov 1998 18:45:41 +0900 -->
+<!--X-Message-Id: 199811240945.SAA24345@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199811240224.LAA02139@example.com&#45;352.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00631.html">Date Prev</A>][<A HREF="msg00633.html">Date Next</A>][<A HREF="msg00610.html">Thread Prev</A>][<A HREF="msg00634.html">Thread Next</A>][<A HREF="maillist.html#00632">Date Index</A>][<A HREF="threads.html#00632">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Syncing NT and Linux passwords</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Syncing NT and Linux passwords</strong></LI>
+<LI><strong>From</strong>: <strong>Hiroshi MIURA &lt;<A HREF="mailto:miura@example.com">miura@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 24 Nov 1998 18:45:11 +0900 (JST)</LI>
+<LI>Content-Type: text/plain; charset=ISO-2022-JP</LI>
+<LI>In-reply-to: Frank Bennett's message of "Tue, 24 Nov 1998 11:24:57 +0900"&lt;<A HREF="msg00610.html">199811240224.LAA02139@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00610.html">199811240224.LAA02139@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+
+In message "tlug: Syncing NT and Linux passwords"
+    on 98/11/24, Frank Bennett &lt;bennett@example.com&gt; writes:
+&gt; We have both NT and Linux machines on the faculty network here.
+I'm also worrying about NT and Linux Password syncing.
+We have plan that we replace NT file server to Linux&amp;samba one,
+and set PDC to regist NT4 w/s clients. 
+All users are managed trusted parent PDC/Domain.
+
+&gt; At the moment, some filespace services are served by NT machines,
+&gt; and mail is provided by a Linux box.  Soon I will be providing
+&gt; further tranches of filespace out of Linux via SMB, and later via
+&gt; SMB layered on Coda.  So we will have the following
+&gt; password-protected services running:
+&gt; 
+&gt;  o SMB (NT password server)
+&gt; 
+&gt;  o Samba (NT password server or Linux fileserver /etc/passwd)
+&gt; 
+&gt;  o pop3 (Linux mailserver /etc/passwd)
+&gt; 
+&gt;  o Coda (Linux fileserver Coda password file)
+
+nice! but it's difficult to sync password because of difference
+on the password management scheme.
+if you and we use Windows 95/WfW, it is easy to sync password.
+Because 95/WfW use plain password... but NT5/NT4sp3/98 use
+encrypted password. 
+ 
+&gt; Currently only mail services are widely used, so there is only
+&gt; one password file of significant size to protect and maintain.
+&gt; But I shudder when I think of the task of explaining to users how
+&gt; to set each of the passwords above, not to mention explaining to
+&gt; them why so many separate passwords are necessary.
+&gt; 
+&gt; On the Unix side, consolidation in a secure fashion will be
+&gt; pretty straightforward (in the sense that I have a plan, know it
+&gt; will work, know it will be secure, and know exactly what will be
+&gt; necessary to implement it).  The problem of syncing Unix and NT
+&gt; has me stumped, though.
+
+YES! Its problem make me scowling face. =_=);;
+
+ 
+&gt; Is there ANY means of simultaneously setting a password on a Unix
+&gt; and an NT box?  If this is possible, it will make our lives MUCH
+&gt; simpler.
+
+If you can do that you quits NT DOMAIN, it will be simple.
+All users are managed by NIS(YP). samba can sync unix password and
+smbpasswd. 
+
+if user want to chage his/her password, request is send to samba server,
+samba changes its own smbpasswd db and chat with /bin/passwd to change
+unix password.
+
+please see smb.conf manual pages, and check out follows:
+passwd chat 
+passwd program
+update encrypted
+unix password sync
+
+
+It is imposible, i think, to sync NT DOMAIN password and UNIX 
+password smartly, I gave up IT. My user must sync by hand :-(
+
+Hiroshi  
+---
+三浦広志 	miura@example.com
+speciality:	Wide-band Network engineer(ATM, FR, TCP/IP and Security) 
+staff of:	Hokkaid Guide Editor
+project:	Linux Kernel Hack Japan Project from 1998 ;-)
+
+
+
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00634" HREF="msg00634.html">Re: tlug: Syncing NT and Linux passwords</A></STRONG>
+<UL><LI><EM>From:</EM> riley@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00610" HREF="msg00610.html">tlug: Syncing NT and Linux passwords</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00631.html">Re: tlug: Floppy mounts</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00633.html">Re: tlug: Floppy mounts</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00610.html">tlug: Syncing NT and Linux passwords</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00634.html">Re: tlug: Syncing NT and Linux passwords</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00632"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00632"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

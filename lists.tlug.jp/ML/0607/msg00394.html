@@ -1,0 +1,203 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754)) -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Thu, 27 Jul 2006 05:41:28 +0900 -->
+<!--X-Message-Id: 20060726164125.4959ce4e.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 87ejw8corz.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00393.html">Date Prev</a>][<a href="msg00395.html">Date Next</a>][<a href="msg00401.html">Thread Prev</a>][<a href="msg00397.html">Thread Next</a>][<a href="maillist.html#00394">Date Index</a>][<a href="threads.html#00394">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 26 Jul 2006 16:41:25 -0400</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29%29">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29%29">20060726125907.GH5111@example.com</a>&gt;	&lt;<a href="mailto:87ejw8corz.fsf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Portability%20of%20Misaligned%20Data%20Access%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29%29">87ejw8corz.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Portability is a good thing. 
+
+I love stuff like: 
+
+   (*(double *)&amp;result_normal_plus[2])
+
+but Stephen makes a good point about alignment. 
+It makes me think about the portability of some of the stuff 
+I've written. Most runs on Intel trash, which seemingly 
+tolerates misaligned data, but such programs might puke 
+when running on non x86 family CPUs. 
+
+&quot;Stephen J. Turnbull&quot; wrote:
+
+&gt; &gt;&gt;&gt;&gt;&gt; &quot;Michal&quot; == Michal Hajek &lt;hajek1@example.com&gt; writes:
+&gt;     Michal&gt; where presult is a pointer to double, eg. defined as:
+&gt;     Michal&gt; double *presult;
+&gt; 
+&gt;     Michal&gt; The problem is that if I print the number:
+&gt; 
+&gt;     Michal&gt; printf(&quot;*presult: %.12f \n&quot;,*presult);
+&gt; 
+&gt; Well, if you're not getting bus errors, I guess alignment doesn't
+&gt; matter.  This kind of casting is normally an excellent way to get into
+&gt; real trouble, though.
+
+There was a discussion at a recent lunch about this. 
+Another bread breaker was talking about how x86 CPUs would 
+tolerate misaligned data, but with a whopping speed 
+penalty. 
+
+(Michal, the kind of speed penalty referred to is 
+still insignificant to your problem.)
+
+You raised a good point about the portability of accessing 
+misaligned data. 
+
+So, to avoid alignment issues, cajole the rx buffer 
+so that result_normal_plus+2 is aligned for a double 
+(which is much too tricky), or copy the data into an 
+obviously aligned place (much better, no tricks). 
+
+   double foo; 
+   int i;
+
+   for (i=0;i&lt;sizeof(foo);i++)
+      (*(unsigned char *)&amp;foo)[i]=(*(unsigned char *)(result_normal_plus+2))[i];
+
+or
+
+   double foo;
+   unsigned char *s=(unsigned char *)&amp;foo;
+   unsigned char *t=(unsigned char *)(result_normal_plus+2);
+   int i;
+
+   for (i=0;i&lt;sizeof(foo);i++)
+      *s++=*t++;
+
+then you can access foo without worrying about alignments issues
+(except perhaps for sizeof reporting a padded value 
+and reading too much from possibly unpadded (result_normal_plus+2), 
+causing a segmentation fault). 
+
+Afterwards, one could do Stephen's result_normal_plus[2]='\0' 
+for the two characters. 
+
+Aligning the data on a nice boundary is a separate issue 
+from what format (IEEE 754 or not) a double is in. 
+
+We've probably overwhelmed Michal by now. 
+
+Jim
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00397" href="msg00397.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00399" href="msg00399.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . . (was	Re: issues with format of double (or IEEE754))</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00386" href="msg00386.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00393.html">[tlug] Internal floating point formats used by 80387, IEEE 754 and C . . . . . (was Re: What does 80387 have to do with IEEE 754 issues? It's moot.)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00395.html">Re: [tlug] Internal floating point formats used by 80387, IEEE 754 and C . . . . . (was Re: What does 80387 have to do with IEEE 754 issues? It's moot.)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00401.html">Re: [tlug] result_normal_plus[2]='\0' likely clobbers payload</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00397.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . . (was Re: issues with format of double (or IEEE754))</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00394"><strong>Date</strong></a></li>
+<li><a href="threads.html#00394"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

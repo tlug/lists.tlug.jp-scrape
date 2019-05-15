@@ -1,0 +1,158 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] httpd strangeness -->
+<!--X-From-R13: fpbgg <fpbggNfynpxvfynaq.bet> -->
+<!--X-Date: Fri, 06 Apr 2007 00:06:19 +0900 -->
+<!--X-Message-Id: 1175785577.3569.15.camel@example.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00105.html">Date Prev</a>][<a href="msg00107.html">Date Next</a>][<a href="msg00105.html">Thread Prev</a>][<a href="msg00107.html">Thread Next</a>][<a href="maillist.html#00106">Date Index</a>][<a href="threads.html#00106">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] httpd strangeness</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 06 Apr 2007 00:06:17 +0900</li>
+<li><strong>From</strong>: <strong>scott &lt;<a href="mailto:scott@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20httpd%20strangeness">scott@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] httpd strangeness</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+
+
+
+
+Hi everyone,<BR>
+<BR>
+The last couple of days I've noticed some strange behavior with my server at home- extreme network latency all of a sudden. Ping time to google is usually 208 ms but during this phenomena it shoots up to over 2000 ms. To troubleshoot the latest event, I did a the following (edited for brevity):<BR>
+<BR>
+[root@example.com scott]# netstat -tuapn<BR>
+Active Internet connections (servers and established)<BR>
+Proto Recv-Q Send-Q Local Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Foreign Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PID/Program name<BR>
+tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp; 81200 219.114.58.46:80&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 58.138.12.186:50661&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ESTABLISHED 24628/httpd<BR>
+tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp; 70000 219.114.58.46:80&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 58.138.12.186:50660&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ESTABLISHED 16617/httpd<BR>
+tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp; 79800 219.114.58.46:80&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 58.138.12.186:50662&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ESTABLISHED 16616/httpd<BR>
+<BR>
+[root@example.com sbin]# tcpdump -i ppp0<BR>
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode<BR>
+listening on ppp0, link-type LINUX_SLL (Linux cooked), capture size 96 bytes<BR>
+23:40:58.909627 IP 186.12.138.58.dy.bbexcite.jp.50660 &gt; slackisland.org.http: . ack 805046405 win 64400 &lt;nop,nop,timestamp 662900488 523132041&gt;<BR>
+23:40:58.909678 IP slackisland.org.http &gt; 186.12.138.58.dy.bbexcite.jp.50660: . 61601:63001(1400) ack 0 win 1402 &lt;nop,nop,timestamp 523134165 662900488&gt;<BR>
+<BR>
+So it looks like apache is taking a hit- dumping a lot of data to this guest from bbexcite. The same thing happened yesterday but it was to a host on OCN&nbsp; p7164-ipad412marunouchi.tokyo.ocn.ne.jp. I checked webalizer and these hosts had shown up:<BR>
+<BR>
+Top 10 of 135 Total Sites By KBytes <BR>
+<FONT SIZE="2">#</FONT> <FONT SIZE="2">Hits</FONT> <FONT SIZE="2">Files</FONT> <FONT SIZE="2">KBytes</FONT> <FONT SIZE="2">Visits</FONT> <FONT SIZE="2">Hostname</FONT> <BR>
+<B><FONT SIZE="2">1</FONT></B> <B><FONT SIZE="2">4</FONT></B> <FONT SIZE="1">0.19%</FONT> <B><FONT SIZE="2">4</FONT></B> <FONT SIZE="1">0.25%</FONT> <B><FONT SIZE="2">194038</FONT></B> <FONT SIZE="1">17.44%</FONT> <B><FONT SIZE="2">0</FONT></B> <FONT SIZE="1">0.00%</FONT> <FONT SIZE="2">p7164-ipad412marunouchi.tokyo.ocn.ne.jp</FONT> <BR>
+<B><FONT SIZE="2">2</FONT></B> <B><FONT SIZE="2">3</FONT></B> <FONT SIZE="1">0.14%</FONT> <B><FONT SIZE="2">3</FONT></B> <FONT SIZE="1">0.18%</FONT> <B><FONT SIZE="2">159350</FONT></B> <FONT SIZE="1">14.32%</FONT> <B><FONT SIZE="2">0</FONT></B> <FONT SIZE="1">0.00%</FONT> <FONT SIZE="2">186.12.138.58.dy.bbexcite.jp</FONT> <BR>
+<B><FONT SIZE="2">3</FONT></B> <B><FONT SIZE="2">3</FONT></B> <FONT SIZE="1">0.14%</FONT> <B><FONT SIZE="2">3</FONT></B> <FONT SIZE="1">0.18%</FONT> <B><FONT SIZE="2">159350</FONT></B> <FONT SIZE="1">14.32%</FONT> <B><FONT SIZE="2">0</FONT></B> <FONT SIZE="1">0.00%</FONT> <FONT SIZE="2">222.146.199.164</FONT><BR>
+<BR>
+So it looks like they are not &quot;visiting&quot;, but they are downloading a lot of data. I am wondering if I should be concerned? I'm already pretty paranoid after getting my system broken into last year. If it isn't anything to worry about, I wonder if I can take off my tin hat and just throttle this kind of stuff to prevent my network from becoming so slow. <BR>
+<BR>
+Anybody else experiencing anything like this lately?<BR>
+<BR>
+Thanks in advance,<BR>
+Scott VanDusen<BR>
+Tokyo<BR>
+<BR>
+
+
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00107" href="msg00107.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00110" href="msg00110.html">Re: [tlug] httpd strangeness</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00105.html">Re: [tlug] TLUG Funding (was: Feisty Upgrade,	USB issues and other oddities)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00107.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00105.html">Re: [tlug] TLUG Funding (was: Feisty Upgrade,	USB issues and other oddities)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00107.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00106"><strong>Date</strong></a></li>
+<li><a href="threads.html#00106"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: XEmacs and Kanji detection -->
+<!--X-From: Steve Dunham <dunham@example.com> -->
+<!--X-Date:  Tue, 3 Jun 1997 22:23:13 GMT -->
+<!--X-Message-Id: m267vvnx6i.fsf@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0wYoCI&#45;00002KC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00042.html">Date Prev</A>][<A HREF="msg00044.html">Date Next</A>][<A HREF="msg00039.html">Thread Prev</A>][<A HREF="msg00047.html">Thread Next</A>][<A HREF="maillist.html#00043">Date Index</A>][<A HREF="threads.html#00043">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: XEmacs and Kanji detection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: XEmacs and Kanji detection</strong></LI>
+<LI><strong>From</strong>: <strong>Steve Dunham &lt;<A HREF="mailto:dunham@example.com">dunham@example.com</A>&gt;</strong></LI>
+<LI>Date: 03 Jun 1997 18:23:01 -0400</LI>
+<LI>Content-Type: text/plain; charset=ISO-2022-JP</LI>
+<LI>In-Reply-To: "Stephen J. Turnbull"'s message of Tue, 03 Jun 1997 16:40:01 +0900</LI>
+<LI>References: &lt;<A HREF="msg00034.html">m0wYoCI-00002KC@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Steve Dunham &lt;dunham@example.com&gt;
+--------------------------------------------------------
+"Stephen J. Turnbull" &lt;turnbull@example.com&gt; writes:
+
+&gt; I've never found locale to be useful for much of anything; kterm
+&gt; hardcodes it, and GNU Mule ignores it.  So this didn't occur to me.
+&gt; (Who looks lame now?)  Yeah, that seem to do the trick (dammit; it
+&gt; means that getting m17n right is going to be really mendoukusai;
+&gt; locale-related functions are dispersed all over xemacs, but not in
+&gt; Mule source files :-( ), although I'm using an XIM-based XEmacs, not a
+&gt; standalone henkan server version.
+
+You can also do thus by selecting "Options/Language Environment/Japanese".
+I believe the issue is that some of the Japanese hooks don't get
+loaded until this is done.
+
+I believe the locale is passed to the input method. (I suspect this is 
+why the Solaris input method didn't work for me.)
+
+&gt; The locale processing also seems to be inconsistently implemented,
+&gt; since "LANG=ja_JP.EUC" results in SJIS being correctly displayed (and
+&gt; "LANG=ja_JP.SJIS" produces correct results for EUC).  
+
+Umm, what do you want it to do? Disable EUC support?
+
+Currently it only uses the LANG variable to determine the "default"
+language for startup.  Hence, it only uses the language part of the
+variable (the "ja").  (Somebody has beta support localized menus &amp;c,
+but I don't know how to enable it.)
+
+XEmacs, by default, seems to have iso-2202 filters in the loading
+process.  The SJIS detection seems to be added when you load the
+japanese language stuff.  This happens when LANG=ja or you pick the
+Japanese menu item. (You can probably do this in .emacs too, you
+should be able to select Japanese and "Save Options", but I haven't
+tried it.)
+
+Anyways, you can change the "default" language in the menu:
+"Options/Language Environment".
+
+File encoding can be set on a per buffer basis using C-x C-n f (type
+C-x C-n C-h for a list of bindings).
+
+&gt; Furthermore, using `(setenv "LANG" "C")' or any other locale does
+&gt; not affect this, so the locale of the XEmacs process seems to be
+&gt; fixed at invocation, and only used to invoke Mule features.
+
+Ahh, digging around, I found yet another reason for this: in the lisp
+directory, there is a locale/ja/locale-start.el.  Apparently, there is 
+no directory for other locales.  (XEmacs desperately needs testers for
+non-japanese MULE stuff.)
+
+&gt; (I suspected that XEmacs would handle ISO-2022-JP when compiled
+&gt; without Mule, because it gets it right when EUC and SJIS are
+&gt; mojibake.  But that is not the case.)  It's really not clear to me
+&gt; what all is going on here.  The Mule features of XEmacs seem to be
+&gt; really hacked in.
+
+Why do you get a feeling that the mule features are hacked in?  It
+feels fairly clean to me.  There are probably some necessary
+differences from the gnu emacs MULE, because of design differences in
+the core editor.  But as far as I can tell, MULE is nicely integrated
+into the editor.
+
+&gt; Re: w3.el.  I'm _not_ getting Japanese on the Mule homepage (the top
+&gt; page is OK, since all the Japanese is in GIFs, but
+&gt; <A HREF="http://www.etl.go.jp/Research/mulepage/MuleJapanese.html">http://www.etl.go.jp/Research/mulepage/MuleJapanese.html</A> bombs).  I
+&gt; don't seem to have any problems with the W3 multilingual example page
+&gt; (<A HREF="http://www.ntt.co.jp/japan/note-on-JP/multi-example.html">http://www.ntt.co.jp/japan/note-on-JP/multi-example.html</A>) except for
+&gt; missing fonts.
+
+&gt; It seems to choke on the (standard-compliant) MIME content-type
+&gt; header.  If that (`Content-type: text/html; charset=iso-2022-jp') is
+&gt; present, the non-ASCII characters turn into mojibake :-(.  (I've
+&gt; confirmed this by prepending that to the header of multi-example.html
+&gt; and getting mojibake, and taking out the charset reference in the
+&gt; Content-type of MuleJapanese.html and getting Japanese.)  Sigh.
+
+Sounds like a bug in w3.el... It seems to be ignoring the charset
+specification in the HTTP header.  Does it work in MULE?
+
+You can dig around an figure out why, if you want.  (It would be
+rather low on my list of things to do - I use netscape for WWW.  The
+top of my todo list for XEmacs would be printing...)
+
+&gt; w3.el doesn't do JPEGs.  Pity, that.
+
+Is your XEmacs linked with libjpeg?  I'm looking at my (rather lame)
+homepage which includes a jpeg, and it looks fine.   It even handles
+my style sheet.
+  <A HREF="http://dunham.tcimet.net/~dunham/">http://dunham.tcimet.net/~dunham/</A>
+
+&gt; Craig, I have a couple of questions.
+
+&gt; Do you get the right charsets when switching from an SJIS server to an
+&gt; ISO-2022 server in w3.el?  Do you need to do anything else (in
+&gt; particular I'm thinking of the liblocale dodge that works with
+&gt; Netscrap)?  Do you get messages about not being able to set locale,
+&gt; using C/POSIX instead?  (I do, unless I use LD_PRELOAD=liblocale.so,
+&gt; since I have XIM compiled in, and any keyboard input gives instant
+&gt; crash.  At least it's for reasons I already understand.  I think; if I 
+&gt; do understand, you probably don't get those messages or need to use
+&gt; liblocale.so with XEmacs/Mule/Canna.)
+
+This is the funny thing: I get those messages from XEmacs for
+"LANG=de", perl does the same thing.  But I don't get any messages
+from Netscape (which displays correctly localized text) or various GNU 
+utilities (again with varying degrees of localized text).
+
+I fully expect that message for LANG=ja, since I don't have any
+"ja" locale in /usr/share/locale.  (This needs to be fixed.) This is
+why the liblocale.so is needed. Apparently, it calls some internal X
+functions to trick it into thinking it has a wide character locale on
+systems lacking the "ja" locale (English Solaris ships without it).
+
+I believe the X locale functions will work in conjuction with libc
+locale, if you have a bona fide "ja" locale - I'll try to look into
+why libc doesn't have a "ja" locale and why the latin-1 locales don't
+work in some instances.
+
+&gt; Lists of all defined locales and aliases are in
+&gt; /usr/X11R6/lib/X11/locale/locale.{dir,alias}.
+
+The X locale information is there.  The libc locales are in
+/usr/share/locale (on Debian).
+
+
+スチェヴ・ダーナム
+dunham@example.com
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00047" HREF="msg00047.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00034" HREF="msg00034.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00042.html">Re: tlug: kinput2 vs. egg</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00044.html">tlug: New Home Page</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00039.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00047.html">Re: tlug: XEmacs and Kanji detection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00043"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00043"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

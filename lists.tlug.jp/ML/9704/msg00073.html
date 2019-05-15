@@ -1,0 +1,229 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: return to sender -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 21 Apr 1997 02:42:58 GMT -->
+<!--X-Message-Id: m0wJ8zc&#45;000010C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.970419201436.schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00072.html">Date Prev</A>][<A HREF="msg00074.html">Date Next</A>][<A HREF="msg00064.html">Thread Prev</A>][<A HREF="msg00075.html">Thread Next</A>][<A HREF="maillist.html#00073">Date Index</A>][<A HREF="threads.html#00073">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: return to sender</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: return to sender </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 21 Apr 1997 11:38:12 +0900</LI>
+<LI>In-reply-to: Your message of "Sat, 19 Apr 1997 20:00:07 +0900."            &lt;<A HREF="msg00064.html">XFMail.970419201436.schweiz@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; I've been puzzling over this all day: wormhole is a
+    Jim&gt; stand-alone box that connects to the Internet via a dial-up
+    Jim&gt; IP connection. I use a POP mailer to send and receive mail
+    Jim&gt; and, for the most part it works really well.
+
+Which one?  I don't use POP very much, so I'm not very familiar with
+them.  You will be needing the documentation....
+
+    Jim&gt; The problem is with certain mailing list software -notably
+    Jim&gt; Listserv. If you check the header of this mail you'll see the
+    Jim&gt; return address as schweiz@example.com but the sender is
+    Jim&gt; jim@example.com
+
+No, we won't.  The Sender is "tlug".  (TLUG is apparently not
+configured to use "Resent-by" headers.)  The information is available
+in a "received" header, but no software should ever use that
+information as authentication.  For one thing, not all MTAs say who
+they received the mail from.
+
+("Return address" is ambiguous here.  You could mean "From",
+"Reply-To", "Return-Path", or possibly even "Sender"!)
+
+    Jim&gt; This means that unless I go back and fire up the old Winblows
+    Jim&gt; box to send mail to some lists, the posts get rejected. I
+    Jim&gt; could just unsubscribe from Windoze and re-subscribe from
+    Jim&gt; Linux (but that's too easy;-)
+
+Nope.  jim@example.com is not a valid email address from the point of
+view of the listserv.  So if they are actually comparing the sender
+address to the mailing list (this is not an RFC-compliant usage, but I 
+can see why they do it---not that it would stop a determined spammer
+(hint)), you'll still lose.  You might try complaining to the listserv 
+owners; they should use the From address, as that is the header the
+author is supposed to use according to the RFC.  I realize they are
+trying to tie authors to their machines as a very primitive form of
+authentication, but it shouldn't work for a lot of RFC-822-compliant
+posts, as there will be no Sender header (see next paragraph).
+
+If your Windwoes box is sending a "Sender: schweiz@example.com"
+header, this is a deprecated practice, since the From and Sender
+headers are the same (cf RFC 822, sec. 4.4).  In that case the Sender
+header should be omitted.
+
+    Jim&gt; I've been unable to get XFMail reconfigured to change the
+    Jim&gt; sender field. Is there somewhere else I should be looking? Or
+    Jim&gt; am I SOL since I have to use the loopback interface?
+
+Technically, the Sender address is intended to identify the actual
+_authenticated_ (since Windwoes can't authenticate a thing, no Windwoes
+MTA should ever use a Sender header :-) _agent_ _responsible_ for
+sending the message.  So if you send mail for somebody else, you would
+be the Sender, but they would be the author (From).  This header can
+also be used to distinguish which of a group of authors actually sent
+the message.  Also, "responsible" means that some error management may
+be requested, so the Sender should be human.  Ie, TLUG's sender should
+be "owner-tlug", directed to Craig, as Majordomo's "boss," _not_
+Majordomo.
+
+This means that you should probably _not_ be using a sender address at 
+all.  (On Linux either.)  Since you are both the author and the agent
+responsible for transmission, you should never need a Sender header.
+On the other hand, HareNet may, having authenticated you at PPP login, 
+decide to add a sender header if it is different from your mailing
+address.  Not very likely, but you could check with them.  HareNet is
+very poorly configured if it is sending "Sender: schweiz@example.com"
+headers, though.
+
+XFMail is a "mail user agent" (MUA), and should never create sender
+headers because it doesn't have any authentication information.  The
+sender headers should be added by the "mail transport agent" (MTA)
+based on any difference between the "From" header and the
+authenticated user owning the process of the MUA that submitted the
+mail.  (The MUA could authenticate, of course, but why add that
+complexity?  People who wanted to hide their identity would just use
+another MUA that didn't authenticate, or submit to the MTA directly
+with "sendmail address &lt; file".  So the MTA has to authenticate in any
+case.)  Common Linux MTAs include sendmail, smail, and qmail.
+
+However, in your case the MTA is presumably your POPmail agent.  So
+you should look at the configuration of that agent.  You could be
+using one of the heavyweight MTAs outgoing and POP incoming, but that
+seems unlikely.  So POP is probably the culprit.
+
+    Jim&gt; Any ideas will be appreciated (I'm sure this is a FAQ
+    Jim&gt; somewhere but I couldn't find it.)
+
+You could try looking in the Majordomo and listserv FAQs.  You could
+also look on the anti-spamming lists, as this is presumably an
+antispamming device.
+
+HTH
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00075" HREF="msg00075.html">Re: tlug: return to sender</A></STRONG>
+<UL><LI><EM>From:</EM> "Francis Brian O'Carroll" &lt;ocarroll@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00064" HREF="msg00064.html">tlug: return to sender</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00072.html">Re: tlug: EB Reading S/W??</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00074.html">tlug: HTTPd server access configuration/Apache security risk</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00064.html">tlug: return to sender</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00075.html">Re: tlug: return to sender</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00073"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00073"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

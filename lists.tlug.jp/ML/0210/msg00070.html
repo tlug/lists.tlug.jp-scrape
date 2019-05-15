@@ -1,0 +1,181 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: MRTG without SNMP: how&#45;to? -->
+<!--X-From-R13: Fbovnf Rvrqevpu <gqNfvz.hav&#45;unaabire.qr> -->
+<!--X-Date: Wed, 9 Oct 2002 15:13:50 +0900 (JST) -->
+<!--X-Message-Id: 20021009061322.GA22554@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: F47ybizizjk9o1P0q5G00003161@example.com -->
+<!--X-Derived: pgp00022.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00069.html">Date Prev</a>][<a href="msg00071.html">Date Next</a>][<a href="msg00066.html">Thread Prev</a>][<a href="msg00076.html">Thread Next</a>][<a href="maillist.html#00070">Date Index</a>][<a href="threads.html#00070">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: MRTG without SNMP: how-to?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 9 Oct 2002 08:13:22 +0200</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:td@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20MRTG%20without%20SNMP%3A%20how-to%3F">td@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: MRTG without SNMP: how-to?</strong></li>
+<li>References: &lt;<a href="msg00066.html">F47ybizizjk9o1P0q5G00003161@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jean-Christian Imbeault wrote:
+&gt; Does anyone remember that posting, or better yet can the original poster 
+&gt; (Tobias maybe?) explain again how to get network usage stats without using 
+&gt; SNMP?
+
+/etc/mrtg.cfg:
+|######################################################################
+|# Multi Router Traffic Grapher -- Sample Configuration File
+|######################################################################
+|# This file is for use with mrtg-2.5.4c
+|
+|# Global configuration
+|WorkDir: /var/www/router/mrtg
+|WriteExpires: Yes
+|
+|#Title[^]: Traffic Analysis for
+|
+|Title[ppp0]: router ADSL connection Traffic
+|PageTop[ppp0]: &lt;H1&gt;Traffic analysis for ppp0&lt;/H1&gt;
+|Target[ppp0]: `/usr/local/bin/routerstats`
+|MaxBytes1[ppp0]: 96000
+|MaxBytes2[ppp0]: 16000
+|WithPeak[ppp0]: wmy
+|
+|Title[temp]: CPU and GPU Temperature
+|PageTop[temp]: &lt;H1&gt;CPU and GPU temperature&lt;/H1&gt;
+|Target[temp]: `/usr/local/bin/routertemp`
+|MaxBytes[temp]: 100
+|WithPeak[temp]: wmy
+|Options[temp]: gauge
+|YLegend[temp]: Temperature in degree Celsius
+|ShortLegend[temp]: °C
+|Legend1[temp]: CPU Temperature
+|Legend2[temp]: GPU Temperature
+|Legend3[temp]: Maximal 5 Minute CPU Temperature
+|Legend4[temp]: Maximal 5 Minute GPU Temperature
+|LegendI[temp]: &amp;nbsp;CPU:
+|LegendO[temp]: &amp;nbsp;GPU:
+
+/usr/local/bin/routerstats:
+|#!/bin/sh
+|PATH=/bin:/usr/bin:/usr/local/bin
+|IN=`cat /proc/net/dev | awk 'index($1,&quot;ppp0&quot;) != 0 { print substr($0,8) }' | awk '{ print $1}'`
+|OUT=`cat /proc/net/dev | awk 'index($1,&quot;ppp0&quot;) != 0 { print substr($0,8) }' | awk '{ print $9}'`
+|if [ &quot;$IN&quot; = &quot;&quot; ]; then IN=&quot;0&quot;; fi
+|if [ &quot;$OUT&quot; = &quot;&quot; ]; then OUT=&quot;0&quot;; fi
+|echo &quot;$IN&quot;
+|echo &quot;$OUT&quot;
+|uptime
+|hostname
+
+-- 
+Tobias								PGP: 0x9AC7E0BC
+This mail is made of 100% recycled bits
+Now playing: hayashibaramegumi: bertemu 06 - matsuriuta
+</pre>
+<p><strong>Attachment:
+<a href="pgp00022.pgp" ><tt>pgp00022.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00066" href="msg00066.html">[tlug] MRTG without SNMP: how-to?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00069.html">[tlug] Best online comp shops??</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00071.html">[tlug] scp or mail w/ uuencode</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00066.html">[tlug] MRTG without SNMP: how-to?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00076.html">List Archives (was: Re: [tlug] MRTG without SNMP: how-to?)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00070"><strong>Date</strong></a></li>
+<li><a href="threads.html#00070"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

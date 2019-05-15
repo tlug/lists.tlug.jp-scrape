@@ -1,0 +1,158 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Any iptables wizards around? -->
+<!--X-From-R13: Quevfgvna Vbea <pubeaNsyhkpbvy.arg> -->
+<!--X-Date: Fri, 25 Mar 2011 17:21:47 +0900 -->
+<!--X-Message-Id: 20110325082141.GA31855@fluxcoil.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4D8C3C8E.5020800@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00385.html">Date Prev</a>][<a href="msg00387.html">Date Next</a>][<a href="msg00390.html">Thread Prev</a>][<a href="msg00392.html">Thread Next</a>][<a href="maillist.html#00386">Date Index</a>][<a href="threads.html#00386">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Any iptables wizards around?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 25 Mar 2011 09:21:41 +0100</li>
+<li><strong>From</strong>: <strong>Christian Horn &lt;<a href="mailto:chorn@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Any%20iptables%20wizards%20around%3F">chorn@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Any iptables wizards around?</strong></li>
+<li>References: &lt;<a href="mailto:4D8C3C8E.5020800@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Any%20iptables%20wizards%20around%3F">4D8C3C8E.5020800@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.20 (2009-06-14)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Fri, Mar 25, 2011 at 03:56:14PM +0900, Andreas Kieckens wrote:
+&gt; 
+&gt; I've got a host with 2 qemu virtual machines in it. They're set up
+&gt; bridged with a tap interface so they both have their own ip address
+&gt; and are accessible from the outside.
+&gt; 
+&gt; Their ips are:
+&gt; VM1: 10.1.0.10
+&gt; VM2: 10.1.0.11
+&gt; Netmask for both: 255.255.255.0
+
+br0 has also an an ip from 10.1.0.0/24?
+
+
+&gt; Now I am trying to add iptables rules to the host machine to nat
+&gt; both virtual machines to subnet 172.16.0.0/24. I use the following
+&gt; rules for this.
+&gt; 
+&gt; iptables -P FORWARD DROP
+&gt; iptables -A FORWARD -s 10.1.0.0/24 -j ACCEPT
+&gt; iptables -A FORWARD -d 10.1.0.0/24 -j ACCEPT
+&gt; iptables -A INPUT -s 10.1.0.0/24 -j ACCEPT
+&gt; iptables -A INPUT -s 172.16.0.0/24 -j ACCEPT
+&gt; iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+&gt; iptables -t nat -A POSTROUTING -s 10.1.0.10 -j SNAT --to 172.16.0.10
+&gt; iptables -t nat -A POSTROUTING -s 10.1.0.11 -j SNAT --to 172.16.0.11
+
+- if you want to do NAT, make sure br0 has an ip.  eth0 shouldnt 
+be enslaved to br0 then
+- separate your problems: start without filering, just doing NAT (so the
+   -t nat rules). Once that works add the filering.
+- for NAT you will also have to enable ip-forwarding, i.e. via sysctl
+- regarding your nat-rules: havent played with this syntax yet, but using
+	iptables -t nat -A POSTROUTING -s 10.1.0.0/24 -j MASQUERADE
+should work (and does here in virtual machine setups)
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00384" href="msg00384.html">[tlug] Any iptables wizards around?</a></strong>
+<ul><li><em>From:</em> Andreas Kieckens</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00385.html">Re: [tlug] Any iptables wizards around?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00387.html">Re: [tlug] Any iptables wizards around?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00390.html">Re: [tlug] Any iptables wizards around?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00392.html">Re: [tlug] Any iptables wizards around?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00386"><strong>Date</strong></a></li>
+<li><a href="threads.html#00386"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

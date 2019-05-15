@@ -1,0 +1,255 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] CPU cycles and packet filtering -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNtfgrjneg.ubzrhavk.arg> -->
+<!--X-Date: Thu, 26 Dec 2002 15:37:01 +0100 -->
+<!--X-Message-Id: 20021226153701.21d1b16c.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20021226141740.1090515d.gstewart@example.com -->
+<!--X-Reference: 20021226133645.GB10020@example.com -->
+<!--X-Derived: pgp00048.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00235.html">Date Prev</a>][<a href="msg00237.html">Date Next</a>][<a href="msg00235.html">Thread Prev</a>][<a href="msg00237.html">Thread Next</a>][<a href="maillist.html#00236">Date Index</a>][<a href="threads.html#00236">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] CPU cycles and packet filtering</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 26 Dec 2002 15:37:01 +0100</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20CPU%20cycles%20and%20packet%20filtering">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] CPU cycles and packet filtering</strong></li>
+<li>References: &lt;<a href="msg00234.html">20021226141740.1090515d.gstewart@example.com</a>&gt;&lt;<a href="msg00235.html">20021226133645.GB10020@example.com</a>&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 26 Dec 2002 08:36:45 -0500, Josh Glover &lt;jmglov@example.com&gt; wrote
+to tlug@example.com:
+
+&gt; When you do not have to worry about users, stopping the packet as low as
+&gt; possible in the TCP/IP stack is going to be the most efficient solution.
+
+That's what seemed most logical to me. The further up the stack the data
+gets, the more processing has been done. Boot the packet out in layer 3 (IP)
+and you've saved yourself a fair amount of work. Thanks for the
+confirmation.
+
+If, OTOH, instead of dropping all connections from a the subnets in my list,
+I route all incoming packets supposed to go to TCP port 25 into a separate
+chain, and only check IP addies in that chain, have those packets already
+made it to layer 4 or does the filter already &quot;know&quot; that's where the packet
+will end up without the kernel having pushed it up?
+
+&gt; My opinion? Stick with your iptables solution.
+
+That's what I'll do.
+
+&gt; Have you also noticed that you park in a driveway and drive
+&gt; on a parkway? ;)
+
+LOL :)  Except that doesn't work in (British) English because &quot;parkway&quot; is
+an American word, the meaning of which I don't really know.
+
+As a coder, you'll probably appreciate the signature at the bottom of this
+mail :)
+
+Anyway, FWIW, here's the list of &quot;offending&quot; subnets I've built if anyone
+else wants to adopt a similar solution:
+
+Korea:
+------
+
+kornet.net		61.78.0.0 -&gt; 61.85.255.255
+			61.78.0.0/15
+			61.80.0.0/14
+			61.84.0.0/15
+
+			61.72.0.0 -&gt; 61.75.255.255
+			61.72.0.0/14
+
+			211.222.212.0 -&gt; 211.222.215.255
+			211.222.212.0/22
+
+boranet			61.32.0.0 -&gt; 61.43.255.255
+			61.32.0.0/13
+			61.40.0.0/14
+
+hananet			211.200.78.0 -&gt; 211.200.79.255
+			211.200.78.0/23
+
+eyes			211.238.96.128 -&gt; 211.238.96.255
+			211.238.96.128/25
+
+
+Mainland China:
+---------------
+
+pingnet			194.148.0.0 -&gt; 194.148.255.255
+			194.148.0.0/16
+
+capital network		211.101.128.0 -&gt; 211.102.127.255
+			211.101.128.0/17
+			211.102.0.0/17
+
+chinacomm.com.cn	211.157.96.0 -&gt; 211.157.127.255
+			211.157.96.0/19
+
+
+Taiwan:
+-------
+
+hinet.net		61.228.0.0 -&gt; 61.231.255.255
+			61.228.0.0/14
+
+ncic.com.tw		218.32.0.0 -&gt; 218.32.255.255
+			218.32.0.0/16
+
+
+Brazil:
+-------
+
+Sao Paolo telecom	200.148.0.0 -&gt; 200.148.127.255
+			200.148.0.0/17
+
+			200.158.0.0 -&gt; 200.158.127.255
+			200.158.0.0/17
+
+			200.161.0.0 -&gt; 200.161.255.255
+			200.161.0.0/16
+
+Ajato			200.162.208.0 -&gt; 200.162.223.255
+			200.162.208.0/20
+
+Others:
+-------
+
+BT Online Nigeria	213.181.64.0 -&gt; 213.181.64.255
+			213.181.64.0/24
+
+
+These subnets account for just over 2 million machines, which in turn
+account for approximately 0.05% of the possible IPV4 address space. It just
+goes to show what a nuisance a small minority can be...
+
+-- 
+G. Stewart   --   gstewart@example.com
+                  gstewart@example.com
+Registered Linux user #284683
+
+GnuPG key  : BA3D01C6 (pgp.mit.edu)
+Fingerprint: C3DF C686 6572 6E59 E3E4  0F40 2B9A 2218 BA3D 01C6
+---------------------------------------------------------------
+There are only 10 kinds of people in the world: Those who understand
+binary, and those who don't.
+
+</pre>
+<p><strong>Attachment:
+<a href="pgp00048.pgp" ><tt>pgp00048.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00237" href="msg00237.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00246" href="msg00246.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00234" href="msg00234.html">[tlug] CPU cycles and packet filtering</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00235" href="msg00235.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00235.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00237.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00235.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00237.html">Re: [tlug] CPU cycles and packet filtering</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00236"><strong>Date</strong></a></li>
+<li><a href="threads.html#00236"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Stupid Perl Tricks -->
+<!--X-From-R13: Xbfu Uybire <gyhtNwztybi.arg> -->
+<!--X-Date: Tue, 20 Apr 2004 23:12:25 &#45;0400 -->
+<!--X-Message-Id: 20040421031225.GB11018%jmglov@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00041.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00162.html">Date Prev</a>][<a href="msg00164.html">Date Next</a>][<a href="msg00181.html">Thread Prev</a>][<a href="msg00182.html">Thread Next</a>][<a href="maillist.html#00163">Date Index</a>][<a href="threads.html#00163">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Stupid Perl Tricks</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 20 Apr 2004 23:12:25 -0400</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Stupid%20Perl%20Tricks">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Stupid Perl Tricks</strong></li>
+<li>User-agent: Mutt/1.5.4i-ja.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Earlier today, I needed to take a screenshot of a piece of the UI of the
+project on which I am currently working, to deliver to the tech writer.
+In of itself, this was not hard, a simple matter of:
+
+sudo emerge media-gfx/imagemagick
+import screenshot.jpg
+
+However, I used to have a couple of entries in my .bbkeysrc that set up
+hotkeys for screen captures:
+
+KeyToGrab(s), WithModifier(Mod1+Control), WithAction(ExecCommand), DoThis(import -window root screenshot_`date +%Y-%m-%d_%H-%M-%S`.jpg)
+KeyToGrab(w), WithModifier(Mod1+Control), WithAction(ExecCommand), DoThis(import screenshot_`date +%Y-%m-%d_%H-%M-%S`.jpg)
+
+But C-M-s and C-M-w were slightly unintuitive, and I really wanted to put
+the bloody Print Screen / SysRq key to good use, so I decided to change
+the hotkeys to M-PrintScreen for full screen captures, and C-M-PrintScreen
+for mouse-defined captures. So, I blissfully changed KeyToGrab(s) to
+KeyToGrab(PrintScreen) (yes, chuckle away, ye hoary hackers of X11 and
+XEmacs ninjas yes I mean Steve Turnbull!) and restarted bbkeys. No dice.
+Steve knows why. I did not. :)
+
+So I try &quot;SysRq&quot;. No dice. &quot;PrintScrn&quot;, &quot;PrntScrn&quot;, no dice. I Google, to
+no avail.
+
+So I break out the trusty LXR[1], for which I had just written a
+webapp-config[2] ebuild[3]. Start browsing the source, find that bbkeys
+reads in the KeyToGrab stuff and hands it off to a neat little X11
+function called XStringToKeysym()[4]. OK, Google it, see that I can find
+all the symbolic names in X11/keysymdef.h &quot;by removing the XK_ prefix from
+each name&quot;. Steve nods.
+
+Now, I easily find that &quot;Print&quot; is the bloody name for the Print Screen /
+SysRq key, which would have been quite obvious had I been coding X11 apps
+for a few years. Steve winces.
+
+Hurrah, bbkeys responds to C-M-Print (as I now know it) by spitting out
+a JPG.
+
+So, at this point, I decide to create a web page documenting these eldritch
+symbols, so that the next time a hard drive explodes and my backups are
+worth sod all, I don't drive myself into a frothing-at-the-mouth frenzy
+trying to figure this out again.
+
+Being a True Hacker(TM and I wish), I decide not to do with cut, paste, and
+C-M-% what I can do with Perl. So I whip up an HTML skeleton, xkeysyms.html
+and the following Perl one-liner:
+
+perl -ne 'next unless /^#define\sXK_(\w+)\s+0x[0-9A-F]{4}\s+(\/\*\s+(.+)\s+\*\/)*/; print &quot;      &lt;tr&gt;\n        &lt;td&gt;$1&lt;/td&gt;\n        &lt;td&gt;&quot;.($3 ? $3 : &quot;&amp;nbsp;&quot;).&quot;&lt;/td&gt;\n      &lt;/tr&gt;\n&quot;' /usr/X11R6/include/X11/keysymdef.h &gt;&gt;xkeysyms.html
+
+But now I am back to cut and paste. No good. After another 20 minutes of
+pounding away, I come up with the following:
+
+<A  HREF="http://www.jmglov.net/unix/xkeysyms.html">http://www.jmglov.net/unix/xkeysyms.html</A>
+
+Feel free to drool. I certainly did once I was done.
+
+And then, after several hours of work, I emailed off the screenshot that
+was as simple as:
+
+sudo emerge media-gfx/imagemagick
+import screenshot.jpg
+
+Score one for the True Hacker. :)
+
+-Josh
+
+[1] <A  HREF="http://sourceforge.net/projects/lxr">http://sourceforge.net/projects/lxr</A>
+[2] <A  HREF="http://www.jmglov.net/unix/webapp-config.html">http://www.jmglov.net/unix/webapp-config.html</A>
+[3] <A  HREF="http://bugs.gentoo.org/show_bug.cgi?id=48459">http://bugs.gentoo.org/show_bug.cgi?id=48459</A>
+[4] <A  HREF="http://tronche.com/gui/x/xlib/utilities/keyboard/XStringToKeysym.html">http://tronche.com/gui/x/xlib/utilities/keyboard/XStringToKeysym.html</A>
+
+-- 
+Josh Glover
+
+GPG keyID 0xDE8A3103 (C3E4 FA9E 1E07 BBDB 6D8B  07AB 2BF1 67A1 DE8A 3103)
+gpg --keyserver pgp.mit.edu --recv-keys DE8A3103
+</pre>
+<p><strong>Attachment:
+<a href="pgp00041.pgp" ><tt>pgp00041.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00182" href="msg00182.html">Re: [tlug] Stupid Perl Tricks</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00162.html">Re: [tlug] libusb and plustek sane-backend (1.0.13)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00164.html">Re: [tlug] libusb and plustek sane-backend (1.0.13)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00181.html">Re: [tlug] Kernel 2.6.5 Compiling problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00182.html">Re: [tlug] Stupid Perl Tricks</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00163"><strong>Date</strong></a></li>
+<li><a href="threads.html#00163"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

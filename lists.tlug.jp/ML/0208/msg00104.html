@@ -1,0 +1,173 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: line filtering (was Re: Unidentified subject!) -->
+<!--X-From-R13: "ovt0" <ovt0Nfrp33.pbz> -->
+<!--X-Date: Wed, 7 Aug 2002 22:07:11 +0900 (JST) -->
+<!--X-Message-Id: 20020807131111.30237.qmail@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: E17cNGT&#45;00024b&#45;00@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00103.html">Date Prev</a>][<a href="msg00105.html">Date Next</a>][<a href="msg00097.html">Thread Prev</a>][<a href="msg00098.html">Thread Next</a>][<a href="maillist.html#00104">Date Index</a>][<a href="threads.html#00104">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: line filtering (was Re: Unidentified subject!)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 07 Aug 2002 13:11:11 GMT</li>
+<li><strong>From</strong>: <strong>&quot;big0&quot; &lt;<A HREF="mailto:big0@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20line%20filtering%20%28was%20Re%3A%20Unidentified%20subject%21%29">big0@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: line filtering (was Re: Unidentified subject!)</strong></li>
+<li>References: &lt;<a href="msg00097.html">E17cNGT-00024b-00@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt; -------------&gt;8----------------- 
+&gt;&gt;
+&gt;&gt;gawk -F&quot; &quot; 'BEGIN { numexp = &quot;[[:digit:]]+&quot;; tmp=&quot;&quot; }
+&gt;&gt;NR &gt; 0 {
+&gt;&gt; if ($1 ~ numexp &amp;&amp; tmp != &quot;&quot;) { print tmp; tmp=&quot;&quot; }
+&gt;&gt;}
+&gt;&gt;{ tmp = tmp&quot; &quot;$0; }' 
+&gt;&gt;
+&gt;&gt; -------------&gt;8-----------------
+&gt; 
+&gt; Oh, that's gross. And it's also wrong. (Try it! It doesn't work.)
+
+It's work. But really have little mistake - do not display the last line.
+So with correction and in shell script:
+ ------[ join_lines.sh ]-------&gt;8-----------------
+#!/bin/sh
+# Usage: join_lines.sh &lt; text_file.txt
+#
+gawk -F&quot; &quot; '
+BEGIN { numexp = &quot;[[:digit:]]+&quot;; tmp=&quot;&quot; }
+NR &gt; 0 {
+ if ($1 ~ numexp &amp;&amp; tmp != &quot;&quot;) { print tmp; tmp=&quot;&quot; }
+}
+{ tmp = tmp&quot; &quot;$0 }
+END { if (tmp != &quot;&quot;) print tmp; }
+'
+ ------------------------------&gt;8-----------------
+And once more - do not use awk - it just do not display
+anything. Use gawk. Also I was wrong for mawk - it put
+everything on one line. The input and output test files
+are in the attachements. 
+
+ --
+ISBN: 0060256575       OpenPGP: 0xBE40FF3E 
+
+</pre>
+<pre>
+1 some text
+text with C/R s
+2 and this is the second line
+3 text text
+text
+4 line number 4
+and this is also line number 4
+5 the last line
+</pre>
+<pre>
+ 1 some text text with C/R s
+ 2 and this is the second line
+ 3 text text text
+ 4 line number 4 and this is also line number 4
+ 5 the last line
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00097" href="msg00097.html">[tlug] line filtering (was Re: Unidentified subject!)</a></strong>
+<ul><li><em>From:</em> Shimpei Yamashita</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00103.html">Re: [tlug] Duplicating a MySQL database</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00105.html">Re: [tlug] searching but don't where to look!!</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00097.html">[tlug] line filtering (was Re: Unidentified subject!)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00098.html">[tlug] Duplicating a MySQL database</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00104"><strong>Date</strong></a></li>
+<li><a href="threads.html#00104"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

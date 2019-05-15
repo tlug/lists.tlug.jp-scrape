@@ -1,0 +1,226 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Setting up Samba -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date: Sat, 4 Apr 1998 08:12:11 &#45;0500 (EST) -->
+<!--X-Message-Id: 19980404221237S.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000301bd5f8e$3f4dcce0$1302a8c0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00061.html">Date Prev</A>][<A HREF="msg00063.html">Date Next</A>][<A HREF="msg00058.html">Thread Prev</A>][<A HREF="msg00063.html">Thread Next</A>][<A HREF="maillist.html#00062">Date Index</A>][<A HREF="threads.html#00062">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Setting up Samba</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:jq@example.com">jq@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Setting up Samba</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 04 Apr 1998 22:12:37 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Sat, 4 Apr 1998 14:20:58 +0900"&lt;<A HREF="msg00058.html">000301bd5f8e$3f4dcce0$1302a8c0@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00058.html">000301bd5f8e$3f4dcce0$1302a8c0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+    Jonathan&gt; 1) Make the computer visible as a node on our office
+    Jonathan&gt; LAN;
+
+I you want to be able to browse it from with M$ machines, you need to
+set the workgroup or domain to whattever you using in the office.
+
+With redhat, you'll find a config file in /etc/smb.conf. If its not
+there, look in /usr/local/samba/lib. At home, I have it set to:
+
+; workgroup = NT-Domain-Name or Workgroup-Name, eg: REDHAT4
+   workgroup = HOWELL
+
+Even if you don't set the domain, you should be able to access a samba
+share using \\host\share\path-what-your-after
+
+    Jonathan&gt; 2) Make two of it's directories visible: public-upload
+    Jonathan&gt; (unrestricted read-write) and public-download
+    Jonathan&gt; (unrestricted read, write only by me or root) that are
+    Jonathan&gt; on my Windows 95 partition that is being mounted under
+    Jonathan&gt; Linux;
+
+These are controlled in the smb.conf. You need an entry like:
+
+; A publicly accessible directory, but read only, except for people in
+; the staff group
+[public]
+   comment = Public Stuff
+   path = /home/samba
+   public = yes
+   writable = yes
+   printable = no
+   write list = @example.com
+
+This creates a share called "public", which points to /home/samba. If
+browsing is working, then PCs can set it in the "Network Neighborhood"
+when they click on the host name. As you can see, you can specify if
+its writable or not.
+
+The is a similar entry to make a printer on your linux box available
+to the Windows world.
+
+    Jonathan&gt; 3) Be able to use the printer which is attached to the
+    Jonathan&gt; NT server machine on our LAN.
+
+For this, I think you need to use smbclient. I've  never tried
+this. man smbclient should point you in right direction. I just found
+that mine does not work, as I was writing this. It complains about:
+
+Unknown socket option TCP_NODELAY
+
+commenting out 
+
+ socket options = TCP_NODELAY
+
+in smb.conf took care of that, but I still have another error. 
+
+SMBsendstrt failed. (ERRSRV - ERRmsgoff (Not receiving messages.))
+
+Something for a rainy day....
+
+    Jonathan&gt; The SMB daemon is started at boot and is running, so I
+    Jonathan&gt; know that part is at least working, but Samba is proving
+    Jonathan&gt; a bit challenging to figure out.
+
+There are two ways to run samba. Before that though, you should know
+that there are two daemons involved. The first in smbd, which does the
+actual file and print sharing, and nmbd, which is a WINS ( Windows
+Internet Name Service ?) WINS does host name lookups, think of it as a
+labotomized (sp?) DNS.
+
+Both of these can be started either at boot time, or via
+inetd.conf. The later is a little slower, but then you don't have to
+worry if the process dies for some reason.
+
+One last thing, under RH samba has be PAMed, so if you are having
+problems, be sure to check /etc/pam.d/samba, or /etc/pam.conf (?), as
+well as /var/log/messages, /var/log/samba or /var/log/security. There
+is also a /var/spool/samba directory...
+
+    Jonathan&gt; Of course, if a graphical front-end similar in function
+    Jonathan&gt; to the network control panel in Windows is available for
+    Jonathan&gt; Samba, I'd be most interested in knowing where to
+    Jonathan&gt; download it :-)
+
+Me too!
+
+Samba's web page is:
+
+	<A TARGET="_top" HREF="http://samba.anu.edu.au/samba/">http://samba.anu.edu.au/samba/</A>
+
+Well, I'll be. I just looked up that bookmark to make sure it was
+right, and guess what I found:
+
+	<A TARGET="_top" HREF="http://samba.anu.edu.au/samba/GUI/index.html">http://samba.anu.edu.au/samba/GUI/index.html</A>
+
+I'll have to check that out...
+
+Andy
+
+---------------------------------------------------------------
+Next TLUG Meeting: 11 April Sat, Tokyo Station Yaesu gate 12:30
+Featuring Tague Griffith of Netscape i18n talking on source code
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00063" HREF="msg00063.html">Re: tlug: Setting up Samba</A></STRONG>
+<UL><LI><EM>From:</EM> urs roesch &lt;urs@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00058" HREF="msg00058.html">tlug: Setting up Samba</A></STRONG>
+<UL><LI><EM>From:</EM> "Jonathan Byrne--3Web" &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00061.html">Re: tlug: help on notebook purchase</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00063.html">Re: tlug: Setting up Samba</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00058.html">tlug: Setting up Samba</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00063.html">Re: tlug: Setting up Samba</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00062"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00062"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

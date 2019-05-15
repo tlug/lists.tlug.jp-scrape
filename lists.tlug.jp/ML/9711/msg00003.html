@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Printing problems again (actually, still!) -->
+<!--X-From: Matthew C Gushee <matt@example.com> -->
+<!--X-Date: Mon, 3 Nov 1997 10:28:43 &#45;0500 (EST) -->
+<!--X-Message-Id: 199711031527.AAA39168@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00002.html">Date Prev</A>][<A HREF="msg00004.html">Date Next</A>][<A HREF="msg00002.html">Thread Prev</A>][<A HREF="msg00009.html">Thread Next</A>][<A HREF="maillist.html#00003">Date Index</A>][<A HREF="threads.html#00003">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Printing problems again (actually, still!)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Printing problems again (actually, still!)</strong></LI>
+<LI><strong>From</strong>: <strong>Matthew C Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 4 Nov 1997 00:27:15 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi, folks--
+
+Well, I was hesitant to keep bugging everyone with this, but I don't seem to be 
+able to solve the problem on my own, so . . . 
+
+A while back I posted about not being able to print Nihongo on a PS printer. I 
+had a hard disk crash, so it might take quite a while to dig up a copy of my 
+original post, but the main points were:
+
+    I have a (low-priced) postscript level II printer on /dev/lp1;
+    My printer and my lpr work fine for English (ASCII or ps);
+    I have canna and Japanese fonts, and can display Japanese text in
+        a kterm, xemacs, and Netscape;
+   When I try to print Japanese text, I just get various versions of mojibake.
+
+So I got an answer from Craig which suggested that the printer's resident 
+Japanese fonts might not be real PS fonts, and it seemed I was going to have to 
+do it with Ghostscript. Haven't gotten anywhere with that yet (see below) but I 
+have found out something interesting, and I wonder if anybody can suggest what 
+I can do about it.
+
+It turns out I *can* print Japanese--from Netscape. Comes out beautifully. I 
+also dug up a postscript file left over from Win95 (or MS-DOG?)--a system 
+resource report in Japanese. No problem.
+
+So I examined the various postscript files, and I noticed that the ones 
+produced by psconv specify kanji fonts like this: 
+
+    /min { /Ryumin-Light-EUC-H findfont } def
+
+whereas the ones that printed out okay have this:
+
+    /of { /Ryumin-Light-RKSJ-H findfont exch scalefont setfont } bind def
+
+--seems like it might have something to do with my troubles. Any ideas about 
+this?
+
+If the above isn't the key, I wonder if there's something really "obvious" that 
+I don't have set up right . . . like printcap, or the locale setting--neither 
+of which I understand very well?
+
+While we're at it . . . Ghostscript . . . augh!  I installed a binary of 
+Aladdin Ghostscript 5.01 and some of the Wadalab fonts, and I can get kanji 
+on-screen, but no output to the printer. That's not just no kanji, I mean no 
+output whatsoever. Both
+
+    gs -dSAFER -q -sOutputFile=\|lpr foo.ps
+
+and
+
+    gs -dSAFER -q -sOutputFile=- foo.ps | lpr
+
+get me a nice screen display and nothing else.
+
+    gs -dSAFER -q -sOutputFile=bar foo.ps
+
+doesn't do anything either. I can get an output file with
+
+    gs -dSAFER -q -sOutputFile=- foo.ps &gt; bar,
+
+but all the file contains is a column of 3-digit numbers, which doesn't seem 
+too likely to print out as Japanese characters. Yes, I've tried all these 
+commands as root, with the filenames quoted &amp; unquoted, etc.  I've read the 
+manpage at least 6 times, but I can't see what I'm doing wrong (note that my 
+printer is not specifically supported by GS, but since it's Postscript it 
+should be possible to print on it, shouldn't it?).
+
+If I can't get this &amp;*()%$$! thing figured out soon, the men in white coats 
+will have to come and take me away! I would very much appreciate any clues 
+anyone can offer.
+
+Matt Gushee
+Oshamanbe, Hokkaido
+
+
+Next TLUG meeting is Saturday Dec. 13, 1997  (possibly Nov. 13?)
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00009" HREF="msg00009.html">tlug: Printing problems again (actually, still!)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00002.html">Re: tlug: Looking for a video cable for a sun monitor ...</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00004.html">Re: tlug: Printing problems again (actually, still!)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00002.html">Re: tlug: Looking for a video cable for a sun monitor ...</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00009.html">tlug: Printing problems again (actually, still!)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00003"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00003"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

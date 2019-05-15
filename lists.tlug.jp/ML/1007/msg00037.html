@@ -1,0 +1,199 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Willcom 3G modem on Linux -->
+<!--X-From-R13: Oxvuveb [bevthpuv <bobergnxlbwvaNtznvy.pbz> -->
+<!--X-Date: Sun, 11 Jul 2010 18:15:56 +0900 -->
+<!--X-Message-Id: AANLkTimvG3ThBJ0kLXdAYqi4zlRliYejyv07OlY&#45;jY4B@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: AANLkTineQXnZok3A&#45;vQAmEeCQFrFypFoVnsJ9nqxwat8@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00036.html">Date Prev</a>][<a href="msg00038.html">Date Next</a>][<a href="msg00036.html">Thread Prev</a>][<a href="msg00039.html">Thread Next</a>][<a href="maillist.html#00037">Date Index</a>][<a href="threads.html#00037">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Willcom 3G modem on Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 11 Jul 2010 18:10:22 +0900</li>
+<li><strong>From</strong>: <strong>Akihiro Moriguchi &lt;<a href="mailto:oboretakyojin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Willcom%203G%20modem%20on%20Linux">oboretakyojin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Willcom 3G modem on Linux</strong></li>
+<li>References: &lt;<a href="mailto:AANLkTineQXnZok3A-vQAmEeCQFrFypFoVnsJ9nqxwat8@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Willcom%203G%20modem%20on%20Linux">AANLkTineQXnZok3A-vQAmEeCQFrFypFoVnsJ9nqxwat8@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>There's a successful report on USB_ModeSwitch with Willcom HX003Z here,
+though I haven't test it.
+<a  rel="nofollow" href="http://yuki-lab.jp/linux/ubuntu-9.04.html#willcomcore3g">http://yuki-lab.jp/linux/ubuntu-9.04.html#willcomcore3g</a>
+
+USB_ModeSwitch <a  rel="nofollow" href="http://www.draisberghof.de/usb_modeswitch/">http://www.draisberghof.de/usb_modeswitch/</a>
+
+Under Ubuntu
+1. Install of USB_ModeSwitch
+2. Addtion of following snippet on /etc/usb_modeswitch.conf
+########################################################
+# Willcom HX003ZT(ZTE MF633)
+#
+# Contributor: KAWAKAMI Yukio
+
+DefaultVendor=  0x19d2
+DefaultProduct= 0x0103
+
+TargetVendor=   0x19d2
+TargetProduct=  0x0031
+
+# only for reference
+MessageEndpoint=0x01
+
+MessageContent=&quot;55534243123456782000000080000c85010101180101010101000000000000&quot;
+
+# if that command doesn't work, try the other (&quot;eject&quot;)
+MessageContent=&quot;5553424312345678000000000000061b000000030000000000000000000000&quot;
+
+3. Addition of following udev rule with /etc/udev/rules.d/60-local.rules
+
+ACTION!=&quot;add&quot;, GOTO=&quot;ZTE_End&quot;
+
+# Is this the ZeroCD device?
+SUBSYSTEM==&quot;usb&quot;, SYSFS{idProduct}==&quot;0103&quot;,
+SYSFS{idVendor}==&quot;19d2&quot;, GOTO=&quot;ZTE_ZeroCD&quot;
+
+# Is this the actual modem?
+SUBSYSTEM==&quot;usb&quot;, SYSFS{idProduct}==&quot;0031&quot;,
+SYSFS{idVendor}==&quot;19d2&quot;, GOTO=&quot;ZTE_Modem&quot;
+
+LABEL=&quot;ZTE_ZeroCD&quot;
+# This is the ZeroCD part of the card, remove
+# the usb_storage kernel module so
+# it does not get treated like a storage device
+RUN+=&quot;/usr/sbin/usb_modeswitch&quot;, GOTO=&quot;ZTE_End&quot;
+
+LABEL=&quot;ZTE_Modem&quot;
+# This is the Modem part of the card, let's
+# load usbserial with the correct vendor
+# and product ID's so we get our usb serial devices
+RUN+=&quot;/sbin/modprobe usbserial vendor=0x19d2 product=0x0031&quot;,
+# Make users belonging to the dialout group
+# able to use the usb serial devices.
+MODE=&quot;660&quot;, GROUP=&quot;dialout&quot;
+
+LABEL=&quot;ZTE_End&quot;
+
+4. udev restart  /etc/init.d/udev restart
+
+5. Make sure hardware recognition.
+After restarting udev, insert HX003ZT and check if /dev/ttyUSB0～2 is created.
+
+6. Configure with gnome-ppp
+# Username : wcm
+# Password : *** &lt;- Check the configuration tool on Windows
+# Phone number : *99#
+# Device : /dev/ttyUSB2　&lt;- I don't know why it can connect.
+# Type : USB Modem
+# Init2 : ATZ
+# Init3 : ATE0V1&amp;D2&amp;C1S0=0　&lt;- I don't know well. It can be omitted?
+# Ignore terminal strings (stupid mode) &lt;- uncheck
+
+HTH
+AM
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00039" href="msg00039.html">Re: [tlug] Willcom 3G modem on Linux</a></strong>
+<ul><li><em>From:</em> Johan Berntsson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00036" href="msg00036.html">[tlug] Willcom 3G modem on Linux</a></strong>
+<ul><li><em>From:</em> Johan Berntsson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00036.html">[tlug] Willcom 3G modem on Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00038.html">Re: [tlug] Used Shops - (After Otto)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00036.html">[tlug] Willcom 3G modem on Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00039.html">Re: [tlug] Willcom 3G modem on Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00037"><strong>Date</strong></a></li>
+<li><a href="threads.html#00037"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

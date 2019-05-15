@@ -1,0 +1,156 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Emacs batch commands, over many files -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 27 Jul 2006 18:48:48 +0900 -->
+<!--X-Message-Id: 8764hjbcox.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: mailman.1.1153969203.1166.tlug@example.com -->
+<!--X-Reference: 44C831B7.8040903@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00413.html">Date Prev</a>][<a href="msg00415.html">Date Next</a>][<a href="msg00403.html">Thread Prev</a>][<a href="msg00407.html">Thread Next</a>][<a href="maillist.html#00414">Date Index</a>][<a href="threads.html#00414">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Emacs batch commands, over many files</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Jul 2006 18:48:46 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Emacs%20batch%20commands%2C%20over%20many%20files">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Emacs batch commands, over many files</strong></li>
+<li>References: &lt;<a href="mailto:mailman.1.1153969203.1166.tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Emacs%20batch%20commands%2C%20over%20many%20files">mailman.1.1153969203.1166.tlug@example.com</a>&gt;	&lt;<a href="mailto:44C831B7.8040903@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Emacs%20batch%20commands%2C%20over%20many%20files">44C831B7.8040903@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b27 (linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; &quot;David&quot; == David Riggs &lt;dariggs@example.com&gt; writes:
+
+
+    David&gt; emacs * -batch --eval '(progn (insert &quot;from
+    David&gt; batch&quot;)(save-buffer))'
+
+    David&gt; But this works on only last of the files served up by the
+    David&gt; &quot;*&quot; expansion, the rest of the files are ignored.
+
+    David&gt; How do I get emacs to see all the files passed to it?
+
+Emacs sees and visits them; it's your Lisp program that doesn't.
+Here's a mass-murder approach, but less violent APIs will be visible
+if you use C-h a -buffer$ RET (in XEmacs, anyway; Emacs still seems to
+believe that ordinary users don't want to see non-interactive
+functions).
+
+emacs * -batch -eval '(while (&gt; (length (buffer-list) 0)) \
+                         (insert &quot;from batch&quot;) (save-buffer) (kill-buffer))'
+
+(You may want to check for (equal (buffer-name) &quot;*scratch*&quot;) and stuff
+like that, too.)
+
+Probably a more convenient way to work on this is to defun the code as
+myfun in a file myprog.el and do
+
+emacs * -batch -l myprog -f myfun
+
+-- 
+School of Systems and Information Engineering <a  rel="nofollow" href="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</a>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00403" href="msg00403.html">[tlug] Emacs batch commands, over many files</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00413.html">Re: [tlug] Portability of Misaligned Data Access . . . . . . .</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00415.html">Re: [tlug] I'm a glutton for punishment - Palm Pilot and Ubuntu Dapper LTS connectivity [SOLVED]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00403.html">[tlug] Emacs batch commands, over many files</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00407.html">[tlug] [OT] Lunch Place around Ginza Was: TLUG Technical Meeting	2006-07-29</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00414"><strong>Date</strong></a></li>
+<li><a href="threads.html#00414"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

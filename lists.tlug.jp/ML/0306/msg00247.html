@@ -1,0 +1,203 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] join /tmp and /var -->
+<!--X-From-R13: [negva Pnrue <zonrueNrznvy.nepuyno.ghjvra.np.ng> -->
+<!--X-Date: Wed, 25 Jun 2003 21:35:14 +0200 -->
+<!--X-Message-Id: 20030625193513.GW12904@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200306251105.26893.pietro@example.com -->
+<!--X-Reference: 20030625180003.GA898@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00246.html">Date Prev</a>][<a href="msg00248.html">Date Next</a>][<a href="msg00245.html">Thread Prev</a>][<a href="msg00252.html">Thread Next</a>][<a href="maillist.html#00247">Date Index</a>][<a href="threads.html#00247">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] join /tmp and /var</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 25 Jun 2003 21:35:14 +0200</li>
+<li><strong>From</strong>: <strong>Martin Baehr &lt;<A HREF="mailto:mbaehr@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20join%20%2Ftmp%20and%20%2Fvar">mbaehr@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] join /tmp and /var</strong></li>
+<li>References: &lt;<a href="msg00240.html">200306251105.26893.pietro@example.com</a>&gt; &lt;<a href="msg00245.html">20030625180003.GA898@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, Jun 26, 2003 at 03:00:03AM +0900, Shimpei Yamashita wrote:
+&gt; Um, putting /var and /tmp together almost defeats the point of partitioning
+&gt; at all. 
+
+really?
+
+&gt; A big reason why you want to partition away /tmp is to avoid launching a
+&gt; denial of service attack on yourself by inadvertently filling up the partition
+&gt; /tmp is on. 
+
+how is a seperate /tmp going to help you there?
+you can just as easely fill up /var/tmp
+
+&gt; Well, guess what--/var is the easiest partition to fill up on a
+&gt; Unix system, and also the only partition that an outsider can legitimately
+&gt; fill up for you. (Think &quot;/var/spool/mail&quot; and &quot;big attachments&quot;.)
+
+again, what would you gain by having a seperate /tmp?
+/tmp is hardly needed for critical operation.
+
+sure some programs will stop working, but your system won't die.
+if it does you have much more serious problems.
+
+&gt; So you're
+&gt; getting all the hassle of partitioning, without much of the merits. Why
+&gt; not just make the entire hard disk one big partition and be done with it?
+&gt; At least you aren't wasting any space that way.
+
+you are missing the point of partitioning.
+it is to keep critical partitions such as / from being written to at all.
+
+with a bit of work it is possible to mount / and /usr readonly for
+normal operation, and if your system crashes / and /usr
+are almost never affected at all. that is the real gain from partitioning.
+
+filling up is something you can measure, and have sufficient warning
+about. there is also this 5% reserve for the root user on any partition,
+so that root still can write even if the partition fills up.
+this is really what protects you here, not a seperate /tmp partition,
+which gains you almost nothing except waste of space because sometimes
+you need a lot of /tmp but most of the time you need hardly any.
+
+&gt; I'm also a bit leery of a system in which the root partition is basically
+&gt; nonfunctional by itself (on your system, no program that writes to /tmp
+&gt; works until the extra partition is mounted), but that may just be the
+&gt; Luddite in me.
+
+no critical program should need to, i have not found any yet,
+and if there is one, make the directory existing on / too, it will then
+be simply hidden when the mount happens.
+
+my partitioning devides things in 4 groups:
+
+stuff needed to boot (/)
+static data that almost never changes (/usr/)
+data that is valuable to me (/home/ and /usr/local/)
+variable data that changes a lot (/tmp/ and /var/)
+
+for each of these groups i have one partition.
+on a simple workstation nothing more is needed.
+
+greetings, martin.
+-- 
+Pike Conference 2003 - Sep 25-27  -  <A  HREF="http://pike.ida.liu.se/conferences/2003/">http://pike.ida.liu.se/conferences/2003/</A>
+-- 
+interested in doing pike programming, sTeam/caudium/pike/roxen training,      
+sTeam/caudium/roxen and/or unix system administration anywhere in the world.
+--
+pike programmer   working in europe                           open-steam.org
+unix system-      bahai.or.at                       iaeste.(tuwien.ac|or).at
+administrator     (stuts|black.linux-m68k).org        is.(schon.org|root.at)
+Martin Bähr       <A  HREF="http://www.iaeste.or.at/~mbaehr/">http://www.iaeste.or.at/~mbaehr/</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00252" href="msg00252.html">Re: [tlug] join /tmp and /var</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00240" href="msg00240.html">[tlug] join /tmp and /var</a></strong>
+<ul><li><em>From:</em> Pietro Zuco</li></ul></li>
+<li><strong><a name="00245" href="msg00245.html">Re: [tlug] join /tmp and /var</a></strong>
+<ul><li><em>From:</em> Shimpei Yamashita</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00246.html">Re: [tlug] join /tmp and /var</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00248.html">Re: [tlug] join /tmp and /var</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00245.html">Re: [tlug] join /tmp and /var</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00252.html">Re: [tlug] join /tmp and /var</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00247"><strong>Date</strong></a></li>
+<li><a href="threads.html#00247"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

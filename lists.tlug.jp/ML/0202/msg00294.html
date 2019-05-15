@@ -1,0 +1,239 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Login/SSH Scan Detection -->
+<!--X-From-R13: [ngg Rbhtugl <zqbhtuglNwncna.rn.pbz> -->
+<!--X-Date: Mon, 18 Feb 2002 17:29:09 +0900 (JST) -->
+<!--X-Message-Id: 20020218172903.J1556@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020218054708.GA13856@example.com -->
+<!--X-Reference: Pine.GSO.4.43.0202181530380.4735&#45;100000@example.com -->
+<!--X-Reference: 20020218172554.I1556@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00293.html">Date Prev</a>][<a href="msg00295.html">Date Next</a>][<a href="msg00293.html">Thread Prev</a>][<a href="msg00300.html">Thread Next</a>][<a href="maillist.html#00294">Date Index</a>][<a href="threads.html#00294">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Login/SSH Scan Detection</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Login/SSH Scan Detection</strong></li>
+<li><strong>From</strong>: <strong>Matt Doughty &lt;<A HREF="mailto:mdoughty@DOMAIN.HIDDEN">mdoughty@example.com</A>&gt;</strong></li>
+<li>Date: Mon, 18 Feb 2002 17:29:03 +0900</li>
+<li>Content-disposition: inline</li>
+<li>Content-transfer-encoding: 7bit</li>
+<li>Content-type: text/plain; charset=us-ascii</li>
+<li>In-reply-to: &lt;<a href="msg00293.html">20020218172554.I1556@example.com</a>&gt;; from mdoughty@example.com on Mon, Feb 18, 2002 at 05:25:54PM +0900</li>
+<li>Mail-followup-to: Matt Doughty &lt;mdoughty@example.com&gt;, tlug@example.com</li>
+<li>References: &lt;<a href="msg00290.html">20020218054708.GA13856@example.com</a>&gt; &lt;<a href="msg00291.html">Pine.GSO.4.43.0202181530380.4735-100000@example.com</a>&gt; &lt;<a href="msg00293.html">20020218172554.I1556@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.2.4i-jp0</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Never mind that suggestion since it won't work with sshd daemonized.  I'm
+having a bad reading day.
+
+--Matt
+On Mon, Feb 18, 2002 at 05:25:54PM +0900, Matt Doughty wrote:
+&gt; Another option is tcp wrappers. The following is example from the
+&gt; man page that mails illegal tftp attempts to root:
+&gt; 
+&gt;        /etc/hosts.allow:
+&gt;           in.tftpd: LOCAL, .my.domain
+&gt; 
+&gt;        /etc/hosts.deny:
+&gt;           in.tftpd: ALL: spawn (/some/where/safe_finger -l @%h | \
+&gt;                /usr/ucb/mail -s %d-%h root) &amp;
+&gt; 
+&gt; --Matt
+&gt; On Mon, Feb 18, 2002 at 04:23:07PM +0900, ayako kato wrote:
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; Hi,
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; Just a few things i would try if I were you (not verified .. just
+&gt; &gt; suggestions)
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 1.) Portsentry
+&gt; &gt; 
+&gt; &gt; I thought portsentry had an option to run an external command. I've never
+&gt; &gt; used it but looking at the sample config file, I imagine you could put
+&gt; &gt; something like this:
+&gt; &gt; 
+&gt; &gt; KILL_RUN_CMD=&quot;/your/mail/or/pager/command option&quot;
+&gt; &gt; 
+&gt; &gt; ... and receive an email/pager message when a scan is detected.
+&gt; &gt; 
+&gt; &gt; portsentry: www.psionic.com/products/portsentry.html
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 2.) Snort + Syslog-ng
+&gt; &gt; 
+&gt; &gt; Or you could use snort/syslog-ng combination. Make snort write logs into
+&gt; &gt; your syslog file. To do that you'd have something like this in your
+&gt; &gt; snort.conf (very simplified):
+&gt; &gt; 
+&gt; &gt; ---&lt;config&gt;---
+&gt; &gt; var HOME_NET [192.168.1.2/24]
+&gt; &gt; 
+&gt; &gt; alert tcp !HOME_NET any -&gt; HOME_NET 22 (msg: &quot;ssh scan from an unknown
+&gt; &gt; host!&quot;;)
+&gt; &gt; 
+&gt; &gt; output alert_syslog: LOG_AUTH LOG_ALERT
+&gt; &gt; ---&lt;config&gt;---
+&gt; &gt; 
+&gt; &gt;  ... and in your syslog-ng.conf:
+&gt; &gt; 
+&gt; &gt; ---&lt;config&gt;---
+&gt; &gt; desination dest_prog { program(&quot;/your/mail/prog your option&quot;); };
+&gt; &gt; log { source(FOO); filter(BAR); destination(dest_prog); };
+&gt; &gt; ---&lt;config&gt;---
+&gt; &gt; 
+&gt; &gt; snort: www.snort.org/
+&gt; &gt; syslog-ng: www.balabit.hu/en/downloads/syslog-ng/
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 3.) Write your own stuff
+&gt; &gt; 
+&gt; &gt; After all, writing a little daemon script that monitors your syslog file
+&gt; &gt; may be the simplest solution ... (using perl or any language of your
+&gt; &gt; choice.)
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; (corrections are welcome)
+&gt; &gt; ak
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; On Mon, 18 Feb 2002, A.Sajjad Zaidi wrote:
+&gt; &gt; 
+&gt; &gt; &gt; -----BEGIN PGP SIGNED MESSAGE-----
+&gt; &gt; &gt; Hash: SHA1
+&gt; &gt; &gt;
+&gt; &gt; &gt; Hi,
+&gt; &gt; &gt;
+&gt; &gt; &gt; Ive been thinking of a way to detect whenever there is a login attempt
+&gt; &gt; &gt; and send an email notification if there is.
+&gt; &gt; &gt;
+&gt; &gt; &gt; It should send the alert as soon as possible so log file checkers that
+&gt; &gt; &gt; run very often (every minute or so) might be overkill.
+&gt; &gt; &gt;
+&gt; &gt; &gt; Has anyone done this or knows a simple way to do it? I can get syslog
+&gt; &gt; &gt; to write to a FIFO, but dont know how to do anything useful with it.
+&gt; &gt; &gt;
+&gt; &gt; &gt; - --
+&gt; &gt; &gt; A. Sajjad Zaidi
+&gt; &gt; &gt; System Administrator
+&gt; &gt; &gt; Technology &amp; Operations Div.
+&gt; &gt; &gt; Digital Garage Inc.
+&gt; &gt; &gt;
+&gt; &gt; &gt; -----BEGIN PGP SIGNATURE-----
+&gt; &gt; &gt; Version: GnuPG v1.0.6 (GNU/Linux)
+&gt; &gt; &gt; Comment: For info see <A  HREF="http://www.gnupg.org">http://www.gnupg.org</A>
+&gt; &gt; &gt;
+&gt; &gt; &gt; iD8DBQE8cJVat1KjqyZ+DQ4RAjsxAJ9cP3xMPw42XlwvIVtlfegwG01YHQCeKEv2
+&gt; &gt; &gt; JC4XQ4CeCrwMuADPL7nMSGA=
+&gt; &gt; &gt; =2feQ
+&gt; &gt; &gt; -----END PGP SIGNATURE-----
+&gt; &gt; &gt;
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; 
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00300" href="msg00300.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+<ul><li><em>From:</em> A.Sajjad Zaidi</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00290" href="msg00290.html">[tlug] Login/SSH Scan Detection</a></strong>
+<ul><li><em>From:</em> A.Sajjad Zaidi</li></ul></li>
+<li><strong><a name="00291" href="msg00291.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+<ul><li><em>From:</em> ayako kato</li></ul></li>
+<li><strong><a name="00293" href="msg00293.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+<ul><li><em>From:</em> Matt Doughty</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00293.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00295.html">[tlug] Brother MFC-9200J</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00293.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00300.html">Re: [tlug] Login/SSH Scan Detection</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00294"><strong>Date</strong></a></li>
+<li><a href="threads.html#00294"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

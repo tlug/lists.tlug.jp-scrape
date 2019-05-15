@@ -1,0 +1,251 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: MD Disks &#45; Re: tlug: Thrashed to death -->
+<!--X-From: gaijin@example.com (John Little) -->
+<!--X-Date:  Wed, 26 Feb 1997 03:30:23 GMT -->
+<!--X-Message-Id: 199702260325.MAA22429@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00099.html">Date Prev</A>][<A HREF="msg00101.html">Date Next</A>][<A HREF="msg00099.html">Thread Prev</A>][<A HREF="msg00101.html">Thread Next</A>][<A HREF="maillist.html#00100">Date Index</A>][<A HREF="threads.html#00100">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>MD Disks - Re: tlug: Thrashed to death</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>MD Disks - Re: tlug: Thrashed to death</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:gaijin@example.com">gaijin@example.com</A> (John Little)</strong></LI>
+<LI>Date: Wed, 26 Feb 1997 12:25:13 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from gaijin@example.com (John Little)
+--------------------------------------------------------
+% 
+% This is one of those "don't do this at home stories". I cobbled
+% together several 100mb drives and thought that I'd give the "md"
+% device a try. John spoke about this during our Linux on Sparc
+% meeting. This lets you combine several drives into on, in various
+% ways. 
+% 
+
+   ...and I should really have mentioned this, too. I hope it's not too
+   late for your disks, Andy. To be honest, I don't know if this already
+   fixed in the 2.0.27 and 2.0.29 kernels.
+
+   I know your particular problem wasn't related to this, but if your
+   striped disks "go away" after a while, this could be the solution.
+
+
+-------------------------------------------------------------------------------
+&gt; From: "David S. Miller" &lt;davem@example.com&gt;
+&gt; Date: Mon, 4 Nov 1996 19:03:01 -0500 (EST)
+&gt; Subject: Important note about using RAID
+
+[ We are working on a general solution for this problem,
+  but for now the following quick fix will make it work
+  for everyone. ]
+
+If certain things aren't setup right, using RAID md facilities on the
+Sparc will overwrite your disk labels on every disk in a stripe or
+linear partition except for the first one.
+
+Because of this, you need to play with fdisk on the disks you would
+like to use with RAID.  Basically you need to make sure every
+partition that will be a part of a RAID device starts at least at
+cylinder 1 to avoid the label being overwritten.  Here is an example
+of what needs to be done:
+
+[root@example.com linux]# fdisk /dev/sde1
+Command (m for help): p
+
+Disk /dev/sde1 (Sun disk label): 16 heads, 135 sectors, 3880 cylinders
+Units = cylinders of 2160 * 512 bytes
+
+    Device Flag   Begin    Start      End   Blocks   Id  System
+/dev/sde11            0        0     3833  4139640   83  Linux native
+/dev/sde12  u      3833     3833     3880    50760   82  Linux swap
+/dev/sde13            0        0     3880  4190400    5  Whole disk
+
+Command (m for help): d
+Partition number (1-8): 1
+Command (m for help): n
+Partition number (1-8): 1
+First cylinder (0-3833): 1
+Last cylinder or +size or +sizeM or +sizeK ([1]-3833): 3833
+Command (m for help): w
+Calling ioctl() to re-read partition table.
+Syncing disks.
+[root@example.com linux]# fdisk /dev/sdf
+Command (m for help): p
+
+Disk /dev/sdf (Sun disk label): 16 heads, 135 sectors, 3880 cylinders
+Units = cylinders of 2160 * 512 bytes
+
+   Device Flag   Begin    Start      End   Blocks   Id  System
+/dev/sdf1            0        0     3833  4139640   83  Linux native
+/dev/sdf2  u      3833     3833     3880    50760   82  Linux swap
+/dev/sdf3            0        0     3880  4190400    5  Whole disk
+
+Command (m for help): d
+Partition number (1-8): 1
+Command (m for help): n
+Partition number (1-8): 1
+First cylinder (0-3833): 1
+Last cylinder or +size or +sizeM or +sizeK ([1]-3833): 3833
+Command (m for help): w
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+[root@example.com linux]# mdadd /dev/md0 /dev/sde1 /dev/sdf1
+[root@example.com linux]# mdrun -p0 /dev/md0
+[root@example.com linux]# cat /proc/mdstat
+Personalities : [1 linear] [2 raid0]
+read_ahead 120 sectors
+md0 : active raid0 sde1 sdf1 8277120 blocks 4k chunks
+      [z0] 
+      z0=[sde1/sdf1] zo=0 do=0 s=8277120
+md1 : inactive
+md2 : inactive
+md3 : inactive
+[root@example.com linux]# dd if=/dev/zero of=/dev/md0 count=100
+100+0 records in
+100+0 records out
+[root@example.com linux]# sync
+[root@example.com linux]# mdstop /dev/md0
+[root@example.com linux]# sync
+
+Now you can take a look at the disks again...
+
+[root@example.com linux]# fdisk /dev/sde
+
+Command (m for help): p
+
+Disk /dev/sde (Sun disk label): 16 heads, 135 sectors, 3880 cylinders
+Units = cylinders of 2160 * 512 bytes
+
+   Device Flag   Begin    Start      End   Blocks   Id  System
+/dev/sde1            1        1     3833  4138560   83  Linux native
+/dev/sde2  u      3833     3833     3880    50760   82  Linux swap
+/dev/sde3            0        0     3880  4190400    5  Whole disk
+
+Command (m for help): q
+[root@example.com linux]# fdisk /dev/sdf
+
+Command (m for help): p
+
+Disk /dev/sdf (Sun disk label): 16 heads, 135 sectors, 3880 cylinders
+Units = cylinders of 2160 * 512 bytes
+
+   Device Flag   Begin    Start      End   Blocks   Id  System
+/dev/sdf1            1        1     3833  4138560   83  Linux native
+/dev/sdf2  u      3833     3833     3880    50760   82  Linux swap
+/dev/sdf3            0        0     3880  4190400    5  Whole disk
+
+Command (m for help): q
+
+And everything is just fine.
+
+--------------------------------------------////
+Yow! 10.49 MB/s remote host TCP bandwidth  ////
+over 100Mb/s ethernet.  Beat that!        ////
+-----------------------------------------////__________  o
+David S. Miller, davem@example.com /_____________/ / // /_/ &gt;&lt;
+
+--
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00101" HREF="msg00101.html">Re: MD Disks - Re: tlug: Thrashed to death</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00099.html">tlug: Re: your mail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00101.html">Re: MD Disks - Re: tlug: Thrashed to death</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00099.html">tlug: Re: your mail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00101.html">Re: MD Disks - Re: tlug: Thrashed to death</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00100"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00100"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

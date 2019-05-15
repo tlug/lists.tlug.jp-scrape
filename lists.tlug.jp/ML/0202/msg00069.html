@@ -1,0 +1,177 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] DiskOnKey boot success -->
+<!--X-From-R13: Tenax Praargg <oraarggNabzbybt.antbln&#45;h.np.wc> -->
+<!--X-Date: Thu, 7 Feb 2002 12:20:59 +0900 (JST) -->
+<!--X-Message-Id: 20020207032149.GA1299@example.com&#45;biscuit.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00068.html">Date Prev</a>][<a href="msg00070.html">Date Next</a>][<a href="msg00067.html">Thread Prev</a>][<a href="msg00070.html">Thread Next</a>][<a href="maillist.html#00069">Date Index</a>][<a href="threads.html#00069">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] DiskOnKey boot success</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] DiskOnKey boot success</strong></li>
+<li><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@DOMAIN.HIDDEN">bennett@example.com</A>&gt;</strong></li>
+<li>Date: Thu, 7 Feb 2002 12:21:49 +0900</li>
+<li>Content-disposition: inline</li>
+<li>Content-type: text/plain; charset=euc-jp</li>
+<li>User-agent: Mutt/1.3.25i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Dear TLUG,
+
+I know that everyone is probably sick of my string of questions and answers
+about my toils on the backup CD thingamabob.  But I've just had a very
+interesting bit of success.
+
+I have been using dd to run the El Torita CD image of the RepliCoaster system
+onto the raw device node of a DiskOnKey, to use as a second-stage boot
+source (the kernel does not have ext2 compiled in, to save a little space).
+
+Just now, just for the hell of it, I plugged the key into the USB port of a
+Dell Optiplex that is sitting on my desk.
+
+It booted from the key.
+
+I've seen docs on the Net stating that the M-Systems DiskOnKey (which this is
+-- it's sold through IO Data as &quot;Easy Disk&quot; in Japan) will only work as a boot
+device on Phoenix BIOS machines.  The OptiPlex has a Dell BIOS, but seems to
+be happy treating anything it finds on USB as a CD-ROM, so long as it has an
+iso9660 filesystem on it.
+
+Booting in this way does not seem to work on my Sharp Mebius PC-SX1-H1; the
+boot hangs until the key is removed or the BIOS times out and fails through
+to non-USB devices.  The Sharp has a Phoenix BIOS installed.  Go figure.
+
+There are some quirks to note in the DiskOnKey, in case anyone picks one of
+these things up to play with.  It shows four SCSI disk partitions off the
+shelf. You will find several alarming anomalies:
+
+  o lots of SCSI errors (yes, Chris, this __is__ another of those whiz-bang
+    gadgets you adore so much);
+
+  o lots of complaints about the partitions when fdisk is run on the device;
+
+  o A read only flag is put up by the device.
+
+The problems can all be solved if you're reckless enough to try
+the following:
+
+  o There is a hack to get past the read only tag, that can be
+    found here:
+    
+      <A  HREF="http://www.stray.ch/articles/downloads/sd-patch-for-diskonkey.txt">http://www.stray.ch/articles/downloads/sd-patch-for-diskonkey.txt</A>
+    
+    I applied this patch to the source for sd.c in the 2.4.16 kernel,
+    and it worked.  Your mileage may vary.
+  
+  o You can ignore the partitions; just treat the raw device as
+    a floppy disk.  It will work.  Honest.  :-)
+    
+  o In writing to the device with dd, the first write will fail.
+    Just invoke the same command again, and the device seems to
+    accept it.  You can then mount the device with the filesystem
+    of the image.
+
+It might be an interesting TLUG escapade to burn images onto a few of these
+things and make a survey of Akihabara, seeing which machines will boot
+successfully to Linux from key and which will not.  Try before you buy and all
+that.
+
+Same strategy should work from *BSD too -- maybe the survey could be treated
+as a contest between code bases?
+
+Cheers,
+Frank
+Nagoya
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00070" href="msg00070.html">Re: [tlug] DiskOnKey [IGNORE PREVIOUS MESSAGE]</a></strong>
+<ul><li><em>From:</em> Frank Bennett</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00068.html">Re: [tlug] xterm man page screwed up on Debian</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00070.html">Re: [tlug] DiskOnKey [IGNORE PREVIOUS MESSAGE]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00067.html">[tlug] Manpages for freewnn (or wnn6) in english</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00070.html">Re: [tlug] DiskOnKey [IGNORE PREVIOUS MESSAGE]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00069"><strong>Date</strong></a></li>
+<li><a href="threads.html#00069"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

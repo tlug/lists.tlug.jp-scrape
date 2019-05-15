@@ -1,0 +1,231 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: PPP still not up -->
+<!--X-From: tsle@example.com (Tan Siong Lian) -->
+<!--X-Date:  Wed, 26 Jun 1996 09:57:20 GMT -->
+<!--X-Message-Id: 1.5.4.32.19960626093641.0066ee7c@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00061.html">Date Prev</A>][<A HREF="msg00063.html">Date Next</A>][<A HREF="msg00073.html">Thread Prev</A>][<A HREF="msg00064.html">Thread Next</A>][<A HREF="maillist.html#00062">Date Index</A>][<A HREF="threads.html#00062">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>PPP still not up</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>PPP still not up</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:tsle@example.com">tsle@example.com</A> (Tan Siong Lian)</strong></LI>
+<LI>Date: Wed, 26 Jun 1996 17:36:41 +0800</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I have change my kernel to v2.0, ppp-2.2.0f (compile with ppp option)
+my ppp is still not up
+I fired ppp-on script, it dial up got connected ...setting up ppp...it pulse
+for a while and then hangup.... PPP call failed.
+
+below are my configuation files
+what is wrong with it....
+
+#/usr/local/sbin/ppp-on
+------------------------
+#!/bin/sh
+
+#
+#	ppp-on
+#
+#	Set up a PPP link to Pacific Internet
+#
+
+LOCKDIR=/var/spool/uucp
+DEVICE=modem
+CHAT=/etc/ppp/pi.chat
+NOTICE=/var/adm/notice
+PPP_PID=/varrun/ppp0.pid
+#
+# end of user settings
+
+
+if [ -f $LOCKDIR/LCK..$DEVICE ]
+then
+   echo "PPP device is locked"
+    exit 1
+fi
+
+(
+    stty 38400 -tostop
+
+#the -v in chat below is to send output to syslog. Check
+#/etc/syslog.conf for the location of syslog
+
+    if (pppd connect "chat -v -f ${CHAT}" -detach debug modem crtscts
+noipdefault defaultroute /dev/$DEVICE &amp;)
+	then
+        echo "setting up ppp..." 1&gt;&amp;2
+        sleep 50
+        if [ -f ${PPP_PID} ]
+        then
+           #echo "news.pacific.net.sg" &gt; /etc/nntpserver    
+           #Shows remote, local IPs	
+           tail -2 ${NOTICE} | grep "IP address" | tee /tmp/ppp.info 1&gt;&amp;2
+    else
+
+	   echo "PPP call failed" 1&gt;&amp;2
+    fi	   
+    exit 0
+    else
+          echo "PPP call failed" 1&gt;&amp;2
+          exit 1
+    fi
+) &lt; /dev/$DEVICE &gt; /dev/$DEVICE
+
+
+#/etc/ppp/pi.chat
+#with my login name &amp; password in place
+----------------------------------------
+ABORT "NO CARRIER"
+ABORT BUSY
+""ATZ OK
+ATDT7739080
+#ATDT8729100
+#ATDT2519100
+CONNECT ""
+ogin 
+ssword 
+
+
+#/usr/local/sbin/ppp-off
+--------------------------
+
+#!/bin/sh
+
+DEVICE=ppp0
+
+#
+# If the ppp0 pid file is present then the program is running. Stop it.
+if [ -r /var/run/$DEVICE.pid ]; then
+	kill -INT `cat /var/run/$DEVICE.pid`
+#
+# If unsuccessful, ensure that the pid file is removed.
+#
+	if [ ! "$?" = "0" ]; then
+		echo "removing stale $DEVICE pid file."
+		rm -f /var/run/$DEVICE.pid
+		exit 1
+	fi
+#
+# Success. Terminate with proper status.
+#
+	echo "$DEVICE link terminated"
+        #rm -f /tmp/ppp.info
+        #rm -f /etc/nntpserver	
+        exit 0
+fi
+#
+# The link is not active
+#
+echo "$DEVICE link is not active"
+exit 1
+
+#/etc/ppp/options
+--------------------------
+/dev/modem 115200
+mru 1500
+mtu 1500
+crtscts
+defaultroute
+noipdefault
+lock
+modem
+
+
+#/etc/resolv.conf
+--------------------------
+domain pacific.net.sg
+
+nameserver 192.169.33.3
+
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00061.html">Re: Targetting sparc</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00063.html">Re: Paper Documentation</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00073.html">Re: Documentation</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00064.html">Re: PPP still not up</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00062"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00062"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

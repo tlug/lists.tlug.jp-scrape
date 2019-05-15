@@ -1,0 +1,185 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Kernal panic -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 17 Apr 1996 06:28:44 GMT -->
+<!--X-Message-Id: m0u9QZn&#45;00mMNHC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199604170121.KAA05940@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00018.html">Date Prev</A>][<A HREF="msg00020.html">Date Next</A>][<A HREF="msg00017.html">Thread Prev</A>][<A HREF="msg00018.html">Thread Next</A>][<A HREF="maillist.html#00019">Date Index</A>][<A HREF="threads.html#00019">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Kernal panic</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Kernal panic</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 17 Apr 96 15:18 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00016.html">199604170121.KAA05940@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+JIm writes:
+
+   It's been awful quiet on this list lately....
+
+Yeah, urusai@example.com is in California this week.  Of 
+course things got quiet!
+
+   I've been trying to get Slackware 3.0 to run on a Compaq Prolinea 4/33s.
+   It's set up with the factory HD as C and a additional HD on D. I've been
+   trying to install Linux to D but keep runing into a kernal panic as soon as
+   it gets to the partition check. It says:
+
+Technical point:  This is *after* the partition check,.  AFAIK the
+partition check simply reads the table, it doesn't do any consistency
+checks.
+
+   Partition check:
+     hda: hda1
+   Kernal Panic: VFS: Unable to mount root fs on 08:01
+
+Kernel panic is a guaranteed hang, all right ;-)
+
+(1) Why isn't Linux finding both of your disks?  (As Mark d'Arcy
+    wrote, it's not clear that "D:" isn't MSDOS partition #2 from the
+    way you wrote, but then I don't know swhy Linux doesn't find
+    hda2.)  Note that device 08:01 is probably the factory disk, and
+    unless you have Linux installed there, it won't be able to mount
+    that partition.
+    I think that the 1.3.large_number kernels will tell you which file 
+    systems they have tried to mount, which might be useful info.  But 
+    you'd need to build one.
+(2) I've had this messsge.  It invariably resulted from using the
+    wrong root partition in the mount option.  I suspect one of the
+    following:
+    (a) you hvaen't fdisked the D: drive
+    (b) you haven't connected the D: drive with a cable or power
+        supply
+    (c) you haven't mkfs'd the root partition in the D: drive
+
+As I understand it, you are doing the following
+- MDSOS or Win95 or other OS on C:, C: is the bootable drive
+- putting Linux on D: (separate hardware)
+
+To do this, you need to do something like the following:
+1. Make Slackware installation boot/root disks
+2. Boot install system from floppy
+3. partition new (D:) drive using fdisk (I am very very suspicious
+   about the fact that your system only acknowledges hda not hdb;
+   where does your CD-ROM drive live?)
+4. Start slackware setup, install to second disk drive
+5. You should be prompted to make a file system on the relevant
+   partition of the second disk drive.  Or maybe you need todo that by
+   hand in step 3 before starting slackware setup, but I don't think
+   so.
+6. Install slackware as usual
+7. (optional) install LILO - this may be very difficult, I'm not sure
+   how you should do it in this situation.  Probably LILO's boot code should be
+   installed to /dev/hda but your boot description of LILO should say
+   root=/dev/hdb1.
+
+See anything you forgot?  Anyway, we need a lot more info about what's 
+going on to diagnose.  For starters, did you successfully copy
+Slackware to the D: drive, or is the kernel panic occuring during the
+install process?  Which drive is bootable?  What OS lives there
+normally?  Kernel version number.  Etc, etc.
+
+If you successfully booted the installation floppy, and copied
+slackware to your "D:" drive, try using the parameters "mount
+root=/dev/hdb1" when booting from the installation floppy.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00016" HREF="msg00016.html">Kernal panic</A></STRONG>
+<UL><LI><EM>From:</EM> schweiz@example.com (Jim Schweizer)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00018.html">RE: Kernal panic</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00020.html">Re: Kernal panic</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00017.html">Re: Kernal panic</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00018.html">RE: Kernal panic</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00019"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00019"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

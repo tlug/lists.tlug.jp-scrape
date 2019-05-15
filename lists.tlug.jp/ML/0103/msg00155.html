@@ -1,0 +1,251 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: How to automate email retrieval -->
+<!--X-From: Venkatesh Raghavan <raghavan@example.com&#45;cu.ac.jp> -->
+<!--X-Date: Fri, 16 Mar 2001 12:09:43 +0900 -->
+<!--X-Message-Id: 3AB183F7.291D231E@example.com&#45;cu.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: E284BBED5A93D211987D00805F85B499443676@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00154.html">Date Prev</A>][<A HREF="msg00156.html">Date Next</A>][<A HREF="msg00148.html">Thread Prev</A>][<A HREF="msg00090.html">Thread Next</A>][<A HREF="maillist.html#00155">Date Index</A>][<A HREF="threads.html#00155">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: How to automate email retrieval</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: How to automate email retrieval</strong></LI>
+<LI><strong>From</strong>: <strong>Venkatesh Raghavan &lt;<A HREF="mailto:raghavan@example.com">raghavan@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 16 Mar 2001 12:09:43 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: OCU</LI>
+<LI>References: &lt;<A HREF="msg00148.html">E284BBED5A93D211987D00805F85B499443676@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;j0K9KB.A._3F.sTYs6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+
+Thanks for the tip. Wrote an nkf filter for procmail which
+works fine for me. Attaching the fiter file just in case
+someone else may need to use it.
+
+Cheers
+
+Raghavan
+Osaka City University
+
+--------------procmail nkf filter-------------------------
+
+:0
+ * ^Content-Type:[ ^I]*text/plain[ ^I]*;[ ^I]*charset="?iso-2022-jp"?
+ * ^Content-Transfer-Encoding:[ ^I]*[78]bit
+ {
+   :0 fw
+   | nkf -e -m
+
+      :0 Afhw
+      | formail -I "Content-Type: text/plain; charset=euc-jp"
+      :0 Afhw
+      | formail -I "Content-Transfer-Encoding: 8bit"
+ }
+
+ :0
+ * ^Content-Type:[ ^I]*text/html[ ^I]*;[ ^I]*charset="?iso-2022-jp"?
+ * ^Content-Transfer-Encoding:[ ^I]*[78]bit
+ {
+   :0 fw
+   | nkf -e -m
+
+      :0 Afhw
+      | formail -I "Content-Type: text/html; charset=euc-jp"
+      :0 Afhw
+      | formail -I "Content-Transfer-Encoding: 8bit"
+ }
+ :0
+ * ^Content-Type:[ ^I]*multipart/mixed[ ^I]*;"?
+ * ^(From|Subject): .*=\?iso-2022-jp\?
+ {
+   :0 fw
+   | nkf -e -m
+
+      :0 Afhw
+      | formail -I "Content-Transfer-Encoding: 8bit"
+ }
+:0
+ * ^Content-Type:[ ^I]*message/rfc822[ ^I]*;"?
+ {
+   :0 fw
+   | nkf -e -m
+      :0 Afhw
+      | formail -I "Content-Type: text/html; charset=euc-jp"
+      :0 Afhw
+      | formail -I "Content-Transfer-Encoding: 8bit"
+ }
+
+---------------------------------------------------------------------
+
+
+
+"Doughty, Matt" wrote:
+
+&gt; It is possible to write a filter rule in procmail that will translate the mail before sorting
+&gt; using nkf. You can find examples of this sort of rule in the procmailex man page.
+&gt;
+&gt; hope that helps
+&gt;
+&gt; Matt Doughty BOT BSC Japan
+&gt;
+&gt; -----Original Message-----
+&gt; From: Venkatesh Raghavan [<A HREF="mailto:raghavan@example.com">mailto:raghavan@example.com</A>]
+&gt; Sent: 13”N3??15“u 14:46
+&gt; To: tlug@example.com
+&gt; Subject: Re: How to automate email retrieval
+&gt;
+&gt; Hi all,
+&gt;
+&gt; Thanks for your responses. Further comments
+&gt; in the quoted text below.
+&gt;
+&gt; "Scott M. Stone" wrote:
+&gt;
+&gt; &gt; On Wed, 14 Mar 2001, Venkatesh Raghavan wrote:
+&gt; &gt;
+&gt; &gt; &gt; When I do fetchmail on my from my linux client
+&gt; &gt; &gt; Japanese characters do not get displayed
+&gt; &gt; &gt; correctly (mojibake again). My mailspool on the
+&gt; &gt; &gt; mailservers contains messages that are not euc-jp
+&gt; &gt; &gt;
+&gt; &gt; &gt; Is there a way of converting the messages to euc-jp encoding
+&gt; &gt; &gt; while doing fetchmail, like piping to nkf.
+&gt; &gt;
+&gt; &gt; might want to also check and make sure you're using the Japanified version
+&gt; &gt; of fetchmail... there is a port, and I would think that it probably
+&gt; &gt; addresses this already.
+&gt;
+&gt; Can't find the Japanified version. The Japanese install document
+&gt; available at <A HREF="http://www.fkimura.com/fetchmail0.html">http://www.fkimura.com/fetchmail0.html</A> does not mention
+&gt; about the Japanified version either.
+&gt;
+&gt; Shimpei Yamashita wrote:
+&gt;
+&gt; &gt; Some people have reported problems in the past with older versions of
+&gt; &gt; fetchmail. Upgrading fetchmail seemed to help. I use fetchmail 5.3.8 and have
+&gt; &gt; no problems with Japanese mail.
+&gt;
+&gt; My version was 5.5.2. tried with the 5.7.4 too.
+&gt;
+&gt; Gomez Noguera David Eduardo wrote:
+&gt;
+&gt; &gt; I dont know if my reply got to the list, but since i didnt see it, i supose it
+&gt; &gt;   didnt.
+&gt; &gt;   so here i go again :)
+&gt; &gt;   try procmail.
+&gt; &gt;   later you might find procmail usefull for another bucnhc of tasks.
+&gt; &gt;
+&gt;
+&gt; Tried invoking fetchmail through procmail as shown below
+&gt;
+&gt; &gt; fetchmail -m "/usr/bin/procmail -f - "
+&gt;
+&gt; but this does not solve the problem.
+&gt;
+&gt; Japanese characters are displayed correctly after converting my
+&gt; local mailspool to euc-jp using nkf after fetching the mail.
+&gt; But this will not allow reading my japanese mail as soon as they
+&gt; are fetched.
+&gt;
+&gt; Looking for some further suggestions.
+&gt;
+&gt; Thanks in advance.
+&gt;
+&gt; Raghavan
+&gt; Osaka City University
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00148" HREF="msg00148.html">RE: How to automate email retrieval</A></STRONG>
+<UL><LI><EM>From:</EM> "Doughty, Matt" &lt;DoughtyM@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00154.html">sendmail relay</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00156.html">Re: Linux-to-Linux copying?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00148.html">RE: How to automate email retrieval</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00090.html">ADSL and Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00155"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00155"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

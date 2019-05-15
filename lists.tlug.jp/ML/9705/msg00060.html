@@ -1,0 +1,295 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: PAP and CHAP -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date:  Sun, 11 May 1997 13:23:18 GMT -->
+<!--X-Message-Id: Pine.LNX.3.93.970511211934.422B&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3375A784.3B1D35D4@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00059.html">Date Prev</A>][<A HREF="msg00061.html">Date Next</A>][<A HREF="msg00050.html">Thread Prev</A>][<A HREF="msg00061.html">Thread Next</A>][<A HREF="maillist.html#00060">Date Index</A>][<A HREF="threads.html#00060">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: PAP and CHAP</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: PAP and CHAP</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 11 May 1997 22:22:42 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00050.html">3375A784.3B1D35D4@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Dennis McMurchy &lt;denismcm@example.com&gt;
+--------------------------------------------------------
+On Sun, 11 May 1997, Alan B. Stone wrote:
+
+&gt; I'm thinking that
+&gt; within the RedHat netcfg, not only can you have it send whatever you
+&gt; type in, but I'm wondering if you can indicate a file to use for
+&gt; connection?  Either way, thanks.  I will give it a try.  I'll let you
+&gt; know what happens.
+
+  Sounds to me (forgive me if I'm wrong) that you're still thinking
+in terms of somehow manually logging.  I would think what you want to
+do is to click once wait thirty seconds and have a ppp connection to
+your ISP all ready to use for sendmail, Netscape, telnet, or whatever.
+
+  What I do may not be elegant, but should work with any Unix-like
+OS (does work with Slackware 3.1 kernel 2.0.26).
+
+  1. My dial-in script and other net stuff is all one click on a
+     fvwm window manager menu, but doesn't have to be.  In fact, I was
+     executing everything manually at the prompt, until I set up one
+of my machines for a group of ordinary users to use recently.  I must
+admit, it's a lot nicer having everything on the menu.
+
+  2. The dial-up script I use:
+
+/usr/sbin/pppd connect '/usr/sbin/chat -v "" ATDT7241745 CONNECT "" \
+ ' /dev/cua1 38400 -detach debug crtscts modem \
+ defaultroute noipdefault user denismcm  &amp;
+
+  This will work for you if you change the phone number, possibly
+the /dev/cua1 (if your modem is not on that device - could be cua0,
+say, on your system), possibly the speed could be 19200 if you have
+a 14.4 modem, and of course, the username (denismcm in my case).  
+Every one of those quotation marks and slashes is _essential_.
+Also, of course, depending on your distribution, pppd and chat may
+live in different directories.
+
+  This script assumes there is a /etc/ppp/pap-secrets file (such as
+Jim or Andrew mentioned) that looks like this:
+
+#client         server          secret
+denismcm         * 		MyPassword
+
+  3.  It generally takes about 25 seconds for the connection to be
+made and the ppp link negotiated.  The -v switch after /usr/bin/chat
+makes a pretty detailed record of these negotiations between the two
+machines which is logged in /var/adm/messages, and can be very useful
+in debugging the connection if there are any problems.  It will also
+record your dynamically allocated dotted quad internet address, which
+you'll need should you want to fancy things like putting your machine
+on the net and so on.  Once you have everything working, you may want
+to turn off the -v switch.
+
+  4.  You can verify that the connection is up with this one-liner:
+
+		/sbin/ifconfig
+
+which will display something like this:
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Bcast:127.255.255.255  Mask:255.0.0.0
+          UP BROADCAST LOOPBACK RUNNING  MTU:3584  Metric:1
+          RX packets:150 errors:0 dropped:0 overruns:0
+          TX packets:150 errors:0 dropped:0 overruns:0
+
+ppp0      Link encap:Point-Point Protocol  
+          inet addr:202.243.60.70  P-t-P:202.243.60.4  Mask:255.255.255.0
+          UP POINTOPOINT RUNNING  MTU:1500  Metric:1
+          RX packets:8 errors:1 dropped:1 overruns:0
+          TX packets:11 errors:0 dropped:0 overruns:0
+
+If your ppp link is not up, of course only the lo section displays.
+Or you can just watch the display in the 'pppcosts' window, if you have
+that running.  I recommend pppcosts to anyone who has to pay local phone
+charges.  It keeps a (very accurate) cumulative tally of your total
+online time to date and provides a real-time one-line display of how
+long you have had the current connection up.  The window looks this
+when you're online: 
+
+ONLINE: 00:07:17 (3 units, JY 30)  
+Total online: 08:23:34 (196 units, JY 1960)
+ONLINE: 00:03:04 (2 units, JY 20)  
+
+  The top line is the last session, the middle line is total to date,
+and the bottom line is the current session.  I did the modifications
+for NTT rates myself and they are now part of the distribution.
+Unfortunately, I don't seem to have a useful URL for this, but it's
+just a little file (18K or thereabouts), so I could easily make it
+available through email or on my website, if you can't find it.  I love
+it.  
+
+  5. I use sendmail for outgoing mail.  sendmail -q  will flush out
+whatever is waiting to go out once your ppp link is up.  You could
+set things up to automagically flush the mailqueue every time you go
+on line, but I don't bother myself.  I explicitly invoke sendmail.
+  I sometimes use a little script called peek.mailqueue to make sure
+everything has gone out:
+
+ls -l /var/spool/mqueue/*
+
+If you ever need to operate directly on the queue,of course, you can
+do so as root.  Nice for those times when you really were a little too
+acid in your email.
+
+  6. I used to use an extraordinarily complicated script written using
+Expect to grab my mailbox, until I discovered popclient, which works
+very nicely and is standard fare (at least with Slackware - come to
+think of it the latest Slackware popclient is buggy - you'd want the
+older one - version 2.21, I think).  This is my mailgrabbing script:
+
+/home/denisbin/pop/popclient -3  -v -u denismcm -p MyPassWord -o /home/denis/internet/postbox popmail.gol.com
+cat /home/denis/internet/bell
+
+This gets my mailbox from the ISP and drops it into 
+/home/denis/internet/postbox for me, deleting the messages from my
+box at the ISP, and then cat's a   (which rings the bell on my terminal -
+there must be a more elegant way to do this though -  letting me know the
+download is finished).
+
+  7. If you do a lot of ftp'ing or telnet'ing or want to put your machine
+on the net, I have some handy scripts for that too, which I could share
+with you.  
+
+  8. I find that for grabbing the small amounts of news I want to read
+that the program called 'suck' works really nicely.  It's on the archive
+CDs and sunsite and so on.  Works very well for what I do.
+
+  9. And finally, you want to shut down your link sometimes ;-).
+I use a little script like this:
+
+  #!/bin/sh
+  #this program was clipped out of the linux ppp-howto file
+  DEVICE=ppp0
+  #
+  # If the ppp0 pid file is present then the program is running. Stop it.
+  if [ -r /var/run/$DEVICE.pid ]; then
+          kill -INT `cat /var/run/$DEVICE.pid`
+  #
+  # If the kill did not work then there is no process running for this
+  # pid. It may also mean that the lock file will be left. You may wish
+  # to delete the lock file at the same time.
+          if [ ! "$?" = "0" ]; then
+                  rm -f /var/run/$DEVICE.pid
+                  echo "ERROR: Removed stale pid file"
+                  exit 1
+          fi
+  #
+  # Success. Let pppd clean up its own junk.
+          echo "PPP link to $DEVICE terminated."
+          exit 0
+  fi
+  #
+  # The ppp process is not running for ppp0
+  echo "ERROR: PPP link is not active on $DEVICE"
+  exit 1
+
+  Gee, I had forgotten it has so many lines.  As it says, it's from
+the ppp-howto.  Works just fine.
+
+  I'm sure I've forgotten something critical, but this will get you
+started anyway.  
+
+  Enjoy,
+
+  Dennis McMurchy,
+  Tojinmachi, Fukuoka  
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00061" HREF="msg00061.html">Re: tlug: PAP and CHAP</A></STRONG>
+<UL><LI><EM>From:</EM> "Alan B. Stone" &lt;stoneab@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00063" HREF="msg00063.html">Re: tlug: PAP and CHAP</A></STRONG>
+<UL><LI><EM>From:</EM> Lance Cummings &lt;lance@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00050" HREF="msg00050.html">Re: tlug: PAP and CHAP</A></STRONG>
+<UL><LI><EM>From:</EM> "Alan B. Stone" &lt;stoneab@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00059.html">tlug: Emergency Help!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00061.html">Re: tlug: PAP and CHAP</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00050.html">Re: tlug: PAP and CHAP</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00061.html">Re: tlug: PAP and CHAP</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00060"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00060"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

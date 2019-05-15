@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug:  =?iso&#45;2022&#45;jp?B?GyRCRnxLXDhsGyhC?=  e&#45;mail header definitions -->
+<!--X-From: "J. David Beutel" <jdb@example.com> -->
+<!--X-Date: Sun, 7 Dec 1997 02:32:45 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.971207162032.377A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.971207151025.20285B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00051.html">Date Prev</A>][<A HREF="msg00053.html">Date Next</A>][<A HREF="msg00050.html">Thread Prev</A>][<A HREF="msg00054.html">Thread Next</A>][<A HREF="maillist.html#00052">Date Index</A>][<A HREF="threads.html#00052">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug:  =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=  e-mail header definitions</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug:  =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=  e-mail header definitions</strong></LI>
+<LI><strong>From</strong>: <strong>"J. David Beutel" &lt;<A HREF="mailto:jdb@example.com">jdb@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 7 Dec 1997 16:39:11 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00050.html">Pine.LNX.3.96LJ1.1b7.971207151025.20285B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Sun, 7 Dec 1997, Craig Oda wrote:
+
+&gt; Maybe, Pine-J has automatic conversion of Subject line encoding?
+&gt; 
+&gt; Is it readable?
+
+Yes, in Pine-J 3.96, but not pine 3.96 (both in kterm).
+
+Plain old pine does decode the base64 encoding (in the From:
+and Subject: lines at least), but then it ironically seems to
+"protect" us from control chars (like ESC) on its index screen,
+which defeats the Japanese encoding.  (I see the 2 chars ^[
+rather than the real ESC char.)
+
+&gt; I was wondering if anyone knew what the proper
+&gt; syntax was for Japanese "Subject:" fields in the header
+&gt; of an e-mail message.
+
+&gt;From Ken Lunde's CJK.INF.2.1, regarding MIME:
+
+------------- start quote -------------
+
+        Base64 encoding is most commonly used for encoding non-ASCII
+text that appears in e-mail headers. Of all the portions of an e-mail
+message, its header gets manipulated the most during transmission, and
+Base64 encoding offers a safe way to further encode non-ASCII text so
+that it is not altered by mail-routing software. This is where Base64
+encoding can cause confusion. For example, what goes through your mind
+when you see the following chunk o' text?
+
+  From: lunde@example.com (=?ISO-2022-JP?B?vq7O07f1?=)
+
+Many folks think that they are seeing ISO-2022-JP encoding. Not
+true. The "ISO-2022-JP" portion is just a flag that indicates the
+original encoding before Base64 encoding was applied. The actual
+Base64-encoded portion is enclosed between question marks (?) as
+follows:
+
+  From: lunde@example.com (=?ISO-2022-JP?B?vq7O07f1?=)
+                                        &gt;^^^^^^^^&lt;
+The whole string enclosed in parentheses has several components, and
+the following explains their purpose and relationships (using the
+above string as an example):
+
+  Component      Explanation
+  ^^^^^^^^^      ^^^^^^^^^^^
+  =?             Signals start of encoded string
+  ISO-2022-JP    Charset name ("ISO-2022-JP" is for Japanese)
+  ?              Delimiter
+  B              Encoding ("B" is for Base64)
+  ?              Delimiter
+  vq7O07f1       Example string of type "charset" encoded by "encoding"
+  ?=             Signals end of encoded string
+
+        One typically does not need to worry about encoding text as
+Base64 (MIME-compliant mailing software usually performs this task for
+you). The problem is usually trying to decode Base64-encoded text. A
+Base64 decoder is available in Perl at the following URL:
+
+  <A TARGET="_top" HREF="ftp://ftp.ora.com/pub/examples/nutshell/ujip/perl/b64decode.pl">ftp://ftp.ora.com/pub/examples/nutshell/ujip/perl/b64decode.pl</A>
+
+Note that this program takes "raw" Base64 data as input. Any non-
+Base64 stuff must be stripped. I usually run this from within Mule
+("C-u M-| b64decode.pl") after defining a region around the Base64-
+encoded material. I hope to replace this program soon with one that
+automatically recognizes the Base64-encoded portions.
+        Most MIME-compliant e-mail software can decode Base64-encoded
+text.
+
+--------------- end quote --------------
+
+BTW, wasn't somebody looking for such a base64 decoder for their MH?
+
+--
+J. David Beutel       "You're inhabited by the society you live in through
+11011011 jdb@example.com  your use of language." McCorduck on Turkle on Lacan
+
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00054" HREF="msg00054.html">Re: tlug:   =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=   e-mail header definitions</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00060" HREF="msg00060.html">Re: tlug:  =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=  e-mail header definitions</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00050" HREF="msg00050.html">tlug: =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=  e-mail header definitions</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00051.html">tlug: Choking</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00053.html">tlug: palmtop PHS (Toshiba GENIO)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00050.html">tlug: =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=  e-mail header definitions</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00054.html">Re: tlug:   =?iso-2022-jp?B?GyRCRnxLXDhsGyhC?=   e-mail header definitions</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00052"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00052"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

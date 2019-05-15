@@ -1,0 +1,183 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: web server -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 14 Nov 1996 10:43:44 GMT -->
+<!--X-Message-Id: m0vNzBu&#45;00002xC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 328AEAED.500EE335@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00066.html">Date Prev</A>][<A HREF="msg00068.html">Date Next</A>][<A HREF="msg00066.html">Thread Prev</A>][<A HREF="msg00068.html">Thread Next</A>][<A HREF="maillist.html#00067">Date Index</A>][<A HREF="threads.html#00067">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: web server</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: web server</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 14 Nov 96 19:38 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00066.html">328AEAED.500EE335@example.com</A>&gt; (message from Jim Schweizer on Thu, 14 Nov 1996 18:48:29 +0900)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi all, Steve T is right, I do have a server configuration
+    Jim&gt; problem with the Apache server I'm trying to set up.
+
+[ snip ]
+    Jim&gt; PATH_TRANSLATED: '/root/public_html/tests/cgi-bin/links.pl'
+[ snip ]
+    Jim&gt; Script Base Directory '/root/public_html/cgi-bin'
+
+    Jim&gt; CGIwrap Error: CGI Directory Not Found.
+
+I don't see any "tests" in that Script Base Directory.
+
+CGIs are dangerous things, so you have to say explicitly where they
+may be found.  NCSA and Apache are fairly similar in this:
+
+# ScriptAlias: This controls which directories contain server scripts.
+# Format: ScriptAlias fakename realname
+
+# If it's not in or below one of these directories, you can't use it
+# unless you enable CGIs for everyone.  It may be possible to do it via
+# .htaccess, but I don't think so.  These directories are *not*
+# relative to ServerRoot or ~/public_html or anything like that.
+
+# What you apparently have
+# ScriptAlias /cgi-bin/ /root/public_html/cgi-bin/
+# What you probably want
+ScriptAlias /cgi-bin/ /root/public_html/tests/cgi-bin/
+# OR
+# ScriptAlias /cgi-bin/ /root/public_html/cgi-bin/
+# ScriptAlias /cgi-tests/ /root/public_html/tests/cgi-bin/
+# which gives TWO CGI directories, which must be specified by name,
+# eg /cgi-tests/links.pl, NOT /~root/tests/cgi-bin/links.pl
+
+# Only a crazy person would
+# ScriptAlias / /
+# although it should "solve" your problem (as well as making such
+# wonderful stuff as "rm" available to visitors).
+
+# If you want to use server side includes, or CGI outside
+# ScriptAliased directories, uncomment the following lines.
+# This is different between Apache and NCSA, NCSA is less general.
+
+# AddType allows you to tweak mime.types
+# Format: AddType type/subtype ext1
+# AddHandler allows you to map certain file extensions to "handlers"
+# Format: AddHandler action-name ext1
+
+# To use CGI scripts:
+#AddHandler cgi-script .cgi
+# only a crazy person would
+#AddHandler cgi-script .pl
+
+You could enable that "AddHandler cgi-script" and mv "links.pl" to
+"links.cgi".  Perl doesn't care....  That way "links" can be used from 
+any directory the server can find, ie, below $DocumentRoot or
+~/public_html.
+
+Steve
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">web server</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00066.html">web server</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00068.html">Re: web server</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00066.html">web server</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00068.html">Re: web server</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00067"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00067"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

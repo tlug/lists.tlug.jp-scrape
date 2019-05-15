@@ -1,0 +1,213 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Mysterious LVM issue -->
+<!--X-From-R13: "Pvexve O. Pnexnefba" <ovexveoNfgbvpivxvat.arg> -->
+<!--X-Date: Wed, 11 Mar 2009 20:21:18 +0900 -->
+<!--X-Message-Id: 49B789EA.1050404@stoicviking.net -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00106.html">Date Prev</a>][<a href="msg00108.html">Date Next</a>][<a href="msg00104.html">Thread Prev</a>][<a href="msg00108.html">Thread Next</a>][<a href="maillist.html#00107">Date Index</a>][<a href="threads.html#00107">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Mysterious LVM issue</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 11 Mar 2009 18:52:42 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Birkir A. Barkarson&quot; &lt;<a href="mailto:birkirb@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Mysterious%20LVM%20issue">birkirb@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Mysterious LVM issue</strong></li>
+<li>User-agent: Thunderbird 2.0.0.19 (X11/20090114)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>If anyone has some experience with LVM I encountered some rather
+mysterious and spooky things when using it.
+
+In short I was copying about 216GB from one HD to another which had an
+LVM VG with exactly 216GB free. The copy (cp -a) went well and except
+for some bad data on the original nothing was reported. Once done though
+the LVM drive reported 0 bytes free, 216GB used. Rather unexpected as I
+would have thought it would either have a few bytes left or it would
+have given me an error messages about the drive being full.
+
+Then I tried to copy some more data onto the drive I finally got a drive
+full message. And that's when things got interesting.  See the attached
+ transcript for a log of what happened.
+
+All of a sudden it was reporting a different size and generally doing
+strange things until I had removed some data.  Thinking that surely some
+data would have corrupted since the drive filled up during the original
+copy I used 'find' to search for 0 byte files, ran a fsck on the drive,
+did syncs to copies of the data I had, so far nothing seems to be broken.
+
+Does anyone know if LVM is doing some voodoo behind the scenes that
+might lead to this situation. I'm a little uneasy about the whole thing
+so any wise words would be appreciated.
+
+Cheers,
+Birkir
+</pre><pre>birkirb@example.com df -h
+Filesystem             Size   Used  Avail Use% Mounted on
+/dev/hda2               11G   1.2G   8.9G  12% /
+tmpfs                   66M      0    66M   0% /lib/init/rw
+udev                    11M    66k    11M   1% /dev
+tmpfs                   66M      0    66M   0% /dev/shm
+/dev/hda1              104M    16M    83M  16% /boot
+/dev/mapper/america_main-store
+                       232G   230G      0 100% /srv
+/dev/mapper/america_main-home
+                       983M    25M   909M   3% /home
+/dev/mapper/america_main-local
+                       3.0G   473M   2.4G  17% /usr/local
+
+&lt;deleted about 8GB of stuff&gt;
+
+birkirb@example.com df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/hda2             9.9G  1.1G  8.3G  12% /
+tmpfs                  62M     0   62M   0% /lib/init/rw
+udev                   10M   64K   10M   1% /dev
+tmpfs                  62M     0   62M   0% /dev/shm
+/dev/hda1              99M   15M   79M  16% /boot
+/dev/mapper/america_main-store
+                      216G  211G     0 100% /srv
+/dev/mapper/america_main-home
+                      938M   24M  867M   3% /home
+/dev/mapper/america_main-local
+                      2.8G  451M  2.2G  17% /usr/local
+
+&lt;Deleted about 2GB of stuff&gt;
+
+birkirb@example.com df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/hda2             9.9G  1.1G  8.3G  12% /
+tmpfs                  62M     0   62M   0% /lib/init/rw
+udev                   10M   64K   10M   1% /dev
+tmpfs                  62M     0   62M   0% /dev/shm
+/dev/hda1              99M   15M   79M  16% /boot
+/dev/mapper/america_main-store
+                      216G  209G     0 100% /srv
+/dev/mapper/america_main-home
+                      938M   24M  867M   3% /home
+/dev/mapper/america_main-local
+                      2.8G  451M  2.2G  17% /usr/local
+
+&lt;Deleted about 7GB of stuff&gt;
+
+birkirb@example.com:/srv/store/store/video/tv/True Blood$ df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/hda2             9.9G  1.1G  8.3G  12% /
+tmpfs                  62M     0   62M   0% /lib/init/rw
+udev                   10M   64K   10M   1% /dev
+tmpfs                  62M     0   62M   0% /dev/shm
+/dev/hda1              99M   15M   79M  16% /boot
+/dev/mapper/america_main-store
+                      216G  202G  2.9G  99% /srv
+/dev/mapper/america_main-home
+                      938M   24M  867M   3% /home
+/dev/mapper/america_main-local
+                      2.8G  451M  2.2G  17% /usr/local
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00108" href="msg00108.html">Re: [tlug] Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> Alan Busby</li></ul></li>
+<li><strong><a name="00109" href="msg00109.html">[tlug] Re: Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00112" href="msg00112.html">Re: [tlug] Mysterious LVM issue: reserved space (not really LVM issue)</a></strong>
+<ul><li><em>From:</em> jep200404</li></ul></li>
+<li><strong><a name="00113" href="msg00113.html">Re: [tlug] Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> Francois Cartegnie</li></ul></li>
+<li><strong><a name="00115" href="msg00115.html">[tlug] Re: Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00106.html">Re: [tlug] Re: [OT] toshiba laptop with no power; find the culprit...</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00108.html">Re: [tlug] Mysterious LVM issue</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00104.html">[tlug] For info: AsiaBSDCon in Tokyo this week</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00108.html">Re: [tlug] Mysterious LVM issue</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00107"><strong>Date</strong></a></li>
+<li><a href="threads.html#00107"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

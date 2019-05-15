@@ -1,0 +1,181 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: How to make a little room for Windows again? -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Tue, 18 Apr 2000 03:15:17 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000418023709.539A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000601bfa88d$cbec9d80$092ad8cb@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00103.html">Date Prev</A>][<A HREF="msg00105.html">Date Next</A>][<A HREF="msg00103.html">Thread Prev</A>][<A HREF="msg00117.html">Thread Next</A>][<A HREF="maillist.html#00104">Date Index</A>][<A HREF="threads.html#00104">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: How to make a little room for Windows again?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: How to make a little room for Windows again?</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 18 Apr 2000 03:14:46 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00103.html">000601bfa88d$cbec9d80$092ad8cb@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Tue, 18 Apr 2000, Ulrike Schmidt wrote:
+
+&gt;  I might need help. Fstab says now:
+&gt;  
+&gt;  /dev/hdb6               /                       ext2    defaults        1 1
+&gt;  /dev/hdb1               /boot                   ext2    defaults        1 2
+&gt;  /dev/cdrom              /mnt/cdrom              iso9660 noauto,owner,ro 0 0
+&gt;  /dev/hdb5               swap                    swap    defaults        0 0
+&gt;  /dev/fd0                /mnt/floppy             ext2    noauto,owner    0 0
+&gt;  none                    /proc                   proc    defaults        0 0
+&gt;  none                    /dev/pts                devpts  gid=5,mode=620  0 0
+&gt;  
+&gt;  [root@example.com /]# ./sbin/fdisk -l /dev/hda
+&gt;  
+&gt;  Disk /dev/hda: 64 heads, 63 sectors, 827 cylinders
+&gt;  Units = cylinders of 4032 * 512 bytes
+&gt;  
+&gt;     Device Boot    Start       End    Blocks   Id  System
+&gt;  /dev/hda1   *         1       826   1665184+   6  FAT16
+&gt;  [root@example.com /]# ./sbin/fdisk -l /dev/hdb
+&gt;  
+&gt;  Disk /dev/hdb: 240 heads, 63 sectors, 555 cylinders
+&gt;  Units = cylinders of 15120 * 512 bytes
+&gt;  
+&gt;     Device Boot    Start       End    Blocks   Id  System
+&gt;  /dev/hdb1   *         1         3     22648+  83  Linux
+&gt;  /dev/hdb2             4       555   4173120    5  Extended
+&gt;  /dev/hdb5             4        30    204088+  82  Linux swap
+&gt;  /dev/hdb6            31       555   3968968+  83  Linux
+&gt;  
+&gt;  So I would put a line into fstab that says something like:
+&gt;  /dev/hda1               /mnt/Windows            vfat    defaults        0 0
+
+Looks okay. /mnt/Windows must be present.
+Test it:  'mount /dev/hda1' and 'df'
+
+&gt;  
+&gt;  BTW, how do I reinstall lilo? I was looking for docs but all I found were
+&gt;  descriptions what it does and that it is handled by the RedHat installer ...
+&gt;  I also had a look again at lilo.conf for inspiration, thought maybe I just
+&gt;  have to add an entry there for Windows and run lilo, but I had no idea how
+&gt;  write this entry ...
+
+I guess your lilo.conf has boot = /dev/hda and atleast one image
+section with 
+image = ... 
+root = /dev/hdb1
+label = linux   # the label name could be anything you like..
+
+Then add a new section
+
+other = /dev/hda1
+label = win98
+
+
+Again you may choose a different label name. To boot windows or
+linux enter the corresponding label name at the lilo prompt or simply
+press return to boot the default image --- the one appearing first
+unless default=.. is specified.
+
+Selva
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00103" HREF="msg00103.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+<UL><LI><EM>From:</EM> "Ulrike Schmidt" &lt;ulrike@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00103.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00105.html">tlug: Samba Installation</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00103.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00117.html">Re: tlug: How to make a little room for Windows again?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00104"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00104"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

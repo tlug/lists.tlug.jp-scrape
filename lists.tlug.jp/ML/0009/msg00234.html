@@ -1,0 +1,177 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: ethner card problem -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Mon, 18 Sep 2000 21:20:35 +0900 (JST) -->
+<!--X-Message-Id: 14790.2195.960213.896301@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: E13ayuu&#45;0006gv&#45;00@example.com -->
+<!--X-Reference-Id: 20000918205713.D4005@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00233.html">Date Prev</A>][<A HREF="msg00235.html">Date Next</A>][<A HREF="msg00233.html">Thread Prev</A>][<A HREF="msg00231.html">Thread Next</A>][<A HREF="maillist.html#00234">Date Index</A>][<A HREF="threads.html#00234">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: ethner card problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: ethner card problem</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 18 Sep 2000 21:20:35 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00233.html">20000918205713.D4005@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00227.html">E13ayuu-0006gv-00@example.com</A>&gt;&lt;<A HREF="msg00233.html">20000918205713.D4005@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;x0uYR.A.BqG.Nugx5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "FB" == Frank BENNETT &lt;bennett@example.com&gt; writes:
+
+    FB&gt; Get source for the PCMCIA package and recompile.  Easy to do.
+    FB&gt; Eliminates all of these mismatch worries.
+
+In /etc/apt/sources.list, _copy_ the whole main distro line to a new
+line and change "deb" to "deb-src".
+
+I haven't figured out how to get sources via dselect, but you can use
+
+apt-get update           # get the Package.list for source
+apt-get source $package
+
+from the command line.
+
+First, do apt-get install kernel-package.  _Read the docs_; it will
+make life a lot easier if you put the kernel sources and the pcmcia-cs
+sources in the right places relative to one another.
+
+Next, get the kernel and the pcmcia-cs sources.  Do
+
+make-kpkg --revision uli+0 menuconfig  # configure your own kernel version
+make-kpkg build
+su
+make-kpkg kernel_image
+make-kpkg modules_image  # NOT the same as kernel modules, which are
+                         # made in the previous step; this is the step
+                         # where the PCMCIA stuff gets made
+			 # #### There used to be a gotcha here; PCMCIA
+                         # likes to read the running kernel's symbols,
+                         # but of course you must use the source tree's
+                         # info -- recent kernel-package does this OK.
+                         # ... I think ...  ;-)
+dpkg -i ../*.deb
+make-kpkg clean          # otherwise you can't step the local revision #
+exit
+
+and reboot.
+
+    FB&gt; Uli writes:
+
+    &gt;&gt; So I guess I have to upgrade the kernel, haven't done that in a
+    &gt;&gt; long time, is there some really easy way instead of
+    &gt;&gt; recompiling, some debian package I can simply install?
+
+Yes, but ...
+
+    FB&gt; You're better off with a locally compiled kernel.  Always.
+
+Frank's right.  The kernel will be smaller, you can not build modules
+you'll never use in the life of the kernel, you can tune which things
+are loadable and which come build in.  And if you do things as above,
+your PCMCIA modules will always be matched to your kernel.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00227" HREF="msg00227.html">Re: ethner card problem</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00233" HREF="msg00233.html">Re: ethner card problem</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00233.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00235.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00233.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00231.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00234"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00234"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

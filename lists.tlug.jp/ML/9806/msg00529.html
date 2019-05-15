@@ -1,0 +1,262 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Lame program contained within; no flames please! -->
+<!--X-From: Felix Morley Finch <felix@example.com> -->
+<!--X-Date:  Wed, 17 Jun 1998 03:18:21 +0900 -->
+<!--X-Message-Id: 19980616181623.7367.qmail@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00528.html">Date Prev</A>][<A HREF="msg00530.html">Date Next</A>][<A HREF="msg00528.html">Thread Prev</A>][<A HREF="msg00530.html">Thread Next</A>][<A HREF="maillist.html#00529">Date Index</A>][<A HREF="threads.html#00529">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Lame program contained within; no flames please!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Lame program contained within; no flames please!</strong></LI>
+<LI><strong>From</strong>: <strong>Felix Morley Finch &lt;<A HREF="mailto:felix@example.com">felix@example.com</A>&gt;</strong></LI>
+<LI>Date: 16 Jun 1998 18:16:23 -0000</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Here you go, Jim.  I ought to insert here that famous Star Trek line,
+"He's dead, Jim."  Lame slow perl program, but my limited testing
+shows it working.
+
+It's in three parts.  A shell script (tlugadd.sh) pipes the output of
+find into xargs which passes the file names to the perl script.  It's
+uglier but easier.  The find assumes you want to modify all *.html
+regular files from the current directory down.  Not sure how familiar
+you are with find and xargs.  If all else fails, invoke the perl
+program directly.
+
+The perl program (tlugadd.pl) modifies all files named on the command
+line.  There are two variables you care about, one more than the
+other.  The important one is $magicline, which is the line AFTER which
+the new data is inserted.  The first line it finds that matches this
+and has nothing else on the line is the line in question.  The
+matching is case independent.  The other variable is $newfile, which
+is just the file name of data to add.  You probably don't need to
+change it.
+
+The last file (tlugadd.data) is what to insert.  It will be inserted
+exactly as is.  I'm not sure what perl will do if the last line has no
+newline, so that's the only thing to double check.  The data in it is
+probably not what you want :-)
+
+The files are rewritten in place.  No backups are kept.  I would most
+certainly copy everything first, back it up, etc.  I would do this and
+I wrote it!  If I don't trust myself, you shouldn't either :-)
+
+Also it would probably be a good idea to try it directly on a single
+file first.
+
+So, steps to use:
+
+1.  Put the three pieces in your path, in the top level directory,
+    whereever you want.
+
+2.  Fix up any #! paths in tlugadd.pl and tlugadd.sh.
+
+3.  Make sure tlugadd.pl and tlugadd.sh have execute permission.
+
+4.  Modify the find args in tlugadd.sh if you need to.
+
+5.  Modify the $magicline variable in tlugadd.pl as necessary.
+
+6.  Put the data you want in tlugadd.data.
+
+7.  BACKUP or COPY your files, please, don't make me feel guilty!
+
+8.  Copy a real data file and test it:
+
+	cp real-data-file.html test-me.html
+	tlugadd.pl test-me.html
+
+9.  If that looks good, delete the test file and do it for real.
+
+	rm test-me.html
+	tlugadd.sh
+
+10a. Scream and yell at me for whatever I goofed up :-)
+
+-- or --
+
+10b. Tell me it worked!
+
+------------------------- tlugadd.sh ---------------------
+#!/bin/sh
+
+find . -type f -name '*.html' -print | xargs ./tlugadd.pl
+------------------------- tlugadd.pl ---------------------
+#!/usr/bin/perl -w
+
+# Supply a list of file names.  Each file is opened, scanned for the
+# magic marker, and rewritten with the new data inserted immedately
+# following the magic marker line.
+
+# This is the magic marker line.  It has to match completely, but case
+# is ignored.  Don't include the trailing newline here.  This has to
+# be a single line; any multi-line marker will simply hose things :-)
+
+my($magicline) = qq`&lt;P&gt;`;
+
+
+
+
+# This is the file name of the new data.
+
+my($newfile) = "tlugadd.data";
+
+
+
+
+# Collect the new data.
+
+open (NEWDATA, "&lt;$newfile") or die "Can't read new data file $newfile: $!";
+my(@example.com) = &lt;NEWDATA&gt;;
+close NEWDATA;
+
+
+# Process all named files.
+
+my($filectr) = 0;
+my($skipctr) = 0;
+my($filename);
+foreach $filename (@example.com) {
+    open (HTMLFILE, "&lt;$filename") or die "Can't open file $filename: $!";
+    my(@example.com) = ();
+    my($line);
+    my($inserted) = undef;
+    while (defined($line = &lt;HTMLFILE&gt;)) {
+	push (@example.com, $line);
+	if (!$inserted &amp;&amp; ($line =~ /^$magicline$/io)) {
+	    $inserted = 1;
+	    push (@example.com, @example.com);
+	}
+    }
+    close HTMLFILE;
+
+# Make sure it got inserted.
+
+    if (!$inserted) {
+	print STDERR "No magic marker line in $filename\n";
+	$skipctr++;
+	next;
+    }
+
+# Rewrite the file.  No backup is made.
+
+    open (HTMLFILE, "&gt;$filename") or die "Can't rewrite file $filename: $!";
+    print HTMLFILE @example.com;
+    close HTMLFILE;
+    $filectr++;
+}
+print "Processed $filectr files\n";
+print "Skipped $skipctr files\n" if $skipctr;
+exit 0;
+------------------------ tlugadd.data --------------------
+*** Put Some Real Data Here ***
+----------------------------------------------------------
+
+-- 
+            ... _._. ._ ._. . _._. ._. ___ .__ ._. . .__. ._ .. ._.
+     Felix Finch: scarecrow repairman &amp; rocket surgeon / felix@example.com
+  PGP = 91 B3 94 7C E9 E8 76 2D   E1 63 51 AA A0 48 89 2F  ITAR license #4933
+I've found a solution to Fermat's Last Theorem but I see I've run out of room o
+--------------------------------------------------------------
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 8 August, Tokyo Station Yaesu central gate 12:30
+*** 20 June: TLUG will be at the Tokyo Linux Fair
+<A TARGET="_top" HREF="http://tlug.linux.or.jp/projects/linux-fair/fair.html">http://tlug.linux.or.jp/projects/linux-fair/fair.html</A>
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00530" HREF="msg00530.html">Re: tlug: Lame program contained within; no flames please!</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00532" HREF="msg00532.html">RE: tlug: Lame program contained within; no flames please!</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00528.html">tlug: CDE</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00530.html">Re: tlug: Lame program contained within; no flames please!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00528.html">tlug: CDE</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00530.html">Re: tlug: Lame program contained within; no flames please!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00529"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00529"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

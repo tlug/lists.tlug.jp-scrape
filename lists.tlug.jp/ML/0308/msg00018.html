@@ -1,0 +1,178 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Converting Encoding&#45;&#45; Mac SJIS to UTF8 Linux -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Tue, 05 Aug 2003 12:14:36 +0900 -->
+<!--X-Message-Id: 5.1.1.8.2.20030805114614.00d7da38@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200308040301.h74310Ew024300@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00017.html">Date Prev</a>][<a href="msg00019.html">Date Next</a>][<a href="msg00209.html">Thread Prev</a>][<a href="msg00019.html">Thread Next</a>][<a href="maillist.html#00018">Date Index</a>][<a href="threads.html#00018">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 05 Aug 2003 12:14:36 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Converting%20Encoding--%20Mac%20SJIS%20to%20UTF8%20Linux">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I have managed to cobble together a way to get my Macintosh files to Linux, 
+but I have to do it one folder at a time. Can anyone help me make the Linux 
+scripts a recursive process, so I don't have to navigate to each folder in 
+turn and run these two scripts (see below)?
+
+I start out by running my Nisus Mac files, which include both SJIS kanji, 
+and lots of diacritics (like the long o, o+ macron, of say, Kyoto)  through 
+a macro from Nobumi Iyanaga. This macro  converts the diacrititics into 
+HTML Entities, like &amp;#332;   These entities are pure ASCII seven bit code, 
+so they will pass through any conversion. If you try to convert the 
+diacritic letters without this, you will find that they use the restricted 
+part of the byte, so they are garbled, and worse, since they can signal the 
+start of a kanji, often the diacritic letter combines with the following 
+letter and is converted into some kanji or other. Converting to HTML 
+Entities in Nisus (which knows, in its own secret way which is kanji and 
+which is diacritics) avoids this problem.
+
+I then take my files to Linux and run the recode utility, and then this 
+little Perl script. This does an in-place conversion, so the original data 
+is destroyed (run on a copy!). Recode converts from SJIS to UTF8 in a 
+flash, assuming that all is in SJIS. It is probably best to run recode with 
+the -f switch, to force conversion even if there are odd bits that do not 
+conform (like old footnote flags or something.)
+
+recode sjis..u8 *
+
+myconvert *
+
+Where myconvert is the perl script in my /bin as follows:
+
+#!/usr/bin/env perl
+#convert from HTML entity  to UTF8, based on Nobumi.
+# Mac end of line hard return, to Unix New Line
+
+$^I = "";               #direct &lt;&gt; op to rename to + string ( backup) and 
+output to orig name
+
+while (&lt;&gt;) {                 #read all files passed in call, renaming to 
+orig (no backup)
+    s/(&amp;#)([0-9]+)(;)/pack ('U*', $2)/eg;           #Entity to utf8
+    s/\015/\012/g;                                    #Mac end of line to unix.
+print;                                                       #output back 
+to original file name
+	}
+;
+
+
+So, it works just fine, I get both kanji and beautiful diacritics, all in 
+the same Unicode encoding. But my question is, how to I make this 
+recursive? I have hundreds of files in scores of directories, and it can 
+get to be a mess, expecially if there is a problem, and errors are all to 
+easy to make. Is there a way to put a recursive envelope around this? Or 
+perhaps is it possible that I can make a TAR file of it all and run this 
+code on the TAR?
+
+Thanks,
+
+David 
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00019" href="msg00019.html">Re: [tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+<li><strong><a name="00020" href="msg00020.html">Re: [tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00017.html">[tlug] Re: What to do when a hard disk goes during the rainy season</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00019.html">Re: [tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00209.html">[tlug] Re: What to do when a hard disk goes during the rainy season</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00019.html">Re: [tlug] Converting Encoding-- Mac SJIS to UTF8 Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00018"><strong>Date</strong></a></li>
+<li><a href="threads.html#00018"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

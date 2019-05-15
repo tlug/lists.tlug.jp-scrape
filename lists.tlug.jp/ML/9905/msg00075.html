@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Local domains and sendmail -->
+<!--X-From: Tetsuji Rai <tetsuji@example.com> -->
+<!--X-Date:  Sat, 15 May 1999 03:26:37 +0900 -->
+<!--X-Message-Id: 199905141826.DAA00679@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19990514232551.C21888@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00074.html">Date Prev</A>][<A HREF="msg00076.html">Date Next</A>][<A HREF="msg00074.html">Thread Prev</A>][<A HREF="msg00055.html">Thread Next</A>][<A HREF="maillist.html#00075">Date Index</A>][<A HREF="threads.html#00075">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Local domains and sendmail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Local domains and sendmail </strong></LI>
+<LI><strong>From</strong>: <strong>Tetsuji Rai &lt;<A HREF="mailto:tetsuji@example.com">tetsuji@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 15 May 1999 03:26:05 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Fri, 14 May 1999 23:25:51 +0900."            &lt;<A HREF="msg00074.html">19990514232551.C21888@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Then I'll show my .mc file.  Put this under /usr/lib/sendmail-cf/cf and edit, 
+and then run m4 ../m4/cf.m4 thifile.mc &gt; sendmail.cf.
+My machine is masquerading as MailAndNews.com, although real hostname is tetsu.
+--------------cut here----------------------
+#
+# Copyright (c) 1998 Sendmail, Inc.  All rights reserved.
+# Copyright (c) 1983 Eric P. Allman.  All rights reserved.
+# Copyright (c) 1988, 1993
+#	The Regents of the University of California.  All rights reserved.
+#
+# By using this file, you agree to the terms and conditions set
+# forth in the LICENSE file which can be found at the top level of
+# the sendmail distribution.
+#
+#
+
+#
+#  This is modified by Tetsuji Rai for Linux.
+#  It has support for local and SMTP mail only.  If you want to
+#  customize it, copy it to a name appropriate for your environment
+#  and do the modifications there.
+#
+
+divert(0)dnl
+VERSIONID(`@(#)rai.mc	8.7 (rai) 5/13/1999')
+OSTYPE(linux)dnl
+DOMAIN(generic)dnl
+MAILER(local)dnl
+MAILER(smtp)dnl
+MASQUERADE_AS(MailAndNews.com)
+MASQUERADE_DOMAIN(MailAndNews.com)
+FEATURE(masquerade_envelope)dnl
+FEATURE(allmasquerade)dnl
+------------------cut here--------------
+&gt; Neil Booth wrote:-
+&gt; &gt; When I connect to my ISP and try to send mail, the SMTP mail messages
+&gt; &gt; bounce off my ISP with the complaint
+&gt; &gt; 
+&gt; &gt; &lt;neil@example.com&gt;... Sender domain must exist
+&gt; &gt; 
+&gt; &gt; The ISP's machine cannot find domain, as it is only local after
+&gt; &gt; all. What is the standard way to resolve this problem?  I've tried the
+&gt; &gt; DM line in sendmail.cf, but that didn't seem to help.
+&gt; 
+&gt; Hmmm, I hate replying to my own mails, but if you are reading this
+&gt; I've solved this one.  DM was of course the right thing, but I was
+&gt; just editing the header file manually.  I suspect doing it with the m4
+&gt; stuff would also uncomment out the envelope masquerading line in
+&gt; ruleset 94 that I needed to change too.  Uncommenting that line and
+&gt; commenting out another line to turn off header masquerading gives me
+&gt; the effect I desire.
+&gt; 
+&gt; Cheers,
+&gt; 
+&gt; Neil.
+&gt; -- 
+&gt; 
+&gt; -------------------------------------------------------------------
+&gt; Next Nomikai: May 26 (Wed), 19:30                        Place: TBD
+&gt; *** Special guest: Eric S. Raymond
+&gt; Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+&gt; -------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+-- 
+Tetsuji Rai    Tokyo Japan
+PPL 2476457    tetsuji@example.com
+Aviation Jokes: <A TARGET="_top" HREF="http://www.geocities.com/CapeCanaveral/Station/9416/">http://www.geocities.com/CapeCanaveral/Station/9416/</A>
+fax: +1-708-570-4868 (in the US)
+
+
+-------------------------------------------------------------------
+Next Nomikai: May 26 (Wed), 19:30                        Place: TBD
+*** Special guest: Eric S. Raymond
+Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00074" HREF="msg00074.html">Re: tlug: Local domains and sendmail</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00074.html">Re: tlug: Local domains and sendmail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00076.html">tlug: RedHat 6.0 and GNOME</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00074.html">Re: tlug: Local domains and sendmail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00055.html">RE:Kernel compile trouble.(Was Re: tlug: new debian user...)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00075"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00075"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

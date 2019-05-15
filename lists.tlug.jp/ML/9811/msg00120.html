@@ -1,0 +1,185 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Need info. about Japanese and Linux -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 6 Nov 1998 08:31:52 +0900 -->
+<!--X-Message-Id: 13890.13645.613625.852880@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199811042321.IAA03708@example.com -->
+<!--X-Reference-Id: 3641A6D2.9A0A9547@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00119.html">Date Prev</A>][<A HREF="msg00121.html">Date Next</A>][<A HREF="msg00118.html">Thread Prev</A>][<A HREF="msg00143.html">Thread Next</A>][<A HREF="maillist.html#00120">Date Index</A>][<A HREF="threads.html#00120">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Need info. about Japanese and Linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Need info. about Japanese and Linux</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 6 Nov 1998 08:31:25 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00118.html">3641A6D2.9A0A9547@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00084.html">199811042321.IAA03708@example.com</A>&gt;&lt;<A HREF="msg00118.html">3641A6D2.9A0A9547@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Fredric" == Fredric Fredricson &lt;Fredric.Fredriksson@example.com&gt; writes:
+
+    Fredric&gt; The customer does not know anything about this. He buys a
+    Fredric&gt; machine does not care about these details.
+
+Bingo!  ++Steve.  :-)
+
+    &gt;&gt; There are three codes in Japanese characters. They are JIS,
+    &gt;&gt; SJIS and EUC. To convert codes there's a converter called
+    &gt;&gt; 'nkf'.
+
+    Fredric&gt; Are these codes 8-bit? My concern is if I can fit it
+    Fredric&gt; inside our current system of language-specific text
+    Fredric&gt; files.
+
+Well, strictly speaking they are 16-bit---someone who has finished
+first grade in Japan has a repertoire of at least 225 characters
+already, and most about 350---can't fit that into 8-bits.  Let alone
+an educated adult's repertoire of about 10,000.
+
+Technically speaking, the most common "native" encoding for Japanese
+is "Packed EUC" which is an ISO-2022 conformant 8-bit code with JIS X
+0201 Roman alphabet (for your purposes, ASCII +/- 2 or 3 characters)
+invoked to GL/G0 and JIS X 0208 invoked to GR/G1.  Normally it uses no
+shift sequences, although auxiliary character sets can be invoked to
+G2 and G3.  It's unlikely you would need those extra character sets
+unless you are doing entry of personal and place names.
+
+Commonly used in messaging applications like mail and netnews is
+ISO-2022-JP, which is an ISO-2022 conformant 7-bit code, using shift
+sequences (ESC "$B" to designate and shift JIS X 0208 into G0/GL, and
+ESC "(B" to designate and shift ASCII into G0/GL).  This has some
+other restrictions which are unimportant for your immediate purpose of 
+determining compatibility (eg, G0 is initialized to ASCII, each line
+of the data stream must end in ASCII (before the newline), etc).
+
+Commonly used on MS Windows and Macintosh is "Shift JIS."  Often the
+"f" is omitted, to indicate that this code is an 8-bit code that
+doesn't comply with anything except Microsoft's whims and will pollute 
+any data channel that transmits it.  You have to accept it in general
+applications (there are too many MS systems out there), but you should 
+never produce it or store it internally.  (MS systems can all handle
+both Packed EUC and ISO-2022-JP now, interchange is not a concern.)
+
+Effectively never used is Unicode.  Unicode conforms to ISO-10646, of
+course (and adds many further restrictions), but suffers from issues
+of user preference (many Japanese personal and place names cannot be
+encoded in Unicode) and programming awkwardness (the collating order
+of the Japanese national standard JIS X 0208 differs from that of
+Unicode).  I doubt that you would have a problem dealing with the
+programming issue since it's already present when using ISO-8859-1,
+although you might have to construct or at least improve the necessary
+POSIX locale(s) (I haven't looked carefully in some months, but last I
+looked the Japanese locales were pretty weakly implemented in glibc,
+and certainly few Japanese programs use the POSIX locale model).
+
+HTH.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+----------------------------------------------------------------
+Next Nomikai: 20 November, 19:30   Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00084" HREF="msg00084.html">Re: tlug: Need info. about Japanese and Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Uchida.Masatomo@example.com, &lt;masatomo@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00118" HREF="msg00118.html">Re: tlug: Need info. about Japanese and Linux</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;Fredric.Fredriksson@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00119.html">tlug: Partition Table Values</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00121.html">Re: tlug: Need info. about Japanese and Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00118.html">Re: tlug: Need info. about Japanese and Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00143.html">My Face Is Red: Re: tlug: Need info. about Japanese and Linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00120"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00120"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

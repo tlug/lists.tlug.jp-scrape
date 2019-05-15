@@ -1,0 +1,204 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] English/Japanese Debian Install for beginners -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Mon, 16 May 2005 09:06:04 +0900 -->
+<!--X-Message-Id: 4287E3EC.4060802@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00130.html">Date Prev</a>][<a href="msg00132.html">Date Next</a>][<a href="msg00153.html">Thread Prev</a>][<a href="msg00151.html">Thread Next</a>][<a href="maillist.html#00131">Date Index</a>][<a href="threads.html#00131">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] English/Japanese Debian Install for beginners</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 May 2005 09:06:04 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20English%2FJapanese%20Debian%20Install%20for%20beginners">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] English/Japanese Debian Install for beginners</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+With all the recent traffic about installing an English Linux with
+Japanese input capability, I thought it was time for a word about
+Debian.
+
+Debian is not usually recommended for beginners, but this relatively
+newby has done a Debian Net-Install in English and proceeded to
+add Japanese input framework for any capable X program while keeping
+the English menus and messages. This is how I did it.
+
+Use Debian-Install Net Install from
+
+    <A  HREF="http://www.debian.org/devel/debian-installer/">http://www.debian.org/devel/debian-installer/</A>
+
+Follow the instructions and read the manuals. I have a step by step
+log of my experience if any other beginner wants it. As Chuck Muller
+has already describe here, you can readily upgrade to the latest
+levels and add whatever software you need from the net, without having
+to burn a lot of CD's that quickly go out of date.
+
+This gives you a standard Debian system, which for me at least
+installed with almost no problems on my Toshiba laptop.
+
+My addition to this standard advice is the following easy way to get 
+Japanese
+support/ (I am following the Debian Reference Manual esp section 9.7).
+
+Add Japanese locale and basic support by running these commands.
+
+dpkg-reconfigure locales #choose both ja_JP.uf-8 and ja_JP.EUC-JP
+
+aptitude install canna kinput2-canna ttf-sazanami-mincho
+xfonts-intl-japanese xfonts-intl-japanese-big
+
+
+Set X so that programs will have Japanese input capability.
+
+1. Disable the startup of the graphical login by renaming the links in
+/etc/rc2.d S99xdm, ~kdm, ~gdm to x99xdm, etc. Now at startup you will
+be in a terminal, and you go to X when you please with the command
+&quot;startx&quot;.
+
+2. Create this file in your home directory: .xsession, containing:
+
+export XMODIFIERS=&quot;@example.com=kinput2&quot; LC_CTYPE=ja_JP.UTF-8 kinput2 -canna &amp;
+exec gnome-session
+
+
+With these two changes you will start Gnome so that any capable
+program will input Japanese in utf-8 encoding with the usual kinput2
+toggle of shift-space or control-o.
+
+My own slight modifications, (following the usual TLUG advice sources),
+are just two.
+
+1. To make the kanji in input conversion area kanji, put these lines
+into the .Xresources file (or great it if not already present). The
+lines need to not have a new line embedded, which may have been added
+by the emailers.
+
+Kinput2*font: -*-fixed-medium-r-normal--24-*-*-*-c-*-iso8859-1
+Kinput2*kanjiFont:-*-fixed-medium-r-normal--24-*-*-*-c-*-jisx0208.1983-0
+Kinput2*kanaFont:-*-fixed-medium-r-normal--24-*-*-*-c-*-jisx0201.1976-0
+
+
+2.The cntl-o trigger for kanji input conflicts with many programs Open
+command. To turn that off (just use shift-space), copy
+/usr/share/canna/sample.canna, to .canna (in your home folder), and
+add these lines at the end:
+
+(global-unbind-key-function 'japanese-mode)
+(global-unbind-key-function 'alpha-mode)
+
+Thats all folks.
+
+If there is a better way I would appreciate being told, but so far,
+this works like a charm. As I mentioned earlier, I would be happy to
+share my install cookbook notes with anyone who is interested. They
+are a bit boring and long (200 lines) to post here.
+
+(With much gratitude to all the folks who explained all the pieces I 
+have assembled here).
+
+David Riggs, Kyoto
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00151" href="msg00151.html">Re: [tlug] English/Japanese Debian Install for beginners</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00130.html">Re: [tlug] Japanese Encoding / 9.1-9.3 Upgrade</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00132.html">Re: [tlug] Job Hunting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00153.html">Re: [tlug] Keyboard(?!) Trouble</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00151.html">Re: [tlug] English/Japanese Debian Install for beginners</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00131"><strong>Date</strong></a></li>
+<li><a href="threads.html#00131"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

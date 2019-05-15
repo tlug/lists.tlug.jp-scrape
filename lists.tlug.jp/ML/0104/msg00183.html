@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 20 Apr 2001 01:38:19 +0900 -->
+<!--X-Message-Id: 15071.5243.25519.159705@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104120117.KAA05815@example.com -->
+<!--X-Reference-Id: 20010412122715.A19988@example.com -->
+<!--X-Reference-Id: s3ty9t6o9n6.fsf@example.com -->
+<!--X-Reference-Id: 15062.46553.961039.412030@example.com -->
+<!--X-Reference-Id: s3tlmozkf7e.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00182.html">Date Prev</A>][<A HREF="msg00184.html">Date Next</A>][<A HREF="msg00155.html">Thread Prev</A>][<A HREF="msg00044.html">Thread Next</A>][<A HREF="maillist.html#00183">Date Index</A>][<A HREF="threads.html#00183">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Mike Fabian &lt;<A HREF="mailto:mfabian@example.com">mfabian@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 20 Apr 2001 01:38:19 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00155.html">s3tlmozkf7e.fsf@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00111.html">200104120117.KAA05815@example.com</A>&gt;&lt;<A HREF="msg00112.html">20010412122715.A19988@example.com</A>&gt;&lt;<A HREF="msg00114.html">s3ty9t6o9n6.fsf@example.com</A>&gt;&lt;<A HREF="msg00132.html">15062.46553.961039.412030@example.com</A>&gt;&lt;<A HREF="msg00155.html">s3tlmozkf7e.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;xF69ZC.A.8iB.XXx36@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Mike" == Mike Fabian &lt;mfabian@example.com&gt; writes:
+
+    Mike&gt; kterm doesn't use [LC_CTYPE] for conversion purposes, it
+    Mike&gt; just uses it to decide whether to use XIM:
+
+I understand that; the point is that LC_CTYPE is about the internal
+structure (classification into alpha, num, hex; collation order, etc)
+of the character set, something quite different from the question of
+I/O protocols.
+
+XEmacs, for example, will internally reset LC_CTYPE in certain cases
+to guarantee that programs that parse natural language text will see
+the expected ordering after sorting.
+
+    Mike&gt; There are no setlocale() calls in kterm using LANG. I this
+    Mike&gt; wrong?
+
+I think so.
+
+    Mike&gt; I patched it with the following patch to make it work with
+    Mike&gt; glibc 2.2:
+
+Kterm evidently goes to some effort to flexibly work with the
+locales.  Why do you short-circuit kterm's facilities this way?
+
+    Mike&gt; Why did the kterm developers use LC_CTYPE?
+
+I don't know.  In general it is very dangerous to use the specific
+LC_* categories, because programs can and do manipulate them to get
+specific effects on text handling in the context of the basic locale
+defined by LANG.  That's why LANG is lowest precedence in general.
+
+    Mike&gt; RedHat (6.2 and 7.0) checks in /etc/X11/xinit/xinitrc.d/xinput
+    Mike&gt; for the value of LC_CTYPE to decide whether to start kinput2.
+
+    Mike&gt; Is this wrong?
+
+You ask a Debian user if Red Hat does wrong?  :-)
+
+    &gt;&gt; Are you sure nicolatter is an XIM input manager?
+
+    Mike&gt; Yes, it is an alternative to kinput2. Nicolatter's homepage
+    Mike&gt; is here:
+
+Thanks!
+
+    Mike&gt; Is it that bad? Aren't the keybindings to start XIM a user
+    Mike&gt; specific setup? So why not put in into $HOME? if $HOME is
+    Mike&gt; nfs mounted,
+
+Yes.  They're user-specific.  _Not_ host-specific.  _Not_ filesystem
+specific.
+
+X11 has a standard way to ensure that your Xserver is set up
+correctly, no matter where your home is or where the X server is:
+xrdb -display $DISPLAY &lt; ~/.Xresources.  If you use that, you never
+have to say:
+
+    Mike&gt; I only thought that it was very confusing that nicolatter
+    Mike&gt; did put the keybindings to start XIM in case of Wnn into the
+    Mike&gt; file ~/.nicolatter/global, but in case of Canna reads them
+    Mike&gt; from ~/.canna. I couldn't find that in nicolatters
+    Mike&gt; documentation, so I was surprised why changes to
+    Mike&gt; ~/.nicolatter/global didn't work in case of Canna.
+
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+<LI><STRONG><A NAME="00112" HREF="msg00112.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher SEKIYA &lt;wileyc@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00114" HREF="msg00114.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00132" HREF="msg00132.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00155" HREF="msg00155.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Mike Fabian &lt;mfabian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00182.html">Re: RC5</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00184.html">Re: About burning a linux dist on CD</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00155.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00044.html">April 13th Nomikai!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00183"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00183"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

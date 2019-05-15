@@ -1,0 +1,181 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: enscription thru loop device. -->
+<!--X-From: Kei Furuuchi <kfur@example.com> -->
+<!--X-Date:  Sat, 10 Oct 1998 02:06:26 +0900 -->
+<!--X-Message-Id: 13854.15526.608273.738462@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810081557.AAA01126@example.com -->
+<!--X-Reference-Id: 199810091622.QAA00316@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00338.html">Date Prev</A>][<A HREF="msg00340.html">Date Next</A>][<A HREF="msg00338.html">Thread Prev</A>][<A HREF="msg00354.html">Thread Next</A>][<A HREF="maillist.html#00339">Date Index</A>][<A HREF="threads.html#00339">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: enscription thru loop device.</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: enscription thru loop device.</strong></LI>
+<LI><strong>From</strong>: <strong>Kei Furuuchi &lt;<A HREF="mailto:kfur@example.com">kfur@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 10 Oct 1998 02:06:02 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00338.html">199810091622.QAA00316@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00285.html">199810081557.AAA01126@example.com</A>&gt;&lt;<A HREF="msg00338.html">199810091622.QAA00316@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Karl-Max Wagner writes:
+ &gt; &gt; I would like to enscript cd-recordable image thru loop device.
+ &gt; &gt; It seems loop device can't increase file size following the sequence
+ &gt; &gt; below:
+ &gt; &gt; 
+ &gt; &gt; $ touch cdr.img
+ &gt; 
+ &gt; That creates a file of the size 0. This won't simply cut it. You
+ &gt; have to make a file the size of an actual CDROM. Like this:
+ &gt; 
+ &gt; $ dd if=/dev/zero of=cdr.img bs=1024 count=650000
+ &gt; 
+ &gt; ....well, I don't know what the size of a CDROM exactly is. Put
+ &gt; into count the correct number. This is raw size - unformatted.
+ &gt; 
+ &gt; &gt; $ losetup -e des /dev/loop0 cdr.img
+ &gt;             ^^^^^^\overkill. Wastes time. Leave it away.
+But, this is the whole point to enscript cdr.img file thru loop
+device. Actually I failed to patch loop device which uses des. losetup 
+somehow enscripts, but the password losetup requires doesn't seem to
+matter. Strange. And -e xor is too simple. I can clearly see what
+password is because cdrom image contains a lot of 00 00 00 00 bits.
+ &gt; 
+ &gt; &gt; $ mkisofs -afvr -o /dev/loop0 &lt;directory&gt;
+ &gt;             ^^^^^^^^\leave that away, too. BTW, what
+ &gt; do you want with the -o ? cdr.img now is associated with
+ &gt; /dev/loop0. Treat it like a partition. Also leave &lt;directory&gt;
+ &gt; away. So far /dev/loop0 isn't mounted yet. So &lt;directory&gt; hasn't
+ &gt; lost anything in there !
+
+-o means mkisofs outputs to /dev/loop which makes enscripted cdrom
+image. &lt;directory&gt; is source of image I want. Then I do:
+
+$ cdrecord -v speed=2 dev=4,0 cdr.img
+
+to burn. Then 
+
+$ losetup -e des /dev/loop0 /dev/scd0
+$ mount -t iso9660 -r /dev/loop0 /mnt/loop
+
+to mount.
+ 
+ &gt; 
+ &gt; &gt; mkisofs fails. Is it usual?
+ &gt; 
+ &gt; As you did things so far, yes.
+ &gt; 
+ &gt; &gt; So far I haven't committed a medium yet. have anyone done already?
+ &gt; &gt; Or is there any better way?
+ &gt; 
+ &gt; Now you can offload the file onto a CDR. Use xcdroast for that.
+ &gt; It's the best. Made in Munich, so it must be good :-))))).
+ &gt; 
+
+But xcdroast is just X window frontend to those above programs?
+When I know what I am doing, why should I use the frontend?
+
+Regards,
+Kei.
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00285" HREF="msg00285.html">tlug: enscription thru loop device.</A></STRONG>
+<UL><LI><EM>From:</EM> Kei Furuuchi &lt;kfur@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00338" HREF="msg00338.html">Re: tlug: enscription thru loop device.</A></STRONG>
+<UL><LI><EM>From:</EM> karlmax@example.com (Karl-Max Wagner)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00338.html">Re: tlug: enscription thru loop device.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00340.html">Re: tlug: any kterm experts?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00338.html">Re: tlug: enscription thru loop device.</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00354.html">Re: tlug: enscription thru loop device.</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00339"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00339"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

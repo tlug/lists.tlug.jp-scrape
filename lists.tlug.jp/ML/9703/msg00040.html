@@ -1,0 +1,300 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: IMAP was (Re: tlug: kinput2 and mule) -->
+<!--X-From: Jim Schweizer <schweiz@example.com> -->
+<!--X-Date:  Mon, 10 Mar 1997 09:21:40 GMT -->
+<!--X-Message-Id: XFMail.970310182533.schweiz@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970310135825.13698B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00039.html">Date Prev</A>][<A HREF="msg00041.html">Date Next</A>][<A HREF="msg00039.html">Thread Prev</A>][<A HREF="msg00041.html">Thread Next</A>][<A HREF="maillist.html#00040">Date Index</A>][<A HREF="threads.html#00040">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: IMAP was (Re: tlug: kinput2 and mule)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: IMAP was (Re: tlug: kinput2 and mule)</strong></LI>
+<LI><strong>From</strong>: <strong>Jim Schweizer &lt;<A HREF="mailto:schweiz@example.com">schweiz@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 10 Mar 1997 18:22:28 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 8bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00039.html">Pine.HPP.3.95.970310135825.13698B-100000@example.com</A>&gt;</LI>
+<LI>Organization: JPS Solutions</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Jim Schweizer &lt;schweiz@example.com&gt;
+--------------------------------------------------------
+
+On 10-Mar-97 C. Oda wrote:
+&gt;--------------------------------------------------------
+&gt;tlug note from "C. Oda" &lt;craig@example.com&gt;
+&gt;--------------------------------------------------------
+&gt;On Sun, 9 Mar 1997, Stephen J. Turnbull wrote:
+&gt;
+&gt;turnbull&gt;    Craig&gt; I'm trying a new system of reading mail. 
+&gt;turnbull&gt;    Craig&gt; I'm using Pine
+&gt;turnbull&gt;    Craig&gt; 3.95 with IMAP4,
+&gt;What is IMAP?
+&gt;
+&gt;IMAP stands for Internet Message Access Protocol. It is a
+&gt;method of accessing electronic mail or bulletin board
+&gt;messages that are kept on a (possibly shared) mail server. 
+
+Funny you should mention IMAP. I just got a security advisory
+about it:
+
+---begin forwarded message----------------------
+                            Secure Networks Inc.
+
+                             Security Advisory
+                               March 2, 1997
+
+
+                     Buffer Overflow in imapd and ipop3d
+
+A vulnerability exists within Mark Crispin's mail server toolkit
+that will allow arbitrary individuals to obtain root access to
+servers running imapd and ipop3d.  This vulnerability is present
+in both the POP3 and IMAP2bis servers included in the PINE
+distribution, as well as the IMAP2bis and IMAP4 servers included
+in Mr. Crispin's IMAP toolkit.
+
+
+Technical Details
+~~~~~~~~~~~~~~~~~
+The vulnerable mail servers call a library routine to affect a
+Unix "login", authenticating the user against it's password. A
+stack overrun exists in this routine. In essence this will allow
+any client with the ability to attempt a login to enter an overly
+long username to cause arbitrary machine code to execute.
+
+Both the POP and IMAP servers Mr. Crispin distributes discard
+supervisory privileges sometime after this authentication phase.
+Unfortunately, the overflow occurs before this happens, and the
+vulnerability will thus allow an attacker superuser access.
+
+The problematic routine is server_login(), which is in
+"log_xxx.c" in the OS-dependent code tree of the server source
+distribution. The problem occurs due to the routine's attempt to
+allow a case insensitive match on the username, which it does by
+copying the username provided to the routine into an automatic
+variable in the routine's stack.
+
+The username buffer is MAILTMPLEN long, which defaults to 1024
+bytes.  Unfortunately, the server's input buffer is greater than
+this, allowing a remote client to feed the routine a username
+greater than 1024 bytes.  If the excess characters in this
+username contain a valid virtual memory address, the routine will
+overwrite it's stack frame when copying the username, causing the
+return from the routine to jump to an unexpected location.
+
+Interestingly, the buffer is converted to lowercase after being
+copied.  This provides a slight technical challenge, as the
+machine code required to take over the server contains uppercase
+characters. However, modifications to the "standard" stack
+overrun exploit code to reverse the affects of this lowercasing
+were trivial. On i386 4.4BSD, the VM address required to redirect
+server_login()'s return need not contain uppercase
+characters.
+
+The flawed code reads:
+
+long server_login (char *user, char *pass, int argc, char
+*argv[])
+{
+        char tmp[MAILTMPLEN];
+        struct passwd *pw = getpwnam (user);
+                /* allow case-independent match */
+        if(!pw) pw = getpwnam (lcase (strcpy (tmp, user)));
+
+        &lt;complete server login and return&gt;
+}
+
+
+Impact
+~~~~~~
+
+Remote individuals, who do not have a valid username and
+password for the mail server, can obtain root access to systems
+running a vulnerable IMAP or POP server.
+
+
+Vulnerable Systems
+~~~~~~~~~~~~~~~~~~
+
+Any system running Mark Crispin's POP or IMAP server, of a
+release earlier than 4.1beta is vulnerable.  To determine whether
+your system is vulnerable, telnet to ports 109, 110, 143 and 220.
+If you see a banner looking like:
+
+* OK example.com IMAP2bis Service 7.8(92) at Mon, 3 Mar 1997
+12:00:00-0500 (EST)
+
+or:
+
+* OK example.com IMAP4 v10.00 server ready
+
+or:
+
++OK example.com POP3 3.0(10) w/IMAP client (Report problems in
+this server to MRC@example.com) at Mon, 3 Mar 1998
+12:00:00 -0500
+(EST)
+
+Then your system is vulnerable.  If you see "POP3 3.3" or
+"IMAP4rev1" or later, your POP or IMAP server is not vulnerable.
+
+POP servers not derived from Mark Crispin's code, including the
+somewhat confusingly named "pop3d" from the University of
+California at Davis are not vulnerable to the attack described in
+this advisory. 
+
+Similarly, the University of California at Berkeley popper, and
+derived POP servers, including the Qualcomm popper, are not
+vulnerable to this attack.
+
+
+Fix Information
+~~~~~~~~~~~~~~~
+
+As a temporary workaround, you can disable the POP and IMAP
+services in /etc/inetd.conf, and then kill and restart inetd.
+
+You can fix the problem in the source yourself, by changing the
+server_login() function to read:
+
+        char tmp[MAILTMPLEN];
+        struct passwd *pw = getpwnam (user);
+
+        if(!pw) {
+                strncpy(tmp, user, MAILTMPLEN - 1);
+                pw = getpwnam(lcase(tmp));
+
+Or, as a final option, you can switch to the IMAP 4.1 beta
+distribution, which can be found at
+<A TARGET="_top" HREF="ftp://ftp.cac.washington.edu/mail/imap.tar.Z">ftp://ftp.cac.washington.edu/mail/imap.tar.Z</A>.
+
+
+Additional Information
+~~~~~~~~~~~~~~~~~~~~~~
+
+If you have any questions about this advisory, feel free to
+contact me, by sending mail to davids@example.com  If you wish to
+encrypt your messages to me, feel free to use the following PGP
+public key.
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: 2.6.2
+
+mQCNAzJ4qJAAAAEEAOgB7mooQ6NgzcUSIehKUufGsyojutC7phVXZ+p8FnHLLZNB
+BLQEtj5kmfww2A2pR29q4rgPeqEUOjWPlLNdSLby3NI8yKz1AQSQLHAwIDXt/lku
+8QXClaV6pNIaQSN8cnyyvjH6TYF778yZhYz0mwLqW6dU5whHtP93ojDw1UhtAAUR
+tCtEYXZpZCBTYWNlcmRvdGUgPGRhdmlkc0BzaWxlbmNlLnNlY25ldC5jb20+
+=LtL9
+-----END PGP PUBLIC KEY BLOCK-----
+----------------------------------------------
+Sent by: Jim Schweizer &lt;schweiz@example.com&gt;
+On: 10-Mar-97 at: 18:22:30 JST
+<A TARGET="_top" HREF="http://www1.harenet.or.jp/~schweiz/">http://www1.harenet.or.jp/~schweiz/</A>
+Lieberman's Law:
+Everybody lies, but it doesn't matter since nobody
+listens.
+----------------------------------------------
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">IMAP was (Re: tlug: kinput2 and mule)</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00039.html">IMAP was (Re: tlug: kinput2 and mule)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00041.html">Re: IMAP was (Re: tlug: kinput2 and mule)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00039.html">IMAP was (Re: tlug: kinput2 and mule)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00041.html">Re: IMAP was (Re: tlug: kinput2 and mule)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00040"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00040"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  git&#45;fu -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 11 Oct 2010 18:07:42 +0900 -->
+<!--X-Message-Id: 87fwwd6s60.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: AANLkTikB4nWApRomKQ&#45;_7esT=BE0Pbv4FvK3GN8w87F=@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00065.html">Date Prev</a>][<a href="msg00067.html">Date Next</a>][<a href="msg00065.html">Thread Prev</a>][<a href="msg00067.html">Thread Next</a>][<a href="maillist.html#00066">Date Index</a>][<a href="threads.html#00066">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  git-fu</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 11 Oct 2010 17:37:59 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20git-fu">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  git-fu</strong></li>
+<li>References: &lt;<a href="mailto:AANLkTikB4nWApRomKQ-_7esT%3DBE0Pbv4FvK3GN8w87F%3D@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20git-fu">AANLkTikB4nWApRomKQ-_7esT=BE0Pbv4FvK3GN8w87F=@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Shawn Brown writes:
+
+ &gt; &gt;From a private repo on Github, I want to make a release branch (ok can do).
+ &gt; 
+ &gt; In a new public repo, I want to clone the release branch.
+ &gt; 
+ &gt; I need to get the changes in the release branch into the public
+ &gt; repo.
+
+In theory, you can directly push/pull from the private repo to the
+public one.  I don't know about github's software, maybe this is not
+supported.  (Normally you'd need shell access to the host with any
+repo you way to pull to/push from.)  Note that push and pull are
+somewhat different from each other.  I explain that below.
+
+If not:
+
+ &gt; So do I pull from the release branch into a local repo and then
+ &gt; push out to the public repo.
+
+Yes.
+
+ &gt; AFAIK, development will only be in the release branch and non it the
+ &gt; public repo.
+
+I'm pretty sure I know what you mean, but in git phrases like &quot;develop
+in a branch,&quot; taken literally, don't really make sense.  See below.
+
+ &gt; I've never done anything like this.  Does pushing/pull to the release
+ &gt; branch from the same local repo where I push to the public repo make
+ &gt; sense.
+
+The basic answer is &quot;yes&quot;.  If other people are doing (some of) the
+work and you're the release manager, then
+
+    release/private repo
+             A |
+             | V
+            local --------&gt; public
+
+(where arrows denote pushes or pulls relative to local) makes sense.
+Note that normally you would also push any tags or release info (eg,
+NEWS, AUTHORS updates) created for the release from local -&gt; release,
+as indicated by the upward arrow.  Local is used for communicating
+between private and public, so it probably contains copies of all
+branches in both repositories.
+
+If you're doing all the work, then it's not obvious to me why you have
+a private branch on github, but whatever the reason, it seems more
+logical to push to both repositories from local
+
+    local -&gt; private    (development trunk aka branch &quot;master&quot;)
+    local -&gt; public     (distribution branch, eg &quot;version-1&quot;)
+
+because local is where all changes to the project content are actually
+made.  You would probably want to set up the &quot;private&quot; remote to push
+all branches, while the &quot;public&quot; remote would only accept pushes from
+the released branches.  (Note that &quot;setting up a remote&quot; refers to
+configuring the *local* branches.  This actually makes sense because
+in git *all* work that the user does is done in the local workspace.
+git has to do some work in the remote repositories, but git has few,
+if any, commands that work *only* on a remote repository.  Even
+commands like &quot;git push --dry-run&quot; require a local repository to
+compare to the remote repository.)
+
+Note that the content of versions of files, directories, and commits
+with the same SHA1 &quot;names&quot; are guaranteed to be the same no matter
+where they are created or stored.  That's why git (and other DVCSes
+like hg and bzr) can be distributed: it's just matter of moving around
+the content, but the True Names never change (&quot;right, Ged&quot;?)
+Repositories on different hosts or even in different workspaces will
+overlap (if they contain the same project), but each repository only
+contains the objects it needs.  It is (conceptually) easy to
+synchronize the needed parts.
+
+In git, branch references (&quot;names&quot; that can be understood by humans),
+on the other hand, are *not* shared across repositories or workspaces,
+and cannot be.  The reason is that when I work on a project &quot;here&quot;,
+and you work on the same line of development &quot;there&quot;, we think of it
+as the *same branch* and we want to refer to it by the *same* name.
+But your changes are typically different from mine.  I still think of
+my commits as being &quot;on *the* branch,&quot; and so do you.  We're both
+right, in some sense, but of course our local copies have diverged.
+
+This is one place where the various DVCSes differ substantially.  In
+Mercurial (hg) and Bazaar (bzr), for practical purposes workspace ==
+branch, and the URL of the workspace is normally used to name it.
+Relative URLs (directory names), then, are just abbreviations for
+unique names, like calling me &quot;Steve&quot; instead of &quot;Stephen John
+Turnbull&quot; (except that URLs are more unique than personal names, as
+anybody interested in Japanese military history probably knows --
+although I don't actually know that &quot;Stephen Turnbull&quot;'s middle name,
+or even if he has one).  The reason for mentioning this is that in
+these VCSes, the idea of &quot;working *in* a branch&quot; makes a lot of sense,
+because branches are physically located somewhere.
+
+In git, things are more abstract (as you might expect; git usually is
+more abstract than other systems).  Git creates namespaces (the most
+common one is &quot;origin/&quot;) which *can* be linked to other repositories
+via URLs and maintained transparently by git-fetch (in which case
+they're called &quot;tracking branches&quot;), but can be used for other
+purposes by Sufficiently Sophisticated Users (like Sufficiently Smart
+Compilers, SSUs may be a pure myth, of course ;-).
+
+What this means is that with git, you &quot;work *on* a branch *in* a
+workspace.&quot;  And git-pull and git-push are not simply direction-
+reversed ways of doing the same thing.  (Ditto, hg.  But in bzr, they
+are completely symmetric.)  The basic of ensuring the right objects
+are present in both source and target repos is symmetric, of course.
+But pull is assumed to be into an *active private workspace*.  git
+expects that you will now edit the content.  And it makes a further
+assumption, that you want to merge any existing local changes with the
+incoming remote changes.  Thus in general git-pull will result in a
+local version of the branch that differs from the remote version.
+(This is OK, because (1) you know what you're doing because you just
+did it :-) and (2) you won't confuse other workers because of the
+assumption of a *private* workspace.)
+
+git-push, on the other hand, assumes that the remote is *public*.
+Thus it refuses to to do things that would confuse other workers
+(rebase a branch), or possibly result in a mess (merge branches).
+This restricts git-push to what is called a *fast-forward [merge]*.
+
+If you set up the tracking branches correctly, then git-fetch (and the
+higher-level commands like git-push and git-pull) can do all the work
+for you.  git-clone will automatically set up an &quot;origin/&quot; namespace
+and a local tracking branch for each branch in the origin repository.
+I personally usually set up other remotes more or less manually, but
+there is a git-remote command to help manage them.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00067" href="msg00067.html">Re: [tlug] git-fu</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00065" href="msg00065.html">[tlug] git-fu</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00065.html">[tlug] git-fu</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00067.html">Re: [tlug] git-fu</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00065.html">[tlug] git-fu</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00067.html">Re: [tlug] git-fu</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00066"><strong>Date</strong></a></li>
+<li><a href="threads.html#00066"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

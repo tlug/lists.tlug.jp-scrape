@@ -1,0 +1,175 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Power cut off before shutdown -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 24 Oct 1996 06:26:43 GMT -->
+<!--X-Message-Id: m0vGJBL&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199610240405.NAA24843@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00147.html">Date Prev</A>][<A HREF="msg00149.html">Date Next</A>][<A HREF="msg00146.html">Thread Prev</A>][<A HREF="msg00151.html">Thread Next</A>][<A HREF="maillist.html#00148">Date Index</A>][<A HREF="threads.html#00148">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Power cut off before shutdown</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Power cut off before shutdown</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 24 Oct 96 15:22 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00146.html">199610240405.NAA24843@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Linux rebooted and toasted the filesystem on /dev/sda1 (where
+
+Actually it was toast as soon as the CPU halted with file system
+changes not yet sync'd.
+
+    Jim&gt; this version of Linux lives. The message is:
+
+    Jim&gt; /dev/sda1: UNEXPECTED INCONSISTENCY: RUN fsck MANUALLY
+
+    Jim&gt; I rebooted to my backup on /dev/hda1 and tried to e2fsck the
+    Jim&gt; unmounted /dev/sda1, but no go. There's nothing in the man
+    Jim&gt; page about doing this manually - neither the -a or -p tags
+    Jim&gt; work.
+
+You have to be in "single-user mode."  I have not found a good system
+for getting there using LILO flags, and "telinit S" definitely doesn't
+work for me in that situation; this may be due to a poor setup in
+/etc/rc.d/rc.*, but there it is.  The easiest thing to do is to use
+your Slackware installation diskettes, if you've got them, to boot to
+the setup system.  Don't run setup, don't mount anything, just run
+fsck.
+
+In your case life may be significantly harder since this is the
+infamous Peanut Brittle drive, as I recall.  (Given the state of your
+file system, I guess you know have a PB&amp;J on toast, huh :-P)  This
+means that you must be booting to a kernel that knows how to access
+Peanut Brittle drives.  How to arrange that depends on a couple of
+things.  If you can mount /dev/sda1 at all, you should be able to copy
+the kernel from there to the Slackware boot/install diskette and
+re-LILO the diskette.
+
+Life should work out OK once you get fsck to run.
+
+Warning: don't do this when you expect to need to be somewhere else in 
+an hour.  You may get lots and lots of messages about deleted inodes
+and incorrect reference counts and things like that (this is more
+typical of file system overflow crashes, but could happen); fsck
+should be told to fix such things.  On the other hand, you probably
+don't want to tell it to "fix all", in something that really looks
+ugly should come along.  So you have to go through it manually :-(.
+
+You could chance it with autofixing everything.  If you're going to do
+that you should think about trying to mount that fs readonly ("mount 
+-r -t ext2 /dev/sda1 /tmp_mount_pt") and trying to recover important
+data first.  That may be faster and safer than a manual fsck.
+
+Take care....
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00146" HREF="msg00146.html">Power cut off before shutdown</A></STRONG>
+<UL><LI><EM>From:</EM> "Jim Schweizer" &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00147.html">RE: Adding documents to the mule info tree</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00149.html">Nakamichi</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00146.html">Power cut off before shutdown</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00151.html">Re: Power cut off before shutdown</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00148"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00148"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

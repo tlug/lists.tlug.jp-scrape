@@ -1,0 +1,193 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] blocking port 6000 -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNqrfcnzzrq.pbz> -->
+<!--X-Date: Wed, 4 Sep 2002 13:44:50 +0900 (JST) -->
+<!--X-Message-Id: 20020904054454.GA8795%scottro@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 200209040400.NAA24400@example.com -->
+<!--X-Derived: pgp00050.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00084.html">Date Prev</a>][<a href="msg00086.html">Date Next</a>][<a href="msg00083.html">Thread Prev</a>][<a href="msg00125.html">Thread Next</a>][<a href="maillist.html#00085">Date Index</a>][<a href="threads.html#00085">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] blocking port 6000</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 4 Sep 2002 00:44:54 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<A HREF="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20blocking%20port%206000">scottro@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] blocking port 6000</strong></li>
+<li>References: &lt;<a href="msg00083.html">200209040400.NAA24400@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i-ja.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, Sep 03, 2002 at 11:36:45PM +0900, Operator wrote:
+&gt; TLUG'ers,
+&gt; I just ran nessus  and it told me that the X-server is accepting responses 
+&gt; from anyone!! this is bad..how do I stop this.. I'm using Mandrake 8.2 @ msec 
+&gt; 3.
+
+
+Just went to MD's site to look for an answer--WOW, what a SLOW site.  As
+near as I can see, they have a Bastille firewall thingie--does it give
+you the option of which ports to configure?  (I gave up looking after
+awhile, the site was too slow).
+
+Anyway, if you type the command InteractiveBastille from a
+terminal--they mention that you have to be root, and I'm guessing that
+this is a case where you might have to either do an su - or log in as
+root. (Doing a simple su will probably get you a bunch of command not
+found things)..
+  
+
+If that doesn't give you the option of ports, then you might have to
+manually try to add a rule--I remember someone telling their firewall
+scripts were a bit confusing, but...
+
+You'll have to figure out if it's running ipchains or iptables
+(hopefully, that Bastille uses one or the other). To do this, again as
+root do 
+iptables -L -n --line-numbers
+
+and if you get an error message then try ipchains -L -n  --line-numbers
+
+(it might be --line-number rather than numbers, but IIRC both work)
+
+If one of these gives you a result, 
+then, you can see where you want to insert it, for example, after a rule
+denying most well-known ports (0-1023).  
+
+Say you wanted to insert it on line 7 then it would be
+iptables -I INPUT 7 -s 0/0 -d 0/0 -p tcp --syn --dport 6000:6009 -j DROP
+
+The syntax is slightly different for ipchains, I ~think~ (but if you
+have ipchains and do 
+
+ipchains --help | less
+it should give it to you
+
+ipchains -I input 7 -s 0/0 -d 0/0 -p tcp -yes 6000:6009 -j DENY 
+
+Again, take a look at the help page (as opposed to
+the man page--the help page is fairly straightforward).  Again, that's
+assuming Bastille uses one or the other.  
+
+-- 
+Scott
+
+PGP keyID EB3467D6 (1B48 077d 66F6 9DB0 FDC2  A409 FA54 D575 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+
+ Colonel: Every inch of this installation is under constant, 24-hour
+surveillance.
+ Willow: Including the secret lab?
+ Colonel: Everything! (pause) What secret lab?
+</pre>
+<p><strong>Attachment:
+<a href="pgp00050.pgp" ><tt>pgp00050.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00125" href="msg00125.html">Re: [tlug] blocking port 6000</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00083" href="msg00083.html">[tlug] blocking port 6000</a></strong>
+<ul><li><em>From:</em> Operator</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00084.html">[tlug] Segmentation fault....what is this??</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00086.html">[tlug] Disk I/O bottleneck: how to solve?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00083.html">[tlug] blocking port 6000</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00125.html">Re: [tlug] blocking port 6000</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00085"><strong>Date</strong></a></li>
+<li><a href="threads.html#00085"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

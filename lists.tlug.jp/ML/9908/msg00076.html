@@ -1,0 +1,213 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: re: ppp but not quite -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 17 Aug 1999 14:01:00 +0900 -->
+<!--X-Message-Id: 14264.60527.738315.921166@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.9908160938010.722&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00075.html">Date Prev</A>][<A HREF="msg00077.html">Date Next</A>][<A HREF="msg00075.html">Thread Prev</A>][<A HREF="msg00079.html">Thread Next</A>][<A HREF="maillist.html#00076">Date Index</A>][<A HREF="threads.html#00076">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: re: ppp but not quite</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: re: ppp but not quite</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 17 Aug 1999 14:00:31 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00073.html">Pine.LNX.4.10.9908160938010.722-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00073.html">Pine.LNX.4.10.9908160938010.722-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I really, really don't think this is a routing/DNS problem; Tony (and
+anybody else with "PPP connection succeeds but TCP connections don't"
+problems) should start by rebooting to 2.0.x and see if he has any
+luck.  If that helps, rebuilding pppd against the 2.2.x headers is
+definitely recommended.  (One of these days soon I'll do that, I just
+don't need PPP very much, sorry, so probably not today.)
+
+Routing problems should prevent you from getting anything through; if
+ping (an ICMP application) and traceroute (which is just ping on
+steroids, read the man page) are working but TCP-based services are
+not, it strongly fingers the local TCP stack, not the IP stack nor the
+routing/DNS services.
+
+If you are so fortunate to have your /usr/src/linux/.config, why don't 
+you post it?
+
+Re the current discussion: does *anybody* on this list read man pages
+anymore?  Or is everybody reading obsolete pages except the Debian
+users?  (Tony is exempted, since he's a TL user and I _know_ their
+docs are sugob - both bogus and backward!)
+
+&gt;&gt;&gt;&gt;&gt; "Tony" == Tony Laszlo &lt;laszlo@example.com&gt; writes:
+
+    Tony&gt; I changed it to look like this: 
+
+    Tony&gt; domain buenahonda.org
+    Tony&gt; domain gol.com
+    Tony&gt; search buenahonda.org
+
+The gospel according to `man resolv.conf' (edited for brevity):
+
+       domain Local  domain  name.  Most queries for names within
+              this domain can use short  names  relative  to  the
+              local  domain.
+
+       search Search list for host-name lookup.  The search  list
+              is  normally determined from the local domain name;
+              by default, it contains only the local domain name.
+              This  may  be changed by listing the desired domain
+              search  path  following  the  search  keyword  with
+              spaces or tabs separating the names.
+
+              The search list is currently limited to six domains
+              with a total of 256 characters.
+
+       The domain and search keywords are mutually exclusive.  If
+       more than one instance of these keywords is  present,  the
+       last instance wins.
+
+And if neither is present, "domain" will be set by parsing the output
+of gethostname().
+
+Ie, your search list is one domain, `buenahonda.org'.  The "domain"
+lines are both ignored.  That means that if you specify a name
+"ftp.netscape.com" the resolver will try to find an IP address for
+"ftp.netscape.com", and if that doesn't work,
+"ftp.netscape.com.buenahonda.org".  You should always be able to find
+FQDNs as long as at least one healthy nameserver is listed in
+resolv.conf.
+
+    Tony&gt; nameserver 203.216.12.3
+
+This is a terminal server IIRC, not a nameserver.  Slows things down
+by a few millisecs.
+
+    Tony&gt; nameserver 203.216.4.4
+    Tony&gt; nameserver 203.216.4.5
+
+Look OK to me.
+
+    Tony&gt; Here's what happened when I connected with the new
+    Tony&gt; /etc/resolv.conf in place;
+
+Actually, what we need is a dump of what happens _after_ the ip_up
+script is done.  Like when Netscrap hangs.
+
+    Tony&gt; local  IP address 203.216.8.74
+    Tony&gt; remote IP address 203.216.71.201
+
+Jonathan, what is the difference between the terminal server at
+203.216.71.201 and the one at 206.216.12.3 (if that actually is a
+server)?  Can you at least confirm if they are the same
+hardware/software?
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: September 17 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: October 9 (Sat), 13:00     place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00079" HREF="msg00079.html">Re: tlug: re: ppp but not quite</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00073" HREF="msg00073.html">tlug: re: ppp but not quite</A></STRONG>
+<UL><LI><EM>From:</EM> Tony Laszlo &lt;laszlo@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00075.html">Re: tlug: re: ppp but not quite</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00077.html">tlug: mime.types(mpeg-4)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00075.html">Re: tlug: re: ppp but not quite</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00079.html">Re: tlug: re: ppp but not quite</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00076"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00076"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

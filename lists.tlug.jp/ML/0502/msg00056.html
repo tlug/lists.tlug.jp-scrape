@@ -1,0 +1,200 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Kuro&#45;Box -->
+<!--X-From-R13: Bngevpx @example.com <gyht.avrffraNtznvy.pbz> -->
+<!--X-Date: Mon, 14 Feb 2005 10:58:42 +0900 -->
+<!--X-Message-Id: 2d4c9c60050213175830fe0222@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00055.html">Date Prev</a>][<a href="msg00057.html">Date Next</a>][<a href="msg00047.html">Thread Prev</a>][<a href="msg00071.html">Thread Next</a>][<a href="maillist.html#00056">Date Index</a>][<a href="threads.html#00056">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Kuro-Box</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 14 Feb 2005 10:58:42 +0900</li>
+<li><strong>From</strong>: <strong>Patrick Niessen &lt;<A HREF="mailto:tlug.niessen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Kuro-Box">tlug.niessen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Kuro-Box</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Dear All,
+
+just wanted to share my experience with this equipment.  I bought
+&quot;kuro-box&quot; which is esentially a developer bare bone version of the
+bufallo linkstation.
+
+You can place any UDMA IDE drive in there and then Linux will provide
+NAS capabilities, using the built in PPC processor and Gigabit
+networking.  It also has a USB port which is intended for another
+external USB disk (however, you can hack the system to use it for
+other things (eg. printserver).
+
+For me the attraction was that it consumes low power (ie. 17 Watt
+according to spec), and so can be permanently on in my home without
+using too much power.
+
+The construction is straight forward - it took me 10 minutes to open
+up the box, place a 250 Gig hd inside.  Once connected to power it
+will boot a mini linux from memory.  Normally you are supposed to use
+a Win application to install the hard drive, but people on the web
+found out a manual way, which also allows customisation:
+
+1. Prepare disks using the included utility.  If no input is given 3
+partitions are created,  one root (rather too small), one swap (also
+too small) and the rest is for data.  So the point here is to specify
+the interactive options so that you have more space for additional
+applications you want to install.
+
+2. Create file systems.  The default will use ext3 journaled systems. 
+Also here you can tweak the options to get better performance /
+capacity for your needs
+
+3. install system image.  This is provided on a CD or can be
+downloaded from the website.  Its a zip file containing a basic linux
+root system and runs telnet, ftp, webinterface etc by default (very
+unsafe).  Basically just extract to the root partition.  I also copied
+some bin's from the Flash system to this new root (like unzip) as they
+seem to be missing in the image.After finishing you have to save
+something to flash (not sure about what actually happens but you use a
+command write_ok) to finish off.
+
+4. reboot into new system.  This will now run the kernel from flash
+with the root=/dev/hda3 option.  Some services like samba ftp and
+telnet are already enabled.
+
+5. Install development system.  Obviously it would be better to run
+newer application versions, and add stuff like postfix and imap.  On
+the CD are some binary packages. just copy them to the disk using
+samba/smb from a pc (or ftp) and then extract them in root.  After
+that you can start compiling.
+
+I first compiled openssh:  download packages from the web site, as
+well as latest version of zlib (the one included is too old).  then :
+
+# ./configure --with-zlib=../zlib-xxxx/
+# make
+# make install
+
+After that I also compiled rsync.  You can configure the startup
+services now to include ssh and remove ftp/telnet and the web
+interface.
+
+My main purpose for using this box is 
+
+a) backup my OSX home dir (rsync)
+b) serve my website (with Gigs of baby fotos) from home (w/o costing
+loads in power) (apache)
+c) share mp3s with friends who also use the kuro-box (rsync)
+d) mail server (future plan)
+
+I onl have the box since friday and only spent two hours with it.
+However first impressions are very positive.  A full Linux server with
+low power the size of an external hard disk enclosure.  It seems so
+flexible that it can be molded to any purpose.  Some people even seem
+to be able to make it boot gentoo and debian (will try when I have
+more time).
+-- 
+Patrick Niessen
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00071" href="msg00071.html">Re: [tlug] Kuro-Box</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00073" href="msg00073.html">Re: [tlug] Kuro-Box</a></strong>
+<ul><li><em>From:</em> Gerald Naughton</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00055.html">Re: [tlug] list server accepting requests?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00057.html">Re: [tlug] empty rows (PostgreSQL)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00047.html">[tlug] Re: empty rows (PostgreSQL)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00071.html">Re: [tlug] Kuro-Box</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00056"><strong>Date</strong></a></li>
+<li><a href="threads.html#00056"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

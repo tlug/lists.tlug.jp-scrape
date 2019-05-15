@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Craig's "Rainikkusu" site -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Tue, 29 Oct 1996 03:01:33 GMT -->
+<!--X-Message-Id: 9610290259.AA27244@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0vI2hL&#45;00001OC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00180.html">Date Prev</A>][<A HREF="msg00182.html">Date Next</A>][<A HREF="msg00180.html">Thread Prev</A>][<A HREF="msg00182.html">Thread Next</A>][<A HREF="maillist.html#00181">Date Index</A>][<A HREF="threads.html#00181">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Craig's "Rainikkusu" site</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Craig's "Rainikkusu" site </strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 29 Oct 1996 11:59:15 JST</LI>
+<LI>In-Reply-To: Your message of "Tue, 29 Oct 1996 10:10:00 JST."            &lt;<A HREF="msg00180.html">m0vI2hL-00001OC@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen J Turnbull &lt;turnbull@example.com&gt; writes:
+
+
+&gt;&gt;&gt;&gt;&gt; "Shige" == Shige Abe &lt;sabe@example.com&gt; writes:
+    Shige&gt; We have DnD for our Wharf (Dock), I heard that you can drag
+    Shige&gt; filenames into the icon, and the application corresponding
+    Shige&gt; to the icon will fire up using data from the file.
+
+    Stephen&gt; Yes, I can see how you'd do that; you give the file
+    Stephen&gt; manager (or the window manager) the ability to interpret
+    Stephen&gt; calls like "exec mule %s", where %s gets the filename
+    Stephen&gt; substituted in.  However, I don't want to fire up a new
+    Stephen&gt; mule every time I edit a new file.
+
+You don't have to fire up a new copy every time. You can use the
+EDITOR environment variable to send a document to an resident copy of
+emacs ( mule ):
+
+
+Using Emacs as a Server
+=======================
+
+   Various programs such as `mail' can invoke your choice of editor to
+edit a particular piece of text, such as a message that you are
+sending.  By convention, these programs use the environment variable
+`EDITOR' to specify which editor to run.  If you set `EDITOR' to
+`emacs', they invoke Emacs--but in an inconvenient fashion, by starting
+a new, separate Emacs process.  This is inconvenient because it takes
+time and because the new Emacs process doesn't share the buffers in the
+existing Emacs process.
+
+   You can arrange to use your existing Emacs process as the editor for
+programs like `mail' by using the Emacs client and Emacs server
+programs.  Here is how.
+
+   First, the preparation.  Within Emacs, call the function
+`server-start'.  (Your `.emacs' file can do this automatically if you
+add the expression `(server-start)' to it.)  Then, outside Emacs, set
+the `EDITOR' environment variable to `emacsclient'.
+
+   Then, whenever any program invokes your specified `EDITOR' program,
+the effect is to send a message to your principal Emacs telling it to
+visit a file.  (That's what the program `emacsclient' does.) Emacs
+obeys silently; it does not immediately switch to the new file's
+buffer.  When you want to do that, type `C-x #' (`server-edit').
+
+   When you've finished editing that buffer, type `C-x #' again.  This
+saves the file and sends a message back to the `emacsclient' program
+telling it to exit.  The programs that use `EDITOR' wait for the
+"editor" (actually, `emacsclient') to exit.  `C-x #' also checks to see
+if any other files are pending for you to edit, and selects the next
+one.
+
+   You can switch to a server buffer manually if you wish; you don't
+have to arrive at it with `C-x #'.  But `C-x #' is the only way to say
+that you are "finished" with one.
+
+   If you set the variable `server-window' to a window or a frame, `C-x
+#' displays the server buffer in that window or in that frame.
+
+   While `mail' or another application is waiting for `emacsclient' to
+finish, `emacsclient' does not read terminal input.  So the terminal
+that `mail' was using is effectively blocked for the duration.  In
+order to edit with your principal Emacs, you need to be able to use it
+without using that terminal.  There are two ways to do this:
+
+   * Using a window system, run `mail' and the principal Emacs in two
+     separate windows.  While `mail' is waiting for `emacsclient', the
+     window where it was running is blocked, but you can use Emacs by
+     switching windows.
+
+   * Use Shell mode in Emacs to run the other program such as `mail';
+     then, `emacsclient' blocks only the subshell under Emacs; you can
+     still use Emacs to edit the file.
+
+   Some programs write temporary files for you to edit.  After you edit
+the temporary file, the program reads it back and deletes it.  If the
+Emacs server is later asked to edit the same file name, it should assume
+this has nothing to do with the previous occasion for that file name.
+The server accomplishes this by killing the temporary file's buffer when
+you finish with the file.  Use the variable `server-temp-file-regexp'
+to specify which files are temporary in this sense; its value should be
+a regular expression that matches file names that are temporary.
+
+
+Regards,
+
+	Andy
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00182" HREF="msg00182.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00180" HREF="msg00180.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00180.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00182.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00180.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00182.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00181"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00181"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

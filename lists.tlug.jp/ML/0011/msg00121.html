@@ -1,0 +1,205 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: DSelect/base&#45;passwd -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 14 Nov 2000 17:09:29 +0900 (JST) -->
+<!--X-Message-Id: 14864.62265.347572.858354@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3A10B915.14C93AF6@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00120.html">Date Prev</A>][<A HREF="msg00122.html">Date Next</A>][<A HREF="msg00119.html">Thread Prev</A>][<A HREF="msg00122.html">Thread Next</A>][<A HREF="maillist.html#00121">Date Index</A>][<A HREF="threads.html#00121">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>DSelect/base-passwd</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>DSelect/base-passwd</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 14 Nov 2000 17:09:29 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00119.html">3A10B915.14C93AF6@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00119.html">3A10B915.14C93AF6@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;OeyEM.A.3eF.xPPE6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Darren" == Darren Cook &lt;darrenj@example.com&gt; writes:
+
+    Darren&gt; I've been running Debian Potato on my test server for 2-3
+    Darren&gt; months now, and it's okay, but I still find dselect a bit
+    Darren&gt; confusing (FWIW, I still find rpm confusing as well).
+
+I don't find it particularly confusing, but the quality of information
+provided by the Debian utilities is just not sufficient when there are
+about 6000 packages.
+
+    Darren&gt; I upgraded bind this morning (when upgrading bind should I
+    Darren&gt; assume that dselect will also restart named, or am I
+
+dselect doesn't do this.  This is actually done by the package itself
+in the post-install script.  Not a big deal, except that if you're
+really curious what a particular install did, you can say "no" when
+dselect asks if you want to get rid of the package files.  Then you
+can install "dpkg -i /var/cache/apt/archives/$PACKAGE_$VERSION.deb"
+and watch what it does.  (Of course, if it has already done some
+things, it shouldn't do them again, but often it will tell you what it
+is thinking about doing.)
+
+If it is going to restart a daemon, normally it will tell it is
+doing so.  It normally does.  It normally shouldn't hurt if you
+restart a daemon yourself, though.
+
+    Darren&gt; expected to do that manually? I did it manually just to be
+    Darren&gt; sure), and it also upgraded 11Mb of others.
+
+    Darren&gt; In particular it wanted to upgrade base-passwd (see
+    Darren&gt; below), but then said it wants to change the home
+    Darren&gt; directory of postgres. But postgres is installed from
+    Darren&gt; source not .deb, and is under /usr/local/, so why is it
+    Darren&gt; intefering? In fact why had it created a postgres user
+    Darren&gt; before I'd even installed postgres? Is changing postgres
+    Darren&gt; to a 100+ uid the proper way to solve this?
+
+postgres is a system user.  It has special privileges.
+Conventionally, such users are given "small" UIDs.  The problem is
+that often the UID is hardcoded into the package in some way.  If two
+packages expect to use the same UID, you have a problem.  So Debian
+keeps a list of them, and sets them up in a convenient way so that
+they won't conflict.  Basically the same way that telnet is always
+port 23, smtp port 25, and http port 80 (although UID assignment is
+normally not as necessary as with the "well-known ports" for network
+services).
+
+The reason it does this in advance is to prevent packages that just
+grab an arbitrary available UID from taking an assigned one.
+
+It is unlikely that you can solve this by changing postgres's UID, the
+next upgrade to base-passwd will want to change it back.  I'd say just
+be careful to refuse changes to /etc/passwd that affect postgres, even
+if that means refusing other changes dpkg wants to make at the same
+time.  (It will back up the passwd file, don't worry.)
+
+It's not clear to me that this level of pedantry is necessary.  You
+could file a bug report with debian, see <A TARGET="_top" HREF="http://www.debian.org/">http://www.debian.org/</A> for
+the procedure.
+
+    Darren&gt; Also when I said No, was I just saying no to the postgres
+    Darren&gt; change, or the whole upgrade? Am I now missing some
+    Darren&gt; important upgrade?
+
+Only to the postgres change.  If there had been other base-passwd
+changes, you should have been asked about each in turn.  (I suspect
+Debian isn't that fine-grained, but they could and should be.)
+
+    Darren&gt; For more documentation on the Debian account policies
+    Darren&gt; please see /usr/share/doc/base-passwd/README.
+
+Read this.
+
+    Darren&gt; Okay, I will not update your system. If you want to make
+    Darren&gt; this update later please check the update-passwd utility.
+
+less /usr/sbin/update-passwd
+
+may be informative.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00122" HREF="msg00122.html">Re: DSelect/base-passwd</A></STRONG>
+<UL><LI><EM>From:</EM> Viktor Pavlenko &lt;vp@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00119" HREF="msg00119.html">DSelect/base-passwd</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darrenj@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00120.html">Re: FreeBSD vs. Linux (another question)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00122.html">Re: DSelect/base-passwd</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00119.html">DSelect/base-passwd</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00122.html">Re: DSelect/base-passwd</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00121"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00121"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

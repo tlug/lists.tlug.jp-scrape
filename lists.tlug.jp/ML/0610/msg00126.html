@@ -1,0 +1,170 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] making make? -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Sat, 14 Oct 2006 13:46:37 +0900 -->
+<!--X-Message-Id: d8fcc0800610132146q47d7a0c3w8ff47381ffc3cc98@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1160790094.17722.9.camel@example.com -->
+<!--X-Reference: d8fcc0800610132122j3e382ee2j777447f09a4a7c8@example.com -->
+<!--X-Reference: 1160800619.17722.14.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00125.html">Date Prev</a>][<a href="msg00127.html">Date Next</a>][<a href="msg00125.html">Thread Prev</a>][<a href="msg00129.html">Thread Next</a>][<a href="maillist.html#00126">Date Index</a>][<a href="threads.html#00126">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] making make?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 14 Oct 2006 13:46:34 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20making%20make%3F">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] making make?</strong></li>
+<li>References: &lt;<a href="mailto:1160790094.17722.9.camel@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20making%20make%3F">1160790094.17722.9.camel@example.com</a>&gt;	&lt;<a href="mailto:d8fcc0800610132122j3e382ee2j777447f09a4a7c8@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20making%20make%3F">d8fcc0800610132122j3e382ee2j777447f09a4a7c8@example.com</a>&gt;	&lt;<a href="mailto:1160800619.17722.14.camel@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20making%20make%3F">1160800619.17722.14.camel@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+[Replying to the list instead of Scott directly.]
+
+On 14/10/06, scott &lt;scott@example.com&gt; wrote:
+
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+On Sat, 2006-10-14 at 13:22 +0900, Josh Glover wrote:
+
+&gt; Having a C compiler on a firewall box is A Very Bad Thing(TM)[1], so I
+&gt; am sure that even if you can get make installed, you won't have gcc.
+&gt;
+I agree with this. However, it would be possible to uninstall the C
+compiler after the ethernet driver has been compiled for that server,
+wouldn't it? Without the quad cards, it can't function as a firewall, so
+I need to get them recognized somehow.
+</pre></blockquote><pre style="margin: 0em;">
+
+I would recommend creating a chroot environment inside your Checkpoint
+install into which you will copy everything, installing the build
+toolchain there, compiling, copying the compiled modules of of the
+jail, and then blowing away the jail. This will minimise the chances
+of the toolchain install leaving potentially nasty tools around.
+Should be as simple as:
+
+ssh root@example.com
+mkdir /chroot
+rsync -av --exclude /chroot / /chroot/
+chroot /chroot /bin/bash
+rpm -Uvh gcc*.rpm make*.rpm  # note that I don't know what the RPMs are called!
+cd /usr/src/network-card-driver/  # change &quot;network-card-driver&quot; to
+the right thing
+./configure &amp;&amp; make &amp;&amp; make install
+exit
+cp /chroot/lib/modules/2.6.13/kernel/drivers/net/network-card-driver.ko \
+/lib/modules/2.6.13/kernel/drivers/net/
+rm -rf /chroot/
+
+Cheers,
+Josh
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00129" href="msg00129.html">Re: [tlug] making make?</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00130" href="msg00130.html">Re: [tlug] making make?</a></strong>
+<ul><li><em>From:</em> Alain Hoang</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00121" href="msg00121.html">[tlug] making make?</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00125" href="msg00125.html">Re: [tlug] making make?</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00125.html">Re: [tlug] making make?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00127.html">Re: [tlug] Making sure people get the message</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00125.html">Re: [tlug] making make?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00129.html">Re: [tlug] making make?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00126"><strong>Date</strong></a></li>
+<li><a href="threads.html#00126"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Get your Bumpers ready! -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Wed, 19 Nov 1997 23:11:07 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xYNlu&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.971117182348.3200B&#45;100000@example.com -->
+<!--X-Reference-Id: 34714A4A.8D03B4A4@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00133.html">Date Prev</A>][<A HREF="msg00135.html">Date Next</A>][<A HREF="msg00121.html">Thread Prev</A>][<A HREF="msg00127.html">Thread Next</A>][<A HREF="maillist.html#00134">Date Index</A>][<A HREF="threads.html#00134">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Get your Bumpers ready!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Get your Bumpers ready!</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 20 Nov 1997 12:59:18 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00121.html">34714A4A.8D03B4A4@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00115.html">Pine.LNX.3.96.971117182348.3200B-100000@example.com</A>&gt;&lt;<A HREF="msg00121.html">34714A4A.8D03B4A4@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Alan" == Alan B Stone &lt;stoneab@example.com&gt; writes:
+
+    Alan&gt; I will say this since working with random numbers/generation
+    Alan&gt; is something I work with.  If you place a range (limit) like
+    Alan&gt; from this to that, then excluding fractions and decimals you
+
+What does this mean in the context of finite precision floats?  Most
+fractions and decimals are not representable.  In fact, none of the
+relevant ones are in the case of most pseudo-random number generators
+since MaxRand is normally relatively prime to the base for the FP
+representation.
+
+    Alan&gt; do not have a random number generator.
+
+Ah....  Knuth suggests "this +(floor(((that-this)*rand())/MaxRand))";
+do you know something he didn't know in 1981?  It is not quite
+uniform, but if (that - this) isn't too big, nobody in TLUG will
+notice.
+
+And AFAICT, if MaxRand == a*(that - this) + b, then
+
+int draw ()
+{
+    int temp = rand() - b;	/* assume MaxRand &lt; MaxInt */
+    return temp &lt; 0 ? draw() : this + temp % a;
+}
+
+ought to do the trick.  If it doesn't, rand() is unsatisfactory for
+Monte Carlo studies in any case.  Statisticians do exactly that kind
+of conditioning operation on pseudo-random variables all the time in
+constructing tables for statistics whose distributions cannot be
+solved in closed form.
+
+And it is an algorithm (despite looking like a potential infinite
+recursion), since pseudo-random numbers must cycle, and "good" ones
+are usually required to hit all values.  Could be a mite slow on
+really bad choices of seed, but running time is bounded....
+
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; for the salt, the system clock?  When I did it with Java, I
+    Craig&gt; was getting random numbers clustered in certain areas.  (I
+
+I really don't think so ... Sun isn't that dumb.  Anyway, for many
+versions of libc all the random number generators were in fact
+variations on a theme.  Even if not, I'm sure that both Java and Perl
+use a system-provided function at some level; "rolling your own"
+general-purpose random number generator is a very very dangerous thing 
+to do.  Knuth devotes 170 (one hundred and seventy) pages of _The Art
+of Computer Programming_ to the topic.  170 very very dense pages....
+
+    Craig&gt; Ahh, to use hitech or lotech that is the question.  Which
+    Craig&gt; is more random?
+
+Ask Schroedinger's Cat.
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00115" HREF="msg00115.html">Re: tlug: Get your Bumpers ready!</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00121" HREF="msg00121.html">Re: tlug: Get your Bumpers ready!</A></STRONG>
+<UL><LI><EM>From:</EM> "Alan B. Stone" &lt;stoneab@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00133.html">RE:  Re: tlug: Stickers</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00135.html">tlug: Keeping the spool</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00121.html">Re: tlug: Get your Bumpers ready!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00127.html">Re: tlug: Get your Bumpers ready!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00134"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00134"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

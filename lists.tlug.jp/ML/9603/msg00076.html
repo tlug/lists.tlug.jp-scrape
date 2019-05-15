@@ -1,0 +1,157 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: disk problems -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Fri, 15 Mar 1996 01:43:22 GMT -->
+<!--X-Message-Id: m0txOPq&#45;00mMNgC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.91.960315095150.24658B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00075.html">Date Prev</A>][<A HREF="msg00077.html">Date Next</A>][<A HREF="msg00074.html">Thread Prev</A>][<A HREF="msg00077.html">Thread Next</A>][<A HREF="maillist.html#00076">Date Index</A>][<A HREF="threads.html#00076">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: disk problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: disk problems</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Fri, 15 Mar 96 10:34 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00074.html">Pine.HPP.3.91.960315095150.24658B-100000@example.com</A>&gt; (message from Craig Oda on Fri, 15 Mar 1996 10:00:16 +0900 (JST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Craig Oda &lt;craig@example.com&gt; writes:
+
+   These are some error messages at read time:
+
+   hda: QUANTUM FIREBALL1080A, 1039MB w/83KB Cache, LBA, CHS=2112/16/63
+   hdb: FX400_02, ATAPI CDROM drive
+
+This is a bad sign; the CD-ROM and hard drive usually want to be on
+separate interfaces.  I suspect that the reason is that a given driver 
+hogs an IRQ, so that you're getting interference from the hard drive
+driver:
+
+[snip]
+   hdb: command error: status=0x51
+   hdb: command error: error=0x50
+   end_request: I/O error, dev 03:40, sector 65
+   isofs_read_super: bread failed, dev 03:40 iso_blknum 16
+   hdb: code: 0x70  key: 0x05  asc: 0x64  ascq: 0x00
+   Unable to identify CD-ROM format.
+
+Try recompiling with the separate interfaces enabled.
+
+Oo-er, maybe you don't have a disk in the drive?  Try putting one in
+and mounting it?  Nah, can't be....
+
+   niji:~# lilo
+   geo_comp_addr: Cylinder number is too big (1026 &gt; 1023)
+   niji:~# 
+
+Maybe you have an old LILO?  This I've never seen before.  If 1026 is
+*not* the last cylinder, then maybe one of LILO's resources, probably
+the kernel, is there.  Moving the kernel to a reasonable place might
+help.  Or you could partition the drive, and put the swap area at the
+top of the disk (that 41MB swap area will getyou under the 1023
+cylinder limit).
+
+   Paul just told me to check the BIOS.  Any other hints?
+
+Yah, some recent BIOSes for SCSI do a different translation (instead
+of 64 heads, they say they have 255 heads) that gets the cylinder
+count down.  Maybe you can pull something like that.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00074" HREF="msg00074.html">disk problems</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00075.html">Re: Linux, Win 95, and Netscape Problems</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00077.html">re: disk problems</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00074.html">disk problems</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00077.html">re: disk problems</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00076"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00076"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

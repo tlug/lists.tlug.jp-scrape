@@ -1,0 +1,293 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] A Rich Experiment Indeed -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Sun, 04 Dec 2005 19:07:19 +0900 -->
+<!--X-Message-Id: 20051204100726.GH4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20051202154627.GB4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051202152527.302e2f6f.jep200404@example.com -->
+<!--X-Reference: 20051203122655.GG4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051203092314.3118db01.jep200404@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00041.html">Date Prev</a>][<a href="msg00043.html">Date Next</a>][<a href="msg00031.html">Thread Prev</a>][<a href="msg00043.html">Thread Next</a>][<a href="maillist.html#00042">Date Index</a>][<a href="threads.html#00042">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] A Rich Experiment Indeed</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 4 Dec 2005 11:07:26 +0100</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<a href="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20A%20Rich%20Experiment%20Indeed">hajek1@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] A Rich Experiment Indeed</strong></li>
+<li>References: &lt;<a href="msg00016.html">20051202154627.GB4348@example.com</a>&gt;	&lt;<a href="msg00018.html">20051202152527.302e2f6f.jep200404@example.com</a>&gt;	&lt;<a href="msg00025.html">20051203122655.GG4348@example.com</a>&gt;	&lt;<a href="msg00031.html">20051203092314.3118db01.jep200404@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.9i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hello :)
+
+well, I have been reading more and trying to understand. I am doing my
+best, but I honestly ask you to be patient with me :) 
+
+So here is what I have found:
+
+My ftime man page says basicaly the same as Jim's. 
+eg.
+......
+BUGS
+
+   This function is obsolete.  Don't use it.  If the time in seconds
+   suf- fices,   time(2)  can  be  used;  gettimeofday(2)  gives
+   microseconds; clock_gettime(3) gives nanoseconds but is not yet
+   widely available.
+
+   Under libc4 and libc5 the  millitm  field is meaningful.   But early
+   glibc2 is buggy and returns 0 there; glibc 2.1.1 is correct again.
+......
+
+
+Now, there are 2 points which I would like to clearly express in a hope
+for correct understanding of each other :) (again, please be patient
+with me...) 
+
+1. I have chacked this immediately after Jim suggested to do so.  So
+from my point of view, ftime() is dead and I should forgot about it :)  
+
+2. In my original program (eg. cas.c) I used printf() in a wrong way
+(eg. %d.%d instead of %d.%03ld). Again Jim discovered the point as far
+as I can understand. The problem was &quot;decimal shift&quot;. 
+eg. 
+
+measured time[1]   -&gt;    _my_ prinf() result
+
+1.001              -&gt;    1.1     
+1.010              -&gt;    1.10
+1.100              -&gt;    1.100
+
+                          ^
+                          |------ THE SAME NUMBER ! :)   
+
+
+If I (only) for this moment forget about other very useful tips and
+suggestions made by Jim [2], I see two ways of improvement:
+
+A - replace ftime with gettimeofday()
+B - replace my printf format with a better one eg. use %d.%03ld 
+
+In Jim's cas2.c only B was implemented. 
+In Josh's noname, both A and B ware implemented. 
+
+see :
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/cas2.c">http://material.karlov.mff.cuni.cz/people/hajek/timetest/cas2.c</a>
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname.c">http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname.c</a>
+
+I have compiled both and run for a moment [3] with:
+$ ./cas2 | uniq | sed -e 's/^113368//g' &gt; cas2.sed
+$ ./josh_noname | uniq | sed -e 's/^113368//g' &gt; josh_noname.sed
+
+resulting in:
+
+$ head josh_noname.sed
+1994.681644000   
+1994.681668000   
+1994.681669000   
+1994.681670000   
+1994.681671000   
+1994.681672000   
+1994.681673000   
+1994.681674000   
+1994.681675000   
+1994.681676000   
+$ head cas2.sed
+1967.897         
+1967.898         
+1967.899         
+1967.913         
+1967.914         
+1967.915         
+1967.916         
+1967.917         
+1967.918         
+1967.919         
+
+all data can be seen here (josh_noname.sed is about 31MB big):
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/">http://material.karlov.mff.cuni.cz/people/hajek/timetest/</a>
+
+Dada ploted with gnuplot :
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/cas2.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/cas2.png</a>
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname.png</a>
+
+Hopla! 
+
+Even though Jim did not use gettimeofday(), his program gives more or
+less straight line, while Josh's noname gives a saw. 
+
+It is about time to inspect Josh's programm :)))
+Perhaps the problem is in this line:
+
+printf(&quot;%d.%03ld \t \n&quot;,(int)start.tv_sec,start.tv_usec*1000);
+
+Let me change it to :
+printf(&quot;%d.%06ld \t \n&quot;,(int)start.tv_sec,start.tv_usec/1000);
+           ^^^^^                                    ^^^^^^^^^
+
+producing:
+$ head josh_noname2.sed
+3269.000626      
+3269.000627      
+3269.000634      
+3269.000635      
+3269.000636      
+3269.000637      
+3269.000638      
+3269.000639      
+3269.000640      
+3269.000641      
+
+and graphed:
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname2.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname2.png</a>
+
+Oh no! Wrong again... :)
+
+Aha, ... let's use this line instead:
+printf(&quot;%d.%06ld \t \n&quot;,(int)start.tv_sec,start.tv_usec);
+                                                  ^^^^^^
+and this time we have samwhat good eresult :) 
+see:
+<a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname3.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/josh_noname3.png</a>
+
+The remaining part: zoom out the data and see, if the there is saw on
+the smaler scale. 
+
+I still do not understand some parts of rtc.txt from kernel. doc, and
+some other timing issues involved, but I will address them in a separate
+email.
+
+Finaly, I have noticed, that gnuplot [4] is able to handle mouse clicks
+inside graph and some manipulation based on mouse input. I shall learn
+these cool tricks definitely! :) 
+If anyone has a good totorial page, it would be wellcome.
+
+
+----------------
+[1] whatever tool was used to obtain this data
+[2] e.g. using pipes and sed. 
+[3] I counted to 20 on fingers :)) Not really exact &quot;clocks&quot; 
+[4] $ gnuplot --version
+    gnuplot 4.0 patchlevel 0
+
+
+Best regards
+Michal
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00043" href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00051" href="msg00051.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00016" href="msg00016.html">[tlug] timing for geeks :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00031" href="msg00031.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00041.html">Re: [tlug] driving on the wrong side of the road</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00031.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00042"><strong>Date</strong></a></li>
+<li><a href="threads.html#00042"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

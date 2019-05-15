@@ -1,0 +1,193 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Japanese Input -->
+<!--X-From-R13: fnxrjvfu <fnxrjvfuNlnubb.pbz> -->
+<!--X-Date: Wed, 1 Dec 2004 19:28:41 &#45;0800 (PST) -->
+<!--X-Message-Id: 20041202032841.50390.qmail@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00022.html">Date Prev</a>][<a href="msg00024.html">Date Next</a>][<a href="msg00036.html">Thread Prev</a>][<a href="msg00037.html">Thread Next</a>][<a href="maillist.html#00023">Date Index</a>][<a href="threads.html#00023">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Japanese Input</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 1 Dec 2004 19:28:41 -0800 (PST)</li>
+<li><strong>From</strong>: <strong>sakewish &lt;<A HREF="mailto:sakewish@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Japanese%20Input">sakewish@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Japanese Input</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+All,
+
+Thanks again for all your help with Japanese input. 
+To close the loop, I thought I'd write the steps I
+used in case anyone cares.  I used the latest versions
+of canna &amp; kinput2 (Oct 2002? - there are some
+problems with this package - needs update).  Build
+system had gcc-3.2.3, binutils-2.14, make-3.80,
+glibc-2.3.2 &amp; xf86-4.4.0.
+
+Attached is a .txt doccument with the commands I used
+to compile &amp; configure the system.  Init is
+accomplished by Util-linux's simpleinit.  
+
+This will allow input for the Opera browser &amp; probably
+some other stuff.  My main goal was to be able to
+write e-mail, which this will allow.  You'll need more
+to type in ATerm or other.
+
+&amp;#33394;&amp;#12293;&amp;#12392;&amp;#12354;&amp;#12426;&amp;#12364;&amp;#12392;&amp;#12358;&amp;#12372;&amp;#12374;&amp;#12356;&amp;#12414;&amp;#12375;&amp;#12383;&amp;#12290;
+
+S A Kewish
+
+
+		
+__________________________________ 
+Do you Yahoo!? 
+Take Yahoo! Mail with you! Get it on your mobile phone. 
+<A  HREF="http://mobile.yahoo.com/maildemo">http://mobile.yahoo.com/maildemo</A> </pre>
+<pre>
+INITIAL SETUP
+
+    echo bin::1: &gt;&gt; /etc/group
+    echo bin::1:1:bin:: &gt;&gt; /etc/passwd
+
+    mkdir /usr/lib/locale
+    localedef -i ja_JP -f EUC-JP ja_JP
+
+COMPILE &amp; INSTALL CANNA
+
+    cd /usr/local/src/Canna*
+    xmkmf
+    make canna
+    make install
+    cp -a /usr/local/canna/lib/canna /usr/include
+
+CONFIGURE FOR CANNA STARTUP (at boot)
+
+    cat &gt; /sbin/init.d/canna &lt;&lt; 'done'
+    #!/bin/sh
+    if [ $1 != &quot;start&quot; ];then exit 0;fi
+    need rc || exit 1
+    /usr/local/canna/bin/cannaserver
+    done
+
+    chmod 0755 /sbin/init.d/canna
+
+    echo export PATH='$PATH':/usr/local/canna/bin &gt;&gt; /etc/profile
+
+    echo /usr/local/canna/lib &gt;&gt; /etc/ld.so.conf
+
+    /sbin/ldconfig -v
+
+COMPILE &amp; INSTALL KINPUT2
+
+    cd /usr/local/src/kinput2*
+    xmkmf -a
+    make
+    make install
+
+CONFIGURE FOR KINPUT2 STARTUP (at startx)
+
+    echo kinput2 &amp; &gt;&gt; /home/name/.xinitrc
+    
+START OPERA WITH THE FOLLOWING COMMAND (twm)
+
+    !&quot;XMODIFIERS='@example.com=kinput2' LANG=ja_JP opera &amp;&quot;
+
+Japanese input should work (toggle on &amp; off with Shift-space)
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00022.html">Re: [tlug] [ann] Dec 10 TLUG Nomikai/Bonenkai</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00024.html">Re: [tlug] [ann] Dec 10 TLUG Nomikai/Bonenkai</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00036.html">[tlug] Re: Dec 10 TLUG Nomikai/Bonenkai</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00037.html">Re: [tlug] Re: Dec 10 TLUG Nomikai/Bonenkai</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00023"><strong>Date</strong></a></li>
+<li><a href="threads.html#00023"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

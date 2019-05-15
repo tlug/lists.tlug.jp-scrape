@@ -1,0 +1,199 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Language localization in Javacript -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 28 Sep 2011 18:16:51 +0900 -->
+<!--X-Message-Id: 87ty7xgh6l.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CA+kCxRb8df237PV1ZdvOp5Emuqgz_=RdVzpa_fPMJEbQZRX3sA@mail.gmail.com -->
+<!--X-Reference: 4E81AF97.2060001@dcook.org -->
+<!--X-Reference: CA+kCxRaM==wbOGH4Qcs__qsPY9SEyQNH9OBefxDbHv0Y2MQ6YQ@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00170.html">Date Prev</a>][<a href="msg00172.html">Date Next</a>][<a href="msg00169.html">Thread Prev</a>][<a href="msg00172.html">Thread Next</a>][<a href="maillist.html#00171">Date Index</a>][<a href="threads.html#00171">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Language localization in Javacript</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 28 Sep 2011 18:16:50 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Language%20localization%20in%20Javacript">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Language localization in Javacript</strong></li>
+<li>References: &lt;<a href="mailto:CA%2BkCxRb8df237PV1ZdvOp5Emuqgz_%3DRdVzpa_fPMJEbQZRX3sA@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Language%20localization%20in%20Javacript">CA+kCxRb8df237PV1ZdvOp5Emuqgz_=RdVzpa_fPMJEbQZRX3sA@example.com</a>&gt;	&lt;<a href="mailto:4E81AF97.2060001@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Language%20localization%20in%20Javacript">4E81AF97.2060001@example.com</a>&gt;	&lt;<a href="mailto:CA%2BkCxRaM%3D%3DwbOGH4Qcs__qsPY9SEyQNH9OBefxDbHv0Y2MQ6YQ@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Language%20localization%20in%20Javacript">CA+kCxRaM==wbOGH4Qcs__qsPY9SEyQNH9OBefxDbHv0Y2MQ6YQ@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I really didn't want to get involved in this thread but yikes, guys,
+there *is* a better way.
+
+Martin G writes:
+
+ &gt; How would I set up a conditional for three or more possible
+ &gt; languages?
+
+Don't.  Surely your Javascript is hosted on something resembling a
+server with something sorta like a modern language being used to
+generate something more or less substitutable for well-styled HTML as
+well as serving the Javascript and other content, right?  Generate the
+Javascript, too!
+
+The something-resembling-a-modern-language probably supports GNU
+gettext (if it doesn't, switch to Python), which in Python 2 would be
+used in a CGI script that looks like this:
+
+# I probably wouldn't do it this way in a real app, but I don't feel
+# like thinking about a real app right now.
+# start writhing
+def generate_javascript ():
+    print &quot;document.writeln(&quot;
+    # Watch for it, here it comes!
+    print _(&quot;Hello.&quot;)
+    # See it?  Hint: it's just lying down; it's not dead.
+    print &quot;);&quot;
+
+setlocale(&quot;ja&quot;)
+generate_javascript()
+# done writhing
+
+which you run through xgettext to get a file like this:
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR &lt;EMAIL@example.com&gt;, YEAR.
+#
+#, fuzzy
+msgid &quot;&quot;
+msgstr &quot;&quot;
+&quot;Project-Id-Version: PACKAGE VERSION\n&quot;
+&quot;Report-Msgid-Bugs-To: \n&quot;
+&quot;POT-Creation-Date: 2011-09-28 18:00+0900\n&quot;
+&quot;PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n&quot;
+&quot;Last-Translator: FULL NAME &lt;EMAIL@example.com&gt;\n&quot;
+&quot;Language-Team: LANGUAGE &lt;LL@example.com&gt;\n&quot;
+&quot;Language: \n&quot;
+&quot;MIME-Version: 1.0\n&quot;
+&quot;Content-Type: text/plain; charset=CHARSET\n&quot;
+&quot;Content-Transfer-Encoding: 8bit\n&quot;
+
+#: js.py:4
+msgid &quot;Hello.&quot;
+msgstr &quot;こんにちは。&quot;
+        A
+        +----------------fill in dis here blank with language du
+          jour and save as &quot;$language.mo&quot;.
+
+There's more to it than that, of course, but basically unless you
+really are writing &quot;hello world&quot; and no more, for two languages and no
+more, the pain of maintaining translations is extremely high.  gettext
+reduces it to a managable level.  It's worth learning how to use it.
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00172" href="msg00172.html">Re: [tlug] Language localization in Javacript</a></strong>
+<ul><li><em>From:</em> Lewske Wada</li></ul></li>
+<li><strong><a name="00179" href="msg00179.html">Re: [tlug] Language localization in Javacript</a></strong>
+<ul><li><em>From:</em> Martin G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00157" href="msg00157.html">[tlug] Language localization in Javacript</a></strong>
+<ul><li><em>From:</em> Martin G</li></ul></li>
+<li><strong><a name="00158" href="msg00158.html">Re: [tlug] Language localization in Javacript</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00163" href="msg00163.html">Re: [tlug] Language localization in Javacript</a></strong>
+<ul><li><em>From:</em> Martin G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00170.html">Re: [tlug] Language localization in Javacript</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00172.html">Re: [tlug] Language localization in Javacript</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00169.html">Re: [tlug] Language localization in Javacript</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00172.html">Re: [tlug] Language localization in Javacript</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00171"><strong>Date</strong></a></li>
+<li><a href="threads.html#00171"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

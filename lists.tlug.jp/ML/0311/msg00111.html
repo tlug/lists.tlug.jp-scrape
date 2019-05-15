@@ -1,0 +1,203 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Japanese Word processor for linux -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNtzk.ng> -->
+<!--X-Date: Thu, 27 Nov 2003 16:10:19 +0100 -->
+<!--X-Message-Id: 20031127151018.GA19800@example.com&#45;a&#45;geek.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200311270301.hAR311am000409@example.com -->
+<!--X-Reference: 3FC56CBA.7010505@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00110.html">Date Prev</a>][<a href="msg00112.html">Date Next</a>][<a href="msg00110.html">Thread Prev</a>][<a href="msg00112.html">Thread Next</a>][<a href="maillist.html#00111">Date Index</a>][<a href="threads.html#00111">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Japanese Word processor for linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Nov 2003 16:10:19 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Japanese%20Word%20processor%20for%20linux">ranma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Japanese Word processor for linux</strong></li>
+<li>References: &lt;200311270301.hAR311am000409@example.com&gt; &lt;<a href="msg00103.html">3FC56CBA.7010505@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Sam Joseph wrote:
+
+&gt; I am now porting to linux and I would love to be able to run the exact 
+&gt; same program, ideally with Shift_JIS characters - checking the code out 
+&gt; of Perforce onto my Linux box seems to leave the Shift_JIS characters 
+&gt; unreadable.  I was wondering if there was some kind of (ideally free) 
+&gt; japanese word processor for linux that would let me create files in 
+&gt; different japanese encoding formats like NJStar or JWPce do for windows.
+&gt; 
+&gt; It may of course be that I just need to set my Java environment on linux 
+&gt; correctly to allow me to compile the files - any suggestions very 
+&gt; gratefully received.
+
+Java uses the LANG and LC_* environment variables to determine which
+charset the source files are in.  So if you run java with
+LC_CTYPE=ja_JP.SJIS it should work (in theory, I didn't try that).
+Under linux the default for Japanese is euc-jp.
+
+You can use the 'locale' tool to see what your apps will think about the
+current environment.  The LC_CTYPE setting is responsible for the
+expected character encoding.  However the locale tool only shows you the
+name of the locale, not the character set used.
+To find out the character set you can use the following program:
+
+------------schnipp------------------
+#include &lt;locale.h&gt;
+#include &lt;langinfo.h&gt;
+
+int main(int argc, char **argv)
+{
+	setlocale(LC_ALL, &quot;&quot;);
+	puts(nl_langinfo(CODESET));
+	return 0;
+}
+------------schnapp------------------
+
+You may have to add the locale (ja_JP.SJIS) to /etc/locale.gen and run
+locale-gen to generate it.
+
+ranma@example.com:~$ ./test
+ISO-8859-1
+ranma@example.com:~$ LC_CTYPE=ja_JP ./test
+EUC-JP
+ranma@example.com:~$ LC_CTYPE=ja_JP.SJIS ./test
+ANSI_X3.4-1968
+ranma@example.com:~$ su
+Password: 
+melchior:/home/ranma# echo ja_JP.SJIS SJIS &gt;&gt; /etc/locale.gen
+melchior:/home/ranma# locale-gen
+Generating locales...
+  de_DE.ISO-8859-1... done
+  de_DE.ISO-8859-15@example.com done
+  de_DE.UTF-8... done
+  en_IN.UTF-8... done
+  en_US.ISO-8859-1... done
+  en_US.UTF-8... done
+  ja_JP.EUC-JP... done
+  ja_JP.UTF-8... done
+  ja_JP.SJIS...character map `SHIFT_JIS' is not ASCII compatible, locale not ISO C compliant
+  done
+Generation complete.
+melchior:/home/ranma# exit
+ranma@example.com:~$ LC_CTYPE=ja_JP ./test
+EUC-JP
+ranma@example.com:~$ LC_CTYPE=ja_JP.SJIS ./test
+SHIFT_JIS
+
+-- 
+/* Tobias */     int main(int a,char **b)    /* PGP: <A  HREF="http://9ac7e0bc.2ya.com">http://9ac7e0bc.2ya.com</A> */
+{char i,j,t,*r=*++b;srand(getpid());for(;*r;){for(;*r&amp;&amp;!isalpha(*r);r++);for(i=
+1;isalpha(r[i+1]);i++){j=rand()%i;t=r[i];r[i]=r[++j];r[j]=t;}r+=i+1;}puts(*b);}
+np: Ziwtra: <A  HREF="http://www.ocremix.org">http://www.ocremix.org</A> - Final Fantasy Adventure Willed Assault OC ReMix []
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00112" href="msg00112.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> Tony Laszlo</li></ul></li>
+<li><strong><a name="00113" href="msg00113.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> David Oftedal</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00103" href="msg00103.html">[tlug] Japanese Word processor for linux</a></strong>
+<ul><li><em>From:</em> Sam Joseph</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00110.html">Re: [tlug] Japanese Word processor for linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00112.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00110.html">Re: [tlug] Japanese Word processor for linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00112.html">Re: [tlug] Re: Japanese Word processor for linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00111"><strong>Date</strong></a></li>
+<li><a href="threads.html#00111"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

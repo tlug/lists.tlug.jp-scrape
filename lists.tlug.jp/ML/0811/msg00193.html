@@ -1,0 +1,237 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] SSH Issues -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Tue, 18 Nov 2008 08:58:05 +0900 -->
+<!--X-Message-Id: 20081117235804.GF10314@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081117161020.GB10314@lucky.cynic.net -->
+<!--X-Reference: 20081117193740.2d38af12@ronin.larsko.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00192.html">Date Prev</a>][<a href="msg00194.html">Date Next</a>][<a href="msg00191.html">Thread Prev</a>][<a href="msg00197.html">Thread Next</a>][<a href="maillist.html#00193">Date Index</a>][<a href="threads.html#00193">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] SSH Issues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 18 Nov 2008 08:58:05 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20SSH%20Issues">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] SSH Issues</strong></li>
+<li>References: &lt;20081117161020.GB10314@lucky.cynic.net&gt;	&lt;20081117193740.2d38af12@ronin.larsko.net&gt;</li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On 2008-11-17 19:37 +0000 (Mon), Lars Kotthoff wrote:
+
+&gt; I tried to do that, however ssh said nasty things about possible DNS spoofing
+&gt; and that the remote host identification changed when I attempted an svn up.
+&gt; So I thought I'd better ask.
+&gt; 
+&gt; hostname starling.repo.cynic.net
+&gt; IP address 122.103.239.154
+&gt; RSA host key 87:a7:8e:c2:c9:a9:e9:1a:4c:c4:36:fc:1d:81:c0:d5
+&gt; 
+&gt; Is this correct?
+
+The short answer: yes, this is the correct fingerprint, at the moment.
+
+The long answer:
+
+You're experiencing this basically because Ubuntu sucks.
+
+This is entirely off-topic for mhailist, but quite relevant to tlug,
+so I'm going to cc it there and give all the details in the hope that
+someone will have some ideas.
+
+starling.repo.cynic.net is role host that moves around between real
+hosts from time to time. In this particular case, the power supply in
+the box running it died yesterday morning, and so we moved the role host
+to another machine.
+
+To deal with this without pain, cynic.net is a signed DNSSEC zone, using
+this key:
+
+cynic.net.          256 3 5 &quot;BQEAAAABlZ3d9spigik6wn4JxAYG63xw47nse4haTYZSPi/8/fikhg76 SaL8Gm8rCDsbP/Fem3ZfOT+XEXLRr733m5Rl5dfsOojD2dn/UAmLUqBm wVq9gbQvSenj1ITrZkYrdnR6gY/FhlaRhGFKk+z5WoxnOku1ww/ArDJ2 Ay/L0YjuhVYPkYHXd5sp0garQsouruDfrTdBEypTjc3G1PdXQK+qh/Nm nGlBXUMm8kL6+QKP+LUPBJ7vN/BKqQM6gtqv/8Z302xudFYhkG1RyHjP S1YYmRicXNeoisVNLS5VSPOs+eMdljl/BtpK59eWQX1GswFRv3fp4IgR NJlV1ZCYzjdBcQ==&quot;; # Kcynic.net.+005+29234.key
+
+The zone contains a CNAME for starling.repo.cynic.net, which eventually
+points to some host with an A record and an SSHFP record. 
+
+If you set up bind9 with &quot;dnssec-enable yes;&quot; and &quot;dnssec-validation
+yes;&quot; in your options section, and add that key line above to your
+trusted-keys section in your named.conf, you will note that in lookups
+(e.g., with dig and possibly the +dnssec option at the end of the
+command line) the &quot;ad&quot; bit is now set, indicating that the records
+have been authenticated. (Or, alternatively, you get a server failure,
+perhaps indicating that someone's trying on the recently announced DNS
+spoofing attack.)
+
+With this setup, you merely have to remove any hosts with that name
+from your known_hosts files, point your resolv.conf to that server,
+possibly adding an &quot;options edns0&quot; line to it as well, configure ssh
+with &quot;VerifyHostKeyDNS yes&quot;, and ssh (at least, not-too-old versions
+of OpenSSH) will turn on the &quot;use dnssec&quot; bit in the request, look up
+the SSHFP record, confirm that it's been authenticated, and use that
+fingerprint. Then you can forget about server moves and known_hosts
+entries and all is happy.
+
+Except under Ubuntu.
+
+For whatever reason, the Debian folks or the Gnu libc folks or
+whomever have not for the last several years seen fit to include the
+RES_USE_DNSSEC bit in their /usr/include/resolv.h or add to their
+resolver the ability to turn this bit on in the request. So, despite
+distributing a version of ssh that supports this functionality, many
+(most? all?) Linux users can't use it.
+
+I have a couple of bug reports filed about this, but after several weeks
+I've not seen any response to the issue beyond kicking the bug reports
+elsewhere.
+
+So, I'm open to ideas for this. 
+
+One thing that would be very cool would be to have a stand-alone program
+with a working resolver library (or one just calling dig, which uses its
+own non-broken resolver code, even under Ubuntu) look up SSHFP records,
+ensure that they're validated, and generate known_hosts entries for
+them. Unfortunately, I don't see how to do this. Ssh appears to use the
+full public key in a known_hosts file, but the SSHFP record contains only
+the fingerprint. So we can go from known_hosts entry to SSHFP record, but
+not the other way. If you want to try it:
+
+    echo AAAAB3NzaC1yc2EAAAABIwAAAIEAvihA+Ee0wI1MOBq4WpgqQL+cG6ipyz3tz1lHvmUuVJoNEG2l74rw+aYEbBIdcRQ9KtHXcB4jMEFaoelWwccT1OUPGFPVjALW6i67OYEVNMfWRsf+wc0xeSICLc9L2EvELSMz8YH9DcfJQBlNlIISqhI+sfIaBwX7fARoWwcpOE0= | ruby -r digest/sha1 -e 'p Digest::SHA1.hexdigest($stdin.read.unpack(&quot;m&quot;)[0])'
+
+Our current solution on Linux boxes is to run a script that that goes
+through our zone file looking up the names with SSHFP records, doing an
+ssh-keyscan on them, and validating the resulting known_hosts entries
+against the SSHFP records. We then sign this (with PGP) and check it in.
+I suppose we could make this file and its signature available at a known
+URL, which would let you download and check updated versions at your
+convenience.
+
+Any other thoughts? Has anybody got enough influence with all of the
+various groups responsible for the Gnu libc issue to get this fixed and
+deployed in any reasonably short period of time.
+
+It's particularly frustrating because if there were an issue like this
+in NetBSD, I could have a fix commited to the NetBSD-current branch
+immediately, the latest release branch within a day or two, and have it
+out in the next minor release fairly quickly. I hadn't realized how much
+punting goes on in the very fragmented Linux development model.
+
+cjs
+- -- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.7 (NetBSD)
+
+iQEVAwUBSSIE4agqOkIlgIs6AQIjFggA2aumvAL76zi+UksOXZ62TXori7wYgpig
+jABnQWOXkDdWPYmEzyPeIWyFb085ZIA0F1pJILYUWwNrBjXmKJ+wtVxbPc2mJs+W
+bBTy5sNSKyj6LKst9SYpXAQmcwInxAIO/5ZyPuRCjY9Wk1oNxU9G6R6BucMGF79D
+J0TN1pZSXQ8tsSZEvBlrkZ3dWDlt7F5RaekHv85ZSM/65FlEI46s5fPAwjc2IMmZ
+vyzW0a+ZWY0G3UCLvk0OOJyjJpmdT7clZEA0mrG2mkm1m8C7DZqH1bBMvVMsuyoK
+bSIvg+yTg8NJbK+Z4K8qqNgr5JDHnfaWhzlowElGRXwDmv++RaJmNA==
+=9OII
+-----END PGP SIGNATURE-----
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00197" href="msg00197.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00192.html">[tlug] Re: Remote Light Control with Linux and other remotes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00194.html">Re: [tlug] Just curious... how much impact does a kernel update make?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00191.html">[tlug] follow up on flash 64</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00197.html">[tlug] SSH Issues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00193"><strong>Date</strong></a></li>
+<li><a href="threads.html#00193"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

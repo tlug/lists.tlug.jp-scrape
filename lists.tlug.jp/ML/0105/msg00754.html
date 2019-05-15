@@ -1,0 +1,334 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Very odd 'bash' problem in RH7.1 &#45; What!?!! -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date: Tue, 29 May 2001 12:55:35 +0900 (KST) -->
+<!--X-Message-Id: Pine.LNX.4.33.0105291253510.2048&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00753.html">Date Prev</A>][<A HREF="msg00755.html">Date Next</A>][<A HREF="msg00760.html">Thread Prev</A>][<A HREF="msg00755.html">Thread Next</A>][<A HREF="maillist.html#00754">Date Index</A>][<A HREF="threads.html#00754">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Very odd 'bash' problem in RH7.1 - What!?!!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Lignux Users' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Very odd 'bash' problem in RH7.1 - What!?!!</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 29 May 2001 12:55:35 +0900 (KST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;BSqbIB.A.tGB.42xE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+  This problem of executables that are there for 'ls', but can't be
+found by 'bash' when I try to run them continues to puzzle me deeply.
+
+  Tobias suggested, "Try ldd pppcosts".  Here's the result:
+
+&lt;denismcm@example.com:~&gt;$ ldd ~/internet/pppcosts
+/usr/bin/ldd: /home/denis/internet/pppcosts: No such file or directory
+
+  Interesting, eh?  I should add here before I forget again, that the
+only two files that have shown this behaviour (so far) are old
+executables that I added myself to a fresh "Everything" installation of
+RedHat 7.1 (I would have assumed that this had all the appropriate
+older libraries that I might need, but it apparently doesn't include
+the 'ld-linux.so.1' that 'pppcosts' probably needs).
+
+  Now, I could try recompiling these things, but, surely, this new fact
+that ldd, for example, reports that these files don't exist suggests that
+the problem lies elsewhere, perhaps where Thomas O'Dowd suggests.  Also,
+I just checked another old executable I've added in, and there seems to
+be no problem running it, or getting e.g. ldd to see it:
+
+	&lt;denismcm@example.com:~&gt;$ ldd fmtj
+		libc.so.6 =&gt; /lib/i686/libc.so.6 (0x4002d000)
+		/lib/ld-linux.so.2 =&gt; /lib/ld-linux.so.2 (0x40000000)
+
+On Mon, 28 May 2001, Thomas O'Dowd wrote:
+
+&gt; There is no rehash for bash. Do you have the same problem with
+&gt; a different shell, ie try it with tcsh...
+
+  NO, appears to make no difference when I switch shells:
+
+[denismcm@example.com ~]$ echo $SHELL
+/bin/tcsh
+[denismcm@example.com ~]$ ls ~/internet/pppcosts
+/home/denis/internet/pppcosts
+[denismcm@example.com ~]$ ~/internet/pppcosts
+/home/denis/internet/pppcosts: Command not found.
+denismcm@example.com ~]$ ls -l /usr/local/bin/xvscan
+-rwxrwxr-x    1 bin      bin       1354434 May 28 01:46 /usr/local/bin/xvscan
+[denismcm@example.com ~]$ /usr/local/bin/xvscan
+/usr/local/bin/xvscan: Command not found.
+
+On Mon, 28 May 2001, Thomas O'Dowd wrote:
+
+&gt; Could be something in
+&gt; the environment also, send us the output of the env command. I
+&gt; seem to remember having a wierd ksh problem something like this
+&gt; about 3 years ago and it was something in the environment. Can't
+&gt; remember if this was exactly it or not though but it sounds very
+&gt; similar.
+
+  This is the output of the 'env' command:
+
+PWD=/home/denis
+TZ=KST-9
+WINDOWID=18874381
+HOSTNAME=tangrennorth
+LD_LIBRARY_PATH=/home/denis/donegaldownloads/xforms/FORMS
+DOOMWADDIR=/usr/games/doom
+PVM_RSH=/usr/bin/rsh
+QTDIR=/usr/lib/qt-2.3.0
+LESSOPEN=|/usr/bin/lesspipe.sh %s
+PS1=&lt;\u@example.com:\w&gt;$
+XPVM_ROOT=/usr/share/pvm3/xpvm
+KDEDIR=/usr
+NNTPSERVER=nnrp.gol.com
+SOCKS_NS=203.216.4.4
+USER=denismcm
+LS_COLORS=
+SMTPSERVER=mail.gol.com
+MACHTYPE=i386-redhat-linux-gnu
+MAIL=/var/spool/mail/denismcm
+INPUTRC=/etc/inputrc
+XMODIFIERS=@example.com=none
+LANG=en_US
+DISPLAY=:0.0
+LOGNAME=denismcm
+SHLVL=4
+XJDIC=/home/denisbin/xjdic22
+TEXMF=/usr/local/share/texmf
+WWW_HOME=/home/denis/internet/homepage.html
+SESSION_MANAGER=local/tangrennorth:/tmp/.ICE-unix/1166
+SHELL=/bin/bash
+HOSTTYPE=i386
+OSTYPE=linux-gnu
+HISTSIZE=1000
+LAMHELPFILE=/etc/lam/lam-helpfile
+PVM_ROOT=/usr/share/pvm3
+HOME=/home/denis
+TERM=kterm
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+XNLSPATH=/home/netscape/nls
+PATH=/home/denis:/usr/bin:/usr/local/bin:/bin:/usr/X11R6/bin:.:/usr/games:/usr/games/doom:/home/denisbin/rvplayer5.0:
+GNOME_DESKTOP_ICON=/usr/share/pixmaps/kterm.xpm
+EXINIT=map q !}fmt 72 | map  !}fmtj 72 | map Z :.,$s/^//
+_=/usr/bin/env
+OLDPWD=/home/denis/internet
+
+  Many of these things are defined in my ~/.bash_profile, of course, but
+quite a few aren't.  Is there anything suspicious-looking here?  I'm still
+quite nervous after the cracker was in last week (via my
+dynamically-assigned IP address, yet!).   I've done a fresh install,
+but I have added in my (enormous) ~/ directory tree (though the only
+compiled executable in there that I can think of was this 'pppcosts' -
+I absolutely should recompile it to be on the safe side, I realize).
+All of the many shell scripts that I use seem to work just fine.
+
+PVM_RSH=/usr/bin/rsh
+LESSOPEN=|/usr/bin/lesspipe.sh %s
+INPUTRC=/etc/inputrc
+LAMHELPFILE=/etc/lam/lam-helpfile
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+_=/usr/bin/env
+
+  This ASKPASS, in particular, worries me, but it may well be standard.
+
+On Mon, 28 May 2001, Thomas O'Dowd wrote:
+
+&gt; Another trick I would try is running strace on your current shell
+&gt; process from another terminal. ie $ strace -p &lt;PID_OF_OTHER_SHELL&gt;
+&gt; then try the command and see if you can see what might be failing...
+&gt; you might want to use the -f option if it manages to fork and exec
+&gt; successfully hitting on the problem in the sub shell.
+
+  I'm afraid that I couldn't understand the last two lines here, but
+I did manage to try the 'strace -p &lt;PID_OF_OTHER_SHELL&gt;' that you
+suggested (took a couple of tries to realize that I couldn't capture
+the output without 2&gt;&amp;1 redirection).  This means nothing to me, but
+here's the output for a run of the following command:
+
+&lt;denismcm@example.com:~&gt;$ ~/internet/pppcosts
+bash: /home/denis/internet/pppcosts: No such file or directory
+
+read(0, "\33", 1)                       = 1
+read(0, "[", 1)                         = 1
+read(0, "A", 1)                         = 1
+write(2, "~/internet/pppcosts", 19)     = 19
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+read(0, "\r", 1)                        = 1
+write(2, "\n", 1)                       = 1
+rt_sigprocmask(SIG_BLOCK, [INT], [], 8) = 0
+ioctl(0, SNDCTL_TMR_STOP, {B38400 opost isig icanon echo ...}) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGINT, {0x807c5d0, [], 0x4000000}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGTERM, {SIG_IGN}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGQUIT, {SIG_IGN}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGALRM, {0x807c540, [HUP INT ILL TRAP ABRT BUS FPE USR1 SEGV USR2 PIPE ALRM TERM XCPU XFSZ VTALRM UNUSED], 0x4000000}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGTSTP, {SIG_IGN}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTTOU, {SIG_IGN}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTTIN, {SIG_IGN}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGWINCH, {0x8070b10, [], 0x4000000}, {0x80a1d40, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGINT, {0x807c5d0, [], 0x4000000}, {0x807c5d0, [], 0x4000000}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+fork()                                  = 2103
+setpgid(2103, 2103)                     = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD (Child exited) ---
+wait4(-1, [WIFEXITED(s) &amp;&amp; WEXITSTATUS(s) == 127], WNOHANG|WUNTRACED, NULL) = 2103
+wait4(-1, 0xbffff86c, WNOHANG|WUNTRACED, NULL) = -1 ECHILD (No child processes)
+sigreturn()                             = ? (mask now [])
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [CHLD], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD TSTP TTIN TTOU], [CHLD], 8) = 0
+ioctl(255, TIOCSPGRP, [2103])           = -1 EPERM (Operation not permitted)
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD TSTP TTIN TTOU], [CHLD], 8) = 0
+ioctl(255, TIOCSPGRP, [2013])           = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+ioctl(255, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD TTOU], [CHLD], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [CHLD], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+rt_sigaction(SIGINT, {0x807c5d0, [], 0x4000000}, {0x807c5d0, [], 0x4000000}, 8) = 0
+time(NULL)                              = 991107319
+stat64("/var/spool/mail/denismcm", {st_mode=S_IFREG|0600, st_size=43985, ...}) = 0
+time(NULL)                              = 991107319
+rt_sigprocmask(SIG_BLOCK, [CHLD TTOU], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD TSTP TTIN TTOU], [], 8) = 0
+ioctl(255, TIOCSPGRP, [2013])           = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGINT, {0x807c5d0, [], 0x4000000}, {0x807c5d0, [], 0x4000000}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT], [], 8) = 0
+ioctl(0, TIOCGWINSZ, {ws_row=25, ws_col=80, ws_xpixel=0, ws_ypixel=0}) = 0
+ioctl(0, TIOCSWINSZ, {ws_row=25, ws_col=80, ws_xpixel=0, ws_ypixel=0}) = 0
+ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+ioctl(0, SNDCTL_TMR_STOP, {B38400 opost isig -icanon -echo ...}) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGINT, {0x80a1cc0, [], 0x4000000}, {0x807c5d0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGTERM, {0x80a1cc0, [], 0x4000000}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTERM, {SIG_IGN}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGQUIT, {0x80a1cc0, [], 0x4000000}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGQUIT, {SIG_IGN}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGALRM, {0x80a1cc0, [], 0x4000000}, {0x807c540, [HUP INT ILL TRAP ABRT BUS FPE USR1 SEGV USR2 PIPE ALRM TERM XCPU XFSZ VTALRM UNUSED], 0x4000000}, 8) = 0
+rt_sigaction(SIGTSTP, {0x80a1cc0, [], 0x4000000}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTSTP, {SIG_IGN}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGTTOU, {0x80a1cc0, [], 0x4000000}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTTOU, {SIG_IGN}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGTTIN, {0x80a1cc0, [], 0x4000000}, {SIG_IGN}, 8) = 0
+rt_sigaction(SIGTTIN, {SIG_IGN}, {0x80a1cc0, [], 0x4000000}, 8) = 0
+rt_sigaction(SIGWINCH, {0x80a1d40, [], 0x4000000}, {0x8070b10, [], 0x4000000}, 8) = 0
+write(2, "&lt;denismcm@example.com:~&gt;$ ", 27) = 27
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+read(0,
+
+  Sure hope this makes sense to somebody out there.  I need to fix this
+problem soon, or I'll have retreat to the "safety" and (relative)
+sanity of RH6.2 again.
+
+  Thanks for thinking about this.  Cheers, Dennis
+
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00755" HREF="msg00755.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+<UL><LI><EM>From:</EM> "Thomas O'Dowd" &lt;tom@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00756" HREF="msg00756.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00753.html">Re: Perl: how to do is x in @example.com</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00755.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00760.html">Re: Kristofer.bergstrom's Kmail Konundrum</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00755.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00754"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00754"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

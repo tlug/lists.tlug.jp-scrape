@@ -1,0 +1,238 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: AUC&#45;TeX -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 14 Sep 1995 06:19:37 GMT -->
+<!--X-Message-Id: m0st7Ud&#45;0004KcC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.91.950914125156.1699C&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00042.html">Date Prev</A>][<A HREF="msg00044.html">Date Next</A>][<A HREF="msg00042.html">Thread Prev</A>][<A HREF="msg00034.html">Thread Next</A>][<A HREF="maillist.html#00043">Date Index</A>][<A HREF="threads.html#00043">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: AUC-TeX</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: AUC-TeX</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 14 Sep 95 15:09 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00042.html">Pine.HPP.3.91.950914125156.1699C-100000@example.com</A>&gt; (message from Craig Oda on Thu, 14 Sep 1995 12:53:21 +0900 (JST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+    "Jim" == Jim Tittsler wrote:
+    Jim&gt; Thanks for the pointer to AUC-Tex.  iesd.auc.dk has an empty
+
+I was afraid of that; I couldn't find a direct pointer, so I just
+grabbed the email address of the maintainer.  Glad you found it.
+
+    Jim&gt; FTP directory, but I found it on one of the Japanese CTAN
+    Jim&gt; mirrors.  I had noticed that the recent update to my favorite
+    Jim&gt; JED editor had an AUC-LaTeX mode, but the documentation was
+    Jim&gt; non-existent beyond the comments in the SLANG file.  First
+    Jim&gt; glance makes it look useful.
+
+JED is nice; but it's not real AUC-TeX mode (like lots of stuff in
+JED).
+
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; Can we get a demonstration of this at the next TLUG
+    Craig&gt; meeting?  As you mentioned, the docs are kind of slim.  I
+    Craig&gt; use LaTeX under Linux almost everyday and would appreciate
+    Craig&gt; any information that would make my work more efficient.
+
+Demo, sure.  But if you just install it, the Emacs version of AUC-TeX
+is (as you'd expect) self-documenting: you can get a synopsis of
+available functions with C-h m.  Furthermore, it has a menu interface
+if you are running Emacs/Mule under X Windows.
+
+For what it's worth, if you decide to experiment, here are the
+relevant portion of my .emacs:
+
+(require 'tex-site)
+
+and /usr/local/lib/mule/site-lisp/tex-site.el:
+
+;;; (and I'll sign off here....  Bye for now!  Steve)
+
+;;; tex-site.el - Site specific variables.
+
+;; Copyright notices deleted ... -- SJT
+
+;;; Commentary:
+
+;; This file contains variables customized for the local site.
+
+;; It also contains all necessary autoloads, so the user can simple
+;; enable AUC TeX by putting (load "tex-site") in his .emacs file,
+;; or the administrator can insert it in the site-start.el file.
+;;
+;; The ideal place for this file is in the `site-lisp' directory.
+
+;;; Code:
+
+(defvar no-doc
+  "This function is part of AUC TeX, but has not yet been loaded.
+Full documentation will be available after autoloading the function."
+  "Documentation for autoload functions.")
+
+;;; Customization:
+;;
+;; Copy variables you need to change from the start of `tex.el' and
+;; insert them here.
+
+;; Note that I haven't moved the AUC-TeX stuff from the old Emacs
+;; directory now that I've got Mule. -- SJT
+(defvar TeX-lisp-directory "/usr/lib/emacs/site-lisp/auctex/"
+  "*The directory where the AUC TeX lisp files are located.")
+
+;; Change this to point to the place where the TeX macros are stored
+;; at yourt site.
+(defvar TeX-macro-global
+  '("/usr/TeX/lib/texmf/tex/latex2e/")
+  "*Directories containing the sites TeX macro files and style files.
+
+The directory names *must* end with a slash.")
+
+;; You may want special options to the view command depending on the
+;; style options.  Only works if parsing is enabled.
+
+(defvar TeX-view-style '(("^a5$" "xdvi %d -paper a5")
+			 ("^landscape$" "xdvi %d -paper a4r -s 4")
+			 ;; The latest xdvi can show embedded postscript.
+			 ;; If you don't have that, uncomment next line.
+			 ;; ("^epsf$" "ghostview %f")
+			 ("." "xdvi -s 4 -geometry +0+0 %d"))
+  "*List of style options and view options.
+
+If the first element (a regular expresion) matches the name of one of
+the style files, any occurrence of the string %v in a command in
+TeX-command-list will be replaced with the second element.  The first
+match is used, if no match is found the %v is replaced with the empty
+string.")
+
+;;; End of customization, the rest is generic -- SJT.
+
+;;; Autoloads:
+
+(or (assoc TeX-lisp-directory (mapcar 'list load-path))	;No `member' yet.
+    (setq load-path (cons TeX-lisp-directory load-path)))
+
+;; This hook will store bibitems when you save a BibTeX buffer.
+(defvar bibtex-mode-hook nil)
+(or (memq 'BibTeX-auto-store bibtex-mode-hook) ;No `add-hook' yet.
+    (setq bibtex-mode-hook (cons 'BibTeX-auto-store bibtex-mode-hook)))
+
+(autoload 'BibTeX-auto-store "latex" no-doc t)
+
+;; Bind latex-help globally. 
+(autoload 'latex-help "ltx-help" no-doc t)
+(define-key help-map "\C-l" 'latex-help)
+
+(autoload 'LaTeX-math-mode "ltx-math" no-doc t)
+(autoload 'tex-mode "tex" no-doc t)
+(autoload 'plain-tex-mode "tex" no-doc t)
+(autoload 'ams-tex-mode "tex" no-doc t)
+(autoload 'TeX-auto-generate "tex" no-doc t)
+(autoload 'TeX-auto-generate-global "tex" no-doc t)
+(autoload 'TeX-insert-quote "tex" no-doc t)
+(autoload 'TeX-submit-bug-report "tex" no-doc t)
+(autoload 'japanese-plain-tex-mode "tex-jp" no-doc t)
+(autoload 'japanese-latex-mode "tex-jp" no-doc t)
+(autoload 'japanese-slitex-mode "tex-jp" no-doc t)
+(autoload 'texinfo-mode "tex-info" no-doc t)
+(autoload 'latex-mode "latex" no-doc t)
+
+(provide 'tex-site)
+
+;;; tex-site.el ends here
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00042" HREF="msg00042.html">Re: AUC-TeX</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00042.html">Re: AUC-TeX</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00044.html">AUC TeX - Table of Contents</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00042.html">Re: AUC-TeX</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00034.html">Re: [Q] Japanese TeX</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00043"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00043"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

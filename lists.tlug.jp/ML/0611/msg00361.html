@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Detect firewire drive -->
+<!--X-From-R13: Xbr Znenoryy <serq62Nynenoryy.bet> -->
+<!--X-Date: Wed, 15 Nov 2006 16:20:09 +0900 -->
+<!--X-Message-Id: Pine.BSF.4.58.0611150210010.69609@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4559BC1D.3010009@example.com -->
+<!--X-Reference: Pine.BSF.4.58.0611140901140.96847@example.com -->
+<!--X-Reference: d8fcc0800611141351q3d1718cay94108febe5fd0bd1@example.com -->
+<!--X-Reference: 455A5567.2060204@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00360.html">Date Prev</a>][<a href="msg00362.html">Date Next</a>][<a href="msg00357.html">Thread Prev</a>][<a href="msg00367.html">Thread Next</a>][<a href="maillist.html#00361">Date Index</a>][<a href="threads.html#00361">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Detect firewire drive</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 15 Nov 2006 02:20:06 -0500 (EST)</li>
+<li><strong>From</strong>: <strong>Joe Larabell &lt;<a href="mailto:fred62@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Detect%20firewire%20drive">fred62@???</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Detect firewire drive</strong></li>
+<li>References: &lt;<a href="msg00346.html">4559BC1D.3010009@example.com</a>&gt;	&lt;<a href="msg00347.html">Pine.BSF.4.58.0611140901140.96847@example.com</a>&gt;	&lt;<a href="msg00353.html">d8fcc0800611141351q3d1718cay94108febe5fd0bd1@example.com</a>&gt;	&lt;<a href="msg00357.html">455A5567.2060204@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;  ieee1394.agent[29302]: ... no drivers for IEEE1394 product 0x/0x/0x
+&gt;  kernel: ieee1394: Error parsing configrom for node 0-00:1023
+&gt;
+&gt; The first is when I modprobe ieee1394, the 2nd is when I switch on the
+&gt; drive.
+
+You mean 'switch on' as in apply power -- after the 1394 cable has already
+been plugged in? I have never had reliable luck doing things in that order.
+It may depend on the hardware (on both sides) but with what works every
+time for me is plugging the cable in with *both* sides already powered on.
+Don't worry -- 1394 and USB are supposed to be capable of being connected
+while powered on. That way the hardware really detects something new just
+showed up.
+
+And what I actually did was plug it in *before* doing any modprobes on the
+drivers. But I don't know why that should matter.
+
+&gt; How do I tell if I have hotplug running? ps aux doesn't list anything by
+&gt; that name. No /etc/init.d or lsmod entry either.
+
+Hmmm... I have /etc/init.d/hotplug (Gentoo). Looking at that script, it
+seems hotplug is in the kernel. Try 'ls /proc/sys/kernel/hotplug' and see
+if anything is there.
+
+Even if you're not auto-detecting hardware, the following sequence should
+work:
+
+a) Kill sbp2 (and maybe ieee1394)
+b) Power on the device
+c) Plug it into the machine
+d) Then, modprobe sbp2 (which should haul in ieee1394 as well)
+
+I have a dual-disk Ratoc box with a power switch on each drive. Turning
+those on and off while the cable is connected do *not* seem to re-detect
+the drive. Turning the whole box on and off while the cable is connected
+also does not cause the hardware to be re-detected. That's why I usually
+have to pull the 1394 plug and re-insert each time. I had the same problem
+with external USB drives too. If anyone knows why, I'm all ears (err...
+eyes, I guess) but my w/around works fine so it's not a problem for me.
+
+---
+Joseph L (Joe) Larabell            Never fight with a dragon
+<a  href="http://larabell.org">http://larabell.org</a>                     for thou art crunchy
+                                  and goest well with cheese.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00367" href="msg00367.html">Re: [tlug] Detect firewire drive</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00346" href="msg00346.html">[tlug] Detect firewire drive</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00347" href="msg00347.html">Re: [tlug] Detect firewire drive</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00353" href="msg00353.html">Re: [tlug] Detect firewire drive</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00357" href="msg00357.html">Re: [tlug] Detect firewire drive</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00360.html">[tlug] Firefox font configuration</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00362.html">Re: [tlug] Firefox font configuration</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00357.html">Re: [tlug] Detect firewire drive</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00367.html">Re: [tlug] Detect firewire drive</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00361"><strong>Date</strong></a></li>
+<li><a href="threads.html#00361"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

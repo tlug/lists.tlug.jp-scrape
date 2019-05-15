@@ -1,0 +1,179 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] pam(?) errors -->
+<!--X-From-R13: Pbgbaq Pbglnafmxv <obgbaqNbcg.pf.xbor&#45;h.np.wc> -->
+<!--X-Date: Fri, 23 May 2003 00:19:21 +0900 -->
+<!--X-Message-Id: 20030523001921.1fa52fee.botond@example.com&#45;u.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030521202439.470b7a3d.botond@example.com&#45;u.ac.jp -->
+<!--X-Reference: 20030521133426.GD1601@example.com -->
+<!--X-Reference: 20030521235106.1ec9b43f.botond@example.com&#45;u.ac.jp -->
+<!--X-Reference: 20030522120539.GF1601@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00299.html">Date Prev</a>][<a href="msg00301.html">Date Next</a>][<a href="msg00297.html">Thread Prev</a>][<a href="msg00291.html">Thread Next</a>][<a href="maillist.html#00300">Date Index</a>][<a href="threads.html#00300">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] pam(?) errors</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 23 May 2003 00:19:21 +0900</li>
+<li><strong>From</strong>: <strong>Botond Botyanszki &lt;<A HREF="mailto:botond@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20pam%28%3F%29%20errors">botond@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] pam(?) errors</strong></li>
+<li>References: &lt;<a href="msg00287.html">20030521202439.470b7a3d.botond@example.com</a>&gt;&lt;<a href="msg00289.html">20030521133426.GD1601@example.com</a>&gt;&lt;<a href="msg00292.html">20030521235106.1ec9b43f.botond@example.com</a>&gt;&lt;<a href="msg00297.html">20030522120539.GF1601@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 22 May 2003 08:05:39 -0400
+Josh Glover &lt;jmglov@example.com&gt; wrote:
+
+&gt; Quoth Botond Botyanszki (Wed 2003-05-21 11:51:06PM +0900):
+&gt; 
+&gt; &gt; Actually I compared this to my other machine's (which didn't log these
+&gt; &gt; errors) pam configs, and they were identical. This machine had libpam
+&gt; &gt; v0.72, so I upgraded to 0.76 and the logs started appearing, so I
+&gt; &gt; guess it't my library not the configs. 
+&gt; &gt; This is debian unstable, so I'm not surprised, just wondering what the
+&gt; &gt; problem might be. Maybe I should downgrade...
+&gt; 
+&gt; Strange...
+&gt; 
+&gt; Do you get the &quot;ssh(pam_unix)&quot; errors every time you login with ssh?
+&gt; What about the proftpd ones? Is there any correlation between the
+&gt; occurances of the error messages and you using sshd and proftpd?
+
+Ssh gives the error(on the server side) just before asking for the
+password or the password for the ssh key, but I can log in just fine with
+both methods.
+With proftpd the error comes after I issue the first command (ls), it does
+nothing weird during the login process. If I &quot;quit&quot; right after logging in
+(without doing anything), the error doesn't show up. 
+ 
+Here is my /etc/pam.d/ssh 
+
+auth       required     pam_nologin.so
+auth       required     pam_unix.so
+auth       required     pam_env.so # [1]
+
+account    required     pam_unix.so
+
+session    required     pam_unix.so
+session    optional     pam_motd.so # [1]
+session    optional     pam_mail.so standard noenv # [1]
+session    required     pam_limits.so
+
+password   required     pam_unix.so md5
+
+&gt; The only other thing to note is that the ssh errors are getting spit out
+&gt; by the pam_unix.so PAM module. Does Debian still use pam_unix over
+&gt; pam_stack? Try replacing the:
+
+Debian doesn't have pam_stack. I even did an `apt-file search` to see if
+it's in some other package but didn't find anything.
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00287" href="msg00287.html">[tlug] pam(?) errors</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00289" href="msg00289.html">Re: [tlug] pam(?) errors</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00292" href="msg00292.html">Re: [tlug] pam(?) errors</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00297" href="msg00297.html">Re: [tlug] pam(?) errors</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00299.html">Re: [tlug] Ouch! , I'm sorry for the autoreplays.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00301.html">[tlug] Alan Davies/FactSet is out of the office.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00297.html">Re: [tlug] pam(?) errors</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00291.html">[tlug] moving sale (Mac, PC, Sun, parts)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00300"><strong>Date</strong></a></li>
+<li><a href="threads.html#00300"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

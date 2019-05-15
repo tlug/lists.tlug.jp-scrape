@@ -1,0 +1,195 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: help in linoyx Red Hat 6.00 -->
+<!--X-From: Simon Cozens <simon@example.com> -->
+<!--X-Date:  Sun, 7 Nov 1999 20:12:59 +0900 -->
+<!--X-Message-Id: 19991107201223.A2088@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19991106211436.A25648@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00043.html">Date Prev</A>][<A HREF="msg00045.html">Date Next</A>][<A HREF="msg00041.html">Thread Prev</A>][<A HREF="msg00042.html">Thread Next</A>][<A HREF="maillist.html#00044">Date Index</A>][<A HREF="threads.html#00044">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: help in linoyx Red Hat 6.00</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:jim@example.com">jim@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: help in linoyx Red Hat 6.00</strong></LI>
+<LI><strong>From</strong>: <strong>Simon Cozens &lt;<A HREF="mailto:simon@example.com">simon@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 7 Nov 1999 20:12:23 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00041.html">19991106211436.A25648@example.com</A>&gt;; from Chris Sekiya on Sat, Nov 06, 1999 at 09:14:36PM -0800</LI>
+<LI>References: &lt;<A HREF="msg00041.html">19991106211436.A25648@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Xairete Kostas,
+
+On Sat, Nov 06, 1999 at 09:14:36PM -0800, Chris Sekiya wrote:
+&gt; &gt; I have a server in linoux Red Hat 6.00 in
+&gt; &lt;<A TARGET="_top" HREF="http://www.cottonon.gr">http://www.cottonon.gr</A>&gt;www.cottonon.gr and in this server i want to
+&gt; install another virtual server in &lt;<A TARGET="_top" HREF="http://www.amanooro.gr">http://www.amanooro.gr</A>&gt;www.amanooro.gr
+&gt; and another &lt;<A TARGET="_top" HREF="http://www.kassinakis.gr">http://www.kassinakis.gr</A>&gt;www.kassinakis.gr do you know how
+
+To clarify Chris' summary:
+
+&gt; * Set up IP aliasing so that eth0:1 binds to www.amanooro.gr's IP, eth0:2
+&gt;   binds to www.kassinakis.gr, etc.
+
+This may not be necessary, and we don't all have IPs to spare. (Well, I
+do, at present, but that's another story.)
+
+At the moment, amanooro and kassinakis don't appear to have DNS entries.
+Therefore, the easiest way to proceed would be to get Otenet, the ISP in
+charge of amanooro, and whoever sets up kassinakis, to set the IP for
+www.amanooro.gr and www.kassinakis.gr to be the same as www.cottonon.gr:
+212.205.55.1
+
+There are arguments for having an IP for each site, but if all you're doing
+is serving web pages, I personally wouldn't bother. I don't think it's
+worth the extra hassle.
+
+If you want to do things the hard way, ask me again. :)
+
+So, you can ignore that, and go on to this:
+
+&gt; * Use the VirtualHost facility in Apache's httpd.conf to bind separate
+&gt;   virtual servers to the respective IPs.
+
+Your httpd.conf should end up something like this:
+
+Port 80
+ServerName proxy.cottonon.gr
+NameVirtualHost 212.205.55.1
+
+&lt;VirtualHost 212.205.55.1&gt;
+DocumentRoot /path/to/cottonon/site
+ServerName www.cottonon.gr
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost 212.205.55.1&gt;
+DocumentRoot /path/to/kassinakis/site
+ServerName www.kassinakis.gr
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost 212.205.55.1&gt;
+DocumentRoot /path/to/amanooro/site
+ServerName www.amanooro.gr
+&lt;/VirtualHost&gt;
+
+&gt; * Secure his server.
+
+There's some basic security in place on that server; I'm not going to
+post a summary of problems with it to the group at large. Feel free
+to contact directly for more hints. However, in general, turn off 
+anything you don't want anyone to get to, then filter everything that
+is for your use only.
+
+You forgot:
+
+ * Join HelLUG. (<A TARGET="_top" HREF="http://www.hellug.gr/">http://www.hellug.gr/</A>)
+
+:)
+
+Any problems, feel free to email me - Greek is OK.
+
+Hope this helps,
+Simon
+
+-- 
+I'm sick and tired of people installing me, using me, and even upgrading me.
+	- D Joseph Creighton, in the monastery.
+-------------------------------------------------------------------
+Next Technical Meeting: November 13 (Sat), 13:30 place: Temple Univ.
+* Network Security                               speaker: Steve Baur
+Next Nomikai: December 17 (Fri), 19:00 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00041" HREF="msg00041.html">Re: tlug: Re: help in linoyx Red Hat 6.00</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00043.html">Re: tlug: Patching the RH6.0 kernel</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00045.html">tlug: Can't access localmail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00041.html">Re: tlug: Re: help in linoyx Red Hat 6.00</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00042.html">tlug: Patching the RH6.0 kernel</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00044"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00044"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

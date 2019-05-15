@@ -1,0 +1,171 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] remote access to server -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Sun, 04 Jun 2017 15:17:01 +0900 -->
+<!--X-Message-Id: 20170604061659.GA21761@monotonic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1a3aa51d&#45;c95d&#45;a22e&#45;3d3d&#45;4e931f4bfd38@me.scn&#45;net.ne.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00010.html">Date Prev</a>][<a href="msg00012.html">Date Next</a>][<a href="msg00014.html">Thread Prev</a>][<a href="msg00012.html">Thread Next</a>][<a href="maillist.html#00011">Date Index</a>][<a href="threads.html#00011">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] remote access to server</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 4 Jun 2017 15:17:00 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20remote%20access%20to%20server">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] remote access to server</strong></li>
+<li>User-agent: Mutt/1.5.23 (2014-03-12)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2017-06-03 14:59 +0900 (Sat), Furkan Mustafa wrote:
+
+&gt; * Disable password login from /etc/ssh/sshd_config and use only public
+&gt; key authentication.
+
+Right. Also set `PermitRootLogin no`. These two things do more to
+protect your system than pretty much anything else and are also
+amongst the very simplest and cheapest things to do.
+
+I feel that trying to go much beyond this is a bad idea; the problems
+with more complex configurations layered on top of this range from
+accidentally cutting off access for yourself to accidentally opening
+up holes that you'd thought you'd closed. (For example, I've seen
+configurations where sysadmins have tried to require both a public key
+AND a password, but what looked like a simple configuration changes
+later turned out to have a non-obvious side effect of changing this to
+public key OR password, effectively removing all the security they'd
+gotten from requiring a public key.)
+
+On 2017-06-03 18:24 +0100 (Sat), Darren Cook wrote:
+
+&gt; One to add to the list of techniques so far, is the use of ipset. We use
+&gt; this to control access to admin websites. E.g. one of our iptables
+&gt; entries is:
+&gt; 
+&gt;   -A INPUT -p tcp --dport 443 -m set --match-set myip src -j ACCEPT
+&gt; 
+&gt; I use this manually over ssh. E.g. if I'm at a coffee shop and need to
+&gt; use an admin page, I will first find out my public ip, then ssh in and
+&gt; (as root) run:
+&gt; 
+&gt;   ipset add myip 1.2.3.4
+&gt; 
+&gt; In fact, in that example I would actually do:
+&gt; 
+&gt;   ipset add myip 1.2.3.4 timeout 3600
+
+This is a perfect example of additional complexity making things less
+secure. Just block all admin access to any address but 127.0.0.1 on
+the server and use SSH port forwarding to access the admin server on
+that address. Now you not only have massively reduced your chance of
+misconfiguring things, but you also don't open up access for anybody
+else using &quot;your&quot; IP address (such as everybody else on a LAN that
+accesses the Internet via NAT).
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00000" href="msg00000.html">[tlug] remote access to server</a></strong>
+<ul><li><em>From:</em> Kevin Sullivan</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00010.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00012.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00014.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00012.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00011"><strong>Date</strong></a></li>
+<li><a href="threads.html#00011"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

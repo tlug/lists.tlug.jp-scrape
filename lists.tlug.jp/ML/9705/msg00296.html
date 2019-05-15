@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Building a better beast: binutils 2.8 and 3Com 3C90x'Boomerang' (adding a new driver to the kernel config) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 29 May 1997 04:41:23 GMT -->
+<!--X-Message-Id: m0wWwu0&#45;00001fC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00295.html">Date Prev</A>][<A HREF="msg00297.html">Date Next</A>][<A HREF="msg00290.html">Thread Prev</A>][<A HREF="msg00297.html">Thread Next</A>][<A HREF="maillist.html#00296">Date Index</A>][<A HREF="threads.html#00296">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Building a better beast: binutils 2.8 and 3Com 3C90x'Boomerang' (adding a new driver to the kernel config)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Building a better beast: binutils 2.8 and 3Com 3C90x'Boomerang' (adding a new driver to the kernel config)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 29 May 1997 13:33:27 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+Hi all,
+
+Ordered the wondrous handy-dandy Acme Roadrunner-catcher, aka 3Com's
+3C900 EtherLink XL (for PCI).  Thought it was a "Vortex", but it's not
+- it's based on the "Boomerang" chipset.  No driver in the 2.0.29
+distribution, of course.
+
+But Donald Becker (who wrote every other good driver, it seems) is
+writing one, and I managed to install the current version which loads
+and finds the card and everything.  I think it actually works.  (ping
+does, anyway :-)  So if you should want to do such a thing, you can
+find the latest drivers for those cards at (approximately)
+
+	 <A TARGET="_top" HREF="ftp://CESDIS.gsfc.nasa.gov/pub/linux/drivers/vortex">ftp://CESDIS.gsfc.nasa.gov/pub/linux/drivers/vortex</A>
+
+(Apparently the two chipsets are closely related and he's creating a
+common driver or something.)
+
+In order to build a kernel with them or even modules, you need to
+change /usr/src/linux/drivers/net/Config.in and the Makefile in that
+directory.  You might even be able to use "patch &lt; $Steves_mail",
+although that's not guaranteed unless you've got 2.0.29.
+
+--- Config.in~	Tue Feb 18 20:37:55 1997
++++ Config.in	Thu May 29 11:04:30 1997
+@@ -52,4 +52,7 @@
+     tristate '3c509/3c579 support' CONFIG_EL3
+     tristate '3c590 series (592/595/597) "Vortex" support' CONFIG_VORTEX
++    if [ "$CONFIG_EXPERIMENTAL" = "y" ]; then
++      tristate '3c900 series (905) "Boomerang" support' CONFIG_BOOMERANG
++    fi
+   fi
+   bool 'AMD LANCE and PCnet (AT1500 and NE2100) support' CONFIG_LANCE
+--- Makefile~	Tue Feb 18 20:37:53 1997
++++ Makefile	Thu May 29 10:58:23 1997
+@@ -295,4 +295,12 @@
+ endif
+ 
++ifeq ($(CONFIG_BOOMERANG),y)
++L_OBJS += 3c90x.o
++else
++  ifeq ($(CONFIG_BOOMERANG),m)
++  M_OBJS += 3c90x.o
++  endif
++endif
++
+ ifeq ($(CONFIG_EEXPRESS),y)
+ L_OBJS += eexpress.o
+
+In the process of building the new kernel, I discovered that binutils
+2.8 eliminated the "-k/--raw" option from the objdump utility, which
+is used to build the compressed kernels.  I used my old 2.6-cygnus
+objdump, which worked fine.
+
+It is probably the case that the option has been renamed with somewhat 
+different functionality, but it was completely undocumented in the
+binutils distribution (maybe it got deprecated in 2.7, but I couldn't
+find that in Changelog or NEWS).  So there's a warning on that one,
+OK?
+
+Regards,
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00297" HREF="msg00297.html">Re: tlug: Building a better beast: binutils 2.8 and 3Com 3C90x 'Boomerang' (adding a new driver to the kernel config)</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Wiles &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00295.html">Re: tlug: Over the router.....</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00297.html">Re: tlug: Building a better beast: binutils 2.8 and 3Com 3C90x 'Boomerang' (adding a new driver to the kernel config)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00290.html">tlug: Linux as proxy server</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00297.html">Re: tlug: Building a better beast: binutils 2.8 and 3Com 3C90x 'Boomerang' (adding a new driver to the kernel config)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00296"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00296"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

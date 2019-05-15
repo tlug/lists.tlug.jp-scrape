@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: selecting DB on linux -->
+<!--X-From: Fredric Fredricson <fredric.fredriksson@example.com> -->
+<!--X-Date: Tue, 26 Jun 2001 01:24:23 +0200 -->
+<!--X-Message-Id: 3B37C827.DA9083C1@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: DNEDKBKPGHIGPJKECDNJMEJFCDAA.jshore@example.com&#45;shuppan.com -->
+<!--X-Reference-Id: 3B3131FF.9124896C@example.com -->
+<!--X-Reference-Id: 001701c0f9f9$fcfc4ce0$98c4e1d2@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00608.html">Date Prev</A>][<A HREF="msg00610.html">Date Next</A>][<A HREF="msg00531.html">Thread Prev</A>][<A HREF="msg00610.html">Thread Next</A>][<A HREF="maillist.html#00609">Date Index</A>][<A HREF="threads.html#00609">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: selecting DB on linux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: selecting DB on linux</strong></LI>
+<LI><strong>From</strong>: <strong>Fredric Fredricson &lt;<A HREF="mailto:fredric.fredriksson@example.com">fredric.fredriksson@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 26 Jun 2001 01:24:23 +0200</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: MYDATA automation AB</LI>
+<LI>References: &lt;<A HREF="msg00398.html">DNEDKBKPGHIGPJKECDNJMEJFCDAA.jshore@example.com</A>&gt; &lt;<A HREF="msg00525.html">3B3131FF.9124896C@example.com</A>&gt; &lt;<A HREF="msg00531.html">001701c0f9f9$fcfc4ce0$98c4e1d2@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;yeeERB.A.to.xk8N7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>Sender: <A HREF="mailto:fredric@example.com">fredric@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"Hatsuhiro, Inc." wrote:
+&gt; 
+&gt; How about MySQL?  I'm interested in it but don't know about the detail.
+&gt; 
+[ Disclaimer: I'm no expert in these matters but 
+  I will try to summarize what little I know on 
+  the subject. I am grateful for any corrections. ]
+
+MySQL vs. Mimer or Solid Embedded Engine:
+
+MySQL is good, I guess, but it does not implement 
+foreign  keys, PSM (a.k.a. stored procedures) or 
+triggers and recently it had no transaction 
+management but I believe it has now.
+
+This is probably not a problem for most applications, 
+unless you want to open your databases to ODBC access
+for external developers. If you do this you have to 
+make sure that the data integrity is maintained by 
+the database and not by the application and here is 
+where foreign keys, PSM and views can be used.
+
+Foreign keys ensures that relations are not broken. 
+You can not delete a record in a table that is a 
+"foreign key" in another table as long as there is 
+a match. Foreign keys are not really necessary to 
+maintain integrity, but might make it easier.
+
+PSM (Persistent Stored Modules) or Stored Procedures 
+are  routines, or scripts, that takes parameters 
+and can update tables in the database. You can give
+external developers access to these routines for 
+data update and this way you do not have 
+to grant access directly to the tables. The stored
+procedure can to a lot of sanity checks before the
+database is updated and this way it is possible to 
+maintain data integrity.
+
+Views are "fake tables" that (usually) are read only. 
+A view is defined like a select from potentially more 
+than one table and are used like a table.
+This is a way to present data in a way that makes it 
+easier to understand or use for external developers. It
+is also a way to keep consistent interfaces as the
+database structure is developed and tables modified.
+
+Triggers are "stored procedures" that are invoked at 
+certain conditions such as an attempt to update a 
+view or insert in a table. Triggers are considered 
+very  error prone and next to impossible to maintain. 
+They are really only useful (and necessary) when you 
+have an  old legacy application that you cannot modify 
+and need to adapt it to a new database.
+
+MySQL vs. PostgreSQL:
+
+When it comes to performance I have seen people state 
+that MySQL is about three times faster than PostgreSQL 
+(in an article linked to from a PostgreSQL mirror).
+On the other hand PostgreSQL does implement PSM (but 
+far, far, from standard) and foreign keys.
+Personally I find MySQL command line interface better
+than both PostgreSQLs psql and Mimers msql.
+MySQL does not do sub-selects. Exactly how much problem
+this will cause I do not know. Typically "not much" I
+imagine.
+
+I think that the basic philosophy behind the MySQL 
+and the PostgreSQL projects are different. It seems 
+like the MySQL philosophy is "small footprint" and 
+"do not implement stuff that is complicated". I am 
+pretty sure the MySQL developers are very happy with 
+a small, and fast, database that can be used to do 
+simple tricks. On the other hand PostgreSQL is out 
+to conquer the world and maybe replace Oracle. 
+These are obviously generalizations but you get 
+the meaning....
+
+Ooops, stepped far into "here be dragons"-part of my
+map. Better stop now.
+
+/Fredric Fredricson
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00398" HREF="msg00398.html">selecting DB on linux</A></STRONG>
+<UL><LI><EM>From:</EM> "Jonathan Shore" &lt;jshore@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00525" HREF="msg00525.html">Re: selecting DB on linux</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;fredric.fredriksson@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00531" HREF="msg00531.html">Re: selecting DB on linux</A></STRONG>
+<UL><LI><EM>From:</EM> "Hatsuhiro, Inc." &lt;hatuhiro@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00608.html">Re: Simon Cozens' nomikai</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00610.html">Re: selecting DB on linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00531.html">Re: selecting DB on linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00610.html">Re: selecting DB on linux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00609"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00609"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

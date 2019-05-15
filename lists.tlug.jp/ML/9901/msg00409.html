@@ -1,0 +1,318 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Partitioning sizes -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 26 Jan 1999 14:04:58 +0900 -->
+<!--X-Message-Id: 13997.19676.267666.873759@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36AC54EB.176485C0@example.com -->
+<!--X-Reference-Id: 1294807400&#45;69404797@example.com -->
+<!--X-Reference-Id: 199901260209.LAA10331@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00408.html">Date Prev</A>][<A HREF="msg00410.html">Date Next</A>][<A HREF="msg00401.html">Thread Prev</A>][<A HREF="msg00413.html">Thread Next</A>][<A HREF="maillist.html#00409">Date Index</A>][<A HREF="threads.html#00409">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Partitioning sizes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Partitioning sizes</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 26 Jan 1999 14:04:28 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00401.html">199901260209.LAA10331@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00382.html">36AC54EB.176485C0@example.com</A>&gt;&lt;<A HREF="msg00389.html">1294807400-69404797@example.com</A>&gt;&lt;<A HREF="msg00401.html">199901260209.LAA10331@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Dave" == Dave Gutteridge &lt;dave@example.com&gt; writes:
+
+    Dave&gt; I'm finally going to set up my own Linux Machine, seperate
+    Dave&gt; from the machine that i've been using so far from my
+    Dave&gt; office. As i'm sure everyone always does with every new
+    Dave&gt; task, I'm telling mysefl "This time i'm going to do it
+    Dave&gt; really, REALLY right!"
+
+:-)
+
+FWIW, here's my df:
+
+steve@example.com:VM$ df
+Filesystem           1k-blocks      Used Available Use% Mounted on
+/dev/hdb1                19485     12871      5608  70% /
+/dev/hdb3               495746    452131     18012  96% /usr
+/dev/hdb5                99507     38392     55976  41% /var
+/dev/hdb6               495714    366877    103236  78% /usr/local
+/dev/hdb7               148319    136598      4062  97% /home
+/dev/hdb8               673217    621966     16477  97% /playpen
+
+Now, that's a LOT more than 1.2 GB but note the /usr/local and
+/playpen mounts.  /playpen is my development area, and has two full
+XEmacs source trees, one full Emacs tree, and a kernel tree or two;
+/usr/local used have that in it and now has miscellaneous students'
+stuff.  You can ignore them for your application ;-)
+
+I have a lot of extra stuff in /usr/doc (rfcs, etc) that most people
+won't have.  You should consider consolidating that kind of shared
+data using NFS (or CODA, eventually).  Keep docs on your road warrior
+(that's where the hard remote debug jobs are going to come up---you
+been there, done that already, ne?)
+
+Unless you're going to put the GIMP or Applix on that box, 512MB for
+/usr should be enough.
+
+    Dave&gt; The Red Hat 5.2 Manual says i should partition thusly:
+
+Burn those pages.
+
+    Dave&gt; 64MB swap
+
+This machine is a server, not a workstation, right?  If so, I'd say
+2MB swap for every 1MB RAM up to 64MB swap.  (That's a little dated, I 
+haven't really paid attention to this for a couple years.)
+
+    Dave&gt; 16MB /boot
+
+Huh?  I have no idea why they'd suggest this.  I've only got 90kB in
+boot.  Put a couple kernels in there and it might go to 2MB.
+
+    Dave&gt; 256MB /
+
+I don't see any reason for more than 50MB, and that only for
+TurboLinux.  For Debian systems I pretty much stick to 25MB.  Take
+two, they're small.  Every time you're about to do something stupid
+(install a new kernel, upgrade to a new libc, etc) that could hose
+your system, do
+
+		     dd if=/dev/hda1 of=/dev/hda2
+
+Then with a proper lilo configuration you'll always have a bootable
+system, subject to no hardware failures on /dev/hda2.  (Requires
+keyboard, sorry, but if you need this, a keyboard will be cheap.)
+
+    Dave&gt; 512MB /usr 
+
+This is plenty for a Debian development system or any non-development
+TurboLinux system.  I dunno Redhat, but it should be plenty.
+
+    Dave&gt; 512MB /home
+
+Pure fat for your application.  But see discussion of servers, below.
+
+    Dave&gt; 256MB /var
+
+Pure fat for your application.  But see discussion of servers, below.
+
+    Dave&gt; What differs from the last time when I set up the machine at
+    Dave&gt; work is that I'm I'm going to be the only user of this new
+    Dave&gt; system, so i'm suspecting i can reduce /home or /usr, but
+    Dave&gt; i'm not sure which of the two should be given priority.
+
+/usr, probably; that's where applications will go.
+
+    Dave&gt; Also, since a big part of this machine's purpose is to do
+    Dave&gt; mail services (albeit only for me at this point), should I
+    Dave&gt; increase /var?
+
+No.  I have about 10 users on another box who mostly leave their mail
+in the spool (they've been warned, their suicidal tendency is not my
+problem).  Never goes above 20MB.  Unless you expect to be sending
+receiving mailbombs, aka Word attachments, or multimedia attachments
+on a regular basis, allowing 20MB for a single user's spool files is
+plenty.  You can even skimp on that by using procmail to filter large
+mails into a holding tank elsewhere.
+
+You _do_ have to consider archival storage.  What do you do with the
+mail?  Read and delete?  or Read and file?  If the latter, you need to 
+increase the size of /home.
+
+    Dave&gt; Just in case it will affect the answers - the machine is for
+    Dave&gt; web pages (no streaming audio or video but multiple domain
+    Dave&gt; names), FTP (no anonymous) and mail (me with multiple
+    Dave&gt; accounts and one mailing list) only.
+
+Where does RedHat put $WWWRoot and $FTPRoot?  Debian puts them in
+/var/www, with the obvious implications for the size of /var.
+Exercise for the reader.  I disagree with this in principle (but I'm
+too lazy to bother changing it), because I think that /var should be
+programs' scratch storage, projects like your Web page and so on
+should live in /home.
+
+Ah, is there gonna be a printer hooked to this machine?  The natural
+unit for HP laserjet spool files generated by Ghostscript is `MB';
+I've seen 40MB files in my /var/spool/lp.
+
+The idea is that everything that a human sweats over is under /home so
+you always back it up.  The root partition gets backed up, since /etc
+is there.  Some of /var needs backed up (/var/spool/mail in
+particular) unfortunately, but I prefer to minimize that.
+
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen Carter &lt;carter@example.com&gt; writes:
+
+    Stephen&gt; I've found the "advice" in both the Red Hat and the SUSE
+    Stephen&gt; manuals pretty confusing, and when followed, doesn't put
+    Stephen&gt; enough space in some of the partitions to load the
+
+"One size gives all fits."
+
+    Stephen&gt; modules specified, and forces me to start over again--and
+    Stephen&gt; using Disk Druid isn't exactly the quickest thing in the
+    Stephen&gt; world!
+
+symlinks are a lazy man's friend.  Make a directory where you do have
+space, move stuff there, and symlink it into the right place.  Don't
+tell anybody I told you that was ok, though.
+
+    Stephen&gt; While I understand that the sizes of the various file
+    Stephen&gt; systems are going to vary depending on use, personal
+    Stephen&gt; needs, etc., can someone suggest a reference or two, or
+    Stephen&gt; perhaps have some insight on laying out file systems?
+
+Most of the distributions are File System Standard (FSSTND), now File
+Hierarchy Standard (FHS), conformant.  Get this at any Linux site.  On
+Debian systems you find them in /usr/doc/debian-policy/.  This
+explains the rationale for the usual installation of files in certain
+directories.
+
+Unfortunately, the only way to figure these things out is by
+experience.  None of the package systems tell you how big the various
+files are.  However, in general nearly _all_ of the expanded size of
+the packages goes under /usr.  So decide what packages you need, ask
+dpkg or rpm how big their contents are, add it up, and multiply by 1.2 
+because you know you are going to miss 20% of the dependencies.
+
+Sorry, I haven't written the script to do this.
+
+&gt;&gt;&gt;&gt;&gt; "Dmytro" == Dmytro Kovalev &lt;kovald@example.com&gt; writes:
+
+    Dmytro&gt; Just personal opinion: I prefer to have separate /tmp and
+    Dmytro&gt; in this case 256 for / seems to much. What I have usually
+    Dmytro&gt; is something like:
+
+This is a _good_ idea (although I don't do it myself).
+
+One caveat:  you need to be careful that your init sequence does not
+set up any files in /tmp that will proceed to disappear when you mount 
+the /tmp partition.  Eg, the X server puts its Unix domain sockets
+there.  So you may need to special case the mount of /tmp.
+
+I have an overly large /var partition, so I set TMPDIR=/var/tmp in my
+environment.  Most programs respect this, so it works for me.  Caveat:
+automatic cleanup policies for /tmp and /var/tmp vary by installation,
+so YMMV.
+
+    Dmytro&gt; /     40-50
+    Dmytro&gt; /tmp ~100
+    Dmytro&gt; /var 40-50
+
+Looks right to me.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00413" HREF="msg00413.html">Re: tlug: Partitioning sizes</A></STRONG>
+<UL><LI><EM>From:</EM> Dave Gutteridge &lt;dave@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00382" HREF="msg00382.html">tlug: resolv.conf</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00389" HREF="msg00389.html">tlug: Partitioning sizes</A></STRONG>
+<UL><LI><EM>From:</EM> Dave Gutteridge &lt;dave@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00401" HREF="msg00401.html">tlug: Partitioning sizes</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00408.html">Re: tlug: Re: Test messages: Where's good?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00410.html">Re: tlug: Re: Test messages: Where's good?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00401.html">tlug: Partitioning sizes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00413.html">Re: tlug: Partitioning sizes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00409"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00409"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

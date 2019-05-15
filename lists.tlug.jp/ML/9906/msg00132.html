@@ -1,0 +1,201 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS filesystems not mounted at boot -->
+<!--X-From: <mike.fabian@example.com&#45;ruhr.de> -->
+<!--X-Date:  Sun, 27 Jun 1999 16:45:06 +0900 -->
+<!--X-Message-Id: 14197.54692.786004.391569@example.com&#45;neckar.de -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14195.9300.707022.87749@example.com&#45;neckar.de -->
+<!--X-Reference-Id: 19990625171257N.andy@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00131.html">Date Prev</A>][<A HREF="msg00133.html">Date Next</A>][<A HREF="msg00114.html">Thread Prev</A>][<A HREF="msg00113.html">Thread Next</A>][<A HREF="maillist.html#00132">Date Index</A>][<A HREF="threads.html#00132">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS filesystems not mounted at boot</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS filesystems not mounted at boot</strong></LI>
+<LI><strong>From</strong>: <strong>&lt;<A HREF="mailto:mike.fabian@example.com">mike.fabian@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 27 Jun 1999 09:41:24 +0200 (CEST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00114.html">19990625171257N.andy@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00112.html">14195.9300.707022.87749@example.com</A>&gt;&lt;<A HREF="msg00114.html">19990625171257N.andy@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Andy" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+&gt;&gt;&gt;&gt;&gt; "mike" == mike fabian &lt;mike.fabian@example.com&gt; writes:
+mike&gt; Jun 21 02:36:10 laputa portmap: portmap startup succeeded Jun 21
+mike&gt; 02:36:10 laputa mount: mount: RPC: Port mapper failure - RPC:
+mike&gt; Unable to send Jun 21 02:36:10 laputa netfs: Mounting NFS
+mike&gt; filesystems failed Jun 21 02:36:10 laputa mount: mount: RPC:
+mike&gt; Port mapper failure - RPC: Unable to send Jun 21 02:36:10 laputa
+mike&gt; netfs: Mounting other filesystems failed
+
+Andy&gt; I think the:
+Andy&gt; mount: RPC: Port mapper failure - RPC: Unable to send
+
+Andy&gt; is saying that the network is not up yet. That fact that you can
+Andy&gt; mount after the machine is fully up, tends to support this.
+
+Thank you very much, this was indeed the problem.
+
+I stupidly did put the `ifconfig' and `route' commands to start up
+the network in /etc/rc.d/rc.local:
+
+    ifconfig eth0 192.168.1.1 netmask 255.255.255.0 up
+    route add -net 192.168.1.0 dev eth0
+
+and  thus    they   were  not   executed   yet   at   the time    when
+/etc/rc.d/init.d/netfs tried to do the  NFS mounts, but after the boot
+procedure had finished, the network was up and I could do the mounts.
+
+The correct way to startup the network on a Redhat 6.0 system seems to
+be writing information about each network-interface in a file
+
+    /etc/sysconfig/network-scripts/ifcfg-&lt;interface-name&gt;
+
+On my system there was only one such file:
+
+    mike@example.com /etc/sysconfig/network-scripts$ cat ifcfg-lo
+    DEVICE=lo
+    IPADDR=127.0.0.1
+    NETMASK=255.0.0.0
+    NETWORK=127.0.0.0
+    BROADCAST=127.255.255.255
+    ONBOOT=yes
+
+I added a second one for the `eth0' interface:
+
+    mike@example.com /etc/sysconfig/network-scripts$ cat ifcfg-eth0
+    DEVICE=eth0
+    IPADDR=192.168.1.1
+    NETMASK=255.255.255.0
+    NETWORK=192.168.1.0
+    BROADCAST=192.168.1.255
+    ONBOOT=yes
+
+The files
+
+    /etc/sysconfig/network-scripts/ifcfg*
+
+are read during booting by the script
+
+    /etc/rc.d/init.d/network
+
+and this script starts the configured network interfaces.
+
+By the way, the procedure seems to  be exactly the  same on Redhat 5.2
+and Redhat  6.0,  which means  that  I was wrong   in claiming that it
+worked before I upgraded to  Redhat 6.0.  Probably the NFS-mounts were
+not done during booting on my old Redhat 5.2 system either.
+
+I probably   did a `mount  -a' after  booting and   forgot about that,
+because  the last  time I  rebooted this  machine  was already several
+weeks ago.
+
+誠に有難うございました。
+
+	Mike
+
+-- 
+Mike Fabian   mike.fabian@example.com   mike.fabian@example.com
+Termuehlenweg 2, D-40885 Ratingen-Lintorf, Telephone: +49(0)2102/893130
+
+-------------------------------------------------------------------
+Next Technical Meeting: July 10 (Sat), 13:00  place: Temple Univ.
+*** Topic: High Performance JAVA, by Matt Welsh
+Next Nomikai: August 20 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00112" HREF="msg00112.html">tlug: NFS filesystems not mounted at boot</A></STRONG>
+<UL><LI><EM>From:</EM> &lt;mike.fabian@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00114" HREF="msg00114.html">Re: tlug: NFS filesystems not mounted at boot</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00131.html">Re: tlug: NFS filesystems not mounted at boot (CORRECTED)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00133.html">tlug: FW: [tlug-admin: 1992] Re: please forward to main list</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00114.html">Re: tlug: NFS filesystems not mounted at boot</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00113.html">Re: tlug: NFS filesystems not mounted at boot</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00132"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00132"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

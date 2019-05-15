@@ -1,0 +1,207 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] OT&#45;Japanese in PHP -->
+<!--X-From-R13: Kbfuvuveb Engb <l_fngbhNlx.evz.be.wc> -->
+<!--X-Date: Mon, 23 May 2005 11:31:15 +0900 -->
+<!--X-Message-Id: EX&#45;MAIL&#45;SHI&#45;01VDBcs00000108@example.com&#45;mail&#45;shi&#45;01.ant.amazon.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200505220201.j4M21ZnW002503@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00231.html">Date Prev</a>][<a href="msg00233.html">Date Next</a>][<a href="msg00225.html">Thread Prev</a>][<a href="msg00235.html">Thread Next</a>][<a href="maillist.html#00232">Date Index</a>][<a href="threads.html#00232">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] OT-Japanese in PHP</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 23 May 2005 11:31:15 +0900</li>
+<li><strong>From</strong>: <strong>Yoshihiro Sato &lt;<A HREF="mailto:y_satou@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20OT-Japanese%20in%20PHP">y_satou@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] OT-Japanese in PHP</strong></li>
+<li>References: &lt;<a href="msg00220.html">200505220201.j4M21ZnW002503@example.com</a>&gt;</li>
+<li>Organization: Amazon.co.jp</li>
+<li>User-agent: Wanderlust/2.12.0 (Your Wildest Dreams) SEMI/1.14.6 (Maruoka)FLIM/1.14.7 (Sanj&omacr;) APEL/10.6 Emacs/21.3(i386-redhat-linux-gnu) MULE/5.0 (SAKAKI)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On server's side, especially if it's web application, I recommend to
+handle data like this: reject all characters which are not in JISX0208,
+and reject all half-width katakana.
+
+
+The difficulties of handling Japanese is
+
+1. Shift_JIS is not same as CP932 / Windows-31J / Shift_JIS on Macintosh.
+2. There's many mapping table between Unicode and legacy Japanese charsets
+3. Unicode CJK characters are unified.
+
+
+1. Shift_JIS is not same as CP932.
+
+Shift_JIS is originally not charset, it's rule how to "shift" JIS X 0208.
+But Microsoft's Windows31-J (aka CP932) is having some additional characters in
+extentional area: like circled numbers, roman numeric characters, symbols, etc.
+
+But on the other hand, Macintosh (Mac OS) is assigned different characters on
+the same data. For example, Windows (CP932) circled-number-one is displaying as
+(日) (in one double-width char) on Mac.
+You can find unmatched character list on Shift_JIS between Windows and Macintosh:
+  <A HREF="http://www.notoinsatu.co.jp/font/omake/S-JIS_check.pdf">http://www.notoinsatu.co.jp/font/omake/S-JIS_check.pdf</A>
+
+The problem is, Windows PC can enter these characters on the form of web browser.
+On web server's side, really difficult to detect which character is entered
+on user's side. Maybe need to check OS and browser version properly - but it
+won't promise always we can get correct result.
+
+
+2. There's many mapping table between Unicode and legacy Japanese charsets
+
+For example, even if it's in Microsoft world, you can find there's difference
+between Shift_JIS -&gt; Unicode and CP932 -&gt; Unicode:
+  <A HREF="http://www.asahi-net.or.jp/~ez3k-msym/charsets/jis2ucs.htm">http://www.asahi-net.or.jp/~ez3k-msym/charsets/jis2ucs.htm</A>
+Mapping table is different between each processing engine - typically
+library. There's several libraries (like iconv, etc.) for converting legacy
+charset &lt;--&gt; Unicode, and typically it has differencies.
+
+
+3. Unicode CJK characters are unified.
+
+This issue is typically happened when entering people's name and/or location
+name.
+When Unicode is designed, some characters which looks "similar" are unified
+into 1 characters (which is in area of "CJK Unified Ideographs"), and
+additionals are put into area of "CJK Compatibility Ideographs." 
+This also makes mapping issue - mapping tables are simply comberted
+characters into "CJK Unified Ideographs" characters, and not using "CJK
+Compatibility Ideographs" characters.
+Even if end user has method to input correct character on their UI in legacy
+character set, but there's a case it's mapped to different character on
+server's side.
+
+But actual problem is, most of the case end user does not have proper way to
+input such special characters. And users input "simplified character" or
+"similar character" as compromised solution when they meet restriction.
+
+--
+Yoshihiro Satou
+y_satou@example.com
+
+
+On Sun, 22 May 2005 12:01:35 +1000 (EST), Jim Breen &lt;Jim.Breen@example.com&gt; said:
+ &gt; 
+ &gt; Evan Monroig &lt;evan.ubuntu@example.com&gt; wrote:
+&gt;&gt;&gt; The
+&gt;&gt;&gt; generally accepted idea is that since Shift_JIS was created by
+&gt;&gt;&gt; Japanese people for Japanese people, then it handles the Japanese
+&gt;&gt;&gt; language better than UTF-8, which is not true (^_^)
+ &gt; 
+ &gt; I'll say it's not true. Shit_JIS was created by Microsoft, as Ken Lunde
+ &gt; wrote in his UJIP book 12 years ago.
+ &gt; 
+ &gt; Jim
+ &gt; 
+ &gt; -- 
+ &gt; Jim Breen                                <A HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>
+ &gt; Computer Science &amp; Software Engineering,                Tel: +61 3 9905 9554
+ &gt; Monash University, VIC 3800, Australia                  Fax: +61 3 9905 5146
+ &gt; (Monash Provider No. 00008C)                ジム・ブリーン@モナシュ大学
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00235" href="msg00235.html">Re: [tlug] OT-Japanese in PHP</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00220" href="msg00220.html">Re: [tlug-digest] Re: [tlug] OT-Japanese in PHP</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00231.html">RE: [tlug] Job Hunting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00233.html">Re: [tlug] Job Hunting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00225.html">Re: [tlug-digest] Re: [tlug] OT-Japanese in PHP</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00235.html">Re: [tlug] OT-Japanese in PHP</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00232"><strong>Date</strong></a></li>
+<li><a href="threads.html#00232"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

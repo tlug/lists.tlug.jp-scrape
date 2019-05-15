@@ -1,0 +1,175 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: awk (was tcl/tk + sed, was bash) -->
+<!--X-From: Jason Molenda <crash@example.com> -->
+<!--X-Date:  Thu, 27 Mar 1997 14:45:11 GMT -->
+<!--X-Message-Id: 199703271446.XAA11732@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.970327201202.schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00087.html">Date Prev</A>][<A HREF="msg00089.html">Date Next</A>][<A HREF="msg00087.html">Thread Prev</A>][<A HREF="msg00089.html">Thread Next</A>][<A HREF="maillist.html#00088">Date Index</A>][<A HREF="threads.html#00088">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: awk (was tcl/tk + sed, was bash)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: awk (was tcl/tk + sed, was bash)</strong></LI>
+<LI><strong>From</strong>: <strong>Jason Molenda &lt;<A HREF="mailto:crash@example.com">crash@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 27 Mar 1997 23:46:13 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00087.html">XFMail.970327201202.schweiz@example.com</A>&gt; from "Jim Schweizer" at Mar 27, 97 08:05:21 pm</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Jason Molenda &lt;crash@example.com&gt;
+--------------------------------------------------------
+Jim S wrote:
+
+&gt; Just thought I'd pass along this quick hack into Tcl/Tk I did for
+&gt; the earlier bash question - not too useful but it was fun...
+
+
+Well my fragile ego won't have any of that!
+
+This handles multiple messages in one input stream.  It either takes
+stdin or filenames on the command line.  It eats up whitespace at the
+beginning of messages.  It isn't particularly pretty, or useful. :-)
+
+
+
+Jason
+==================================================
+#! /bin/sh
+
+# ignores the Content-Length: header, assumes messages start with "From_".
+
+# would be easy to have it print out the sender at the top of the message--just
+# look for ^From: while inheader and save the string until we're no longer in
+# the e-mail header.
+
+awk '{
+   if ($1 == "From") 
+   {
+     inheader = 1                 #  we are in the header of an e-mail message
+     continue
+   }
+   if (inheader)
+   {
+     if (NF == 0)                # blank line
+     { 
+       eatblanks = 1
+       continue
+     }
+     if (eatblanks &amp;&amp; NF &gt; 0)    # start of actual message text
+     {
+       if (morethanone)          # print ^L iff we have more than one msg
+       {
+         print ""
+       }
+       print
+       inheader = 0              # we are no longer in the e-mail header
+       eatblanks = 0
+       morethanone = 1
+     }
+     continue                    # skip this header line
+   }
+   print
+}' $* | lpr
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00087" HREF="msg00087.html">tlug: Tcl/Tk + sed (was bash?)</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00087.html">tlug: Tcl/Tk + sed (was bash?)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00089.html">tlug: Locale</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00087.html">tlug: Tcl/Tk + sed (was bash?)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00089.html">tlug: Locale</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00088"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00088"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

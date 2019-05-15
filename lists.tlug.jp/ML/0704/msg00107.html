@@ -1,0 +1,200 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] please ignore my previous mail regarding httpd strangeness -->
+<!--X-From-R13: fpbgg <fpbggNfynpxvfynaq.bet> -->
+<!--X-Date: Fri, 06 Apr 2007 00:23:34 +0900 -->
+<!--X-Message-Id: 1175786613.3569.19.camel@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1175785577.3569.15.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00106.html">Date Prev</a>][<a href="msg00108.html">Date Next</a>][<a href="msg00106.html">Thread Prev</a>][<a href="msg00108.html">Thread Next</a>][<a href="maillist.html#00107">Date Index</a>][<a href="threads.html#00107">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] please ignore my previous mail regarding httpd strangeness</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 06 Apr 2007 00:23:33 +0900</li>
+<li><strong>From</strong>: <strong>scott &lt;<a href="mailto:scott@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20please%20ignore%20my%20previous%20mail%20regarding%20httpd%20strangeness">scott@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] please ignore my previous mail regarding httpd strangeness</strong></li>
+<li>References: &lt;<a href="msg00106.html">1175785577.3569.15.camel@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi again everybody,
+
+I found the cause of this httpd hit after a bit more logfile analysis,
+so please disregard my previous mail. 
+
+Funny how everytime I post to the TLUG list, I seem to work out the
+issue on my own almost right after. Maybe I should just post to myself
+and go from there ;-)
+
+Doh!
+Scott VanDusen
+Tokyo
+
+On Fri, 2007-04-06 at 00:06 +0900, scott wrote:
+&gt; Hi everyone,
+&gt; 
+&gt; The last couple of days I've noticed some strange behavior with my
+&gt; server at home- extreme network latency all of a sudden. Ping time to
+&gt; google is usually 208 ms but during this phenomena it shoots up to
+&gt; over 2000 ms. To troubleshoot the latest event, I did a the following
+&gt; (edited for brevity):
+&gt; 
+&gt; [root@example.com scott]# netstat -tuapn
+&gt; Active Internet connections (servers and established)
+&gt; Proto Recv-Q Send-Q Local Address               Foreign Address
+&gt; State       PID/Program name
+&gt; tcp        0  81200 219.114.58.46:80            58.138.12.186:50661
+&gt; ESTABLISHED 24628/httpd
+&gt; tcp        0  70000 219.114.58.46:80            58.138.12.186:50660
+&gt; ESTABLISHED 16617/httpd
+&gt; tcp        0  79800 219.114.58.46:80            58.138.12.186:50662
+&gt; ESTABLISHED 16616/httpd
+&gt; 
+&gt; [root@example.com sbin]# tcpdump -i ppp0
+&gt; tcpdump: verbose output suppressed, use -v or -vv for full protocol
+&gt; decode
+&gt; listening on ppp0, link-type LINUX_SLL (Linux cooked), capture size 96
+&gt; bytes
+&gt; 23:40:58.909627 IP 186.12.138.58.dy.bbexcite.jp.50660 &gt;
+&gt; slackisland.org.http: . ack 805046405 win 64400 &lt;nop,nop,timestamp
+&gt; 662900488 523132041&gt;
+&gt; 23:40:58.909678 IP slackisland.org.http &gt;
+&gt; 186.12.138.58.dy.bbexcite.jp.50660: . 61601:63001(1400) ack 0 win 1402
+&gt; &lt;nop,nop,timestamp 523134165 662900488&gt;
+&gt; 
+&gt; So it looks like apache is taking a hit- dumping a lot of data to this
+&gt; guest from bbexcite. The same thing happened yesterday but it was to a
+&gt; host on OCN  p7164-ipad412marunouchi.tokyo.ocn.ne.jp. I checked
+&gt; webalizer and these hosts had shown up:
+&gt; 
+&gt; Top 10 of 135 Total Sites By KBytes 
+&gt; # Hits Files KBytes Visits Hostname 
+&gt; 1 4 0.19% 4 0.25% 194038 17.44% 0 0.00% p7164-
+&gt; ipad412marunouchi.tokyo.ocn.ne.jp 
+&gt; 2 3 0.14% 3 0.18% 159350 14.32% 0 0.00% 186.12.138.58.dy.bbexcite.jp 
+&gt; 3 3 0.14% 3 0.18% 159350 14.32% 0 0.00% 222.146.199.164
+&gt; 
+&gt; So it looks like they are not &quot;visiting&quot;, but they are downloading a
+&gt; lot of data. I am wondering if I should be concerned? I'm already
+&gt; pretty paranoid after getting my system broken into last year. If it
+&gt; isn't anything to worry about, I wonder if I can take off my tin hat
+&gt; and just throttle this kind of stuff to prevent my network from
+&gt; becoming so slow. 
+&gt; 
+&gt; Anybody else experiencing anything like this lately?
+&gt; 
+&gt; Thanks in advance,
+&gt; Scott VanDusen
+&gt; Tokyo
+&gt; 
+&gt; -- 
+&gt; To unsubscribe from this mailing list, 
+&gt; please see the instructions at <a  href="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</a>
+&gt; 
+&gt; Please visit our sponsor at <a  href="http://www.primustel.co.jp/tlug/">http://www.primustel.co.jp/tlug/</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00108" href="msg00108.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00106" href="msg00106.html">[tlug] httpd strangeness</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00106.html">[tlug] httpd strangeness</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00108.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00106.html">[tlug] httpd strangeness</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00108.html">Re: [tlug] please ignore my previous mail regarding httpd strangeness</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00107"><strong>Date</strong></a></li>
+<li><a href="threads.html#00107"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

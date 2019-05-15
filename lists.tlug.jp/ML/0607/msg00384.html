@@ -1,0 +1,272 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] issues with format of double (or IEEE754) -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Thu, 27 Jul 2006 01:05:55 +0900 -->
+<!--X-Message-Id: 20060726160548.GJ5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20060726103316.5fd3a597.jep200404@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00383.html">Date Prev</a>][<a href="msg00385.html">Date Next</a>][<a href="msg00383.html">Thread Prev</a>][<a href="msg00389.html">Thread Next</a>][<a href="maillist.html#00384">Date Index</a>][<a href="threads.html#00384">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] issues with format of double (or IEEE754)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 26 Jul 2006 18:05:48 +0200</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<a href="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29">hajek1@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] issues with format of double (or IEEE754)</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29">20060726125907.GH5111@example.com</a>&gt;	&lt;<a href="mailto:20060726103316.5fd3a597.jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20issues%20with%20format%20of%20double%20%28or%20IEEE754%29">20060726103316.5fd3a597.jep200404@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.11+cvs20060403</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello :)
+
+ 
+&gt; &gt; on an i386 mashine...
+&gt; 
+&gt; ISA bus? 
+
+no, I use a PCI bus gpib board from INES production. It has quite a good
+support and documentation. 
+Oh, I see the point now... it is not an actual 386 procesor. It is a
+
+model name      : AMD Athlon(tm) 4 processor
+stepping        : 2
+cpu MHz         : 1466.890
+
+based computer. 
+Sorry for the confusion. My mystake.  
+
+&gt; &gt; char result_normal_plus[17]=&quot;00000000000000000&quot;;
+&gt; 
+&gt; If that is global, keep in mind that result_normal_plus will 
+&gt; initialized only _once_. 
+ 
+yes, thank you for pointing that out. But I consider the inicialization
+as a side issue for the time being :) (this consideration is based on
+the fact, that program returns a reasonable number, only 4 orders of
+magnitude wrong, but the actual digits are right)
+
+as for the number 17, it is just ad-hoc number. I choose it only to be
+long enough. Perhaps a mystake. Perhaps it could be 10 as well. 
+Since later I put &quot;end of string&quot; mark at position 10, I did not bother
+to use the other 7 bits in any way. 
+I thought I can change it to lower number later, when everything works
+well. My understanding is that it only saves memory but actualy does not
+influence anything alse.
+
+&gt; I am confused about which data is binary and which data is ASCII. 
+&gt; I get the hazy impression that ibrd() does binary, 
+&gt; so seeing result_normal_plus[ibcnt]='\0' looks odd. 
+
+The function ibrd is implemented (by people writing gpib code for linux)
+as:
+int ibrd(int ud, void *buffer, long num_bytes); 
+
+The problem is, that first 16bit read from the nanovoltmeter are two
+asci characters (#0 header) which I do not want. Being a poor programer
+myself, I could not find any other solution than just take everything
+and store it in a string. Than point another variable (a pointer to
+double) to the right place in the string (kind of saying &quot;from this
+point on take the following 8 characters as a double floating point
+number&quot;).
+
+Although if I know some kind of binary type where I could store 80 bits and
+than take only last 64, it would be perhaps a less confusing solution. 
+
+ 
+&gt; Where is the problem? Divide and conquer. 
+&gt; Does the meter output in the format you expect? How do you know? 
+&gt; Does double* use the format you expect? How do you know? 
+&gt; 
+&gt; Print out in hexadecimal (or even binary!), 
+&gt; the data returned by ibrd(). 
+&gt; 
+&gt; Parse it by hand. Calculate what you believe the numbers to be. 
+
+Out of despair, I have already started to work on that :) But the
+results are not so easy to obtain... :) 
+I need little more time. :)
+
+ 
+&gt; (BTW, where does ibcnt come from?)
+
+ibcnt is set by ibrd() to the number of bytes read. 
+So I use the information to cut the string in the right place. 
+Sometimes it could be 0, if something goes wrong with the devices on
+gpib bus or the bus itself. If all works ok, than the ibcnt is same as
+the number you give to ibrd as last parameter. 
+ 
+&gt; First, make it work right, then make it work correct. 
+...
+&gt; Did reading in ASCII, then converting with atof() work correctly? 
+
+yes, it works well. No problem. 
+
+ 
+&gt; How much time does it take to do it _correctly_? 
+well, I intend to run a measurement in a loop. One such loop has about
+four atof() and whole together takes about 0.8 seconds to finish. 
+
+I do not know how much time I can save with avoindig atof(). From profiler I
+cannot source the information, since atof() is buried inside another
+function. But if I run the program in gdb, than my personal subjective
+impression is, that atof() takes considerably more time than for example
+ibrd(). I do not know any other way how to find the information :( 
+
+&gt; Is the ASCII format and atof(), the fastest way that works _correctly_?
+&gt; Avoid premature optimization. 
+
+Well, the program is rather simple. Maybe this is a wrong path from the
+point of view of having work done. But I also want to know how things
+work. So my line of reasoning was based on these assumptions :
+
+1. the manual (which I believed) says the nanovoltmeter can return
+values in binary IEEE754 double precision format
+2. it should be possible to exploit this feature and avoid atof(). 
+
+When the program does not work like I expected, I tend to look for the
+errors in the program first and try to stick to assumptions as long as
+possible. Only I understand why the assumptions are wrong, I am
+satisfied and can leave them aside happily :) 
+
+&gt; Why do you care about speed? How much speed is enough? 
+
+This is difficult to say. The nanovoltmeter can make a conversion very
+quickly, but for my purpose about 16.6ms would be ok. In one loop, there
+are 4 measurements. Together less than 0.07s.  For my math model, 7 loops
+per second would be great. So there is about 0.5s for all the remaining
+work on the computer side. But for a computer 0.5s could be a lot of
+time, right? :) 
+
+I do not know if I can reach this value, but every speed up will be
+good. I want to go to the possible limit of hw.  Maybe I will have to go
+realtime, but for the first approximation, I want to try without it. 
+
+&gt; just worry about correctness and making your program easy to understand. 
+
+agree. At least easy to understand is definitely my goal too. 
+
+Unfortunately, right now the timing of my work is a problem. I have
+about 24 hours to find a solution and than I am leaving for 7 day
+holiday.  After I come back, I will continue this work. So right now I
+will try to find out what are the actual digits which the nanovoltmeter
+returns and how they represent the measured value. I will let you know
+what I have been able to find. 
+
+Thank you once again for your advice...
+
+Best regards
+Michal
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00389" href="msg00389.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Botond Botyanszki</li></ul></li>
+<li><strong><a name="00400" href="msg00400.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00404" href="msg00404.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00383" href="msg00383.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00383.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00385.html">Re: [tlug] I'm a glutton for punishment - Palm Pilot and Ubuntu Dapper LTS connectivity</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00383.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00389.html">Re: [tlug] issues with format of double (or IEEE754)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00384"><strong>Date</strong></a></li>
+<li><a href="threads.html#00384"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

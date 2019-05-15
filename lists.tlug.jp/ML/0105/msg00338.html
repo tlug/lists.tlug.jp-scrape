@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Cisco 2611 as a firewall? -->
+<!--X-From: Jonathan Q <jq@example.com> -->
+<!--X-Date: Thu, 17 May 2001 17:58:55 +0900 -->
+<!--X-Message-Id: 20010517175855.E28296@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 990022020.3b0289844392a@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00335.html">Date Prev</A>][<A HREF="msg00339.html">Date Next</A>][<A HREF="msg00288.html">Thread Prev</A>][<A HREF="msg00341.html">Thread Next</A>][<A HREF="maillist.html#00338">Date Index</A>][<A HREF="threads.html#00338">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Cisco 2611 as a firewall?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Cisco 2611 as a firewall?</strong></LI>
+<LI><strong>From</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@example.com">jq@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 May 2001 17:58:55 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00279.html">990022020.3b0289844392a@example.com</A>&gt;; from sven@example.com on Wed, May 16, 2001 at 09:07:00AM -0500</LI>
+<LI>References: &lt;<A HREF="msg00279.html">990022020.3b0289844392a@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;TI5kE.A.UaB.uM5A7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+sven@example.com (sven@example.com) wrote:
+
+&gt; A friend of mine who's running an ISP wants me to come over
+&gt; and configure his Cisco 2611 router he just got as the primary
+&gt; link to his backbone.
+
+He may be already committed contractually, but a better and
+more reliable setup would be to get some portable IP space
+and multi-home with two providers, and get the fiber from
+two different carriers, so he has a network uplink that
+looks like this:
+
+
+**********				**********
+Provider A				Provider B
+**********				**********
+    |					    |
+    | Carrier A				    | Carrier B
+    |					    |
+    -----------------2611--------------------
+
+The links could be be 768K and equally balanced, or one
+could be smaller and used as a backup, with traffic primarily
+going through the bigger pipe.  The benefits of this are:
+
+1) If Provider A has an outage, you have a backup router through
+   Provider B;
+
+2) If Carrier A has a fiber cut or other outage, you hope
+   that Carrier B's fiver takes a physically different path
+   and didn't get cut by the same backhoe that took out Carrier A.
+   Ditto for outages from things like ugprades of network switches:
+   Carrier B probably doesn't upgrade it's firmware at the same time
+   Carrier A does.  If A has an upgrade gone bad, you still have a route
+   via B.
+
+More expensive?  Yeah.  But cheaper than downtime, especially if you're
+an ISP.
+
+On the inside of the network, you could - as Scott suggested - hang
+the mail servers, DNS, etc. off of one Ethernet interface on the
+2611 and protect them with access lists, then hang things like
+dial-up access servers, that need to be right on the Internet,
+on the other Ethernet interface.  Here, acess lists would be
+minimal, just filter outoing port 25 and anything your AUP
+prohibits (filtering all NetBIOS ports might be useful for
+protecting customers; just state somewhere that you're doing
+it).   This will make the 2611 work harder, so if the business
+does well, it will run out of steam faster or you'll seen need
+to move to a real firewall and take that work off of the router.
+However, if you really want to have firewalling there, you're better
+off setting up a firewall in the first place.
+
+Note: do use a setup where:
+
+1)  Each machine behind the firewall is locked down, and even
+    running ipchains or iptables firewalling itself;
+
+2) All you have to do if the firewall fails in service is unplug the
+   ethernet leading to the servers and connect it directly to the
+   2611 to restore connectivity.   
+
+For 2, connect all the machines behind the firewall into a switch
+(not a hub; if anyone should somehow manage to own one of them, a
+hub will allow them to sniff; a switch will defeat this.  Put
+security where ever you can.  Switches also perform better than
+hubs).  
+
+This way, even if the firewall box dies, you can get your connectivity
+back in a few seconds and the machines will still be fairly secure
+even without the firewall.
+
+
+Next issue, routing protocols.  If you plan to take a partial BGP
+view (a full view is probably out of the question on a 2611), 
+stuff that router with as much memory as it will hold.  However,
+if you're not multi-homing, there's no real reason why you need
+to do anything but run a static route to the upstream.
+
+Jonathan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00341" HREF="msg00341.html">Re: Cisco 2611 as a firewall?</A></STRONG>
+<UL><LI><EM>From:</EM> "Thomas O'Dowd" &lt;tom@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00279" HREF="msg00279.html">Cisco 2611 as a firewall?</A></STRONG>
+<UL><LI><EM>From:</EM> sven@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00335.html">Re: CmdrTaco, Hemos</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00339.html">Re: Samba on 7.1 not working :(</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00288.html">Re: Cisco 2611 as a firewall?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00341.html">Re: Cisco 2611 as a firewall?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00338"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00338"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

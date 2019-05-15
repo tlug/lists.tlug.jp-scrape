@@ -1,0 +1,272 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Programming in Japanese on X -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 29 Sep 1998 13:34:12 +0900 -->
+<!--X-Message-Id: 13840.25386.839880.61347@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.980929103858.787A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00874.html">Date Prev</A>][<A HREF="msg00876.html">Date Next</A>][<A HREF="msg00877.html">Thread Prev</A>][<A HREF="msg00868.html">Thread Next</A>][<A HREF="maillist.html#00875">Date Index</A>][<A HREF="threads.html#00875">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Programming in Japanese on X</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Programming in Japanese on X</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 29 Sep 1998 13:33:46 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00863.html">Pine.LNX.3.96.980929103858.787A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00863.html">Pine.LNX.3.96.980929103858.787A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "mc" == Michael Casinghino &lt;michael@example.com&gt; writes:
+
+    mc&gt; I have a programming question.  How can I figure out how to
+    mc&gt; display Japanese text in an X-Window?  I have just read the
+    mc&gt; following books (well, the i18n and font parts anyway) --
+
+    mc&gt; They all made vague references, and I tried a million things.
+    mc&gt; Nothing worked.
+
+Um, the OReilly Xlib Programming Manual is quite specific.  As is the
+Motif Programming Manual.  Did you try the example programs?  Are you
+already an experienced X programmer?  If neither, I understand why you
+think the references are "vague," but you really have to read the
+_whole_ book up to the i18n chapter to understand that material.
+
+What _did_ you try?  Send code when you have a programming question;
+it's the only way we have hope of figuring out what you're thinking.
+
+Basically it's a matter of setting the font and squirting strings at
+the display using XDrawString and friends.  I just used straight JIS
+(ie, 7 bit code with no escape sequences) which will look like random
+ASCII (eg "#0#1#2#3#4#5#6#7#8#9" would display the digits in order in
+zenkaku form; it turns out there is not a dependency on endianness,
+look up the definition of struct XChar2b) after setting the font
+appropriately.  Here's a patch to an OReilly example.  It's pretty
+ugly; _all_ it does is output Japanese in a specific place.  (The
+error routine has been tested, too ;-)
+
+steve@example.com:basic$ diff -u basicwin.c japanese.c
+--- basicwin.c  Wed Jun 10 06:22:18 1992
++++ japanese.c  Tue Sep 29 13:07:33 1998
+@@ -2,12 +2,17 @@
+  * Copyright 1989 O'Reilly and Associates, Inc.
+  * See ../Copyright for complete rights and liability information.
+  */
++#define JAPANESE 1
+ #include &lt;X11/Xlib.h&gt;
+ #include &lt;X11/Xutil.h&gt;
+ #include &lt;X11/Xos.h&gt;
+ #include &lt;X11/Xatom.h&gt;
+ 
+ #include &lt;stdio.h&gt;
++#ifdef JAPANESE
++/* For sleep() */
++#include &lt;unistd.h&gt;
++#endif
+ 
+ #include "../bitmaps/icon_bitmap"
+ 
+@@ -175,7 +179,51 @@
+                                TooSmall(win, gc, font_info);
+                        else {
+                                /* place text in window */
++#ifndef JAPANESE
+                                draw_text(win, gc, font_info, width, height);
++#else
++/* Assuming you've already opened display, created and mapped
++   win, set up gc, entered the event loop, and received an Expose
++   event.  This code was tested by subtituting as is for the function
++   call to drawtext() in O'Reilly's basic/basicwin.c.  Available at 
++   <A TARGET="_top" HREF="ftp://ftp.uu.net/vendor/oreilly/xbook/xlib/xlibprgs3.tar.Z">ftp://ftp.uu.net/vendor/oreilly/xbook/xlib/xlibprgs3.tar.Z</A>.
++   Compile with gcc -L /usr/X11R6/lib -lX11 -o japanese japanese.c 
++   (note rename). */
++{
++  /* that really should be a 14-hyphen XLFD, but I'm lazy */
++  /* most X servers have "k14", you can try that too      */
++  char *fontname = "-*-jisx0208.1983-0";
++  XFontStruct *jfont;
++
++  /* extra parens shut up compiler */
++  if ((jfont = XLoadQueryFont(display,fontname)))
++  {
++    XSetFont(display,gc,jfont-&gt;fid);
++    /* I think the 10 is correct (count characters), but it may actually
++       be 20 (count bytes). */
++    /* should use XTextExtents to insure this does not get clipped */
++    XDrawString16(display,win,gc,20,20,
++                  (XChar2b *) "#0#1#2#3#4#5#6#7#8#9", 10);
++  } else {
++    /* do the same display operation in the default font */
++    /* should check length of fontname and malloc this, also make sure
++       window boundaries don't clip the string */
++    char error[81];     /* +1 is belt-and-suspenders */
++    int nchars;
++    nchars = snprintf(error,80,"Can't find matching font: %s.",fontname);
++    XDrawString(display,win,gc,20,20,
++                error,nchars);
++    XDrawString(display,win,gc,20,40,
++                "If you're gonna display Japanese, you need fonts!", 49);
++    /* This is normally evil, but since we're exiting we're not unhappy
++       about preempting user interaction. Translation:  heavens, I'm lazy. */
++    XFlush(display);
++    sleep(5);
++    exit(1);
++  }
++}
++
++#endif
+ 
+                                /* place graphics in window, */
+                                draw_graphics(win, gc, width, height);
+
+
+
+See also r5/i18n_output.c in xlibprgs3.tar.Z.
+
+In Motif, you probably need to make a Compound Text string and use
+XmDrawText (or some such function, I don't do Motif).
+
+    mc&gt; Where do I find out how X turns a euc string into Japanese
+
+Use compound text, which is an 8-bit ISO-2022 encoding.  There are
+convenience functions for making compound text out of strings in
+Motif.  I believe that Motif does the conversion to the font's
+encoding (JIS) internally.  Or maybe Xlib does.  Or you can do it; Ken 
+Lunde's code is well documented, you can just borrow his functions
+(check the license notice first, I forget if there are any special
+restrictions, but he didn't just GPL it):
+
+      <A TARGET="_top" HREF="ftp://ftp.uu.net/vendor/oreilly/nutshell/ujip/src/jconv.c">ftp://ftp.uu.net/vendor/oreilly/nutshell/ujip/src/jconv.c</A>
+
+    mc&gt; text?  Or perhaps more basically, how can I select a character
+    mc&gt; from a Japanese font set?  And what about input?
+
+Japanese font sets are all encoded in JIS (that's why their longnames
+end in jisx0208-0 etc).  Just set the font in the GC and start spewing 
+JIS.
+
+Input is a bitch.  Rather than try to handle input, you should use an
+X Input Method like kinput2.  Unfortunately, both Xlib and Motif and
+most versions of lesstif have bugs.  The XIM stuff is tedious but
+straightforward; you set it up and then let the usual complement of
+input functions do their work.  Mostly they won't crash on you,
+although muriyari Netscape users may tell you differently :-P.
+
+See the r5/i18n_input.c in xlibprgs3.tar.Z.
+
+    mc&gt; I have lesstif and Gtk.  I can read a little Japanese but...
+    mc&gt; If anyone can recommend a good book, document, or web site, I
+    mc&gt; will be eternally grateful.
+
+Well, you listed my reading list already.  Gtk ought to have man pages
+galore.  Look at the stuff in /usr/X11/man/man3/X{mb,wc}*.
+
+Read programs (or perhaps better the Japanese-enabling patches).  I
+can't suggest any, unfortunately, the programs I know (Mule, kinput2,
+kterm) bury the Japanese handling deep in arcane general routines.
+
+Maybe Jim Breen's xjdic (<A TARGET="_top" HREF="ftp://ftp.monash.edu.au/pub/nihongo/xjdic*">ftp://ftp.monash.edu.au/pub/nihongo/xjdic*</A>),
+but I think that only does input and assumes output to a kterm.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00863" HREF="msg00863.html">tlug: Programming in Japanese on X</A></STRONG>
+<UL><LI><EM>From:</EM> Michael Casinghino &lt;michael@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00874.html">Re: tlug: List of meta's for different languages</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00876.html">Re: tlug: List of meta's for different languages</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00877.html">Re: tlug: Programming in Japanese on X</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00868.html">RE: tlug: Programming in Japanese on X</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00875"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00875"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

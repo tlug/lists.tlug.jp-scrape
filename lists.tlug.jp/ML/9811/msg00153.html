@@ -1,0 +1,321 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: PCMCIA Network trouble (D&#45;Link DE&#45;660) -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Sat, 7 Nov 1998 22:10:29 +0900 -->
+<!--X-Message-Id: 199811071312.WAA00721@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00152.html">Date Prev</A>][<A HREF="msg00154.html">Date Next</A>][<A HREF="msg00149.html">Thread Prev</A>][<A HREF="msg00154.html">Thread Next</A>][<A HREF="maillist.html#00153">Date Index</A>][<A HREF="threads.html#00153">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: PCMCIA Network trouble (D-Link DE-660)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: PCMCIA Network trouble (D-Link DE-660)</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 7 Nov 1998 22:12:00 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Short questions:
+
+  (1) Is the D-Link DE660 PCMCIA Ethernet adapter card a loser
+      with version 2.9.12 of the PCMCIA package?
+
+  (2) If the answer to the above is "yes" or "dunno", how can
+      I force the egcs compiler that ships with TL to link a
+      binary (cardmgr) with libc-5 --- or would someone with
+      a libc-5 system be willing to build such a binary for
+      me?
+
+  (3) Why am I still at my b***dy office at 9:50pm this evening?
+
+
+Today I had a little free time, so I thought I would set things
+up for backing up my laptop.  It has turned into something of a
+nightmare.  I think I'm now up against the last hurdle.  But you
+never know.
+
+To do the backup properly, I need to get a filesystem into memory
+via LILO, and use that to stream the data to a tape device on our
+network.  That much, I think, is pretty standard.  What has made
+my life exceptionally entertaining today is that the machine has
+no DOS partition, won't boot from floppy, and relies on PCMCIA
+for network access.
+
+The rest of this message describes the steps I've gone through,
+and the problem I'm up against.  If you are willing to help, but
+are only interested in the problem, search for PROBLEM:, below.
+
+I started off by building statically-linked copies of the tools I
+would need, but very soon saw that I was going to run past the
+4-meg limit for a ramdisk.  Same problem with libraries and
+dynamically-linked executables (libc-5 and libc-6 were both
+required).
+
+Right.  So I fetched the tomsrtbt stuff, and began sculpting it
+to suit my purposes.  I created a Big Empty File with dd,
+formatted it, used loopback to mount it and cp --archive'd the
+contents of the tomsrtbt disk image into it.
+
+Then I added this entry to my /etc/lilo.conf:
+
+image=/boot/vmlinuz.APM
+	label=backup
+	initrd=/boot/tomsrtbt.initrd
+	root=/dev/hda1
+        read-only
+
+The kernel vmlinux.APM is a 2.0.33 kernel, compiled to provide
+initrd support.  The initrd starts up just fine, and runs a
+"linuxrc" script I have stuck in there.  The "linuxrc" script
+does some basic setup operations to give me a working
+environment.  I can see from poking around inside the initrd
+filesystem that it's got what I'll need to do the backup.
+
+Next, I need network access.  Attempting to start the "cardmgr"
+contained in tomsrtbt, I found that it failed for want of /proc.
+I arranged for /proc to get mounted.  Next, "cardmgr" failed
+claiming that it couldn't find the PCMCIA sockets, and whinged
+about a symbol mismatch with the kernel.  This was fair enough,
+because my kernel is not the one that ships with tomsrtbt (the
+latter has no initrd support).
+
+Soooooo ... I fetched the sources for the pcmcia utilities in the
+version used in tomsrtbt, and compiled them for my vmlinuz.APM
+kernel.  After a little tweaking here and there to assure that
+everything was in place (the linuxrc script is below for
+reference -- search for "LOOK HERE" to find the significant
+bits), cardmgr is able to load and unload the driver without
+complaint.
+
+PROBLEM:
+
+Unfortunately, the card doesn't WORK.  It will accept
+configuration data via "ifconfig", but after completing the usual
+setup with ifconfig and route, the nameserver is invisible, ping
+reports that the network is inaccessible, etc etc.  I do get
+green lights on the modem cable's jack ... don't know whether
+that's anything at all to do with the driver though.
+
+It occurred to me that the card, a D-Link DE-660, might not have
+been supported by the 2.9.12 version of pcmcia that ships with
+tomsrtbt; the 3.0.5 version is what I use for normal running, and
+it works fine.
+
+Unfortunately, to test this I will need a 3.0.5 version of
+"cardmgr", linked against libc-5, since that's the library used
+in tomsrtbt.
+
+It wouldn't surprise me if I've just left out some simple piece
+of network configuration magic, or misconfigured something.  But
+it's been a long, slow learning curve on this, and I have a _bad_
+case of brain burn this evening.  If you can consider the account
+above, take a look at the file below, and offer some sort of
+insight into either (a) network problems or (b) compile options
+needed to link dynamically against an alternative library, I
+would be most grateful.
+
+The file linuxrc:
+
+#!/bin/ash
+export PATH=/bin:/sbin:/usr/bin
+. ./etc/settings.s
+update &amp;
+mount -t proc /proc /proc
+#
+# LOOK HERE
+# The setting below is definitely correct for this site.
+#
+cat&gt;/etc/resolv.conf&lt;&lt;X
+domain nomolog.nagoya-u.ac.jp
+nameserver 133.6.33.1
+X
+cat&gt;/etc/hosts&lt;&lt;X
+127.0.0.1	localhost
+X
+cat&gt;/etc/passwd&lt;&lt;X
+root:xxxx:0:0::/:/bin/sh
+shutdown:*:6:0::/:/usr/bin/shutdown
+halt:*:7:0::/:/usr/bin/halt
+X
+cat&gt;/etc/profile&lt;&lt;'X'
+export PATH=/usr/bin:/bin:/doc
+cd /
+ls () { /usr/bin/ls --color=tty "$@";}
+clear
+stty sane
+ddate
+X
+#
+# LOOK HERE
+# These parameters feed into the works via the usual
+# "network" script, in /etc/pcmcia.  Everything shows
+# up correctly when I do "ifconfig".  But the card doesn't
+# seem to function.
+#
+cat&gt;/etc/pcmcia/network.opts&lt;&lt;'X'
+case "$ADDRESS" in
+*,*,*,*)
+IPADDR=133.6.33.14
+NETWORK=133.6.33.0
+BROADCAST=133.6.33.255
+NETMASK=255.255.255.0
+BOOTP="n"
+GATEWAY="133.6.33.254"
+DOMAIN="nomolog.nagoya-u.ac.jp"
+SEARCH="133.6.33.1"
+DNS_1="133.6.33.1"
+start_fn () { return; }
+stop_fn () { return; }
+;;
+esac
+X
+cat&gt;/etc/pcmcia/PCIC&lt;&lt;X
+export PCIC=i82365 # or tcic
+X
+FM=`sh -c 'shift 2;echo $8' \`dd if=/proc/meminfo 2&gt;/dev/null\` `
+if [ $FM -gt 6000000 ]
+then
+mkfs.minix /dev/ram3
+else
+mkfs.minix /dev/ram3 256
+fi
+mount /dev/ram3 /root
+#
+# LOOK HERE
+# These are the same modules loaded by the "pcmcia" script under
+# "/etc/rc.d".
+#
+insmod pcmcia_core
+insmod i82365
+insmod ds
+cardmgr
+hostname rm-325
+clear
+cat &lt;&lt;'X'
+1 be	4 dk	7 fr	10 is	13 la	16 pt	19 sf
+2 cf	5 es	8 gr	11 it	14 no	17 ru	20 sg
+3 de	6 fi	9 hu	12 jp	15 pl	18 se	21 uk
+
+X
+read -p "Select keyboard, ENTER for default: " J&lt;/dev/tty1&gt;/dev/tty1 2&gt;&amp;1
+case $J in
+1)loadkeys be.map;; 8)loadkeys gr.map;;15)loadkeys pl.map;;
+2)loadkeys cf.map;; 9)loadkeys hu.map;;16)loadkeys pt.map;;
+3)loadkeys de.map;;10)loadkeys is.map;;17)loadkeys ru.map;;
+4)loadkeys dk.map;;11)loadkeys it.map;;18)loadkeys se.map;;
+5)loadkeys es.map;;12)loadkeys jp.map;;19)loadkeys sf.map;;
+6)loadkeys fi.map;;13)loadkeys la.map;;20)loadkeys sg.map;;
+7)loadkeys fr.map;;14)loadkeys no.map;;21)loadkeys uk.map;;esac
+{ echo -e "\n\n\n\n\tWhat you have is...\n"
+{ find / -path /proc -prune -o \( -type f -o -type l \) -printf "%f\n"\
+|sed -e s/\\.o$// -e /\\.map$/d -e s/\\.diff$// -e s/\\.so\.*// -e s/\\.awk$//\
+|sort -u
+} |fmt -80
+echo -e "\n\t...Login as root.  Remove the floppy.  AltF1-AltF4 for consoles.\n"
+echo -n " \l "
+} &gt;/etc/issue
+
+
+/bin/ash -i
+
+----------------------------------------------------------------
+Next Nomikai: 20 November, 19:30   Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00154" HREF="msg00154.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00180" HREF="msg00180.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00181" HREF="msg00181.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00152.html">Re: tlug: Re: Sendmail down on TLUG?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00154.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00149.html">tlug: Re: imap</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00154.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00153"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00153"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

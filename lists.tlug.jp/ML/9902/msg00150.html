@@ -1,0 +1,203 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Ghostscript/VFlib not finding font -->
+<!--X-From: Matt Gushee <matt@example.com> -->
+<!--X-Date:  Tue, 9 Feb 1999 15:18:16 +0900 -->
+<!--X-Message-Id: 199902090521.OAA08903@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00149.html">Date Prev</A>][<A HREF="msg00151.html">Date Next</A>][<A HREF="msg00166.html">Thread Prev</A>][<A HREF="msg00152.html">Thread Next</A>][<A HREF="maillist.html#00150">Date Index</A>][<A HREF="threads.html#00150">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Ghostscript/VFlib not finding font</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Ghostscript/VFlib not finding font</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 9 Feb 1999 14:21:35 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi, Folks--
+
+ARRGH! ARGV! ARGC!
+
+Sorry, just had to get that off my chest.
+
+Well, here I am in Ghostscript hell again. Yesterday I installed VFlib 
+2.22pl10 and built ghostscript 5.10-jp from SRPM. Compilation seems to 
+have gone okay, but now I'm having a problem: if I try to view a
+document in GV, I get the following:
+
+VFlib: Cannot open the font 'min'.
+Unexpected interpreter error -12.
+Error object:
+Unrecoverable error: ioerror in kfVFlib
+Operand stack:
+	min 0 10273 0 10273 c21 Private
+
+... and so on. This is for English PS files; if I try to view a
+Japanese document, I get the same error, only the stack trace is much
+longer.
+
+Up till yesterday I had gs-3.33 from the RedHat 5.1 CD, which worked
+(only for English, of course); before I replaced my hard disk in
+December, I was using gs-5.03jp with the same version (but see below)
+of VFlib, which worked for both English and Japanese. Here are some
+more details:
+
+Things that are the same:
+------------------------
+
+* all ghostscript paths -- /usr/bin/gs,
+/usr/share/ghostscript/$VERSION &amp; /usr/share/ghostscript/fonts,
+/usr/local/lib/wada-gsf for Wadalab fonts
+
+* /etc/vfontcap and ghostscript's Fontmap files (well, I haven't
+compared them line-for-line, but I've looked at them and there don't
+appear to be any significant changes)
+
+* environment variables directly affecting ghostscript -- $GS_LIB =
+/usr/local/lib/wada-gsf
+
+* VFlib version 2.22pl10
+
+Things that have changed:
+------------------------
+
+* I installed a different VFlib *package* -- before I was using the
+JRPM version, but this time I used the TurboLinux RPM; thus all the
+VFlib stuff was under /usr/local before, now it's under /usr.
+
+* ghostscript version: 5.03 -&gt; 5.10  (both packages from JRPM, but
+	for 5.03 I used the binary distribution)
+
+* I made some changes to the ghostscript makefile:
+
+SHARE_LIBPNG=0  --&gt; SHARE_LIBPNG=1
+
+SHARE_ZLIB=0  --&gt; SHARE_ZLIB=1
+
+GCFLAGS=-Dconst -Wall -Wpointer-arith -Wstrict-prototypes  --&gt;
+GCFLAGS=-Wall -Wcast-qual -Wpointer-arith -Wstrict-prototypes \
+	-Wwrite-strings 
+	(if I understood the documents right, the latter is normal,
+	the former is a workaround for GCC versions up to 2.7.2 -- I
+	compiled w/ 2.7.2.3)
+
+FEATURE_DEVS=level2.dev pdf.dev pipe.dev kanji.dev kfvflib.dev  --&gt;
+FEATURE_DEVS=level2.dev pdf.dev pipe.dev kanji.dev kfvflib.dev \
+	ttfont.dev
+	(this last -- non-Japanese TrueType font support -- is the
+	main reason I wanted to build from source in the first place)
+
+
+And one other thing that could be significant: when I run the VFlib
+test programs (vftest, vfperf, ktest, with no font name, I get:
+	Initializing VFlib: OK
+	open error; min
+... which is no surprise -- except that on my other machine I get the
+same error, but it doesn't seem to affect ghostscript at all.
+
+Well, anybody care to take a stab at this? 'Twill be much appreciated.
+
+Matt Gushee
+Oshamanbe, Hokkaido
+	
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00152" HREF="msg00152.html">Re: tlug: Ghostscript/VFlib not finding font</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00155" HREF="msg00155.html">Re: tlug: Ghostscript/VFlib not finding font</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00149.html">Re: tlug: 3Com 589 PC Card</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00151.html">Re: tlug: 3Com 589 PC Card</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00166.html">Re: tlug: 3Com 589 PC Card</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00152.html">Re: tlug: Ghostscript/VFlib not finding font</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00150"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00150"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

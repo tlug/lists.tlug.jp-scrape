@@ -1,0 +1,165 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] stdin/stderr redirection under Solaris -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 28 Aug 2004 17:16:21 +0900 -->
+<!--X-Message-Id: 87u0unu17u.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 412C3FED.4000901@example.com&#45;sc.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00104.html">Date Prev</a>][<a href="msg00106.html">Date Next</a>][<a href="msg00096.html">Thread Prev</a>][<a href="msg00121.html">Thread Next</a>][<a href="maillist.html#00105">Date Index</a>][<a href="threads.html#00105">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] stdin/stderr redirection under Solaris</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 28 Aug 2004 17:16:21 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20stdin%2Fstderr%20redirection%20under%20Solaris">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] stdin/stderr redirection under Solaris</strong></li>
+<li>References: &lt;<a href="msg00077.html">412C3FED.4000901@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (chayote, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Jean-Christian&quot; == Jean-Christian Imbeault &lt;jean-christian.imbeault@example.com&gt; writes:
+
+    Jean-Christian&gt; Sorry since this is not a Linux only question, but
+    Jean-Christian&gt; I've been having a hell of a time trying to figure
+    Jean-Christian&gt; out how to redirect stdout and stderr separately
+    Jean-Christian&gt; under Solaris (in any shell).
+
+It's a shell question, not an OS question.  Your best bet is to use a
+Bourne shell, in which case file redirection use the syntax &quot;prog N&gt;
+file&quot; where N is the file descriptor and defaults to 1.  The syntax &amp;M
+duplicates file descriptor M into an &quot;lvalue&quot;, so that &quot;prog N&gt;&amp;M&quot;
+sends both N and M to wherever N was at the time.  Note that it is a
+duplication, not an identification, so that &quot;prog 1&gt; file 2&gt;&amp;1&quot; send
+both stdout and stderr to file, while &quot;prog 2&gt;&amp;1 1&gt;file&quot; sends stdout
+to file and stderr to stdout (this actually has semantics: stderr is
+now buffered, where normally it is not).
+
+I don't think any of the shells have syntax for sending different FDs
+to different pipes; use the &quot;y&quot; program for that.  However, I don't
+see a &quot;y&quot; program on Debian or an old Red Hat Linux.  If you need two
+&quot;consoles&quot;, you could use something like
+
+prog 1&gt; tmp1 2&gt; tmp2 &amp;
+
+and
+
+tail -f tmp1
+tail -f tmp2
+
+in the separate consoles.
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00121" href="msg00121.html">Re: [tlug] stdin/stderr redirection under Solaris</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00077" href="msg00077.html">[tlug] stdin/stderr redirection under Solaris</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00104.html">Re: [tlug] funny error msg</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00106.html">Re: [tlug]  Sub: best thing on the internet</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00096.html">Re: [tlug] stdin/stderr redirection under Solaris</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00121.html">Re: [tlug] stdin/stderr redirection under Solaris</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00105"><strong>Date</strong></a></li>
+<li><a href="threads.html#00105"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

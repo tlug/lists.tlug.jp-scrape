@@ -1,0 +1,239 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Boot Easy -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 7 Nov 1996 02:39:07 GMT -->
+<!--X-Message-Id: m0vLKI3&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199611060828.RAA29052@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00034.html">Date Prev</A>][<A HREF="msg00036.html">Date Next</A>][<A HREF="msg00031.html">Thread Prev</A>][<A HREF="msg00040.html">Thread Next</A>][<A HREF="maillist.html#00035">Date Index</A>][<A HREF="threads.html#00035">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Boot Easy</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Boot Easy</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 7 Nov 96 11:33 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00031.html">199611060828.RAA29052@example.com</A>&gt; (schweiz@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; Hi all, I just picked up a copy of FreeBSD 2.1.5 so I could
+    Jim&gt; compare it to Linux (and hopefully understand Linux better by
+
+You should find that you don't really see any difference.  All of the
+user-level programs are the same (GCC, bash, etc, et al.)  You may
+find that some things work better and others worse because of
+different bugs in the kernel (eg, your image-maps might suddenly start 
+working, although I still think that was a configuration bug, not a
+problem with the servers).
+
+I used 386BSD for a while back in its v0.1 days; it was amusing but
+DESQview/X over DOS (there was no working X for 386/BSD then) was a
+more productive environment.  I think csh was the standard shell then;
+other than that it looked a lot like Linux or SunOS or Ultrix at the
+user level.
+
+System administration will be a little different, but many of the
+system administration tasks on Linux are done via BSD utilities ported 
+to the Linux environment, so I suspect even that will be familiar.
+
+Back when I started with Linux, there was a big debate, even flamewar, 
+over the relative advantages.  The BSD crowd pointed to better (more
+stable) networking and a more unified development process; Linux had
+better console user interfaces and more applications.  I never did get 
+around to installing FreeBSD though, because about that time there
+were *big* improvements in Linux networking, and I found that Linux
+was far more stable than my ISP's system (by which I mean the
+University of Tsukuba's Scientific Information Processing Center and
+SINET).  :-P
+
+I've talked to a few BSD fans, and basically what it comes down to is
+that BSD is a "man's" OS with good thread support and robust
+networking; some prefer the programming interface although Linux is
+quite BSD-ish there.  However, free software being what it is, Linux
+has borrowed a lot of the code from the FreeBSD project, and
+capabilities have converged.
+
+If I were you, I'd see if I could find a BSD user group to talk to and
+see if you really are going to see benefits from fooling around with a
+new system.  Not being a user myself, the above impressions are not
+very reliable; but I can say that it's not out of the realm of
+possibility that you'll find yourself making a fair investment only to
+find that the only difference you can see is in uname's output!
+
+    Jim&gt; doing so) and I wondered if any of you have tried to use Boot
+    Jim&gt; Easy (the default boot manager for BSD) to boot LILO?
+
+If BSD is going to be your alternative system, I'd do it the other way
+around, arrange for BSD's boot record to be stored in a partition, and 
+have LILO boot that partition.  If you screw up the Boot Easy -&gt; LILO
+-&gt; Linux configuration, consequences will be *dire*.
+
+I'm sure Boot Easy is much more accomodating than MicroShaft's
+Windowze95 bootdozer or OS/2's bootmangler, but those two examples
+should give you fair warning of the headaches that mixing boot
+managers can be.
+
+    Jim&gt; Also, the FreeBSD docs say that it should work on almost any
+    Jim&gt; file system but didn't mention ext2 by name. Anyone tried to
+    Jim&gt; install BSD on a Linux partition?
+
+The kernel needs to understand the file system's structure.  So unless
+support for an ext2 fs is compiled in to the FreeBSD kernel, it won't
+work.  You're asking for trouble IMHO if you install FreeBSD into an
+existing Linux partition; each OS should have its own.  You won't be
+able to use your Linux programs; the system calls are different.
+POSIX, to the extent that it's followed, makes C programs portable at
+the *source* level; binary compatibility is not assured (ie, library,
+calling sequence, types of arguments and return values---these are
+typedef'd in the /usr/include/sys/*.h files and in GCC configuration,
+so you can use standard typedefs to match library types to user
+program types, but this does not guarantee that the underlying
+implementation type is the same, they might be 16-bit vs 32-bit ints,
+for example).  Certainly implementation of ioctls will be different.
+大変や。
+
+Bottom line (AFAIK): if you don't have a 100MB partition lying around
+to install the system into, and let it use its native FS there, it's
+not going to work well.
+
+Oh, by the way, did I mention that your Linux XFree86 binaries almost
+certainly won't work?  Make that at least a 200MB partition, my
+/usr/X11R6 du's to 76.7MB all by its lonesome.
+
+    Jim&gt; Oopps sorry, that leads to yet more questions. Anyone using
+    Jim&gt; Linux in a classroom full of 6-10 year olds? Any suggestions
+    Jim&gt; for education related software on Linux?
+
+Most games CDs have educational sections.  I would suggest browsing
+around the archives at SimTel and UUNet in the DOS/Windows sections to 
+see what's around.  If it's console-oriented, you can probably build
+it out of the box.  If it's GUI, porting might be a big task, but
+maybe somebody's already done it and you can find it on AltaVista or
+with archie.
+
+These 6-10 year olds are Japanese kids doing eikaiwa, no?  There are
+lots of Hangman-type games that don't require all that much beyond a
+console.  Many support full-screen (character) interfaces; you aren't
+going to compete with Sony's PlayStation for realism, but you knew
+that anyway....
+
+I have done some computer work with kids ("Where in the ... is Carmen
+SanDiego" goes well with 9-12 year-old returnees from English-speaking
+countries---we see lots of them in Tsukuba; I believe it ran in an
+XDOS window, but not very well), but kid-teaching is not my main line.
+I do strongly advise that if you've got a classroom "full" (ie, more
+than four) of 6-10 year olds that you prepare very well to have the
+remainder kept very busy (or have *lots* of workstations); two or
+three kids per workstation is optimal IMO.  More than four leads to
+fights very quickly, even with close supervision, less than two is
+anti-social at that age.
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00031" HREF="msg00031.html">Boot Easy</A></STRONG>
+<UL><LI><EM>From:</EM> "Jim Schweizer" &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00034.html">Re: sendmail on dialup LAN</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00036.html">(Fwd) TLUG - site</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00031.html">Boot Easy</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00040.html">Re: Boot Easy</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00035"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00035"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

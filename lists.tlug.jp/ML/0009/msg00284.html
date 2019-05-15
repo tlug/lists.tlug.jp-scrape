@@ -1,0 +1,210 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: ethner card problem -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Thu, 21 Sep 2000 11:17:54 +0900 (JST) -->
+<!--X-Message-Id: 14793.28626.997988.143959@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 002501c0231f$0df39740$8a2ad8cb@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00283.html">Date Prev</A>][<A HREF="msg00285.html">Date Next</A>][<A HREF="msg00282.html">Thread Prev</A>][<A HREF="msg00291.html">Thread Next</A>][<A HREF="maillist.html#00284">Date Index</A>][<A HREF="threads.html#00284">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: ethner card problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: ethner card problem</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 21 Sep 2000 11:17:54 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00282.html">002501c0231f$0df39740$8a2ad8cb@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00282.html">002501c0231f$0df39740$8a2ad8cb@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;6z3s0C.A.odB.kLXy5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Ulrike" == Ulrike Schmidt &lt;ulrike@example.com&gt; writes:
+
+    Ulrike&gt; Is there an easier way? I sat here several hours answering
+    Ulrike&gt; questions about devices I have no idea what they are or
+    Ulrike&gt; what I have in this labtop,
+
+Find your most recent .config that resulted in a kernel you like.  If
+worst comes to worst, you should have stuff in /boot/config* from
+Debian installs.  Copy that to /usr/src/linux/.config, and you're
+basically there.
+
+Now cd to the linux source directory and do `make-kpkg clean'; this
+does a `make clean'[1] from the kernel makefile and gets rid of all
+Debian cruft.  Next, do `make menuconfig' or `make xconfig'.  This
+allows you to choose what you're going to configure, instead of
+looking at millions of choices (which admittedly has gotten way out of
+hand).  Alternatively, if you're really happy with that kernel, just
+do "make oldconfig", which defaults all questions to the answer in the
+existing .config, and asks if it's a new config option.  (So, eg, if
+the newer kernel has a device driver for a card that didn't exist for
+the old kernel, you'll be asked about that, but not about any existing
+cards.)
+
+If you feel like answering more questions, on a laptop you need (1)
+the default storage devices (IDE disk &amp; CD-ROM, floppy, etc) (2) file
+system (again, defaults should be OK, you need ext2, iso9660 aka
+isofs, fat, vfat, and msdos filesystems) (3) network drivers (accept
+the defaults; you only need to mess with this if you're going to use
+is as a firewall or so) (4) network device drivers (turn all of these
+OFF because you're going to use PCMCIA).  You may want to add (5)
+network file systems (NFS, Samba) and (6) NLS facilities (ie, display
+fonts for non-ASCII; not Japanese, unfortunately -- I think these are
+in file systems for some reason).  Oh, and you probably want (7)
+sound.  For sound you need to know what chipset you're using, this is
+complex but if it's already working in the kernel corresponding to the
+.config you copied you're golden, "sono mama" should work.  All the
+rest (ISDN, video4linux, etc) the defaults are OK, the worst that can
+happen is wasted space.
+
+Then (still in the top linux directory with the Makefile) do
+`make-kpkg --revision=uli+0 kernel_image'.  This will do another `make
+oldconfig', which should run to completion, followed by a kernel
+build, a kernel modules build, and finally the .deb build.
+
+Then (still in the top linux directory with the Makefile, NOT in the
+../modules directory) do `make-kpkg modules_image'.  This will build
+all the modules in subdirectories of ../modules.  In the case of
+PCMCIA, you should not need to do ANY configuration.  This will result
+in lots of PCMCIA modules you don't need, but should also give you the
+one you do need.
+
+Now install the debs and you should be done.
+
+This whole process normally takes me about 20 minutes of my time, and
+I usually go through the whole menuconfig.  If you just accept the
+defaults from the old .config, you should be able to do this in two
+minutes.  (I assume you can find something useful to do while the
+kernel and modules are building, that time is not included.)
+
+    Ulrike&gt; take the network card to some Windows labtop, install the
+    Ulrike&gt; drivers and check in this way whether it is broken or
+    Ulrike&gt; not. I am fed up.
+
+One or more of the cards sharing the mfrid is broken.
+
+You get what you pay for, I'm afraid.  I buy 3Com, funny, I've never
+had any of these problems (I also paid about 15 times what you did;
+WTF, it's your taxes, not my salary :( and no, I can't give it back,
+I've asked).
+
+    Ulrike&gt; At the last kernel recompile I did things were configured
+    Ulrike&gt; already, I just had to add a module. This is a
+    Ulrike&gt; nightmare!!!
+
+You can always use old configs simply by copying them to .config in
+the top linux directory.  The configure scripts are smart enough to
+ignore (and delete) stuff it doesn't understand or is irrelevant.
+(Except for `make config', which assumes you want to do it all
+yourself.)
+
+If this config is already good for a (mostly) working kernel, then you
+only have to focus on new devices (eg, your ethernet card) and broken
+subsystems (eg, if sound doesn't work, you want to try reconfiguring
+that).  But if it's not broke, don't touch it.
+
+
+Footnotes: 
+[1]  Actually, it does a `make mrproper', except that it preserves the
+config files.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00282" HREF="msg00282.html">Re: ethner card problem</A></STRONG>
+<UL><LI><EM>From:</EM> "Ulrike Schmidt" &lt;ulrike@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00283.html">Re: hardware doctors!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00285.html">Re: hardware doctors!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00282.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00291.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00284"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00284"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

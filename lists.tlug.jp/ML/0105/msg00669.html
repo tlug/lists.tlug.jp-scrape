@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: networking trouble -->
+<!--X-From: "A.Sajjad Zaidi" <sajjad@example.com> -->
+<!--X-Date: Fri, 25 May 2001 19:04:05 +0900 -->
+<!--X-Message-Id: 3B0E2E14.D0006FEE@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3B0DEE65.3B255773@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 20010525144314.A30956@example.com -->
+<!--X-Reference-Id: 3B0DFB06.7CB463FD@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 20010525153130.B30956@example.com -->
+<!--X-Reference-Id: 3B0E0929.DC292FA0@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 20010525171435.E30956@example.com -->
+<!--X-Reference-Id: 3B0E215B.5DA8A345@example.com -->
+<!--X-Reference-Id: 3B0E2925.53E2EF74@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00668.html">Date Prev</A>][<A HREF="msg00670.html">Date Next</A>][<A HREF="msg00667.html">Thread Prev</A>][<A HREF="msg00659.html">Thread Next</A>][<A HREF="maillist.html#00669">Date Index</A>][<A HREF="threads.html#00669">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: networking trouble</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: networking trouble</strong></LI>
+<LI><strong>From</strong>: <strong>"A.Sajjad Zaidi" &lt;<A HREF="mailto:sajjad@example.com">sajjad@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 25 May 2001 19:04:05 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: Vanguard K.K.</LI>
+<LI>References: &lt;<A HREF="msg00651.html">3B0DEE65.3B255773@example.com</A>&gt; &lt;<A HREF="msg00652.html">20010525144314.A30956@example.com</A>&gt; &lt;<A HREF="msg00653.html">3B0DFB06.7CB463FD@example.com</A>&gt; &lt;<A HREF="msg00654.html">20010525153130.B30956@example.com</A>&gt; &lt;<A HREF="msg00658.html">3B0E0929.DC292FA0@example.com</A>&gt; &lt;<A HREF="msg00664.html">20010525171435.E30956@example.com</A>&gt; &lt;<A HREF="msg00666.html">3B0E215B.5DA8A345@example.com</A>&gt; &lt;<A HREF="msg00667.html">3B0E2925.53E2EF74@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;Vs291.A.taF.c4iD7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>Sender: sajjad</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Sorry, I couldnt keep up with the thread earlier.
+
+The key thing to note is that IP Forwarding has to be enabled on the box doing NAT.
+Its disabled by default on most boxes and you will need to do this:
+
+            echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+
+or in '/etc/sysctl.conf' change this:
+            net.ipv4.ip_forward = 0
+to this:
+            net.ipv4.ip_forward = 1
+
+
+Assuming that you use "10.0.0.0/24" for your internal boxes, these are the rules I
+would use:
+
+iptables -P INPUT DROP
+iptables -A INPUT -s 10.0.0.0/24 -p icmp -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/24 -p tcp --destination-port 22 -j ACCEPT
+
+iptables -P FORWARD DROP
+iptables -A FORWARD -s 10.0.0.0/24 -j ACCEPT
+iptables -A FORWARD -d 10.0.0.0/24 -j ACCEPT
+iptables -t nat -A POSTROUTING -j SNAT --to-source 192.168.1.83
+
+iptables -P OUTPUT DROP
+iptables -A OUTPUT -d 10.0.0.0/24 -p icmp -j ACCEPT
+iptables -A OUTPUT -d 10.0.0.0/24 -p tcp --source-port 22 -j ACCEPT
+
+
+asz
+
+
+B0Ti wrote:
+
+&gt; "A.Sajjad Zaidi" wrote:
+&gt;
+&gt; &gt; And yes, I did manage to get this setup, including NAT, working without problem
+&gt; &gt; inside VMware.
+&gt;
+&gt; Then why don't you tell me more about this?!  I have been spending a whole night
+&gt; without success.
+&gt; I would appreciate some hints at least.
+&gt;
+&gt; B0Ti
+&gt;
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30-
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00651" HREF="msg00651.html">networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> B0Ti &lt;9915104t@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00652" HREF="msg00652.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00653" HREF="msg00653.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> B0Ti &lt;9915104t@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00654" HREF="msg00654.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00658" HREF="msg00658.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> B0Ti &lt;9915104t@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00664" HREF="msg00664.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00666" HREF="msg00666.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> "A.Sajjad Zaidi" &lt;sajjad@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00667" HREF="msg00667.html">Re: networking trouble</A></STRONG>
+<UL><LI><EM>From:</EM> B0Ti &lt;9915104t@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00668.html">Re: networking trouble</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00670.html">Re: networking trouble</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00667.html">Re: networking trouble</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00659.html">Re: networking trouble</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00669"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00669"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

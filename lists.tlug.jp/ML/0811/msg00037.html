@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Re: [RFC] Outline of the fast HTTP talk -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Mon, 03 Nov 2008 23:24:20 +0900 -->
+<!--X-Message-Id: 20081103141806.GA12339@smtp.office.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 87fxm9tfx7.fsf&#45;genuine&#45;vii@john.fremlin.org -->
+<!--X-Reference: 20081103093743.GB14296@lucky.cynic.net -->
+<!--X-Reference: 87zlkhrreb.fsf&#45;genuine&#45;vii@john.fremlin.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00036.html">Date Prev</a>][<a href="msg00038.html">Date Next</a>][<a href="msg00034.html">Thread Prev</a>][<a href="msg00038.html">Thread Next</a>][<a href="maillist.html#00037">Date Index</a>][<a href="threads.html#00037">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: [RFC] Outline of the fast HTTP talk</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 3 Nov 2008 23:18:07 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re:%20%5BRFC%5D%20Outline%20of%20the%20fast%20HTTP%20talk">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: [RFC] Outline of the fast HTTP talk</strong></li>
+<li>References: &lt;<a href="msg00029.html">87fxm9tfx7.fsf-genuine-vii@john.fremlin.org</a>&gt;	&lt;<a href="msg00033.html">20081103093743.GB14296@lucky.cynic.net</a>&gt;	&lt;<a href="msg00034.html">87zlkhrreb.fsf-genuine-vii@john.fremlin.org</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17+20080114 (2008-01-14)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-11-03 11:16 +0000 (Mon), John Fremlin wrote:
+
+&gt; The benchmark consists of running apachebench with concurrency 100
+&gt; against a page that should return an HTTP body of &quot;&lt;h1&gt;Hello $name&lt;/h1&gt;&quot;. The
+&gt; &quot;name&quot; parameter is given as part of the GET request, and should be
+&gt; correctly escaped (if it contains &lt; characters, etc.).
+&gt; 
+&gt; The objective of the test is to show how fast a very simple dynamic page
+&gt; can be, without worrying about databases.
+
+That sounds like an excellent simple benchmark for that sort of thing.
+
+Can I just send you a tar file of a qam project that you can unpack?
+Ruby 1.8.whatever will be required, but you're already set up for that.
+Do you want me to include lighttpd source, or are you ok with installing
+your lighttpd 1.4.18 or 1.4.19 package from your package system?
+
+As well: we gave up on ab quite a while ago, and use httperf[1] for
+benchmarking. We've just started extracting a generic test project for
+load testing websites; I'll see if I can put together something to try
+with this.
+
+Httperf does have one unfortunate, and fairly major, issue: it uses
+select(). Given that it's oriented around the idea of maintaining a
+certain number of requests per second, regardless of how long it takes
+to receive a response, this usually results in it running out of file
+descriptors long before it's generated the kind of load a modern machine
+is capable of generating.
+
+It really needs to be using kqueue, but of course my issue here is that
+I have a large pile of NetBSD boxen, but (almost) all my clients have
+Linux boxen, which support only epoll. Perhaps for this app I could hack
+in some #ifdefs that would do the job, or maybe I just fall back to
+poll() and live with the performance hit. Who knows. But anything has
+to be better than select(), so if anybody's interested in working on
+this....
+
+[1] <a  href="http://www.hpl.hp.com/research/linux/httperf/">http://www.hpl.hp.com/research/linux/httperf/</a>
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00038" href="msg00038.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00054" href="msg00054.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00029" href="msg00029.html">[tlug] [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00033" href="msg00033.html">Re: [tlug] [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00034" href="msg00034.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00036.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00038.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00034.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00038.html">[tlug] Re: [RFC] Outline of the fast HTTP talk</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00037"><strong>Date</strong></a></li>
+<li><a href="threads.html#00037"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Notebook Question -->
+<!--X-From-R13: Xvz Perra <wjoNznvy.pffr.zbanfu.rqh.nh> -->
+<!--X-Date: Mon, 16 Sep 2002 10:31:43 +0900 (JST) -->
+<!--X-Message-Id: 200209160131.g8G1VDh21670@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00296.html">Date Prev</a>][<a href="msg00298.html">Date Next</a>][<a href="msg00292.html">Thread Prev</a>][<a href="msg00301.html">Thread Next</a>][<a href="maillist.html#00297">Date Index</a>][<a href="threads.html#00297">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Notebook Question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Sep 2002 11:31:13 +1000 (EST)</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<A HREF="mailto:jwb@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Notebook%20Question">jwb@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Notebook Question</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>One further question, then comments following on my previous questions.
+
+"dmesg" is full of lines saying:
+
+	mtrr: no more MTRRs available
+
+/var/log/messages says it was repeated 229 times.
+
+Early in the boot I see:
+
+	kernel: mtrr: v1.40 (20010327) Richard Gooch (rgooch@example.com)
+	kernel: mtrr: detected mtrr type: Intel
+
+Is this something I should worry about.
+
+My kernel is 2.4.18-10 Wed Aug 7 11:39:21 EDT 2002
+
+&gt;&gt; From: Godwin Stewart &lt;gstewart@example.com&gt;
+&gt;&gt; On Sat, 14 Sep 2002 13:43:46 +1000 (EST), Jim Breen
+&gt;&gt; &lt;jwb@example.com&gt; squashed this out of the keyboard:
+&gt;&gt; 
+&gt;&gt; &gt; (b) I'm having trouble setting my hostname. It was suggested in March
+&gt;&gt; &gt; that I use "HOSTNAME=...." in /etc/sysconfig/network, but this time that 
+&gt;&gt; &gt; broke a few things and stopped X from launching.
+&gt;&gt; 
+&gt;&gt; You have to do that, also obviously "# hostname new_name".
+&gt;&gt; 
+&gt;&gt; I don't remember whether RH reads from /etc/HOSTNAME at boot time or whether
+&gt;&gt; that file gets written to. On Slackware, it is read and the hostname set
+&gt;&gt; from it.
+&gt;&gt; 
+&gt;&gt; Finally, you have to create the entry for new_name in your /etc/hosts
+&gt;&gt; otherwise you *will* run into problems with applications which require the
+&gt;&gt; machine's IP - X is one.
+
+Thanks. What has ended up working best for me is:
+
+	"hostname whatever" in /etc/rc.d/rc.local
+	adding whatever to /etc/hosts
+
+Having it set earlier seemed to slow down sendmail and ISP
+authentication.
+
+&gt;&gt; From: Josh Glover &lt;jmglov@example.com&gt;
+&gt;&gt; Quoth Jim Breen (Sat 2002-09-14 01:43:46PM +1000):
+&gt;&gt; &gt;=20
+&gt;&gt; &gt; (a) where do I kick off kinput2 at boot time? I put it in
+&gt;&gt; &gt; /etc/rc.d/rc.local, but it doesn't work there. I suspect it is because
+&gt;&gt; &gt; canna hasn't properly initialized yet.
+&gt;&gt; 
+&gt;&gt; You need kinput2 to start after X has started. Slap it in your .xinitrc or,
+&gt;&gt; if you are using Gnome, add it to your startup items or whatever they call
+&gt;&gt; it. You probably want to do something like:
+&gt;&gt; 
+&gt;&gt; kinput2 -canna &amp;
+
+In my case "kinput2 -canna -xim &amp;" as I want it to work with Mozilla,
+Tk, etc.
+
+I tried putting it in .xinitrc but it doesn't start. Looking in 
+.xsession-errors I see:
+
+	Warning: Conversion Server not found
+	Warning: Conversion Server not found
+	Warning: Conversion Server not found
+	......
+
+I suspect it is because it takes a while for canna to start up and the
+kinput2 initialization is getting there too fast.
+
+&gt;&gt; Of course, you can just start it manually when you need it.
+
+Yes, not a huge hassle, in fact I could have a cron that looked for it
+running and started it if it wasn't, but getting it going properly
+would be best.
+
+&gt;&gt; From: Mike Gauthier &lt;mike@example.com&gt;
+&gt;&gt; Be sure to set your XMODIFIERS variable before you run kinput2 (example XMODIFIERS="@example.com=kinput2"; export XMODIFIERS).
+
+That is set already. I think RedHat does it when I say I want Japanese
+support.
+
+Many thanks for the help.
+
+Jim
+
+-- 
+Jim Breen  (j.breen@example.com  <A HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>)
+Computer Science &amp; Software Engineering,                Tel: +61 3 9905 3298
+P.O Box 26, Monash University,                          Fax: +61 3 9905 5146
+Clayton VIC 3800, Australia      ジム・ブリーン@モナシュ大学
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00301" href="msg00301.html">Re: [tlug] Notebook Question</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+<li><strong><a name="00305" href="msg00305.html">[tlug] Re: Notebook Question</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00296.html">Re: [tlug] sh shell woes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00298.html">Re: [tlug] sh shell woes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00292.html">Re: [tlug] Notebook Question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00301.html">Re: [tlug] Notebook Question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00297"><strong>Date</strong></a></li>
+<li><a href="threads.html#00297"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

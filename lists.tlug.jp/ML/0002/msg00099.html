@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: fetchmail flushes flushing Laszlo's career down the drain? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 10 Feb 2000 02:43:55 +0900 -->
+<!--X-Message-Id: 14497.42710.298123.956790@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.10002100033100.7942&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00098.html">Date Prev</A>][<A HREF="msg00100.html">Date Next</A>][<A HREF="msg00095.html">Thread Prev</A>][<A HREF="msg00100.html">Thread Next</A>][<A HREF="maillist.html#00099">Date Index</A>][<A HREF="threads.html#00099">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: fetchmail flushes flushing Laszlo's career down the drain?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: fetchmail flushes flushing Laszlo's career down the drain?</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 10 Feb 2000 02:41:42 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00095.html">Pine.LNX.4.10.10002100033100.7942-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00095.html">Pine.LNX.4.10.10002100033100.7942-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Tony" == Tony Laszlo &lt;laszlo@example.com&gt; writes:
+
+    Tony&gt; other OSes are probably lenient enough to allow them to be
+    Tony&gt; received.
+
+Obviously.  So what?
+
+The addresses you posted earlier are REQUIRED by RFC 822 to be
+interpreted in a different way than the author intends them.  Some of
+them HAVE NO LEGAL INTERPRETATION WHATSOEVER.  It is not at all
+surprising that fetchmail gives up on mail containing such headers.
+
+    Tony&gt; This makes me the "troublemaker", in a perverse way.
+
+Perverse is right.  If this is making trouble, Japan needs more
+troublemakers.  Desperately.  By the planeload.  But then, I can't
+imagine this is news to you....
+
+Just call it "kokusaika".
+
+    Tony&gt; Any way of telling fetchmail "I don't care what's in the
+    Tony&gt; 'from' field or even if there is one - just bring it in"?
+
+It doesn't look like it.  fetchmail needs to look at that header for
+several purposes besides the running commentary as it downloads.
+Since it is not an SMTP receiver, it MUST read those headers to get
+sender information.  You could try the "no rewrite" option, but I
+suspect that fetchmail just assumes it's going to look at the address,
+and defeats rewrite later.
+
+You could try fetchmail's ETRN mode.  See fetchmail(1) and RFC 1985.
+This forces the remote smtpd, _if_ it understands ETRN, to wake up and
+do a spool flush directly to your box's rmstpd.  This probably means
+you have to stay connected until all mail is received, and I don't
+know how you figure that out.  fetchmail(1) isn't very specific.
+
+In any case, it doesn't look like GOL's sendmail at mx*.mail.gol.com
+does ETRN.  And popmail.gol.com doesn't even speak SMTP.  Maybe if you
+ask Jonathan real nice....
+
+Or, if GOL still supports procmail for its users, you could try
+searching for escape sequences and 8-bit characters in the headers,
+and use sed to just strip those babies out.  Alternatively, if you
+_know_ that the mail will contain a legal Return-Path or other
+originator header besides From, you could use sed or formail to just
+drop those on the floor.
+
+You could just try POP-capable MUAs (VM, Gnus, Pine, etc) until you
+find one that will accept those hosed addresses.  Once you've got the
+stuff in your INBOX, you can disconnect.
+
+You could always just run Windows.
+
+Time to go to bed.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00095" HREF="msg00095.html">tlug: fetchmail flushes flushing Laszlo's career down the drain?</A></STRONG>
+<UL><LI><EM>From:</EM> Tony Laszlo &lt;laszlo@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00098.html">Re: tlug: Silly Questions.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00100.html">Re: tlug: fetchmail flushes flushing Laszlo's career down the drain?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00095.html">tlug: fetchmail flushes flushing Laszlo's career down the drain?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00100.html">Re: tlug: fetchmail flushes flushing Laszlo's career down the drain?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00099"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00099"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Any way to make code running on a cloud service	publicly	verifiable? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 14 Sep 2012 20:37:13 +0900 -->
+<!--X-Message-Id: 87627grg2i.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CA+su7OWvHruqQ8MVWKqkGNSwrnLS0GeZECk=B4P4AwWN=qR8eg@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00038.html">Date Prev</a>][<a href="msg00040.html">Date Next</a>][<a href="msg00038.html">Thread Prev</a>][<a href="msg00040.html">Thread Next</a>][<a href="maillist.html#00039">Date Index</a>][<a href="threads.html#00039">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Any way to make code running on a cloud service	publicly	verifiable?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 14 Sep 2012 20:37:09 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Any%20way%20to%20make%20code%20running%20on%20a%20cloud%20service%09publicly%09verifiable%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Any way to make code running on a cloud service	publicly	verifiable?</strong></li>
+<li>References: &lt;CA+su7OWvHruqQ8MVWKqkGNSwrnLS0GeZECk=B4P4AwWN=qR8eg@mail.gmail.com&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Edmund Edgar writes:
+
+ &gt; Recently I've run into a couple of situations where I've wanted to run
+ &gt; some code on a server somewhere, in such a way that people can verify
+ &gt; that it's really running the code that I say I am.
+
+The best way to do this is not to do it on a server at all.  Do it on
+the client in Javascript or Java.  This is moderately verifiable by
+anybody with access to wget. ;-)  Python has OpenSSL bindings, maybe JS
+and/or Java do too.  This would work for the coinapult example.
+Whether it would be fast enough if you have to do it in JS or Python
+(ie, no OpenSSL bindings) is another question.
+
+ &gt; For example, I'd like to run a simple, api-only version of
+ &gt; www.coinapult.com, where in essence what my app has to do is:
+ &gt; 1) You tell me an email address.
+ &gt; 2) I make up a random number.
+ &gt; 3) I make a private/public keypair based on the random number.
+ &gt; 4) I email the private key to the email address.
+ &gt; 5) I tell you the public key.
+ &gt; 6) I forget all about the random number and the private key.
+
+Coinapult doesn't promise (6), only implicitly not to use them.  I
+don't understand why simply promising to be good doesn't work for
+you.  (This matters because although there are no absolutely
+trustworthy ways to do this without 3rd party certification AFAICS,
+depending on the application you might be able to convince people with
+something short of bulletproof security.)
+
+ &gt; I don't mind people having to trust some big, well-known
+ &gt; organization with no particular interest in my service,
+
+Well, then I don't see why you wouldn't be able to use the approach in
+the Brown-Chase paper.  Of course you'd have to pay for it, but isn't
+trust the most valuable thing in the world? ;-)
+
+ &gt; It looks like I could get part of the way by making an EC2 AMI,
+ &gt; setting it to fetch code based on a parameter set when it was run and
+ &gt; locking myself out of it, but I'm not sure that I could effectively
+ &gt; let people verify that the server I was running at a given IP address
+ &gt; was really using that AMI, and I'm also not quite confident that there
+ &gt; isn't some other way of secretly horsing around with an instance that
+ &gt; you own.
+
+Ken Thompson proved that there is such a way 3 decades ago.  See ref
+#14 in the Brown-Chase paper.
+
+The thing is, you absolutely have to have a third party certify that
+(1) they know exactly what the system that downloaded your code is,
+and they know it's safe (ie, the code doesn't have backdoors that Ken
+put there and the only server visible outside of the instance itself
+is a vanilla webserver using HTTPS, and (2) that the initial code it
+downloaded is the code you published.  (&quot;Initial&quot; because you could
+trivially add a backdoor to upload additional code via HTTPS or
+whatever -- this can only be dealt with by a 3rd party certifying that
+your initial code doesn't do that.)
+
+If you trust SHA1 is cryptographically strong, then you could do this
+easily with git or hg (or maybe bzr, but they have a weird way of
+creating revids whose implications I don't understand, and therefore
+cannot trust in this application).  Have the cloud provider install a
+trusted, known clean version of the DVCS, which checks out a revision
+you specify from a public repo.  Then have the domain name of your
+virtual host be derived from that revid by the trusted cloud provider's
+nameserver.  (AFAICT, this doesn't cost any security due to DNS holes.
+You already have that problem, just as Coinapult has the problem that
+reading somebody's email is trivial for the Russian mafia etc.  So
+anything you do to make the DNS secure if you don't use this naming
+scheme you can do if you do use it.)
+
+ &gt; Can anyone think of a good way to do this?
+
+My half-serious response is &quot;if you are trusting the advice of people
+on this list, you don't really care about trust.&quot;&lt;wink/&gt;
+
+Seriously, the Brown-Chase paper looks pretty good to me.  The ugly
+part is &quot;With the existing Web trust management framework, this
+approach requires the user browser to accept C as a Certifying
+Authority.&quot;  That is not something I'd want to try to explain the
+pluses and minuses of to the average soccer mom.
+
+Steve
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00040" href="msg00040.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00038" href="msg00038.html">[tlug] Any way to make code running on a cloud service publicly	verifiable?</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00038.html">[tlug] Any way to make code running on a cloud service publicly	verifiable?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00040.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00038.html">[tlug] Any way to make code running on a cloud service publicly	verifiable?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00040.html">Re: [tlug] Any way to make code running on a cloud service publicly verifiable?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00039"><strong>Date</strong></a></li>
+<li><a href="threads.html#00039"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

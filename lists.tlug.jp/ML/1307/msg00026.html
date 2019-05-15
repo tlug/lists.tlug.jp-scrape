@@ -1,0 +1,183 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Reverse DNS Delegatation -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Fri, 19 Jul 2013 13:03:54 +0900 -->
+<!--X-Message-Id: 20130719040353.GA26790@skeptic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20130718050249.GD4297@skeptic.cynic.net -->
+<!--X-Reference: 51E81045.2080807@fgs.eti.br -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00025.html">Date Prev</a>][<a href="msg00027.html">Date Next</a>][<a href="msg00025.html">Thread Prev</a>][<a href="msg00028.html">Thread Next</a>][<a href="maillist.html#00026">Date Index</a>][<a href="threads.html#00026">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Reverse DNS Delegatation</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 19 Jul 2013 13:03:53 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Reverse%20DNS%20Delegatation">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Reverse DNS Delegatation</strong></li>
+<li>References: &lt;<a href="msg00018.html">20130718050249.GD4297@skeptic.cynic.net</a>&gt;	&lt;<a href="msg00025.html">51E81045.2080807@fgs.eti.br</a>&gt;</li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2013-07-18 12:56 -0300 (Thu), SCHWARTZ, Fernando G. wrote:
+
+&gt; I agree with your comments except for the fact that there is little
+&gt; workaround to a properly configured &quot;rDNS&quot; record. By properly I mean
+&gt; one matching your domain.
+&gt; 
+&gt; You can't expect your modern/secure mailserver to run smoothly without one.
+
+Well, I think I disagree, since I've been running for years what I
+believe is a &quot;modern/secure mailserver&quot; with an in-addr.arpa PTR record
+that is not pointing to a name in a domain I own.
+
+But let's examine this in detail, because I'm interested in learning
+exactly what you're saying here, and what the disadvantages of my
+arrangement are. Here's an example configuration to which we can refer;
+feel free to extend the example if you feel the need.
+
+I have a server, &quot;alice&quot;, which sends and receives mail for my two
+domains, &quot;alice.com&quot; and &quot;bob.com.&quot; (I run the DNS for these domains.)
+I purchase connectivity from two ISPs, &quot;frank.com&quot; and &quot;george.com&quot;.
+The following DNS entries are maintained by me and the two ISPs
+respectively:
+
+         alice.alice.com.    A  1.2.3.4
+         alice.alice.com.    A  5.6.7.8
+               alice.com.   MX  alice.alice.com.
+                 bob.com.   MX  alice.alice.com.
+
+     customer4.frank.com.    A  1.2.3.4
+    4.3.2.1.in-addr.arpa.  PTR  customer4.frank.com.
+
+    customer8.george.com.    A  5.6.7.8
+    8.7.6.5.in-addr.arpa.  PTR  customer8.george.com.
+
+
+The major advantage I see to the above arrangement is that the PTR and A
+record pair are both controlled by the ISP (both generated from the same
+database, if the ISP is at all competent), and thus no co-ordination is
+required between me and an ISP for the in-addr.arpa record for the IP
+address supplied by that ISP.
+
+Now, as I understand it, you don't like this arrangement, and feel that
+there's some advantage to having the PTR records instead have the value
+&quot;alice.alice.com.&quot; Why, precisely is this? What makes it worth the extra
+hassle and chance of misconfiguration?
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Pier Fumagalli</li></ul></li>
+<li><strong><a name="00030" href="msg00030.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> SCHWARTZ, Fernando G.</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> SCHWARTZ, Fernando G.</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00025.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00027.html">[tlug]  Wakame Users Group</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00025.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00028.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00026"><strong>Date</strong></a></li>
+<li><a href="threads.html#00026"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

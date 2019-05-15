@@ -1,0 +1,295 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Almost painless upgrade to 2.0.26 -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 26 Nov 1996 03:37:33 GMT -->
+<!--X-Message-Id: m0vSEFV&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.93.961126093354.151A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00113.html">Date Prev</A>][<A HREF="msg00115.html">Date Next</A>][<A HREF="msg00113.html">Thread Prev</A>][<A HREF="msg00116.html">Thread Next</A>][<A HREF="maillist.html#00114">Date Index</A>][<A HREF="threads.html#00114">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Almost painless upgrade to 2.0.26</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Almost painless upgrade to 2.0.26</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 26 Nov 96 12:31 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00113.html">Pine.LNX.3.93.961126093354.151A-100000@example.com</A>&gt; (message from Dennis McMurchy on Tue, 26 Nov 1996 09:50:48 +0900 (JST))</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Dennis" == Dennis McMurchy &lt;denismcm@example.com&gt; writes:
+
+    Dennis&gt;   I had one small hitch in upgrading from 2.0.0 to 2.0.26
+    Dennis&gt; last night.  It has to do with modules.  I eventually
+    Dennis&gt; realized that I had to do a 'make modules' 'make
+    Dennis&gt; modules_install' as part of the compile.  But that hasn't
+    Dennis&gt; taken care of all the problems.
+
+For those of you who aren't interested in the details (this is _long_) 
+but occasionally get snagged in upgrades, here's a hint:
+
+   less -p '&lt;problem keyword&gt;' /usr/src/linux/Documentation/Changes
+
+/usr/src/linux/Documentation/Changes is _not_ all that technical in
+general; it's oriented towards identifying upgrade problems, just as
+you've encountered, not towards helping kernel hackers.
+
+Details, as per the Surgeon General's Warning above:
+
+Modules are pretty complicated, and the "user interface" hasn't
+settled down yet.  What one would like is something that
+
+1. Keeps the kernel small by leaving out never-used drivers (eg, for
+   hardware you don't have).  This has the side benefit of forcing a
+   standard interface on the drivers, which then become simpler to
+   program and debug.  But still permit adding new drivers on-the-fly
+   without rebuilding the kernel.
+2. Move as much code as possible out of the privileged area.  Then
+   it's much harder for your mouse driver to overwrite your .emacs
+   file.
+3. Load drivers on demand.  For example, you might use both PLIP and a 
+   local printer.
+4. Keep track of all this both on a day-to-day basis and when the
+   kernel upgrades.
+5. And other stuff I've forgotten.
+
+1 is solved by the current module setup, except that the best time for
+loading and unloading drivers would be at configure time for newbies,
+so they can try different SCSI drivers, for example.  This is not
+properly supported (however, I know how to do it, and RedHat and
+Debian are apparently thinking about moving in this direction; start
+by loading from floppy to a RAM disk, then insmod the SCSI drivers).
+
+2 is not addressed by the current architecture; modules still have
+kernel privileges.
+
+3 and the first half of 4 is fairly well addressed by the kerneld.
+
+The rest of 4 is not even properly dealt with at the makefile level
+yet.  (IMHO, if modules are configured, they ought to be automatically
+built and installed.  Yes, yes, I know if they don't work right,
+taihen desu, but that's still taihen for the non-hacker in any case.)
+
+The current Linux module process works like this:
+
+1. Boot kernel.
+2. Kernel wakes up built in drivers, almost always including the
+   display, mouse, keyboard, and root device, and often many others.
+3. (optional, 2.x) Kernel wakes up kerneld.  kerneld will create
+   stubs for modules which callback the kerneld.  When activated,
+   kerneld finds and insmod's the relevent module.
+4. Kernel starts init.  Init runs the rc scripts, one of which does
+   depmod -a.  This determines location and dependency tree for
+   installed modules.
+5. (optional, pre-2.x) Init starts kerneld.
+6. (optional) User does an insmod or a modprobe to load a module.
+   insmod doesn't know about dependencies, modprobe does.  When a
+   module is loaded, kernel checks for version information and refuses 
+   to load if present and wrong.
+
+It sounds like your setup is 1, 2, 4, then 6, but I'm not sure.  I
+don't know under what conditions depmod says "can't locate module"; I
+think it's modprobe saying that, but I can't be sure since they are
+the same binary.
+
+    Dennis&gt;   When I boot up I get the following error messages:
+    Dennis&gt; 1. Updating module dependencies for Linuz 2.0.26
+    Dennis&gt; 	Can't locate module lp
+    Dennis&gt; 	Can't locate module slip
+    Dennis&gt; 	Can't locate module ppp
+    Dennis&gt; I haven't tested the printer, but I know that slip and ppp
+    Dennis&gt; are activated at an earlier stage of the boot, and ppp is
+    Dennis&gt; usable.  Also there's no reference to these in
+    Dennis&gt; /lib/modules/2.0.26/modules.dep .
+
+It sounds to me like they've been included in the kernel.  Things to
+check in decreasing order of probability (IMO):  Is your
+/etc/conf.modules up-to-date?  If it's still the 2.0.0 version, then
+things are going to be weird.  Are these modules present in the proper
+directories (./net, ./misc, etc)?  Do a
+
+		      ls -R /lib/modules/2.0.26
+
+Look at the file /usr/src/linux/.config.  It should include lines like
+
+			     CONFIG_PPP=m
+
+for each of the modules.  If the 'm' is a 'y', then it got built in.
+Also look at /usr/src/linux/Makefile and make sure it begins with
+
+			    VERSION = 2
+			    PATCHLEVEL = 0
+			    SUBLEVEL = 26
+
+If not, your source trees are getting confused.  I normally keep at
+least the last working version of the kernel around.  If you need to
+switch back, you will need to have the correct /usr/include/linux
+files to compile any system-related utilities.  So I normally have
+/usr/src looking like this
+
+lrwxrwxrwx   1 root     root           12 Nov 25 12:02 linux -&gt; linux-2.0.26
+drwxr-xr-x  15 root     root         1024 Jun 24 16:14 linux-2.0.0
+drwxr-xr-x  15 root     root         1024 Nov 25 14:06 linux-2.0.26
+
+This helps keep things sorted out.  When upgrading by patching the
+easiest thing to do is to copy the whole tree and patch over that.
+It's possible to save space by massive symlinking, but this requires
+that you know what you're doing; patch doesn't handle that itself.
+
+    Dennis&gt; 2.      Loading the iBCS module
+    Dennis&gt;         Cannot open /lib//modules/misc/iBCS.o
+
+I don't fully understand this message; it doesn't include a proper
+reference to the kernel version.  I think what's happening is that
+insmod looks first in the kernel-specific area, forgets to complain,
+then looks in a general catch-all area, and complains when it doesn't
+find it there.
+
+    Dennis&gt; If I make a symbolic link to the existing iBCS.o, then it
+    Dennis&gt; complains that it's the 2.0.0 version.
+
+It's tagged with version information.  There's no way to work around
+this as far as I know; you can only rebuild.
+
+    Dennis&gt;   Why is 'make modules' not taking care of these problems.
+    Dennis&gt; What am I doing wrong?
+
+As above, my guess is that the net-serial and lp modules weren't
+built, probably because they weren't configured.  There also seems to
+be some problem with reporting errors in building the modules; if some 
+modules can be built, but others not, the build continues.  So if
+you're not watching the build carefully you might miss error messages.
+
+iBCS is a different problem.  As far as I know, iBCS is not
+distributed with the Linux kernel sources; I don't know why.  See
+/usr/src/linux/Documentation/Changes for details.  Ah, forget that,
+it's short:
+
+iBCS and Dosemu
+===============
+
+   For a version of iBCS that works with 2.0.x kernels, grab
+<A TARGET="_top" HREF="ftp://tsx-11.mit.edu/pub/linux/BETA/ibcs2/ibcs-2.0-960610.tar.gz">ftp://tsx-11.mit.edu/pub/linux/BETA/ibcs2/ibcs-2.0-960610.tar.gz</A>
+
+   For a version of Dosemu that works (well, at least as well as DOS
+ever works ;-), get
+<A TARGET="_top" HREF="ftp://tsx-11.mit.edu/pub/linux/ALPHA/dosemu/Development/dosemu-0.64.0.3.tgz">ftp://tsx-11.mit.edu/pub/linux/ALPHA/dosemu/Development/dosemu-0.64.0.3.tgz</A>
+or check out <A TARGET="_top" HREF="http://www.ednet.ns.ca/auto/rddc">http://www.ednet.ns.ca/auto/rddc</A>. Be sure to follow the
+instructions in README.newkernels about patching your include files, or
+it will not compile.
+
+    Dennis&gt; over and over again, alas without finding any oneiric
+                                                          ^^^^^^^
+Sugoi vocabulary!
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00116" HREF="msg00116.html">Re: Almost painless upgrade to 2.0.26</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00113" HREF="msg00113.html">Almost painless upgrade to 2.0.26</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00113.html">Almost painless upgrade to 2.0.26</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00115.html">Re: How to crash an operating system...</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00113.html">Almost painless upgrade to 2.0.26</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00116.html">Re: Almost painless upgrade to 2.0.26</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00114"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00114"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

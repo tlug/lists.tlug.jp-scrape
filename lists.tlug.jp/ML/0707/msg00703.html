@@ -1,0 +1,218 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Japanese in Xandros -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Tue, 17 Jul 2007 13:22:22 +0900 -->
+<!--X-Message-Id: 20070717042219.GC62942@mail.scottro.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00702.html">Date Prev</a>][<a href="msg00704.html">Date Next</a>][<a href="msg00943.html">Thread Prev</a>][<a href="msg00704.html">Thread Next</a>][<a href="maillist.html#00703">Date Index</a>][<a href="threads.html#00703">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Japanese in Xandros</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 17 Jul 2007 00:22:19 -0400</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Japanese%20in%20Xandros">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Japanese in Xandros</strong></li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I accidentally deleted the original post, so all headers are broken
+here, sorry.
+
+As I deleted the original post, I will probably cover some things that
+you've already done.
+
+Theoretically (as the fortune quote goes, Theoretically means, &quot;Not
+really&quot; with a locale of en_US.UTF-8 (FreeBSD designation, not sure what
+it is in Debian) you should be able to input Japanese with a scim-anthy
+combination. I remember you saying you'd used EUC and I believe that is
+how you typed it.  The first thing to do is see how your particular
+distribution phrases it.  To do that
+
+locale -a | grep ja_JP
+
+That should show you if they call it eucJP, euc_JP,  EUCJP, EUC-JP etc.
+I would recommend using UTF-8 however, you'll have more terminals, I
+think, that support it.  So, let's assume that you see something, as a
+result of the above command like 
+ja_JP.utf8
+
+(If it's UTF-8, or utf-8, etc, adjust the following accordingly.)
+
+Make sure you have some Japanese support.  In Ubuntu, you can add
+support for a language from the System menu, I think, it's listed on my
+page at <a  href="http://home.nyc.rr.com/computertaijutsu/jpninpt.html">http://home.nyc.rr.com/computertaijutsu/jpninpt.html</a> ).
+
+Basically, you need to be able to support the locale and an input
+method.  I believe you said you have scim-anthy installed.  
+
+So, try it at its simplest.  I don't know if Xandros uses gnome or KDE,
+but regardless, we'll try something that should work in either one. 
+
+See if scim is running.  (For the rest of this, I'll put a $ in front of
+anything that should be typed in a terminal as a command.)
+
+$ pgrep scim
+
+If you get a response (probably a few lines of numbers), well and good.
+If not then
+
+$ scim -d
+
+Hopefully, you'll get something to the effect that scim has been
+started. 
+
+Now
+
+$ export XMODIFIERS='@im=SCIM'
+$ export LC_CTYPE=ja_JP.utf8
+$ uxterm
+
+This should up an xterminal that handles UTF-8.
+
+In that new terminal, check that the settings are what you want.
+
+
+$ echo $XMODIFIERS
+$ echo $LC_CTYPE
+
+Make sure that they're what you typed before, i.e., scim and ja_JP.utf8.
+
+Now, hit shift+space and see if the scim widget opens up.  If it does,
+then, when you type, on an English keyboard
+
+$ nihongo
+
+You should see, underneath where you're typing, or as you type, the
+hiragana for nihongo--hitting space should enable you to select kanji.  
+
+Hit enter.  
+
+You should see the nihongo, in kanji, at the prompt and then get
+something like command not found. 
+
+If that works, you can add the XMODIFIERS and LC_CTYPE lines to your
+.bash_profile.  Log out and log back in, and see if you're able to input
+Japanese in the applications you need.  
+
+If, when you open the uxterm, you get an error message, please post what
+the message says.  If, when you type, you get the hiragana but when you
+try to select kanji, only see little squares, it should mean that you
+simply need to add some fonts. 
+
+
+-- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Mayor Wilkins: There's more than one way to skin a cat.
+And I happen to know that factually that's true.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00704" href="msg00704.html">Re: [tlug] Japanese in Xandros</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+<li><strong><a name="00804" href="msg00804.html">Re: [tlug] Japanese in Xandros</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+<li><strong><a name="00809" href="msg00809.html">Re: [tlug] Japanese in Xandros</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00702.html">Re: [tlug] [OT] Raising a geek (was: Interesting Hans Reiser article	in	Wired)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00704.html">Re: [tlug] Japanese in Xandros</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00943.html">Re: [tlug] apple microsoft ads</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00704.html">Re: [tlug] Japanese in Xandros</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00703"><strong>Date</strong></a></li>
+<li><a href="threads.html#00703"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

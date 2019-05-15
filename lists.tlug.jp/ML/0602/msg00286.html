@@ -1,0 +1,165 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] unicode and Perl&#45; how to pass command lineunicodearguments -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Wed, 15 Feb 2006 18:08:12 +0900 -->
+<!--X-Message-Id: 43F2F035.7000506@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00285.html">Date Prev</a>][<a href="msg00287.html">Date Next</a>][<a href="msg00283.html">Thread Prev</a>][<a href="msg00291.html">Thread Next</a>][<a href="maillist.html#00286">Date Index</a>][<a href="threads.html#00286">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] unicode and Perl- how to pass command lineunicodearguments</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 15 Feb 2006 18:11:17 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20unicode%20and%20Perl-%20how%20to%20pass%20command%20lineunicodearguments">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] unicode and Perl- how to pass command lineunicodearguments</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US;rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Neil Bortnak said: about perl invocation argument -C:
+ &gt;You missed A. IMHO, you should just use -C127 (enables all of the above)
+ &gt;in a kanji/unicode heavy program because it simply makes everything
+ &gt;unicode aware (except for unicode in the script, for which you still
+ &gt;need the utf pragma) and that will cut down on accidental encoding
+ &gt;problems.
+
+Yes, thanks, I did miss that, and -CSioA works well.
+
+And also:
+ &gt;s/日本語/英語/  m/日本語/
+ &gt;seem to work fine for me in the middle of the program. I'm using &quot;use
+ &gt;utf8;&quot; as per normal, so I'm in a bit of wonderment as to why it 
+ &gt;doesn't work for you. I
+
+The do work just fine, for MANY cases. But, I think that perl is 
+actually doing byte level comparison/replace, and the above strings 
+would work just fine as bytes (assuming your script and data are in the 
+same encoding.) But even at this level there are still problems: as I 
+mentioned earlier: if I try to match a ☆ (star: unicode E29886)
+
+if (/^☆.*tw:(.).*jp:(.)/)
+
+It just never works. But if I assign a star to a variable, either in the 
+script or from the command line, and use that, it works fine. That 
+really bothers me.
+
+And the real problem is if you try to do tr/// or more complex character 
+sets, alternations and such in the regex, then it all breaks down unless 
+you are really doing unicode.
+
+I did a whole search thing with character set skipping over punctuation, 
+and actually it was just in byte mode-- I never realized it until I 
+started to get false misses and such and finally realized that perl was 
+just munching bytes. It was separately skipping over all three bytes of 
+a unicode space character inside of a character class.
+
+  And of course the tradtional tools like tr and grep work fine with 
+unicode, it seems. But the results are wrong-- they are just doing bytes 
+  (as Steven T pointed out to us some time ago.)
+
+(Sorry, you probably already know all this...)
+
+Thanks for the tip about -CA  (kinda wishing I were back in CA myself 
+with this weather.)
+
+
+David Riggs
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00285.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00287.html">Re: [tlug] Japanese dictionaries</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00283.html">[tlug] [OT] Unix System Admin Job</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00291.html">[tlug] Red Hat 7.2 Enterprise install.log.syslog times</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00286"><strong>Date</strong></a></li>
+<li><a href="threads.html#00286"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

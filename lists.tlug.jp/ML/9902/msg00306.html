@@ -1,0 +1,225 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: 2 Problems with Kernel 2.2.1 upgrade -->
+<!--X-From: Neil Booth <NeilB@example.com> -->
+<!--X-Date:  Thu, 25 Feb 1999 19:58:19 +0900 -->
+<!--X-Message-Id: 36D52D37.444A3D84@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36BC4027.F853B657@example.com -->
+<!--X-Reference-Id: 14014.16061.666836.934319@example.com -->
+<!--X-Reference-Id: 36C15DF9.EC11314B@example.com -->
+<!--X-Reference-Id: 14019.37054.723432.15506@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00305.html">Date Prev</A>][<A HREF="msg00307.html">Date Next</A>][<A HREF="msg00184.html">Thread Prev</A>][<A HREF="msg00309.html">Thread Next</A>][<A HREF="maillist.html#00306">Date Index</A>][<A HREF="threads.html#00306">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</strong></LI>
+<LI><strong>From</strong>: <strong>Neil Booth &lt;<A HREF="mailto:NeilB@example.com">NeilB@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 25 Feb 1999 20:00:07 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: ...</LI>
+<LI>References: &lt;<A HREF="msg00119.html">36BC4027.F853B657@example.com</A>&gt;	&lt;<A HREF="msg00123.html">14014.16061.666836.934319@example.com</A>&gt;	&lt;<A HREF="msg00178.html">36C15DF9.EC11314B@example.com</A>&gt; &lt;<A HREF="msg00184.html">14019.37054.723432.15506@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull wrote:
+
+&gt; One other thing, for some reason 2.2 kernels (or maybe it's
+&gt; pcmcia-cs-3.0.8?) seem to automatically set default routes and there
+&gt; is often a problem (SIOADDR or something like that) with explicit
+&gt; route commands.  Check your syslog for routing errors, maybe?  But
+&gt; this doesn't seem to cause me any grief.
+
+I've tried again under kernel 2.2.2 this time, but still no luck getting
+PPP to work.
+
+Here is the comparison of a route, netstat and ifconfig under 2.0.36
+which works and 2.2.2 which doesn't. The only difference in setup is the
+kernel; I boot the same disk for both.
+
+Here's 2.2.2:
+
+[root@example.com /root]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use
+Iface
+hiperarc1-ariak *               255.255.255.255 UH    0      0        0
+ppp0
+127.0.0.0       *               255.0.0.0       U     0      0        0
+lo
+default         hiperarc1-ariak 0.0.0.0         UG    0      0        0
+ppp0
+[root@example.com /root]# netstat -nr
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt
+Iface
+203.216.40.12   0.0.0.0         255.255.255.255 UH        0 0          0
+ppp0
+127.0.0.0       0.0.0.0         255.0.0.0       U         0 0          0
+lo
+0.0.0.0         203.216.40.12   0.0.0.0         UG        0 0          0
+ppp0
+[root@example.com /root]# ifconfig ppp0
+ppp0      Link encap:Point-to-Point Protocol  
+          inet addr:203.216.42.136  P-t-P:203.216.40.12 
+Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1514  Metric:1
+          RX packets:6 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:7 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:10 
+
+Here's the same under 2.0.36:
+
+[root@example.com /root]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use
+Iface
+hiperarc1-ariak *               255.255.255.255 UH    0      0        0
+ppp0
+127.0.0.0       *               255.0.0.0       U     0      0        0
+lo
+default         hiperarc1-ariak 0.0.0.0         UG    0      0        1
+ppp0
+[root@example.com /root]# netstat -nr
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt
+Iface
+203.216.40.12   0.0.0.0         255.255.255.255 UH     1514 0          0
+ppp0
+127.0.0.0       0.0.0.0         255.0.0.0       U      3584 0          0
+lo
+0.0.0.0         203.216.40.12   0.0.0.0         UG     1514 0          0
+ppp0
+[root@example.com /root]# ifconfig ppp0
+ppp0      Link encap:Point-to-Point Protocol  
+          inet addr:203.216.42.200  P-t-P:203.216.40.12 
+Mask:255.255.255.0
+          UP POINTOPOINT RUNNING  MTU:1514  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 
+          Memory:5bdf038-5bdfc20 
+
+Note the difference in the ppp0 config (2.0.36 has NOARP and MULTICAST
+unlike 2.2.2), 2.0.36 has the default route usage count as 1 whereas
+2.2.2 doesn't. Also, the MSS entries are zeroed under 2.2.2. I'm not
+really sure what all this means.
+
+ping works fine; so e.g. Netscape says "www.slashdot.org contacted,
+waiting for reply" and the modem appears to be actually receiving data.
+It just seems to go in the bitbucket though, and Netscape times out.
+
+If anyone has any hints, I'd really appreciate this. This is preventing
+me from running 2.2.2.
+
+Cheers,
+
+Neil.
+-------------------------------------------------------------------
+Next Nomikai: March 19 (Fri), 19:30  Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00309" HREF="msg00309.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00119" HREF="msg00119.html">tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00123" HREF="msg00123.html">tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00178" HREF="msg00178.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00184" HREF="msg00184.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00305.html">Re: tlug: Scsi devices</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00307.html">tlug: "boot failed". Period.</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00184.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00309.html">Re: tlug: 2 Problems with Kernel 2.2.1 upgrade</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00306"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00306"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

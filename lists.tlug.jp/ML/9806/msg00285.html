@@ -1,0 +1,191 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Multilingual input (was Re: Japanese input) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 9 Jun 1998 14:02:49 +0900 -->
+<!--X-Message-Id: 13692.49422.505506.525770@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.980608013538.asbel@example.com -->
+<!--X-Reference-Id: 19980608125521A.craigoda@example.com -->
+<!--X-Reference-Id: 357B99C7.CC81C1AC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00284.html">Date Prev</A>][<A HREF="msg00286.html">Date Next</A>][<A HREF="msg00251.html">Thread Prev</A>][<A HREF="msg00239.html">Thread Next</A>][<A HREF="maillist.html#00285">Date Index</A>][<A HREF="threads.html#00285">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Multilingual input (was Re: Japanese input)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Multilingual input (was Re: Japanese input)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 9 Jun 1998 13:58:54 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00251.html">357B99C7.CC81C1AC@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00238.html">XFMail.980608013538.asbel@example.com</A>&gt;&lt;<A HREF="msg00247.html">19980608125521A.craigoda@example.com</A>&gt;&lt;<A HREF="msg00251.html">357B99C7.CC81C1AC@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Klaus" == Klaus Kudielka &lt;kudielka@example.com&gt; writes:
+
+    Klaus&gt; I renamed the subject again ;) The system I am dreaming of
+    Klaus&gt; should handle as many languages as possible, without having
+    Klaus&gt; to re-start applications (ideally, they shouldn't even know
+    Klaus&gt; about the language/charset/encoding etc. if they don't
+    Klaus&gt; like).
+
+Keep dreaming.  If your application can do that, then it will have to
+abandon all hope of interchange with the majority of current
+applications (although by focusing on M$ compatibility, you will
+probably be able to interchange the majority of documents).
+
+    Klaus&gt; 1. Shall the {input API, display API, C library multi-byte
+    Klaus&gt; functions} support arbitrary encodings (specified by the
+    Klaus&gt; locale) or just one universal encoding (e.g. UTF-8)? 3
+    Klaus&gt; questions, but, to keep application complexity low, there
+    Klaus&gt; should be only 1 answer.
+
+To keep application complexity low, it must be UCS-2 (or its trivial
+extension to the BMP of UCS-4), perhaps using UTF-8.  But see above.
+
+    Klaus&gt; 2. For the multi-byte conversion functions, matters are
+    Klaus&gt; even more complex. Does the wchar_t specify the Universal
+
+Multi-byte does not mean "wide character."  It means "variable width"
+character.  Sorry about that, but this usage is very well established
+now.
+
+    Klaus&gt; Character Set (UCS) or the local character set (i.e. the
+    Klaus&gt; one corresponding to the encoding)? I assume it's UCS,
+
+Wrong.  wchar_t doesn't give you _anything_; there's no guarantee it's 
+even more than one byte wide.  (In practice it's normally a CARD16 ==
+unsigned short for most C compilers.  However some systems use CARD32
+or CARD64, so you will have to make sure you handle those cases.)
+
+    Klaus&gt; since some encodings (like ISO-2022-JP-2) can have multiple
+    Klaus&gt; (overlapping?) character sets. The Single UNIX
+    Klaus&gt; Specification, Version 2, only states that the behaviour is
+    Klaus&gt; affected by the LC_CTYPE category, but not in what way.
+    Klaus&gt; Does anyone have more information?
+
+It's locale-specific.  Look in /usr/share/i18n/.
+
+    Klaus&gt; 3. Concerning (1) and (2), what's the status/direction for
+    Klaus&gt; the current APIs?
+
+    Klaus&gt;    - XIM
+
+XIM (and its output complement, XOM) handle both wide-character and
+multibyte encodings based on the POSIX locale model.  It will
+presumably stay that way, now that X has divided into free and
+proprietary development streams.
+
+    Klaus&gt;    - GNOME
+    Klaus&gt;    - glibc (I know the status of 2.0.7: UCS-4 &lt;-&gt; UTF-8 only)
+
+    Klaus&gt; When we have decided upon this issue, we can actually start
+    Klaus&gt; hacking on the various subsystems.
+
+Why not join the groups that already are working on this?  Mule at ETL 
+and FSF, XEmacs (very desultory at the moment, though), GNOME,
+XFree group, whatever?
+
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+After June 13, the next meeting is 8 August at Tokyo Station
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00238" HREF="msg00238.html">Re: Japanese input  (was RE: tlug: Japanese)</A></STRONG>
+<UL><LI><EM>From:</EM> "Matthew J. Francis" &lt;asbel@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00247" HREF="msg00247.html">Re: Japanese input  (was RE: tlug: Japanese)</A></STRONG>
+<UL><LI><EM>From:</EM> craigoda@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00251" HREF="msg00251.html">tlug: Multilingual input (was Re: Japanese input)</A></STRONG>
+<UL><LI><EM>From:</EM> Klaus Kudielka &lt;kudielka@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00284.html">Re: tlug: Xemacs Japanese input</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00286.html">tlug: Xemacs Japanese input</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00251.html">tlug: Multilingual input (was Re: Japanese input)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00239.html">Re: Japanese input  (was RE: tlug: Japanese)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00285"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00285"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

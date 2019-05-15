@@ -1,0 +1,209 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS question -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 18:46:28 +0900 -->
+<!--X-Message-Id: 19981014184620.A19261@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810140858.RAA03506@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00565.html">Date Prev</A>][<A HREF="msg00567.html">Date Next</A>][<A HREF="msg00572.html">Thread Prev</A>][<A HREF="msg00568.html">Thread Next</A>][<A HREF="maillist.html#00566">Date Index</A>][<A HREF="threads.html#00566">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS question</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 18:46:20 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt;; from Frank Bennett on Wed, Oct 14, 1998 at 05:58:15PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Frank Bennett writes:  (on 14 Oct 98)
+
+&gt; The design strategy (someone step on my fingers if I'm crawling
+&gt; in the wrong direction...) is to load processing overhead onto
+&gt; the terminals, and to centralize data storage and machine
+&gt; configuration details on the server.
+
+You are a very wise man.  Absolutely the right direction (IMHO).
+
+&gt;                                       The terminal machines will
+&gt; run Applix and Netscape and what have you, from the disk in each
+&gt; terminal.  Data, mail, and bootpd parameters will be stored on
+&gt; the server.
+
+You may want to make an install server as well -- to ensure all your
+clients are configured identically.
+
+&gt; This will require that the user's home directory be in an NFS or
+&gt; other remote-mounted filesystem, and I just realized that I don't
+&gt; know how best to set this up, nor indeed whether it will work at
+&gt; all.
+
+Sure it'll work.  Unfortunately Linux's NFS client implementation is
+quite slow at the moment (faster but flakier in 2.1).  I wouldn't
+recommend using Linux as an NFS server if you have another option.
+
+&gt; Am I going to run into massive overhead by exporting /home to
+&gt; every terminal (there will be about 20 at the start, but numbers
+&gt; will grow; and there will be 300+ subdirectories in /home)?
+
+The number of subdirectories doesn't matter, but the number of clients
+and the available network bandwidth does.  Keep in mind that a single 10
+Mbps etherent network can only transfer about 1 MB/s, or 3.6 GB per hour
+(and bring the network to its knees while its doing it).
+
+20 shouldn't be enough to worry about though.  100 Mbps network gear is
+pretty cheap these days.  If you can afford switched 100 Mbps, try to put
+more than one interface on the server and dedicate a switch port to each
+interface.  Then ensure your clients mount from each interface evenly.
+
+&gt;                                                              Will
+&gt; this require that the /etc/password on the server is cloned to
+&gt; the client to assure that permissions are synced between the two
+&gt; systems?
+
+No, the server doesn't have to have any entries in /etc/passwd.  All
+permissions are stored in the filesystem and passed over the wire as
+uid/gid numbers.  You only need /etc/passwd entries if you want an "ls"
+on the server to show you names rather than numbers.  I recommend
+limiting the logins in /etc/passwd on the server to an absolute minimum.
+
+The *clients* however must be in sync.
+
+&gt;           Are permissions on an NFS-mounted filesystem going to
+&gt; be as easy to walk around as, thinking idly about the problem
+&gt; here at my desk this evening, I think they will be --- by hacking
+&gt; the /etc/passwd ID number or password on the client machine?  It
+&gt; all seems rather scary somehow.
+
+You must somehow ensure that all of the user&lt;-&gt;uid, group&lt;-&gt;gid mappings
+are identical on all of the clients.  This can be accomplished using NIS
+or by rdist (I'd actually recommend the latter).
+
+&gt; Or is there another, better method of accessing remote data in
+&gt; filesystem form that I can apply here?
+
+You can look at the coda project (succesor to AFS) but I'd strongly
+recommend sticking with NFS unless you're doing this more for
+hacking/learning than to ease administration.
+
+NFS is a simple protocol with a lot of ugliness, but it's also easy to
+understand and fix problems.
+
+&gt; If the answers are complex, please feel free to just point me at
+&gt; suitable readings.  I'm happy to study, but don't want to spend
+&gt; my time reading up on dead-ends.
+
+I'm paid to be an NFS expert -- feel free to let me know any problems
+you may encounter.
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00568" HREF="msg00568.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00591" HREF="msg00591.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00564" HREF="msg00564.html">tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00565.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00567.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00572.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00568.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00566"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00566"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

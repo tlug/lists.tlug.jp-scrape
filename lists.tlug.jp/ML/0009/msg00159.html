@@ -1,0 +1,230 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: ppp, pmcia and isdn question -->
+<!--X-From: "Ulrike Schmidt" <ulrike@example.com> -->
+<!--X-Date: Tue, 12 Sep 2000 22:32:44 +0900 -->
+<!--X-Message-Id: 004301c01cc2$5ff50460$052ad8cb@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00158.html">Date Prev</A>][<A HREF="msg00161.html">Date Next</A>][<A HREF="msg00146.html">Thread Prev</A>][<A HREF="msg00161.html">Thread Next</A>][<A HREF="maillist.html#00159">Date Index</A>][<A HREF="threads.html#00159">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: ppp, pmcia and isdn question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: ppp, pmcia and isdn question</strong></LI>
+<LI><strong>From</strong>: <strong>"Ulrike Schmidt" &lt;<A HREF="mailto:ulrike@example.com">ulrike@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 12 Sep 2000 22:32:44 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain;charset="iso-8859-1"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;rhMj7D.A.qEB.-Ojv5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;usually you can treat a TA like a modem with the exception of the NEC
+ones[1]. If you look at the &gt;documentation of the NEC TA and go through the
+list of AT commands you'll find a command called $N that &gt;is for setting the
+data port. To be able to do PPP you have to send $N1=1 when initializing the
+TA.
+
+I took the init string from the settings I use with windows but this did not
+solve the problem.
+
+&gt;No, you _did_ get a connection.  Then _you_ terminated it.  (Well,
+&gt;your pppd did.)
+
+
+&gt;Evidently your PPP configuration is set up to authenticate the remote
+&gt;side.  Since GOL expects to do the authentication, and not vice versa,
+&gt;it doesn't have a password for you.
+&gt;
+&gt;Look in the configuration file for stuff that has to do with who
+&gt;authenticates who.  I forget whether the relevant thing is in PPP's
+&gt;config, or in pap-secrets.
+
+
+I found the following
+in /etc/ppp/options:
+
+&lt;quote&gt;
+# Require the peer to authenticate itself before allowing network
+# packets to be sent or received.
+# Please do not disable this setting. It is expected to be standard in
+# future releases of pppd. Use the call option (see manpage) to disable
+# authentication for specific peers.
+auth
+&lt;/quote&gt;
+
+in man pppd:
+
+&lt;quote&gt;
+              Read  options  from  the  file /etc/ppp/peers/name.
+              This file may contain privileged options,  such  as
+              noauth, even if pppd is not being run by root.
+&lt;/quote&gt;
+
+in /etc/ppp/peers/GI (GOL-ISDN):
+
+&lt;quote&gt;
+noauth
+&lt;/quote&gt;
+
+So I thought maybe the settings are correct like this? But still there seems
+to be a problem. So I followed the instructions in the ppp-FAQ and logged
+the output of the session:
+
+&lt;quote&gt;
+Sep 12 21:36:06 debian pppd[1045]: pppd 2.3.11 started by root, uid 0
+Sep 12 21:36:07 debian chat[1046]: abort on (BUSY)
+Sep 12 21:36:08 debian chat[1046]: abort on (NO CARRIER)
+Sep 12 21:36:08 debian chat[1046]: abort on (VOICE)
+Sep 12 21:36:08 debian chat[1046]: abort on (NO DIALTONE)
+Sep 12 21:36:08 debian chat[1046]: abort on (NO DIAL TONE)
+Sep 12 21:36:08 debian chat[1046]: abort on (NO ANSWER)
+Sep 12 21:36:08 debian chat[1046]: send (ATZ^M)
+Sep 12 21:36:08 debian chat[1046]: expect (OK)
+Sep 12 21:36:08 debian chat[1046]: ^M
+Sep 12 21:36:08 debian chat[1046]: OK
+Sep 12 21:36:08 debian chat[1046]:  -- got it
+Sep 12 21:36:08 debian chat[1046]: send (atq0v1x3$s9=10$n1=1&amp;d1^M)
+Sep 12 21:36:08 debian chat[1046]: expect (OK)
+Sep 12 21:36:08 debian chat[1046]: ^M
+Sep 12 21:36:08 debian chat[1046]: ^M
+Sep 12 21:36:08 debian chat[1046]: OK
+Sep 12 21:36:08 debian chat[1046]:  -- got it
+Sep 12 21:36:08 debian chat[1046]: send (ATDT35990050^M)
+Sep 12 21:36:09 debian chat[1046]: expect (CONNECT)
+Sep 12 21:36:09 debian chat[1046]: ^M
+Sep 12 21:36:11 debian chat[1046]: ^M
+Sep 12 21:36:11 debian chat[1046]: CONNECT
+Sep 12 21:36:11 debian chat[1046]:  -- got it
+Sep 12 21:36:11 debian chat[1046]: send (\d)
+Sep 12 21:36:12 debian pppd[1045]: Serial connection established.
+Sep 12 21:36:12 debian pppd[1045]: Using interface ppp0
+Sep 12 21:36:12 debian pppd[1045]: Connect: ppp0 &lt;--&gt; /dev/ttyS0
+Sep 12 21:36:13 debian pppd[1045]: sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt;
+&lt;magic 0x89b56df7&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+Sep 12 21:36:13 debian pppd[1045]: rcvd [LCP ConfReq id=0x1 &lt;mru 1514&gt; &lt;auth
+pap&gt; &lt;magic 0x78f6ad4&gt; &lt;pcomp&gt; &lt;accomp&gt; &lt; 11 04 05 ea&gt; &lt; 13 03 00&gt; &lt;asyncmap
+0x0&gt;]
+Sep 12 21:36:13 debian pppd[1045]: sent [LCP ConfRej id=0x1 &lt; 11 04 05 ea&gt; &lt;
+13 03 00&gt;]
+Sep 12 21:36:13 debian pppd[1045]: rcvd [LCP ConfAck id=0x1 &lt;asyncmap 0x0&gt;
+&lt;magic 0x89b56df7&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+Sep 12 21:36:16 debian pppd[1045]: sent [LCP ConfReq id=0x1 &lt;asyncmap 0x0&gt;
+&lt;magic 0x89b56df7&gt; &lt;pcomp&gt; &lt;accomp&gt;]
+Sep 12 21:36:43 debian last message repeated 9 times
+Sep 12 21:36:45 debian pppd[1045]: Hangup (SIGHUP)
+Sep 12 21:36:45 debian pppd[1045]: Modem hangup
+Sep 12 21:36:45 debian pppd[1045]: Connection terminated.
+Sep 12 21:36:46 debian pppd[1045]: Exit.
+&lt;/quote&gt;
+
+... could someone enlighten me?
+
+&gt;    Ulrike&gt; If cardinfo detects the pcmcia-card as a modem, why
+&gt;    Ulrike&gt; doesn't pppconfig?
+&gt;
+&gt;Because cardinfo talks to the card directly via the PCMCIA bus.  The
+&gt;card responds to "hello, WTF are you?" with "hi, I'm a modem."
+&gt;pppconfig scans the serial "devices" (actually high level software
+&gt;abstractions) /dev/ttyS*.  For whatever reason, it doesn't recognize
+&gt;the response from /dev/ttyS2 as a modem.
+
+
+Is there anything that can be done about this, or can I forget about using
+this modem?
+
+Uli
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00161" HREF="msg00161.html">Re: ppp, pmcia and isdn question</A></STRONG>
+<UL><LI><EM>From:</EM> Simon Cozens &lt;simon@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00166" HREF="msg00166.html">Re: ppp, pmcia and isdn question</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00158.html">Re: new webpage: rikai.com</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00161.html">Re: ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00146.html">ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00161.html">Re: ppp, pmcia and isdn question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00159"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00159"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] remote access to server -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Sun, 04 Jun 2017 02:24:11 +0900 -->
+<!--X-Message-Id: d22e1c93&#45;0da1&#45;9a46&#45;8fd1&#45;bb485a9e9f3d@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1a3aa51d&#45;c95d&#45;a22e&#45;3d3d&#45;4e931f4bfd38@me.scn&#45;net.ne.jp -->
+<!--X-Reference: 22834.22284.10376.798201@gargle.gargle.HOWL -->
+<!--X-Reference: CAH2XypFYOH8Z5Bo079aWKJh8KKAQ&#45;bAsvGY+nSoVygYaxPBUfA@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00007.html">Date Prev</a>][<a href="msg00009.html">Date Next</a>][<a href="msg00003.html">Thread Prev</a>][<a href="msg00006.html">Thread Next</a>][<a href="maillist.html#00008">Date Index</a>][<a href="threads.html#00008">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] remote access to server</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 3 Jun 2017 18:24:02 +0100</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20remote%20access%20to%20server">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] remote access to server</strong></li>
+<li>References: &lt;<a href="msg00000.html">1a3aa51d-c95d-a22e-3d3d-4e931f4bfd38@me.scn-net.ne.jp</a>&gt;	&lt;<a href="msg00002.html">22834.22284.10376.798201@gargle.gargle.HOWL</a>&gt;	&lt;<a href="msg00003.html">CAH2XypFYOH8Z5Bo079aWKJh8KKAQ-bAsvGY+nSoVygYaxPBUfA@mail.gmail.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101	Thunderbird/52.1.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>One to add to the list of techniques so far, is the use of ipset. We use
+this to control access to admin websites. E.g. one of our iptables
+entries is:
+
+  -A INPUT -p tcp --dport 443 -m set --match-set myip src -j ACCEPT
+
+I use this manually over ssh. E.g. if I'm at a coffee shop and need to
+use an admin page, I will first find out my public ip, then ssh in and
+(as root) run:
+
+  ipset add myip 1.2.3.4
+
+In fact, in that example I would actually do:
+
+  ipset add myip 1.2.3.4 timeout 3600
+
+
+This could be used just as well for ssh whitelisting, by setting up a
+dedicated web page, password-protected, where a login from 1.2.3.4 will
+automatically run:
+
+  ipset add sship 1.2.3.4 timeout 180
+
+You then have three minutes to ssh in.
+
+Doing this for ssh is on my to-do list, as I am still hoping to find a
+ready-made open source package - when it comes to security the rule is
+you don't hack your own :-)
+
+Darren
+
+P.S. <a  rel="nofollow" href="https://wiki.archlinux.org/index.php/Ipset">https://wiki.archlinux.org/index.php/Ipset</a>
+
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+My New Book: Practical Machine Learning with H2O:
+  <a  rel="nofollow" href="http://shop.oreilly.com/product/0636920053170.do">http://shop.oreilly.com/product/0636920053170.do</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00000" href="msg00000.html">[tlug] remote access to server</a></strong>
+<ul><li><em>From:</em> Kevin Sullivan</li></ul></li>
+<li><strong><a name="00002" href="msg00002.html">[tlug]  remote access to server</a></strong>
+<ul><li><em>From:</em> Marcus Metzler</li></ul></li>
+<li><strong><a name="00003" href="msg00003.html">Re: [tlug] remote access to server</a></strong>
+<ul><li><em>From:</em> Chris Salisbury</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00007.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00009.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00003.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00006.html">Re: [tlug] remote access to server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00008"><strong>Date</strong></a></li>
+<li><a href="threads.html#00008"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Reading kanji file name from Mac OS X -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Wed, 05 Jul 2006 09:30:23 +0900 -->
+<!--X-Message-Id: 44AB1649.60608@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: mailman.36.1152025166.2473.tlug@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00052.html">Date Prev</a>][<a href="msg00054.html">Date Next</a>][<a href="msg00055.html">Thread Prev</a>][<a href="msg00065.html">Thread Next</a>][<a href="maillist.html#00053">Date Index</a>][<a href="threads.html#00053">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Reading kanji file name from Mac OS X</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 05 Jul 2006 10:30:49 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<a href="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Reading%20kanji%20file%20name%20from%20Mac%20OS%20X">dariggs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Reading kanji file name from Mac OS X</strong></li>
+<li>References: &lt;<a href="mailto:mailman.36.1152025166.2473.tlug@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Reading%20kanji%20file%20name%20from%20Mac%20OS%20X">mailman.36.1152025166.2473.tlug@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US;	rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<tt>Thanks for the suggestions Stephen, I can sometimes read some of the 
+</tt><tt>file names in emacs, but its a real hassel.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>It seems that using WinXP is indeed the best way to handle this-- the 
+</tt><tt>Mac OS kanji file names are a mess.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Just for the record, here is my little note to myself about how to bring 
+</tt><tt>over a dir tree of Mac files with kanji and spaces and upper case ascii 
+</tt><tt>in the file names and translate from their names in sjis to utf-8, also 
+</tt><tt>converting spaces to &quot;.&quot; and lowercasing ascii. And convert content too!
+</tt><pre style="margin: 0em;">
+
+Copy to usb in WinXP, mount it in Linux as -o iocharset=sjis and then do
+the following to convert to utf-8 and no-blank file names.
+
+Go to the top level dir that contains the files from Mac. To clean up
+</pre><tt>Mac _directory_ names of blanks, converting the blank to a &quot;.&quot;  run 
+</tt><tt>repeatedly until no errors are reported:
+</tt><pre style="margin: 0em;">
+
+find * -type d -print0 | xargs -0 rename 's/ /./g'
+
+(Several runs may be needed due to the problem of renaming a folder
+that has already had a higher level rename done because it is itself
+</pre><tt>contained in folder that has a blank in the name. To properly separate 
+</tt><tt>file names despite the blanks,  -print0 directsl to use
+</tt><pre style="margin: 0em;">
+null instead of blank for separators, and xargs -0 recognizes that.)
+
+Then run for _files_ (should not be any more errors):
+
+find * -type f -print0 | xargs -0 rename 's/ /./g'
+
+Then convert kanji file names to utf-8, and also lowercase ascii. If
+</pre><tt>there are garbage, or non-sjis kanji names, &quot;convmv&quot; will report it and 
+</tt><tt>stop and you may have to correct non-sjis names manually, then rerun.
+</tt><pre style="margin: 0em;">
+&quot;convmv&quot; does its own recursion into directories.
+
+convmv -r -f sjis -t utf-8 --notest --lower *
+
+</pre><tt>Then convert data, both line breaks and encoding, (should be no blanks 
+</tt><tt>in names, but just in case use -printf0):
+</tt><pre style="margin: 0em;">
+
+find * -type f -print0 |xargs -0 recode -f sjis/cl..utf-8/
+
+
+Hope it is useful to someone,
+
+David Riggs
+
+Kyoto
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00065" href="msg00065.html">Re: [tlug] Reading kanji file name from Mac OS X</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00052.html">[tlug] More on CentOS and Japanese input</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00054.html">Re: [tlug] SCIM/Anthy on CentOS</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00055.html">Re: [tlug] More on CentOS and Japanese input</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00065.html">Re: [tlug] Reading kanji file name from Mac OS X</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00053"><strong>Date</strong></a></li>
+<li><a href="threads.html#00053"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

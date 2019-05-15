@@ -1,0 +1,171 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Adding latency to network connection -->
+<!--X-From-R13: Sqjneq [vqqyrgba <rzvqqyrgbaNororne.arg> -->
+<!--X-Date: Wed, 18 Feb 2009 16:49:28 +0900 -->
+<!--X-Message-Id: 499BBD74.30402@bebear.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00129.html">Date Prev</a>][<a href="msg00131.html">Date Next</a>][<a href="msg00154.html">Thread Prev</a>][<a href="msg00132.html">Thread Next</a>][<a href="maillist.html#00130">Date Index</a>][<a href="threads.html#00130">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Adding latency to network connection</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 18 Feb 2009 16:49:08 +0900</li>
+<li><strong>From</strong>: <strong>Edward Middleton &lt;<a href="mailto:emiddleton@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Adding%20latency%20to%20network%20connection">emiddleton@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Adding latency to network connection</strong></li>
+<li>User-agent: Thunderbird 2.0.0.19 (X11/20090202)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I have a web application that I am trying to test but our network is
+being a bit to responsive and low in latency.  What I need is to add
+about 500ms latency to all packets going to the server.
+
+There is a fairly outdated perl script called countertrace[1], that has
+been updated by someone at redhat[2], which should accomplish this. 
+Unfortunately, it appears that not only is the ip_queue obsoleted in kernel
+
+Networking ---&gt;
+[*] Networking support
+        Networking options --&gt;
+[*] Network packet filtering framework (Netfilter) ---&gt;
+        IP: Netfilter Configuration ---&gt;
+&lt;*&gt; IP Userspace queuing via NETLINK (OBSOLETE)
+
+but the user space bindings (libipq) appear to have been removed from
+recent iptables (1.4.0).  The previous mentioned script uses perl
+binding[3] to libipq.
+
+Lucky (sort of) the new netfilter netlink queue
+
+Networking ---&gt;
+[*] Networking support
+        Networking options --&gt;
+[*] Network packet filtering framework (Netfilter) ---&gt;
+        Core Netfilter Configuration ---&gt;
+&lt;*&gt; Netfilter NFQUEUE over NFNETLINK interface
+
+also comes with a libipq compatibility library[4] which I used to
+compile IPQueue[3].  This allowed me to run delay-net.pl[5] but it keeps
+on dying with the following error.
+
+Delay by 0.25 seconds
+NFNETLINK answers: File exists
+Could not initialize IPQ: Unable to bind netlink socket: Illegal seek
+
+Does anyone have any ideas what is happening here, or how one might
+debug this?  Alternately does anyone have a better method or adding
+latency to a network connections?
+
+Cheers,
+
+Edward
+
+1. <a  href="http://michael.toren.net/code/countertrace/">http://michael.toren.net/code/countertrace/</a>
+2. <a  href="http://people.redhat.com/berrange/notes/network-delay.html">http://people.redhat.com/berrange/notes/network-delay.html</a>
+3. <a  href="http://search.cpan.org/~jmorris/perlipq-1.25/IPQueue.pm">http://search.cpan.org/~jmorris/perlipq-1.25/IPQueue.pm</a>
+4.
+<a  href="http://git.netfilter.org/cgi-bin/gitweb.cgi?p=libnetfilter_queue.git;a=blob;f=src/libipq_compat.c;h=61283ed6c6aed1919f2b12d76dbe83aa62c9468a;hb=HEAD">http://git.netfilter.org/cgi-bin/gitweb.cgi?p=libnetfilter_queue.git;a=blob;f=src/libipq_compat.c;h=61283ed6c6aed1919f2b12d76dbe83aa62c9468a;hb=HEAD</a>
+5. <a  href="http://people.redhat.com/berrange/notes/network-delay/delay-net.pl">http://people.redhat.com/berrange/notes/network-delay/delay-net.pl</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00132" href="msg00132.html">[tlug] Re: Adding latency to network connection</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00143" href="msg00143.html">Re: [tlug] Adding latency to network connection</a></strong>
+<ul><li><em>From:</em> A.Tomita</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00129.html">Re: [tlug] Call for presenters - March 14th technical meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00131.html">Re: [tlug] Call for presenters - March 14th technical meeting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00154.html">Re: SCIM working! (Was: Re: [tlug] Re: EeePC so far)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00132.html">[tlug] Re: Adding latency to network connection</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00130"><strong>Date</strong></a></li>
+<li><a href="threads.html#00130"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

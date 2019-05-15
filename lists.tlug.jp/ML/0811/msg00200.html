@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] flash player 10, x86_64, firefox crashes -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Tue, 18 Nov 2008 21:19:22 +0900 -->
+<!--X-Message-Id: 20081118121850.GE40018@mail.scottro.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1226916306.5475.8.camel@localhost.localdomain -->
+<!--X-Reference: 20081117123136.GA28333@mail.scottro.net -->
+<!--X-Reference: 1226927398.5475.20.camel@localhost.localdomain -->
+<!--X-Reference: 20081117145425.GA29696@mail.scottro.net -->
+<!--X-Reference: 1227000266.4500.4.camel@localhost.localdomain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00199.html">Date Prev</a>][<a href="msg00201.html">Date Next</a>][<a href="msg00198.html">Thread Prev</a>][<a href="msg00183.html">Thread Next</a>][<a href="maillist.html#00200">Date Index</a>][<a href="threads.html#00200">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] flash player 10, x86_64, firefox crashes</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 18 Nov 2008 07:18:50 -0500</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20flash%20player%2010%2C%20x86_64%2C%20firefox%20crashes">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] flash player 10, x86_64, firefox crashes</strong></li>
+<li>References: &lt;<a href="msg00179.html">1226916306.5475.8.camel@localhost.localdomain</a>&gt;	&lt;<a href="msg00185.html">20081117123136.GA28333@mail.scottro.net</a>&gt;	&lt;<a href="msg00186.html">1226927398.5475.20.camel@localhost.localdomain</a>&gt;	&lt;<a href="msg00189.html">20081117145425.GA29696@mail.scottro.net</a>&gt;	&lt;<a href="msg00198.html">1227000266.4500.4.camel@localhost.localdomain</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tue, Nov 18, 2008 at 06:24:26PM +0900, Shawn wrote:
+&gt; &gt;   libflashplayer.so
+&gt; &gt; 
+&gt; &gt; Copy that file to /usr/lib64/mozilla/plugins  
+&gt; 
+&gt; Ok thanks!  x86_64 firefox running flash 10 works!
+&gt; I　should have tried to locate mozilla/plugins and I could have figured it out myself.
+&gt; 
+&gt; <a  href="http://labs.adobe.com/downloads/flashplayer10.html">http://labs.adobe.com/downloads/flashplayer10.html</a>
+
+Well, there are mozilla/plugins all over the place, and it seems easy
+enough to guess wrong.  :)
+
+Did I mention that one doesn't have to remove nspluginwrapper,
+especially if using adobe reader as well?  (removing nspluginwrapper can
+also cause problems with SELinux if you use it.)
+
+Instead, one should just add it to the IGNORE_WRAP line in
+/etc/sysconfig/nspluginwrapper.  After the = sign, add this to the end
+of that line (but within the quotes.)
+
+:libflash*
+
+If you have nothing in that line at present, then don't use the colon
+before libflash, but by default, it seems to at least put libtotem in
+there.  (I'm guessing that's the default since I never specifically
+chose to install totem and I see it in there.)   
+
+Just in case that's not clear, what I mean is the line should look
+something like this. 
+
+export IGNORE_WRAP=&quot;libtotem*:libjavaplugin*:libflash*&quot;
+
+
+
+-- 
+Scott Robbins
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Spike: You're not friends. You'll never be friends. You'll be in 
+love 'til it kills you both. You'll fight, and you'll shag, and
+you'll hate each other 'til it makes you quiver, but you'll never
+be friends. Real love isn't brains, children. It's blood. It's 
+blood screaming inside you to work its will. I may be love's 
+bitch, but at least I'm man enough to admit it. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00179" href="msg00179.html">[tlug] flash player 10, x86_64, firefox crashes</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+<li><strong><a name="00185" href="msg00185.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+<li><strong><a name="00186" href="msg00186.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+<li><strong><a name="00189" href="msg00189.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+<li><strong><a name="00198" href="msg00198.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00201.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00198.html">Re: [tlug] flash player 10, x86_64, firefox crashes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00183.html">[tlug] [OT] Any hobbyist electrical engineers around Tokyo?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00200"><strong>Date</strong></a></li>
+<li><a href="threads.html#00200"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

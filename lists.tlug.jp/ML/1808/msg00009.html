@@ -1,0 +1,279 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Compile/load problem with graphics library -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyy.fgrcura.sjNh.gfhxhon.np.wc> -->
+<!--X-Date: Wed, 08 Aug 2018 23:38:09 +0900 -->
+<!--X-Message-Id: 23403.78.891515.225366@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: fe5a3e36&#45;1068&#45;ab9b&#45;e233&#45;66f92f81b522@imaginatorium.org -->
+<!--X-Reference: 32f9378d&#45;874e&#45;b475&#45;e35f&#45;fe10719cede8@gmail.com -->
+<!--X-Reference: a3dd8cfb&#45;f6bd&#45;f433&#45;c5db&#45;4b7bb8cab604@imaginatorium.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00008.html">Date Prev</a>][<a href="msg00010.html">Date Next</a>][<a href="msg00008.html">Thread Prev</a>][<a href="msg00010.html">Thread Next</a>][<a href="maillist.html#00009">Date Index</a>][<a href="threads.html#00009">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Compile/load problem with graphics library</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 8 Aug 2018 23:38:06 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull.stephen.fw@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Compile%2Fload%20problem%20with%20graphics%20library">turnbull.stephen.fw@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Compile/load problem with graphics library</strong></li>
+<li>References: &lt;<a href="msg00001.html">fe5a3e36-1068-ab9b-e233-66f92f81b522@imaginatorium.org</a>&gt;	&lt;<a href="msg00003.html">32f9378d-874e-b475-e35f-fe10719cede8@gmail.com</a>&gt;	&lt;<a href="msg00006.html">a3dd8cfb-f6bd-f433-c5db-4b7bb8cab604@imaginatorium.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Brian Chandler writes:
+
+ &gt; I may not have mentioned: this program has been compiled several
+ &gt; times, 
+
+Like Joe F, I do not understand how this could be possible with that
+Makefile.  Are you sure the application source code (specifically the
+Makefile) hasn't been refactored in the meantime?
+
+Linking is order-sensitive, and one-pass (the linker does not go back
+over the list to try to resolve unresolved references using libraries
+or objects it has already processed, unless they're actually listed
+more than once in the command arguments[1]).  So both the command line
+in the error message and the Makefile snippet are in the wrong order.
+
+‾\_(ツ)_/‾
+
+ &gt; and was running for more than 3 years. So it seems unlikely that I
+ &gt; made a fundamental mistake.  I got the response about object order
+ &gt; on the magick forum too; I have tried putting the configure script
+ &gt; which generates the library references after the .o files, but it
+ &gt; makes no difference.
+ &gt; 
+ &gt; One big problem is that I simply cannot understand the mass of subtly 
+ &gt; different library names involved. The configure script generates the 
+ &gt; following for the libraries to be searched:
+ &gt; 
+ &gt; -L/usr/local/lib -lMagick++-6.Q16 -lMagickWand-6.Q16 -lMagickCore-6.Q16
+
+If you think this is a &quot;big problem&quot; (it's really very basic Unix
+programming), perhaps you're out of your depth?  I have a few
+suggestions below.  (0) and (1) are easy to implement and may or may
+not be helpful, but (2) and (3) I can't explain in detail without
+hands on, although there may be a few people around who know how to
+get the needed information out of your system.  And of course I can't
+help you if it's something else without more information.  If the easy
+fixes don't work, you should probably give somebody who knows how this
+all fits together access to the system.
+
+FYI: The library actually linked has a name generated by prepending
+&quot;lib&quot; and appending &quot;.so&quot; (and possibly some version numbers).[2]  These
+are the relevant files:
+
+ &gt; libMagick++-6.Q16.a            # This is for &quot;static&quot; linking
+ &gt; libMagick++-6.Q16.la           # This is for creating more libraries
+ &gt; libMagick++-6.Q16.so           # This is a link to the &quot;real&quot; file
+ &gt; libMagick++-6.Q16.so.6         # This is a link to the &quot;real&quot; file
+ &gt; libMagick++-6.Q16.so.6.0.0     # This is the &quot;real&quot; file
+ &gt; libMagickCore-6.Q16.a          # And similar for each group of five
+ &gt; libMagickCore-6.Q16.la
+ &gt; libMagickCore-6.Q16.so
+ &gt; libMagickCore-6.Q16.so.2
+ &gt; libMagickCore-6.Q16.so.2.0.0
+ &gt; libMagickWand-6.Q16.a
+ &gt; libMagickWand-6.Q16.la
+ &gt; libMagickWand-6.Q16.so
+ &gt; libMagickWand-6.Q16.so.2
+ &gt; libMagickWand-6.Q16.so.2.0.0
+
+Darren said you have a lot of versions installed, but that's only true
+for GraphicsMagick, which you aren't linking to.  As you can see
+above, the libMagick libraries all contain the string &quot;-6.Q16&quot;, which
+probably corresponds the version number or string in the ImageMagick
+include file(s).  The .so versions differ (.6 for libMagick vs. .2 for
+Core and Wand), but this is common.  The question of when to bump the
+.so numbers is very technical (ie, I haven't a clue :-).  Bottom line:
+all your ImageMagick libraries are the same version.
+
+ &gt; ---- Latest error: with the library files after the .o files ----
+ &gt; horigome@kulle% make imagetrim
+ &gt; g++ imagetrim.o boundingbox.o `Magick++-config --ldflags --libs` -o imagetrim
+ &gt; imagetrim.o: In function `main': imagetrim.cpp:(.text+0x3c1):
+ &gt; undefined reference to
+ &gt; `Magick::Image::read(std::__cxx11::basic_string&lt;char,
+ &gt;                                                 std::char_traits&lt;char&gt;,
+ &gt;                                                 std::allocator&lt;char&gt;
+ &gt;                                                 &gt; const&amp;)'
+
+So I told a fib above.  C++ is extremely finicky about function names,
+and pretty much everything in the `...' quoted part of the &quot;Latest
+error&quot; above is encoded in the name the linker sees.  There are four
+issues I can think of that would cause that error in the presence of
+successfully compiled .o files and the appropriate library files.
+
+(0) You still have old .o files lying around that refer to an earlier
+    version of ImageMagick.  With that Makefile, &quot;make&quot; will *not*
+    recompile them unless the sources have changed.  Does &quot;make clean;
+    make&quot; help?
+
+(1) The version of the ImageMagick headers used to compile the .o
+    files is out of sync with the version of the libraries, and the
+    prototypes are just plain wrong.  This would be especially likely
+    if there are many calls to ImageMagick in the program but only
+    these three functions are undefined at link time.
+
+    (a) This typically happens at upgrades when the admin upgrades the
+        runtime package (probably something like &quot;imagemagick&quot; +
+        version information and package manager stuff), but not the
+        corresponding developer package (typically something like
+        &quot;imagemagick-dev&quot; + corresponding stuff).  If so, you're in
+        luck: the trivial solution is to upgrade the -dev package to
+        the same version as the runtime package.
+
+    (b) It also happens if somebody has installed a local build and
+        cleaned up /usr/local/lib but not /usr/local/include.  This
+        seems very unlikely here, though, since you're getting the
+        location of ImageMagick includes from Magick++-config
+        according to the Makefile.
+
+    I think (0) or (1a) is most likely, as the other possibilities
+    shouldn't happen with a modern package management system.  If they
+    were common, nobody would ever be able to compile C++ programs!
+
+(2) As Jim T suggests, it's possible that the issue is in the version
+    or options of G++ being used.  Specifically, the application
+    program is requesting C++11 conformance (ie, to 2011 standard
+    C++), it seems (just guessing, but the __cxx11 seems indicative).
+    If the library was compiled to a different standard (perhaps
+    because the default conformance level changed between G++
+    versions), it won't link.  For this you need to figure out what
+    the conformance level of the libraries is and how to get G++ to
+    conform to that level.  (Sorry, I don't recall how to do this
+    offhand; last time I programmed C++ in anger cfront was still the
+    reference implementation!)
+
+(3) The method used for encoding function prototypes into linker names
+    and the calling convention for functions occasionally change
+    across compiler versions, and this will change the linker names
+    mangled up from the prototypes.  You need to figure out what
+    version of the compiler was used for the libraries, and use that
+    one.  (Again, not something I've done in a very long time.)
+
+The reason that the people on the ImageMagick channel don't seem to
+understand what's going on is that they don't.  They offered several
+really plausible guesses, but in the end the problem is in the build
+environment of the system (eg, include/lib version skew) or the build
+process for your application, not in ImageMagick.  They clearly also
+assumed you have more knowledge of how to build applications on
+Unix-like systems than you show here.
+
+
+Footnotes: 
+[1]  Yes, this is actually useful in particularly complex cases.
+There is one exception: if the static .a library is linked instead of
+the dynamic .so, GNU ld will repeatedly search it to resolve
+references in an object linked later.  But if the application were
+statically linked, it should still work because the library is
+actually incorporated in the executable.  And of course there's no
+-static flag in the link command.
+
+[2]  Static linking, mentioned above, is an exception.  Those libraries
+will use .a extension without a version number extension, and the link
+line will have a &quot;-static&quot; flag.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">[tlug]  Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+<li><strong><a name="00003" href="msg00003.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Joe Foran</li></ul></li>
+<li><strong><a name="00006" href="msg00006.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00008.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00010.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00008.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00010.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00009"><strong>Date</strong></a></li>
+<li><a href="threads.html#00009"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

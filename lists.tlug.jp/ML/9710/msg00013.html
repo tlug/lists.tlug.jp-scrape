@@ -1,0 +1,164 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Problems with CDROM detection in Caldera Lignux -->
+<!--X-From: Jim Tittsler <jwt@example.com> -->
+<!--X-Date:  Fri, 3 Oct 1997 06:55:59 GMT -->
+<!--X-Message-Id: 19971003155548.48102@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.93.971002220151.152B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00012.html">Date Prev</A>][<A HREF="msg00014.html">Date Next</A>][<A HREF="msg00008.html">Thread Prev</A>][<A HREF="msg00009.html">Thread Next</A>][<A HREF="maillist.html#00013">Date Index</A>][<A HREF="threads.html#00013">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Problems with CDROM detection in Caldera Lignux</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Problems with CDROM detection in Caldera Lignux</strong></LI>
+<LI><strong>From</strong>: <strong>Jim Tittsler &lt;<A HREF="mailto:jwt@example.com">jwt@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 3 Oct 1997 15:55:48 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00007.html">Pine.LNX.3.93.971002220151.152B-100000@example.com</A>&gt;; from Dennis McMurchy on Thu, Oct 02, 1997 at 10:11:00PM +0900</LI>
+<LI>Oranization: 7J1AJH/AI8A Tokyo</LI>
+<LI>Organization: 7J1AJH/AI8A</LI>
+<LI>References: &lt;<A HREF="msg00007.html">Pine.LNX.3.93.971002220151.152B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Jim Tittsler &lt;jwt@example.com&gt;
+--------------------------------------------------------
+On Thu, Oct 02, 1997 at 10:11:00PM +0900, Dennis McMurchy wrote:
+&gt;   CD-Rom... on IRQ15, Port 170, Model 468-021
+&gt; The Linux Install diskette (I booted it, but this time I aborted before
+&gt; anything was actually installed) detects it like this:-
+&gt;   hdd:  CDA468021, ATAPI CDROM drive  ide0 at 0x1f
+                                                ^^^^ probably 0x1f0
+&gt;   The kennel rebuild went very smoothly (though I chose rather wildly
+&gt; between the various options), and I selected ATAPI CD-Rom. And, as you
+
+Which hopefully means he said yes to "Include IDE/ATAPI CDROM support"
+(and also yes to "ISO9660 filesystem" but that will only be a problem
+after detecting the drive :-).  You will also want to exercise caution
+if you have an IDE chipset that has only a single FIFO for both of the
+interfaces.  In particular say Yes to the CMD640 and RZ1000 configuration
+options if you have either or if you aren't sure.
+
+&gt; In the "Initializing block devices" section, it deals with the two hard
+&gt; disks and the floppy, but no mention of hdd or cdrom - UNLESS the
+&gt; following obscure line
+&gt;      ide0 at 0x1f0-0x1f7, 0x3f6 on irq 14
+&gt; is an attempt to detect it. The IRQ is different, but "ide0" and the
+&gt; memory address (or whatever those letters are) look similar to what the
+
+That is the "primary" IDE interface, at ports 0x1F0~1F7 IRQ14, the
+"secondary" IDE interface is located at ports 0x170~177 and uses
+IRQ15.
+
+(You can include ide?=port,upper_port,irq on the command line (as in
+linux ide0=0x1f0,0x3f6,14 ide1=0x170,0x376,15), but since those are
+the default values, it shouldn't be required.)
+
+What *may* be required is mentioning the drive location, especially
+if you have a non-standard setup (like a CD-ROM set as slave and no
+master device on that interface)... try booting your new kernel with
+a command line for LILO or loadlin like:
+  linux hdd=cdrom
+
+Good luck.
+-- 
+Jim Tittsler, Tokyo  jwt@example.com  <A TARGET="_top" HREF="http://www.dskk.co.jp/~jwt/">http://www.dskk.co.jp/~jwt/</A>
+
+                                 
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00007" HREF="msg00007.html">tlug: Problems with CDROM detection in Caldera Lignux</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00012.html">Re: tlug: Redistribute Meeting Announcement</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00014.html">Re: Meeting  (tlug: Qt and autoconf)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00008.html">RE: tlug: Problems with CDROM detection in Caldera Lignux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00009.html">Re: tlug: Gnus and Japanese</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00013"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00013"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

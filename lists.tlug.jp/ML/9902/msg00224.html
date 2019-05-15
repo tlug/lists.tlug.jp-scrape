@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Calling C procedures from FORTRAN -->
+<!--X-From: Venkatesh Raghavan <raghavan@example.com&#45;cu.ac.jp> -->
+<!--X-Date:  Tue, 16 Feb 1999 11:16:04 +0900 -->
+<!--X-Message-Id: 36C8D555.561355A4@example.com&#45;cu.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36C39982.93B1BBC9@example.com&#45;cu.ac.jp -->
+<!--X-Reference-Id: 14019.44648.357221.369381@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00223.html">Date Prev</A>][<A HREF="msg00225.html">Date Next</A>][<A HREF="msg00188.html">Thread Prev</A>][<A HREF="msg00189.html">Thread Next</A>][<A HREF="maillist.html#00224">Date Index</A>][<A HREF="threads.html#00224">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Calling C procedures from FORTRAN</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Calling C procedures from FORTRAN</strong></LI>
+<LI><strong>From</strong>: <strong>Venkatesh Raghavan &lt;<A HREF="mailto:raghavan@example.com">raghavan@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 16 Feb 1999 11:17:57 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>References: &lt;<A HREF="msg00186.html">36C39982.93B1BBC9@example.com</A>&gt; &lt;<A HREF="msg00188.html">14019.44648.357221.369381@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+Thanks for your reply. I just found a g77 option to avoid appending
+_(underscore)
+to C procedure calls. This makes it easier for me to make C procedure and
+library call from my Fortran program. The g77 option is as shown below;
+
+&gt;g77 -fno-underscoring -fsource-case-preserve test.f
+
+the "-fno-underscoring" is to avoid adding the underscore and
+"-fsource-case-preserve"
+is to preserve the case sensitivity in my Fortran program. I need to use the
+"-fsource-case-preserve" flag since g77 converts subroutine names to lower
+cases
+and my C routines that have both upper and lower cases (eg. call R_open_driver
+etc.)
+
+Hope this helps people who want to try Fortran/C mixed programming.
+
+
+Venkatesh Raghavan
+Osaka City University
+
+
+
+Stephen J. Turnbull wrote:
+
+&gt; &gt;&gt;&gt;&gt;&gt; "VR" == Venkatesh Raghavan &lt;raghavan@example.com&gt; writes:
+&gt;
+&gt;     VR&gt; I am writing a FORTRAN program that calls C procedures. I am
+&gt;     VR&gt; using g77 and gcc compilers.  By default the g77 compiler
+&gt;     VR&gt; appends an _(underscore) to function and subroutine names. For
+&gt;     VR&gt; example my program call a C procedure as follows; CALL CPROC()
+&gt;
+&gt;     VR&gt; and I have to name the C procedure as cproc_()
+&gt;
+&gt; Does this actually work?  I thought FORTRAN and C had different
+&gt; calling conventions.  That's what those underscores are for,
+&gt; preventing you from accidentally linking incompatible call sequences.
+&gt;
+&gt;     VR&gt; Is there any way/option for suppressing this addition of
+&gt;     VR&gt; underscore in FORTRAN so that C procedures can be called
+&gt;     VR&gt; directly (without adding an underscore).
+&gt;
+&gt; In C++, if FORTRAN linkage is supported, you can do the following
+&gt;
+&gt; #ifndef NAG_WRAPPER
+&gt; #define NAG_WRAPPER
+&gt; extern "fortran" {
+&gt;
+&gt; /* prototypes for NAG routines go here */
+&gt;
+&gt; }
+&gt;
+&gt; This automatically generates the necessary thunks to make sure the
+&gt; arguments are in the right order and alignment and so on.  I don't
+&gt; know how you would do this in FORTRAN to call C.
+&gt;
+
+
+
+-------------------------------------------------------------------
+Next Nomikai: March 19 (Fri), 19:30  Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00186" HREF="msg00186.html">tlug: Calling C procedures from FORTRAN</A></STRONG>
+<UL><LI><EM>From:</EM> Venkatesh Raghavan &lt;raghavan@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00188" HREF="msg00188.html">tlug: Calling C procedures from FORTRAN</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00223.html">Re: tlug: Graphic Tool</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00225.html">Re: tlug: 10/100base2 NICs for Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00188.html">tlug: Calling C procedures from FORTRAN</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00189.html">tlug: Intial Window size in Wmaker</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00224"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00224"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: IPChains rules -->
+<!--X-From: "A.Sajjad Zaidi" <sajjad@example.com> -->
+<!--X-Date: Mon, 05 Mar 2001 10:39:18 +0900 -->
+<!--X-Message-Id: 3AA2EE46.D591833@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.GSO.4.05.10103020952020.918&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00065.html">Date Prev</A>][<A HREF="msg00067.html">Date Next</A>][<A HREF="msg00051.html">Thread Prev</A>][<A HREF="msg00067.html">Thread Next</A>][<A HREF="maillist.html#00066">Date Index</A>][<A HREF="threads.html#00066">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: IPChains rules</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: IPChains rules</strong></LI>
+<LI><strong>From</strong>: <strong>"A.Sajjad Zaidi" &lt;<A HREF="mailto:sajjad@example.com">sajjad@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 05 Mar 2001 10:39:18 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: Vanguard K.K.</LI>
+<LI>References: &lt;<A HREF="msg00051.html">Pine.GSO.4.05.10103020952020.918-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;kF8inC.A.UME.O5uo6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>Sender: sajjad</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Thanks.
+
+Actually I forgot about the default policy. Once I did
+
+/sbin/ipchains -P input -j DENY
+
+everything worked like I wanted it to.
+
+I also installed iptables (and a new kernel) on another machine and although the
+syntax is slightly different, it worked.
+
+Now the only thing is finding out which service accesses which ports. I still cant
+figure out ftp.
+Secure Shell works with the following:
+
+#Allow outgoing ssh
+ipchains -A input -s $MY_IP -d 0.0.0.0/0 22 -p tcp -j ACCEPT
+ipchains -A input -s 0.0.0.0/0 22 -d $MY_IP -p tcp -j ACCEPT
+
+If ftp is allowed, it connects, but cant get any data or even a listing.
+
+
+A.Sajjad Zaidi
+
+
+"Scott M. Stone" wrote:
+
+&gt; you're going about it wrong.  first make a rule to deny EVERYTHING, then
+&gt; make rules to *allow* only the ports that you want.
+&gt;
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;
+&gt; &gt; "Stephen J. Turnbull" wrote:
+&gt; &gt;
+&gt; &gt; &gt; &gt;&gt;&gt;&gt;&gt; "A" == A Sajjad Zaidi &lt;sajjad@example.com&gt; writes:
+&gt; &gt; &gt;
+&gt; &gt; &gt;     A&gt; Im trying to setup rules through IPChains so everything except
+&gt; &gt; &gt;     A&gt; a few services are blocked. The problem is that only one port
+&gt; &gt; &gt;     A&gt; or a range of ports can be specified. Is there a work around
+&gt; &gt; &gt;     A&gt; for this?
+&gt; &gt; &gt;
+&gt; &gt; &gt; Specify the same rule multiple times, once for each port range.
+&gt; &gt; &gt;
+&gt; &gt; &gt; --
+&gt; &gt; &gt; University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+&gt; &gt; &gt; Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+&gt; &gt; &gt; _________________  _________________  _________________  _________________
+&gt; &gt; &gt; What are those straight lines for?  "XEmacs rules."
+&gt; &gt; &gt;
+&gt; &gt; &gt; -----------------------------------------------------------------------
+&gt; &gt; &gt; Next Technical Meeting:  Prof. Jim Breen  Sat, March 10 13:30-
+&gt; &gt; &gt; Next Nomikai Meeting:    Fri, April 13 19:30- Tengu Tokyo Eki Mae
+&gt; &gt; &gt; -----------------------------------------------------------------------
+&gt; &gt; &gt; more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; &gt;
+&gt; &gt; -----------------------------------------------------------------------
+&gt; &gt; Next Technical Meeting:  Prof. Jim Breen  Sat, March 10 13:30-
+&gt; &gt; Next Nomikai Meeting:    Fri, April 13 19:30- Tengu Tokyo Eki Mae
+&gt; &gt; -----------------------------------------------------------------------
+&gt; &gt; more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;
+&gt;
+&gt; --------------------------
+&gt; Scott M. Stone &lt;sstone@example.com&gt;
+&gt; Cisco Certified Network Associate, Sun Solaris Certified Systems Administrator
+&gt; UNIX Systems and Network Engineer
+&gt; Taos - The SysAdmin Company
+&gt;
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Prof. Jim Breen  Sat, March 10 13:30-
+&gt; Next Nomikai Meeting:    Fri, April 13 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00067" HREF="msg00067.html">Re: IPChains rules</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darrenj@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00051" HREF="msg00051.html">Re: IPChains rules</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00065.html">Re: linux only with linux?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00067.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00051.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00067.html">Re: IPChains rules</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00066"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00066"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

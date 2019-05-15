@@ -1,0 +1,218 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: despam &#45; a report on a spam blocker -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 23 Sep 1997 16:53:16 GMT -->
+<!--X-Message-Id: m0xDgTj&#45;00002WC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199709191324.WAA12806@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00056.html">Date Prev</A>][<A HREF="msg00058.html">Date Next</A>][<A HREF="msg00049.html">Thread Prev</A>][<A HREF="msg00050.html">Thread Next</A>][<A HREF="maillist.html#00057">Date Index</A>][<A HREF="threads.html#00057">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: despam - a report on a spam blocker</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: despam - a report on a spam blocker</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 24 Sep 1997 10:42:59 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00049.html">199709191324.WAA12806@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00049.html">199709191324.WAA12806@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jason" == Jason Molenda &lt;crash@example.com&gt; writes:
+
+    Jason&gt; I installed a spam blocker here in Tokyo called 'despam'
+    Jason&gt; a week ago.  It is a perl script which which includes a
+    Jason&gt; large database of regular expressions to detect spam mail
+    Jason&gt; notes (it looks through the headers or body of mail notes
+    Jason&gt; for certain regular expressions).  It has something like
+    Jason&gt; 1,500 or 2,000 regexps it checks against.
+
+Yikes!  presumably a descendent of the system used by the Cancel-Moose 
+on Usenet?
+
+    Jason&gt; The merit of any of these systems is how well they block
+    Jason&gt; the spam.  I kept track of things for 9 days.  Over that
+    Jason&gt; period, period I was sent 117 spams, 79 of which despam
+    Jason&gt; caught (and 38 of which got past it).  Some of these 117
+    Jason&gt; spams were duplicates; I counted all of them as individual
+
+I lost my recent mail archives to a disk crash, so I'm just
+reconstructing from memory.  But at one point I had 500 or so, and I'm
+sure I was doing better than 65%.  I use _one_ procmail regexp on
+_headers only_.  It has wrapped around about 5 times on an 80-column
+window by now, of course.
+
+It's true that most of the ones that get through the filter are MLM
+pyramid swindles.   However, I'm pretty sure I know how to catch most
+of those although I haven't implemented it yet, and it may require
+going out of procmail:  check for a mismatch in the "Received:" chain
+(especially if there's an intervening "From:").  Come to think of it,
+lots of MTAs now include a "possible spoof" notice in the headers;
+filtering on that will catch them in many cases (but it'll also catch
+Jim Schweiz when he's fiddling with his mailer config :-).
+
+    Jason&gt; spams.  Two messages were marked as spam, but were not
+    Jason&gt; spam.  They were digests (the nikon-digest mailing list)
+    Jason&gt; which had spam in them, so I'm not holding that against
+    Jason&gt; despam.
+
+despam should check for digests.  That's not acceptable to me.
+
+    Jason&gt; So I'm pretty happy with the results of despam so far.  One
+    Jason&gt; drawback of it is that it does eat some CPU time as it goes
+    Jason&gt; through the headers and body of incoming mail notes for all
+
+If I understand your description correctly, _and_ you are already
+using procmail, one thing you can do is to keep a list of your regular
+individual correspondents and trusted-not-to-spam domains and put them
+_ahead_ of the despam call in .procmailrc.  Also digests, where the
+cost of the spam may be lower, and the probability of a multiple false 
+positive is high.
+
+You can get the multiples sort of for free by keeping a spam-cache of
+message IDs (see the procmail docs, I know it's possible but not how),
+and filtering on the cache before using despam.  This may require
+altering despam (it would probably have to call formail, the procmail
+tool which maintains message ID caches).  This cache would be small
+because the multiples would all arrive within 24 hours, most likely,
+so you can expire the cache rapidly.
+
+    Jason&gt; of these regexps.  Another drawback is that the spam block
+    Jason&gt; patterns are tied to the releases of despam, so I'm not
+    Jason&gt; sure how frequently updated patterns will be released.
+
+Well, that requires analysis of the spams, so it's mostly going to be
+useful against pyramid swindles.  There aren't any new ones :-)
+
+You can also make a private spam-blocker like mine, look for something 
+suspicious in the headers and add it to the spam regexp in
+.procmailrc.  In Emacs I use the following procedure:
+
+; mark suspicious domain or address or other feature
+; eg "cool.out.do.you.know.where.the.delete.key.is" in Message-ID.
+M-w				; save it
+C-x C-f "~/.procmailrc" RET	; cheap if the buffer already exists
+M-&lt; M-s "abuse/newmail" RET	; I append spam to an abuse inbox
+				; use mh-inc and mh-scan to check for
+				; non-spam, mv them to a safe place,
+				; then delete the spam files
+C-a C-b				; back up to end of regexp
+"|"
+C-u C-y				; yank, leaving point at head
+C-x n n M-x "replace-string" RET "." RET "\."	; narrow and quote dots
+C-x n w C-x C-s			; widen and save
+
+Note that there are no user inputs after the region is defined; this
+could easily be turned into a macro or a function (I haven't bothered
+but if you want to distribute to non-hackers).  I don't know how you
+would do this in Eudora or MS Exchange ....
+
+Avoid the temptation to put "prodigy", "aol", "compuserve", and "tlug" 
+into your regexp.
+
+The better your regexp is, the less often despam gets called.
+
+HTH
+
+Steve
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00049" HREF="msg00049.html">tlug: despam - a report on a spam blocker</A></STRONG>
+<UL><LI><EM>From:</EM> Jason Molenda &lt;crash@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00056.html">tlug: tk4.2-jp and japanese characters</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00058.html">Re: tlug: Locale problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00049.html">tlug: despam - a report on a spam blocker</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00050.html">tlug: Swedish characters in tcl/tk-jp</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00057"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00057"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

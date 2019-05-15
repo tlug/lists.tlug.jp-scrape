@@ -1,0 +1,190 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Kernel rebuild problem -->
+<!--X-From: Neil Booth <NeilB@example.com> -->
+<!--X-Date:  Mon, 28 Sep 1998 07:41:23 +0900 -->
+<!--X-Message-Id: 360EC0C7.4F050352@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 360DC2C5.977A6498@example.com -->
+<!--X-Reference-Id: 360E87CD.8D6132C2@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00799.html">Date Prev</A>][<A HREF="msg00801.html">Date Next</A>][<A HREF="msg00799.html">Thread Prev</A>][<A HREF="msg00862.html">Thread Next</A>][<A HREF="maillist.html#00800">Date Index</A>][<A HREF="threads.html#00800">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Kernel rebuild problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Kernel rebuild problem</strong></LI>
+<LI><strong>From</strong>: <strong>Neil Booth &lt;<A HREF="mailto:NeilB@example.com">NeilB@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 28 Sep 1998 07:48:39 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: ...</LI>
+<LI>References: &lt;<A HREF="msg00786.html">360DC2C5.977A6498@example.com</A>&gt; &lt;<A HREF="msg00799.html">360E87CD.8D6132C2@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Kenny,
+
+Thanks for the info. I mounted the fs of the old boot image, which shows
+the scsi card was a module for 2.0.34. However, for 2.0.35 I have
+configured it as part of the kernel, not a module. The scsi card is
+correctly identified at bootup for 2.0.35, and it goes on to find my
+external SCSI zip drive at bootup, but doesn't seem to find my hard
+drive and CD-Rom!
+
+After finding the zip drive, I get the cannot open console message.
+Actually, as I write, this is starting to make sense. If it doesn't find
+my HD, the zip beomes my "sda" (boot drive) rather than "sdb" and that's
+why it fails to open an initial console.
+
+So my problem is getting it to find the HD &amp; CD-rom. I'll try and track
+that down tonight.
+
+Cheers,
+
+Neil.
+
+Hernando TANAKA wrote:
+&gt; 
+&gt; Neil Booth wrote:
+&gt; &gt; I have no idea what the "initrd" line is for the original kernel,
+&gt; &gt; so I omitted it for the new kernel. Do I need it?
+&gt; 
+&gt; I think so, although I need more information to be sure.
+&gt; 
+&gt; The problem might be that your root disk is on a SCSI disk
+&gt; (root=/dev/sda1), and the kernel is configured to support SCSI
+&gt; as a module.  When the kernel comes up, it couldn't recognize the
+&gt; SCSI adapter, so it fails mounting the root file system.
+&gt; 
+&gt; Try to put the same initrd line in the lilo.conf for the
+&gt; new kernel.  It might work, provided that you configured the
+&gt; kernel to support ramdisk.
+&gt; 
+&gt; Initrd stands for Initial Ramdisk.  If specified, the kernel
+&gt; uses it as the root file system at boot time, on the memory
+&gt; (ramdisk), and executes the /linuxrc script on that ramdisk.
+&gt; Usually, you insmod the appropriate scsi module there.
+&gt; 
+&gt; The initrd file is an gzipped ext2fs, so if your kernel supports
+&gt; loop file system, you can see the contents by;
+&gt; 
+&gt;   1. Ungzip the content by
+&gt;         # gzip -dc &lt;initrd.img &gt;/tmp/initrd.fs
+&gt; 
+&gt;   2. Mount the file by
+&gt;         # mount -o loop /tmp/initrd.fs /mnt/loop
+&gt; 
+&gt; To create a new initrd image, use mkinitrd command.
+&gt; 
+&gt; To understand more about ramdisk, Bootdisk-HOWTO might be
+&gt; a good starting point (although the contents on RH4.2 are
+&gt; a little bit obsolete).
+&gt; 
+&gt; --- Kenny TANAKA
+&gt; ---------------------------------------------------------------
+&gt; Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+&gt; Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+&gt; ---------------------------------------------------------------
+&gt; Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00862" HREF="msg00862.html">Re: tlug: Kernel rebuild problem</A></STRONG>
+<UL><LI><EM>From:</EM> Hernando TANAKA &lt;ktanaka@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00786" HREF="msg00786.html">tlug: Kernel rebuild problem</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00799" HREF="msg00799.html">Re: tlug: Kernel rebuild problem</A></STRONG>
+<UL><LI><EM>From:</EM> Hernando TANAKA &lt;ktanaka@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00799.html">Re: tlug: Kernel rebuild problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00801.html">Re: tlug: 1.Japanese hard- and software/2.Netscape</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00799.html">Re: tlug: Kernel rebuild problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00862.html">Re: tlug: Kernel rebuild problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00800"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00800"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

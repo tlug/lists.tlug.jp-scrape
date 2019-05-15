@@ -1,0 +1,237 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: Ghostscript and HP Deskjets -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Wed, 7 Jan 1998 21:04:38 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xq787&#45;00012bC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199801071641.BAA18182@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00040.html">Date Prev</A>][<A HREF="msg00042.html">Date Next</A>][<A HREF="msg00040.html">Thread Prev</A>][<A HREF="msg00038.html">Thread Next</A>][<A HREF="maillist.html#00041">Date Index</A>][<A HREF="threads.html#00041">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: Ghostscript and HP Deskjets</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: Ghostscript and HP Deskjets</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 8 Jan 1998 10:51:31 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00037.html">199801071641.BAA18182@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00037.html">199801071641.BAA18182@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "JB" == Jonathan Byrne &lt;jbyrne@example.com&gt; writes:
+
+    JB&gt; Cool!  I'm interested in this!  I know Ghostscript went in
+    JB&gt; with my installation (I basically had it install the kitchen
+    JB&gt; sink), so it's out there somewhere.  I'm pretty green on UNIX,
+    JB&gt; so if you could tell me what I need to do and how I need to do
+    JB&gt; it to set up Ghostscript, I'd certainly appreciate it.
+
+Start with `which gs' to find Ghostscript, then `gs --help 2&gt;&amp;1 | less'
+to find out what's configured in to your Ghostscript (I build my own,
+with a configure script tuned to my facilities, so I don't know what's
+in your package).
+
+Then find the docs (probably in /usr/doc/gs{,-version}) and read
+"new-user.txt" and then "use.txt".  I think "devices.txt" contains the 
+info you need on setting up the drivers for your printer.  As Blaine
+advised in &lt;<A HREF="msg00033.html">34B345B0.D890DCD@example.com</A>&gt;, you can usually
+assume backward compatibility.
+
+Oops, I probably lied.  My GS 4.03 does not include the "uniprint"
+driver.  So you need at least the 5.0x release of Ghostscript, and
+probably have to build it yourself.  There is a HP850 driver
+available.  (Unfortunately, drivers are not loadable on the fly at
+present; you'll have to FTP that driver and build Ghostscript with
+it.)  Here's what GS 5.06's version of devices.txt has to say (in
+part) about "uniprint" and HP printers.
+
+&lt;quote&gt;
+A few notes on the state of this driver
+=======================================
+
+The coding of uniprint was triggered by the requirements of the various
+Stylus Color models and some personal needs for HP- and NEC-Drivers. Thus
+the Epson-Models are well represented among the distributed Parameter-Files.
+When this driver entered the beta testphase, three other drivers appreared on
+the scene, that could/should at least partially integrated into uniprint:
+
+    cdj850 by Uli Wortmann       (available via <A TARGET="_top" HREF="ftp://bonk.ethz.ch">ftp://bonk.ethz.ch</A>)
+    hpdj      by Martin Lottermoser
+    bjc610    by Helmut Riegler
+
+Uli addresses features of the more recent Deskjet-Models, that will not be 
+available in uniprint soon. Martin taught me a lesson on HP-PCL3-Headers,
+that will be available in uniprint soon. Helmut in turn followed an almost
+similar idea, but targetted primarily for printing on Canon-Printers from
+the pbmplus-Library. Starting with Version 1.68 of uniprint, the bjc-support
+is available. The work on the hpdj-Integration will start after the update of
+my website.
+&lt;/quote&gt;
+
+    JB&gt; So will Ghostscript let me do all the cool stuff like printing
+    JB&gt; in economy, normal, or best quality modes, change my paper
+
+Use the `-r' option to control resolution.  I don't know how this is
+handled from RedHat's printer control panel.  Almost all drivers
+support that option.  If you are worried about draft vs. best issues,
+I strongly recommend you check out the different drivers in detail; I
+know that some of the drivers are better optimized than others but I
+don't know which ones.  You may be better off using a HP-600 driver
+for draft and the unified driver for presentation, for all I know.
+
+    JB&gt; size on a per printout basis without editing the printer setup
+    JB&gt; in Linux, etc., etc,?
+
+If you mean you have a multiple-tray printer, I don't know.  If you
+simply mean printing in various sizes on whatever paper you happen to
+have loaded, yes.  That's a function of the Postscript language.
+
+    JB&gt; I've got plenty of memory and can always get more, so that's
+    JB&gt; no problem. I'm interested in something that works well and
+    JB&gt; doesn't give me a lot of grief (UNIX systems often seem to be
+    JB&gt; designed to make everything as difficult as possible :-) )
+    JB&gt; while doing so.
+
+I'm shocked that you could think it's designed to be difficult.  :-)
+It's designed to be flexible and powerful, and to work while you play,
+not work while you wait.  You pay a price for that.
+
+For the forseeable future, you're going to have to read the app's docs 
+on Unix systems.  Configuration is generally not going to be trivial.
+But once you get the knack of configuration, you'll find you can
+configure your way around most of the obnoxious repetitive tasks that
+keep "office automation" classes well-populated.  And then forget
+them.
+
+    &gt;&gt; The "unified color driver" for Ghostscript does a pretty good
+    &gt;&gt; job.
+
+    JB&gt; Perfect!  How do I set it up?
+
+This is probably all accesible from RedHat's control panel.  Don't ask 
+me, I'm a command line, `vi /etc/app.conf' geek :-)  But basically you 
+just need to set an environment variable.  Or you can edit the various 
+scripts in /usr/bin/gs*.
+
+    JB&gt; Are some of the low cost Postscript printers (I remember
+    JB&gt; seeing TI ones that were pretty cheap) any good?  I don't
+    JB&gt; really want a laser, in so far as I place a lot of value on
+    JB&gt; color and a color Postscript printer *really* is beyond my
+    JB&gt; means :-)
+
+My primary hardcopy device is a TI microLaser of 1991 vintage.  I have
+trouble getting supplies in Japan, but other than that it's given me
+years of trouble free service, except for a ROM bug which they
+replaced the mother board by FedEx and threw in a free memory upgrade.
+The Postscript implementation was real Adobe (but only level one so
+these days I drive the HP emulation via Ghostscript).  Still the
+fastest printer I own, too, although the Esper gives double the
+resolution.  I like TI.  Don't know about their non-laser products
+though.
+
+HTH.
+
+---------------------------------------------------------------
+Next TLUG Nomikai: 14 January 1998 19:15  Tokyo station
+Yaesu Chuo ticket gate.  Or go directly to Tengu TokyoEkiMae 19:30
+Chuo-ku, Kyobashi 1-1-6, EchiZenYa Bld. B1/B2 03-3275-3691
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00037" HREF="msg00037.html">tlug: Re: Ghostscript and HP Deskjets</A></STRONG>
+<UL><LI><EM>From:</EM> "Jonathan Byrne" &lt;jbyrne@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00040.html">Re: tlug: Re: Ghostscript and HP Deskjets</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00042.html">Re: tlug: IMAP daemon</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00040.html">Re: tlug: Re: Ghostscript and HP Deskjets</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00038.html">tlug: IMAP daemon</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00041"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00041"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

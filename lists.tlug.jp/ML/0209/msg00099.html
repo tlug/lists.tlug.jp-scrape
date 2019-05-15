@@ -1,0 +1,171 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Disk I/O bottleneck: how to solve? -->
+<!--X-From-R13: "Xbanguna Plear" <ogrnzNtby.pbz> -->
+<!--X-Date: Wed, 4 Sep 2002 18:47:40 +0900 (JST) -->
+<!--X-Message-Id: E17mWl0&#45;0003gp&#45;00@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F263u9PH3IhA1qfT7eE000005e4@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00098.html">Date Prev</a>][<a href="msg00100.html">Date Next</a>][<a href="msg00091.html">Thread Prev</a>][<a href="msg00103.html">Thread Next</a>][<a href="maillist.html#00099">Date Index</a>][<a href="threads.html#00099">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Disk I/O bottleneck: how to solve?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 04 Sep 2002 18:47:30 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Jonathan Q&quot; &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Disk%20I%2FO%20bottleneck%3A%20how%20to%20solve%3F">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Disk I/O bottleneck: how to solve?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+On 9/4/2002, &quot;Jean-Christian Imbeault&quot; &lt;
+&gt;
+&gt;I don't think there is any thrashing going on. It's a web server and I
+think
+&gt;there just are too many requests coming in.
+
+
+OK, in that case, it's possible that you just aren't keeping enough spare
+Apache processes in reserve. As I'm sure you know, Apache forks off processes
+to handle new connections, and keeps several standing by as spares.  You might
+want to take a look at your settings for minimum and maximum number of spares
+in httpd.conf and adjust those to see if it improves your performance
+(increase the numbers, of course, don't shrink them :-).  Be aware that this
+will use up more memory, but IIRC you are OK on memory right now.  However,
+keep tabs on memory use as you experiment with the number of Apache spares.
+
+As Shimpei (I think?) noted, separating the content from the log disk will
+also help.  If you can't put another disk in the machine right now, consider
+using an external log host.  If you have another machine in that location and
+it has adequate disk space, you can use it as your log host. 
+
+If you don't want the log packets going out the same interface that apache
+binds to (will mess up your MRTG readings), you can put a second NIC in each
+box and I think you can bind syslog to the address of the second NIC (don't
+promise; I've never tried it and feel too lazy to Google right now).
+
+Another thing that may help in addition to the above is to remove the CD-ROM
+drive and put a second disk on other ATA header and run them as RAID 1
+(mirrored), while still logging to an external log host. This won't help your
+disk writes any (in fact, they will take longer), but it will cut the read
+times by about 50% because it will read half the data from each disk, in
+parallel, then assemble it into the whole.
+
+That will also help you a lot in the event of disk failure, since a disk
+failure in RAID 1 means you just run off the other disk until you can replace
+it and rebuild the mirror.  A disk failure with the current single disk means
+that if your web server goes down with a disk crash, it's going to stay down
+for a long time while you get a new disk, reinstall the OS, apply the security
+updates, and restore the web content from backup.  If you're lucky and it does
+it at the start of your work day, you might finish the job by the end of the
+business day. That assumes you have the disk already, the install media, the
+restore media, and you're ready to go pretty quickly.  If you have to go buy a
+disk and gather up the stuff, it's going to take longer.
+
+Jonathan
+
+
+GPG key: DF12B4EF (5399 C834 3ABB C3AF 610C  5345 D5D6 E6EA DF12 B4EF)
+gpg --keyserver pgp.mit.edu --recv-keys  DF12B4EF
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00089" href="msg00089.html">Re: [tlug] Disk I/O bottleneck: how to solve?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00098.html">Re: [tlug] More on GPG signing</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00100.html">[tlug] Apache: Logging: how-to pipe logs or log to another machine (was Disk I/O bottle</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00091.html">Re: [tlug] Disk I/O bottleneck: how to solve?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00103.html">[tlug] Re: Disk I/O bottleneck: how to solve?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00099"><strong>Date</strong></a></li>
+<li><a href="threads.html#00099"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: *kernel hacking* question (sort of) -->
+<!--X-From: Chris Sekiya <chris@example.com> -->
+<!--X-Date:  Tue, 1 Dec 1998 17:04:36 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.05.9812011655490.27259&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981201165211.4617R&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00021.html">Date Prev</A>][<A HREF="msg00023.html">Date Next</A>][<A HREF="msg00019.html">Thread Prev</A>][<A HREF="msg00020.html">Thread Next</A>][<A HREF="maillist.html#00022">Date Index</A>][<A HREF="threads.html#00022">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: *kernel hacking* question (sort of)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: *kernel hacking* question (sort of)</strong></LI>
+<LI><strong>From</strong>: <strong>Chris Sekiya &lt;<A HREF="mailto:chris@example.com">chris@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 1 Dec 1998 17:05:20 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00019.html">Pine.LNX.3.96LJ1.1b7.981201165211.4617R-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, 1 Dec 1998, Scott Stone wrote:
+
+&gt; I have a hard time believing that it works on neither the ATAPI driver nor
+&gt; the SCSI CDROM driver... tried it on both...
+
+It may really not be implemented.  PTRACE_GETFPREGS existed as a header
+define for a *long* time, but it didn't actually work until a couple of
+months ago (that's why gdb doesn't let you peek at FP registers, by the
+way).
+
+Well, when in doubt pull out the kernel source.  I see two ioctls that
+might be candidates, around line 385:
+
+        case CDROM_DRIVE_STATUS:
+                if (cdo-&gt;drive_status == NULL)
+                        return -EINVAL;
+                else
+                        return cdo-&gt;drive_status(dev);
+
+        case CDROM_DISC_STATUS:
+                if (cdo-&gt;disc_status == NULL)
+                        return -EINVAL;
+                else
+                        return cdo-&gt;disc_status(dev);
+
+... should be pretty obvious what's going on there.
+
+Ah, wait ... 2.0 kernels doesn't use the unified cdrom driver.  So, yeah,
+it doesn't surprise me that neither the ATAPI nor the SCSI driver don't
+seem to implement either function ...
+
+
+-- Chris
+
+
+
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 *** place TBA ***
+IMPORTANT: TLUG is looking for a venue for the next meeting
+if you could host in your university or office, please contact us
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00019" HREF="msg00019.html">Re: tlug: *kernel hacking* question (sort of)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00021.html">tlug: webmastering</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00023.html">Re: tlug: *kernel hacking* question (sort of)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00019.html">Re: tlug: *kernel hacking* question (sort of)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00020.html">Re: tlug: *kernel hacking* question (sort of)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00022"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00022"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

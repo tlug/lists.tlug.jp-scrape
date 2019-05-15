@@ -1,0 +1,293 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] SSH Issues -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 19 Nov 2008 10:36:14 +0900 -->
+<!--X-Message-Id: 87y6zgmr1o.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20081117161020.GB10314@lucky.cynic.net -->
+<!--X-Reference: 20081117193740.2d38af12@ronin.larsko.net -->
+<!--X-Reference: 20081117235804.GF10314@lucky.cynic.net -->
+<!--X-Reference: 871vx9o5b1.fsf@xemacs.org -->
+<!--X-Reference: 20081118112601.GC2893@smtp.office.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00201.html">Date Prev</a>][<a href="msg00203.html">Date Next</a>][<a href="msg00199.html">Thread Prev</a>][<a href="msg00203.html">Thread Next</a>][<a href="maillist.html#00202">Date Index</a>][<a href="threads.html#00202">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] SSH Issues</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 19 Nov 2008 10:40:35 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20SSH%20Issues">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] SSH Issues</strong></li>
+<li>References: &lt;20081117161020.GB10314@lucky.cynic.net&gt;	&lt;20081117193740.2d38af12@ronin.larsko.net&gt;	&lt;<a href="msg00193.html">20081117235804.GF10314@lucky.cynic.net</a>&gt;	&lt;<a href="msg00197.html">871vx9o5b1.fsf@xemacs.org</a>&gt;	&lt;<a href="msg00199.html">20081118112601.GC2893@smtp.office.cynic.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Curt Sampson writes:
+
+ &gt; It's your (trusted) resolving server that's normally doing the
+ &gt; authentication,
+
+*snort*  I don't trust any of my local servers as far as I can throw
+them (their polices are all set by people with the fine political
+sensibilities and practical ability to get things done of Aso Taro),
+and the ones I have access to aren't doing authentication that is
+visible to me (no &quot;ad&quot; flags, even though the &quot;do&quot; flag is present).  
+
+ &gt; and the libc resolver just relays whether the server claims to have
+ &gt; authenticated the records or not.
+
+Based on your description I expected that (if it worked) I would see
+an indication that the RRSIG RRs had been checked against the data
+they're signing, not the RRSIGs themselves.  It's not very useful to a
+human (non-debugging) user to see the RRSIG RRs most of the time, and
+I didn't ask for them (ie, I asked for type=A, with +dnssec option; I
+would think that if I want to see RRSIGs I can ask for type RRSIG
+records).
+
+A little digging into the RFC shows that the authoritative server just
+returns the RRSIGs, and doesn't set the &quot;ad&quot; flag.  That's why your
+server spews when I query it directly, I think.  This seems a bit
+unfriendly to the users in the domain of the authoritative server!
+
+Unless the resolver library can do the validation.  I would be very
+surprised if dig *can't* do the validation of the RRset against the
+RRSIG record.  After all, a recursive server presumably uses the same
+resolver library.  And dig is supposed to be the Swiss Army knife of DNS.
+
+ &gt; &gt; But on Gentoo there doesn't even seem to be a USE flag for resolver v9
+ &gt; &gt; for bind-tools (ie, the package that provides dig).
+ &gt; 
+ &gt; I would think it's automatic; bind9 dig has always, for me, used the
+ &gt; bind9 resolver library.
+
+Well, I would think that too!  But bind-tools is a separate package
+from bind.  I don't know if contains the resolver library or not
+... maybe it does since ldd says dig doesn't link to libresolv.so.
+Seems weird that bind-tools wouldn't install the library it links to
+*somewhere*, though.
+
+ &gt; &gt; Borrow enough of the OpenSSH code to get the host's public key, say
+ &gt; &gt; &quot;thank you&quot;, maybe-replace the key into the known_hosts file, and call
+ &gt; &gt; SSH for real, maybe?  That much of the protocol can't be all that hard
+ &gt; &gt; to get &quot;good enough&quot;, can it?
+ &gt; 
+ &gt; As I mentioned, that's pretty much exactly what we do. No need to borrow
+ &gt; source: the ssh-keyscan will give you back the known_hosts entry.
+
+OK.  But you specifically wrote
+
+    So we can go from known_hosts entry to SSHFP record, but not the
+    other way.
+
+implying you were looking in the known_hosts file, and I mistakenly
+assumed that is populated with all the keys in the domain.  When you
+are actually getting the key from the net I would expect &quot;so we can
+go from *host key* to SSHFP record, but not the other way.&quot;
+
+ &gt; it's a bit of a pain, no? And it's also not secure to rely on comparing
+ &gt; the result against the SSHFP record unless you can authenticate the
+ &gt; SSHFP record.
+
+Of course it's a bit of a pain, SSH can do all this stuff
+transparently so you sure as shootin' want it to do so.  The question
+has been workarounds for systems which don't allow SSH to organize the
+work.
+
+As for authenticating the SSHFP record, you can do that with the RRSIG
+record, AIUI.  Which you *should* be able to get using the &quot;cd&quot; flag
+(but again, this doesn't work for me).  No?
+
+ &gt; &gt; Getting it fixed is hard enough, but forget about getting it deployed.
+ &gt; &gt; A real fix would involve a full move to BIND 9 resolver in glibc....
+ &gt; 
+ &gt; glibc is still using the BIND 8 resolver?
+
+No, it's not.  The /usr/include/resolv.h (and the absence of
+/usr/include/resolv8_compat.h) pretty strongly suggests that the base
+is BIND 8, but there are clearly a lot of extensions.  Which is
+undoubtedly part of the upgrade problem.  And unfortunately for your
+application, none of those extensions happens to be DNSSEC.
+
+Anyway, I would think that you could build SSH against the BIND 9
+resolver library.  A bit of a PITA for the users, but doing that would
+give all your SSH apps the benefit of Just Working with your domain, no?
+
+ &gt; &gt; Geez, Curt, you of all people should know that that is presumably
+ &gt; &gt; exactly the braindamaged process that led to the current impasse:
+ &gt; &gt; people unwilling to wait for a full move to BIND 9 adding a few
+ &gt; &gt; features *they* thought were &quot;critical bug fixes&quot; (because they'd been
+ &gt; &gt; personally inconvenienced) to the resolver code....
+ &gt; 
+ &gt; This is not just &quot;personal inconvenience;&quot; it's a security issue.
+
+I didn't say otherwise.  What extensions I see are stuff like IPv6,
+though, and that is not security per se.  Nor is this something that
+can be secured by releasing a patched libresolv, as you point out
+yourself.  You're not secure until the admins start using secure DNS,
+which they could do at any time whether we upgrade libresolv or not,
+but they haven't bothered to.
+
+I'm not defending GNU libc's past mistakes; I'm linking the *way* that
+those mistakes occurred to their present state of stasis.  And I'm not
+saying that something shouldn't be done.  I am saying that this is not
+&quot;incoming ICBM&quot; urgent, and that attention to process is required.
+
+ &gt; &gt; But a move to BIND 9 is not the kind of thing you can do in a quickie
+ &gt; &gt; patch, especially not if you want to claim the security stuff is going
+ &gt; &gt; to work.
+ &gt; 
+ &gt; Actually, the security stuff in the resolver is not nearly as tricky
+ &gt; as you make it out.
+
+Well, it is certainly tricky enough that it DOESN'T WORK as you
+described it on Gentoo.  Although it may do so on Ubuntu, that doesn't
+prove it works as expected on Debian, or even RHEL and SuSE.  It may
+be a doc bug; email messages are notoriously unreliable documentation.
+Even yours. ;-)  Still it does not leave me with a good feeling.
+
+In the late '90s I got a call from our Chairman of the Computer
+Committee.  He'd gotten an email complaining that my host was being
+used as an open relay.  This confused me greatly, as I had carefully
+set up my MTA (Smail 3.101) to not relay.  Well, I shut it down,
+firewalled the spam source (in those days, that was good enough for a
+couple of days or so), and then tested it and indeed it was an open
+relay.  After looking at the code, I realized that the &quot;do not relay
+for any remote host&quot; flag was being correctly parsed out of the config
+file, stored in the config db, and then *never referred to again* for
+the remaining life of the smail process.  Thank you, Debian.
+
+I do not *ever* want to experience that again.  Advertised security
+features that don't work are *worse* than the absence of the security
+feature.
+
+ &gt; And while I understand that the move to the bind9 resolver is
+ &gt; non-trivial I would trust it to be correct
+
+For the particular security issue, yes.  But how about making sure it
+works in combination with the other programs that are expecting the
+traditional BIND 8 APIs, etc etc etc?  How about the unobvious feature
+that you *must* delegate the authentication to a *local* server to get
+the &quot;ad&quot; flag set?[1]  It's not just a question of algorithmic
+correctness, as you well know; it's migrating all that code---and the
+brains that maintain them---to the new regime.
+
+Footnotes: 
+[1]  For those not in the know, all the &quot;ad&quot; bit *can* do is prove
+that there is no man-in-the-middle attack occuring.  The authoritative
+server cannot authenticate the data it sends itself, that's axiomatic.
+Either you trust it (eg, because you have its key-signing key through
+a trusted channel and you validate the record-signing key with that),
+or you don't.  If you don't trust it, then it is trivial for that
+server to simply change its data in any way it likes and then sign it.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+<li><strong><a name="00214" href="msg00214.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00193" href="msg00193.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00197" href="msg00197.html">[tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00199" href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00201.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00203.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00199.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00203.html">Re: [tlug] SSH Issues</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00202"><strong>Date</strong></a></li>
+<li><a href="threads.html#00202"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

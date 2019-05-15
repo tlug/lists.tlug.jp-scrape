@@ -1,0 +1,403 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Draft: Quickie Guide to GPG -->
+<!--X-From-R13: Xbanguna Plear <ogrnzNtby.pbz> -->
+<!--X-Date: Mon, 2 Sep 2002 01:03:51 +0900 (JST) -->
+<!--X-Message-Id: 20020901160345.GG16554@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00000.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[Date Prev][<a href="msg00001.html">Date Next</a>][Thread Prev][<a href="msg00001.html">Thread Next</a>][<a href="maillist.html#00000">Date Index</a>][<a href="threads.html#00000">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Draft: Quickie Guide to GPG</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 2 Sep 2002 01:03:45 +0900</li>
+<li><strong>From</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Draft%3A%20Quickie%20Guide%20to%20GPG">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Draft: Quickie Guide to GPG</strong></li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+A couple of co-conspirators and I are working on a series of
+Quick-N-Dirty Guides to various *nix topics, good for
+when you just need to know how to do &quot;XYZ&quot; right now and
+will worry about stuff like the man page later.
+
+Since few TLUGgers seem to use any crypto software - signed messages
+on TLUG are rare, and because I'd like input, presented for your
+approval (or to constructively rip to bits :-) is the Quick-N-Dirty
+Guide to GPG.
+
+Please tell me about anything you find wrong with it (or right with
+it), bearing in mind that this is a minimalist document whose
+sole aim is to tell you what you need to do Right Now to
+get GPG going, even if you've never heard of it before.  It aims
+to give you the &quot;what&quot; and let you go find out the &quot;why&quot; for yourself
+later in the documentation. 
+
+With no further ado, then, the second draft of the QND Guide
+to GPG.
+
+Thanks,
+
+Jonathan
+GPG key: DF12B4EF (5399 C834 3ABB C3AF 610C  5345 D5D6 E6EA DF12 B4EF)
+gpg --keyserver pgp.mit.edu --recv-keys  DF12B4EF
+
+================================
+
+		Quick-n-Dirty GPG
+
+Welcome to the QND Guide to GPG.
+
+QND guides contain a lot of &quot;what&quot; information and 
+very little &quot;why&quot; information.  Reading the GPG Documentation
+at <A  HREF="http://www.gnupg.org/docs.html">http://www.gnupg.org/docs.html</A> is highly recommended.
+
+This document contains seven sections, which cover making
+sure you have GPG and that it is installed correctly,
+making a key pair, making a revocation certificate, 
+dealing with keyservers, and advertising your key.
+
+This QND guide is at present oriented toward RPM-based
+distributions, but in future, instructions for other 
+distros will be included, or possibly it will be branched
+into Distro-specific versions.
+
+This is a draft copy.  Comments and suggestions are
+welcome.
+
+BEFORE YOU START
+----------------
+
+Read this guide all the way to the end before you do anything.
+After you have read this entire guide and understand what to
+do, proceed to Step 1.
+
+
+1) DO YOU HAVE GPG?
+-------------------
+
+In a shell, type:
+
+which gpg
+
+This should return the path to gpg, probably
+/usr/bin/gpg.
+
+If it finds it, go to Step 2.  If it doesn't, 
+continue with this step.
+
+If you're here, that means you didn't find gpg when you typed
+which gpg.  In that case, you will need to download a GPG
+package from your distribution's FTP site or a mirror.
+
+After downloading it, su to root in a shell, change
+to the directory where you downloaded the RPM, and
+type:
+
+rpm -Uvh name-of-gpg-rpm-here
+
+which gpg
+
+should now give you the location of gpg, probably
+/usr/bin/gpg.
+
+
+2) MAKE GPG SUID ROOT
+---------------------
+
+Skip this step if you do not have root access to the
+computer you are using.
+
+SU to root, then type:
+
+chmod +s /path/to/gpg/from/step1/gpg
+
+Example: chmod +s /usr/bin/gpg
+
+This is to make GPG use secure memory.
+
+Exit root and go back to your normal userid. 
+
+
+3) GENERATE A KEY PAIR
+----------------------
+
+Type:
+
+gpg --gen-key
+
+NOTE: If you have not generated a key pair before, you
+will see messages like these:
+
+----------
+gpg (GnuPG) 1.0.6; Copyright (C) 2001 Free Software Foundation, Inc.
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions. See the file COPYING for details.
+
+gpg: /home/newbie/.gnupg: directory created
+gpg: /home/newbie/.gnupg/options: new options file created
+gpg: you have to start GnuPG again, so it can read the new options file
+----------
+
+This is normal.  Now, we will repeat the previous step once more.
+Type:
+
+gpg --gen-key
+
+-Accept the default for the key type (just hit enter).
+-Enter 2048 for the suggested key size.
+-It will ask if you really need it.  Yes.
+-It will ask for how long the key should be valid.
+ Enter 0 (default).
+-It will ask if that is correct.  Yes.
+
+- Userid section.  Enter your first and last name.
+- Enter your email address.
+- Optional comment.  Leave blank.
+- Confirm the userid you entered.  Enter O(kay) here if
+  it's acceptable.
+
+Your userid is your name + email address + optional comment, like
+this:
+
+Ima Newbie (This is my comment) &lt;imanewbie@example.com&gt;
+
+IMPORTANT:  Next is the passphrase section.  Let's
+start with a subsection called...
+
+
+&lt;DANGER&gt;
+=========================
+Your passphrase is very important. It should be long
+(a sentence, not just a word), and contain mixed-case
+letters along with numbers and punctuation.  Obscuring words
+by plugging in numbers that look like them is good. For example
+3 for E/e, 4 for A/a, 0 for O/o, 1 for L/l, 7 for T/t,
+etc, is advisable.  This is in the style used by 31337 
+H4x0rs.  If you understand those two words, you get
+the idea.
+
+DO NOT store your passphrase on your computer.  EVER.  Keep
+it offline in a secure place.  Taped to your monitor, or
+anywhere else in the vicinity of your computer, does not
+constitute a safe place.  If you can memorize it, that is
+best.
+
+Treat your passphrase as being more valuable than the root
+password. It is.
+=========================
+&lt;/DANGER&gt;
+
+
+Now, the key pair will be generated.  You will be 
+asked to perform some other action such as typing or moving
+the mouse while this is being done, to generate good random data.
+Do it right away, generating the key pair takes only a few
+seconds.
+
+4) GENERATE A KEY REVOCATION CERTIFICATE
+----------------------------------------
+
+You will need this in case your private key is ever
+compromised or you lose your passphrase.  Do it now,
+because if you wait until that happens, it's too late.
+You won't be able to do it then.
+
+Type:
+
+gpg --gen-revoke &quot;YOUR-USERID-HERE&quot;
+
+Your userid is your name + email address + optional comment, like
+this:
+
+Ima Newbie (This is my comment) &lt;imanewbie@example.com&gt;
+
+EXAMPLE: gpg --gen-revoke &quot;Ima Newbie &lt;imanewbie@example.com&gt;&quot;
+
+The revocation certificate generator will ask you
+these questions.  Answers immediately follow them.
+
+- Create a recovation certificate? y
+- Select reason: 2
+- Optional description: (leave blank)
+- Is this OK? y
+- Enter passphrase: YOUR-PASSPHRASE-HERE
+
+You will see the revocation certificate on your screen.
+
+It will look like this:
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see <A  HREF="http://www.gnupg.org">http://www.gnupg.org</A>
+Comment: A revocation certificate should follow
+
+&lt;Some encrypted text here&gt;
+
+-----END PGP PUBLIC KEY BLOCK-----
+
+Cut and paste this somewhere and print it and/or store it on a 
+CD or floppy (CD is better, floppies aren't reliable).
+Both printing it and storing it on a CD or floppy is best.
+DO NOT store the revocation certificate on your computer,
+ever, for the same reasons you should never store your
+passphrase on your computer.  Keep this revocation certificate
+secure, also for the same reasons you should keep your
+passphrase secure.
+
+
+5) SEND YOUR PUBLIC KEY TO A KEY SERVER
+---------------------------------------
+
+cd ~/.gnupg
+
+Type:
+
+gpg --list-keys
+
+You will see something like this:
+
+pub  1024D/DF12B4EF 2002-07-27 Jonathan Q &lt;jq@example.com&gt;
+
+But it will have your public key info here.  The part you want
+is after pub 1024D/ - in my case, it's DF12B4EF. That's my key ID.
+
+Connect to the Internet, then type this command, putting your
+key ID in the obvious place:
+
+gpg --keyserver pgp.mit.edu --send-keys YOUR-KEY-ID
+
+Repeat the same command with a different keyserver:
+
+gpg --keyserver www.keyserver.net --send-keys YOUR-KEY-ID
+
+6) GET MY PUBLIC KEY
+---------------------
+gpg --keyserver pgp.mit.edu --recv-keys DF12B4EF
+
+You are now ready to both send and receive GPG-encrypted
+or signed files.  How to do those things will be covered
+in another document.
+
+7) TELLING OTHERS ABOUT YOUR KEY
+--------------------------------
+
+The easiest way to advertise your key to others is to put it in your
+.signature file so it is included in your email.  My .signature
+contains this:
+
+GPG key: DF12B4EF (5399 C834 3ABB C3AF 610C  5345 D5D6 E6EA DF12 B4EF)
+gpg --keyserver pgp.mit.edu --recv-keys  DF12B4EF
+
+Two lines, with my key, my key fingerprint, and the command
+to get my key from a keyserver.
+====================================
+</pre>
+<p><strong>Attachment:
+<a href="pgp00000.pgp" ><tt>pgp00000.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">Re: [tlug] Draft: Quickie Guide to GPG</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00004" href="msg00004.html">Re: [tlug] Draft: Quickie Guide to GPG</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+<li><strong><a name="00017" href="msg00017.html">[tlug] Re: Draft: Quickie Guide to GPG</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+<li><strong><a name="00046" href="msg00046.html">Re: [tlug] Draft: Quickie Guide to GPG</a></strong>
+<ul><li><em>From:</em> simon colston</li></ul></li>
+<li><strong><a name="00048" href="msg00048.html">[tlug] Re: Draft: Quickie Guide to GPG</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Next by Date:
+<strong><a href="msg00001.html">Re: [tlug] Draft: Quickie Guide to GPG</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00001.html">Re: [tlug] Draft: Quickie Guide to GPG</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00000"><strong>Date</strong></a></li>
+<li><a href="threads.html#00000"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

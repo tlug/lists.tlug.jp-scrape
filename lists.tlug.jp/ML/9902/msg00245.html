@@ -1,0 +1,227 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: trouble in smb setting -->
+<!--X-From: Tetsuji Rai <tetsuji@example.com> -->
+<!--X-Date:  Wed, 17 Feb 1999 18:18:25 +0900 -->
+<!--X-Message-Id: 199902170935.SAA00670@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00244.html">Date Prev</A>][<A HREF="msg00246.html">Date Next</A>][<A HREF="msg00265.html">Thread Prev</A>][<A HREF="msg00249.html">Thread Next</A>][<A HREF="maillist.html#00245">Date Index</A>][<A HREF="threads.html#00245">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: trouble in smb setting</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: trouble in smb setting</strong></LI>
+<LI><strong>From</strong>: <strong>Tetsuji Rai &lt;<A HREF="mailto:tetsuji@example.com">tetsuji@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 17 Feb 1999 18:35:01 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+  I am trying to configure smb to connect my Linux box with my Win98 box.  
+Linux box is named tetsu, and Win98 is yuki.  A printer named "canon" is 
+connected to tetsu and it is to be shared with yuki.
+
+  I tried to make smb.conf.  I want to share the printer with both machines.  
+Even "smbclient -L tetsu" says "Your server software is being unfriendly".   
+I am quite new to smb, so I guess I must make a big mistake.
+Here is my result of smbclient -L yuki, smbclient -L tetsu and smb.conf
+  What should I do?
+
+Best regards...
+
+----smbclient -L yuki---------
+MailAndNews% smbclient -L yuki                                                ~
+Get_Hostbyname: Unknown host MailAndNews.com.
+Failed to get my hostname.
+Get_Hostbyname: Unknown host MailAndNews.com.
+No interface found for address 200.117.14.64
+Added interface ip=200.117.14.64 bcast=200.117.14.255 nmask=255.255.255.0
+Get_Hostbyname: Unknown host MailAndNews.com.
+Get_Hostbyname: Unknown host MailAndNews.com.
+Server time is Wed Feb 17 18:16:46 1999
+Timezone is UTC+9.0
+security=share
+
+Server=[YUKI] User=[] Workgroup=[WORKGROUP] Domain=[WORKGROUP]
+
+        Sharename      Type      Comment
+        ---------      ----      -------
+        DOWNLOAD       Disk      
+        IPC$           IPC       (japanese letters)$B%j%b!&lt;%H(B $B%W%m%;%94VDL?.(B
+        MY DOCUMENTS   Disk      
+
+NOTE: There were share names longer than 8 chars.
+On older clients these may not be accessible or may give browsing errors
+
+
+This machine has a browse list:
+
+        Server               Comment
+        ---------            -------
+        TETSU                Samba 1.9.18p10
+        YUKI                 Yukiko's site
+-----smbclient -L tetsu----------
+MailAndNews% smbclient -L tetsu                                               ~
+Get_Hostbyname: Unknown host MailAndNews.com.
+Failed to get my hostname.
+Get_Hostbyname: Unknown host MailAndNews.com.
+No interface found for address 200.117.14.64
+Added interface ip=200.117.14.64 bcast=200.117.14.255 nmask=255.255.255.0
+Get_Hostbyname: Unknown host MailAndNews.com.
+Get_Hostbyname: Unknown host MailAndNews.com.
+Session request failed (0,0) with myname= destname=TETSU
+Unspecified error 0x0
+Your server software is being unfriendly
+-------/etc/smb.conf------------
+; /etc/smb.conf
+;
+; Make sure and restart the server after making changes to this file, ex:
+; /etc/rc.d/init.d/smb stop
+; /etc/rc.d/init.d/smb start
+ [global]
+; Uncomment this if you want a guest account
+; guest account = nobody
+   log file = /var/log/samba-log.%m
+   lock directory = /var/lock/samba
+   share modes = yes
+   workgroup = workgroup
+
+[homes]
+   comment = Home Directories
+   browseable = no
+   read only = no
+   create mode = 0750
+
+[tmp]
+   comment = Temporary file space
+   path = /tmp
+   read only = no
+   public = yes
+
+  [public]
+     comment = Public Stuff
+     path = /home/tetsuji
+     public = yes
+     writable = no
+     printable = yes
+
+  [global]
+     printing = bsd
+     printcap name = /etc/printcap
+     load printers = yes
+     log file = /var/log/samba-log.%m
+     lock directory = /var/lock/samba
+
+  [printers]
+     comment = All Printers
+     security = server
+     path = /var/spool/lpd/lp
+     browseable = no
+     printable = yes
+     public = yes
+     writable = no
+     create mode = 0700
+
+  [canon]
+     security = server
+     path = /var/spool/lpd/lp
+     printer name = lp
+     writable = yes
+     public = yes
+     printable = yes
+     print command = lpr -r -h -P %p %s
+-------------------------------------------------------------------
+Next Nomikai: March 19 (Fri), 19:30  Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: April 10 (Sat), 12:30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00249" HREF="msg00249.html">Re: tlug: trouble in smb setting</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00244.html">Re: tlug: Libretto</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00246.html">tlug: Sparc Linux, TPE on eth0</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00265.html">Re: tlug: Libretto</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00249.html">Re: tlug: trouble in smb setting</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00245"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00245"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

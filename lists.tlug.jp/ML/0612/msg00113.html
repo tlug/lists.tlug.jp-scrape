@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Getting back into C programming -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Wed, 06 Dec 2006 08:52:02 +0900 -->
+<!--X-Message-Id: d8fcc0800612051552x2f2a2e49m5fbe233d05f6536@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: AA0639A1EB70AE409130258CE7BDC318323740@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00112.html">Date Prev</a>][<a href="msg00114.html">Date Next</a>][<a href="msg00111.html">Thread Prev</a>][<a href="msg00117.html">Thread Next</a>][<a href="maillist.html#00113">Date Index</a>][<a href="threads.html#00113">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Getting back into C programming</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 6 Dec 2006 08:52:00 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Getting%20back%20into%20C%20programming">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Getting back into C programming</strong></li>
+<li>References: &lt;<a href="msg00111.html">AA0639A1EB70AE409130258CE7BDC318323740@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">On 06/12/06, burlingk@example.com &lt;burlingk@example.com&gt; wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">void func(int &amp;a){a++; return;}</pre><br>
+<pre style="margin: 0em;">For instance would take an integer without any special  notation and
+increment it.
+</pre></blockquote><pre style="margin: 0em;"><br>The reference operator is really syntactic sugar more than anything.
+It allows you to use a parameter variable normally (i.e. without
+dereferencing it) in your function body, but without having to pay the
+price of pass-by-value.</pre><br>
+<pre style="margin: 0em;">Your function is exactly equivalent to:</pre><br>
+<pre style="margin: 0em;">void func(int *const a) { (*a)++; return; }</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">void func(int * a) {a++; return;}
+Theoretically does the same thing, but wants either a pointer to an int,
+or an integer specifically notated as &amp;a.
+</pre></blockquote><pre style="margin: 0em;"><br>No, this theoretically performs pointer arithmetic. :) See my example
+above, then compile and run this code that illustrates what your
+example really does:</pre><br>
+<pre style="margin: 0em;">==</pre><br>
+<pre style="margin: 0em;">#include &lt;stdio.h&gt;</pre><br>
+<pre style="margin: 0em;">void func(int * a) {
+/*** DEBUGGERY ***/
+ fprintf(stderr, &quot;(0x%x) %d\n&quot;, (unsigned)a, *a);
+/*** DEBUGGERY ***/
+ a++;
+/*** DEBUGGERY ***/
+ fprintf(stderr, &quot;(0x%x) %d\n&quot;, (unsigned)a, *a);
+/*** DEBUGGERY ***/
+ return;
+}</pre><br>
+<pre style="margin: 0em;">int main(void) {
+ int foo = 0;
+ func(&amp;foo);
+ return 0;
+}</pre><br>
+<pre style="margin: 0em;">==</pre><br>
+<pre style="margin: 0em;">Just in case you don't have a C compiler handy:</pre><br>
+<pre style="margin: 0em;">: jglover@example.com; gcc -g -Wall -o func func.c
+: jglover@example.com; ./func
+(0xbfffc3e4) 0
+(0xbfffc3e8) -1073757176</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>Of course my logic is based more off of C++.
+</tt></blockquote><pre style="margin: 0em;"><br>Note that:</pre><br>
+<pre style="margin: 0em;">void func(int &amp;a){a++; return;}</pre><br>
+<pre style="margin: 0em;">will *only* work in C++. In C, the only meaning of '&amp;' is &quot;address
+of&quot;, and it will not work in a function prototype:</pre><br>
+<pre style="margin: 0em;">: jglover@example.com; grep '^void func' func.c
+void func(int &amp;a){a++; return;}
+: jglover@example.com; gcc -g -Wall -o func func.c
+func.c:3: error: syntax error before '&amp;' token
+func.c: In function `func':
+func.c:4: error: `a' undeclared (first use in this function)
+func.c:4: error: (Each undeclared identifier is reported only once
+func.c:4: error: for each function it appears in.)</pre><br>
+<pre style="margin: 0em;">-Josh</pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00117" href="msg00117.html">Re: [tlug] Getting back into C programming</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00111" href="msg00111.html">Re: [tlug] Getting back into C programming</a></strong>
+<ul><li><em>From:</em> burlingk</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00112.html">Re: [tlug] Email address munging in the TLUG archives</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00114.html">Re: [tlug] Email address munging in the TLUG archives</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00111.html">Re: [tlug] Getting back into C programming</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00117.html">Re: [tlug] Getting back into C programming</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00113"><strong>Date</strong></a></li>
+<li><a href="threads.html#00113"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

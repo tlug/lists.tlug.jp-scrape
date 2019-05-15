@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: root mirror (was: LILO Vs. 1024??) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 7 Oct 1998 16:20:00 +0900 -->
+<!--X-Message-Id: 13851.5639.316636.883671@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810062007.UAA00264@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981007092838.635C&#45;100000@example.com -->
+<!--X-Reference-Id: 13850.57974.611501.31116@example.com -->
+<!--X-Reference-Id: 19981007133247.A11940@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00214.html">Date Prev</A>][<A HREF="msg00216.html">Date Next</A>][<A HREF="msg00204.html">Thread Prev</A>][<A HREF="msg00218.html">Thread Next</A>][<A HREF="maillist.html#00215">Date Index</A>][<A HREF="threads.html#00215">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: root mirror (was: LILO Vs. 1024??)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: root mirror (was: LILO Vs. 1024??)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Oct 1998 16:19:35 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00204.html">19981007133247.A11940@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00184.html">199810062007.UAA00264@example.com</A>&gt;&lt;<A HREF="msg00188.html">Pine.LNX.3.96LJ1.1b7.981007092838.635C-100000@example.com</A>&gt;&lt;<A HREF="msg00199.html">13850.57974.611501.31116@example.com</A>&gt;&lt;<A HREF="msg00204.html">19981007133247.A11940@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Rex" == Rex Walters &lt;rex@example.com&gt; writes:
+
+    Rex&gt; On Wed, Oct 07, 1998 at 12:39:34PM +0900, Stephen J. Turnbull
+    Rex&gt; wrote:
+    &gt;&gt; Paranoid structure:
+    &gt;&gt; 
+    &gt;&gt; /dev/?da1  50 MB / 
+    &gt;&gt; /dev/?da2 128 MB &lt;swap&gt;
+    &gt;&gt; /dev/?da3  50 MB /.root_mirror
+
+    Rex&gt; I also recommend this, but I caution against the word
+    Rex&gt; "mirror".  I prefer the word "clone" or "backup".  That is I
+    Rex&gt; don't think you're really referring to raid1 mirroring, are
+
+No, I'm not a physical FS kind of guy, I'm a logical FS (eg NFS, AFS,
+URL ;-) kind of guy.  I'm talking about the kind of mirror that the
+mirror script does.  I don't think of it as a "backup", because that
+implies to me offline/hard to access.  "Clone" would be OK.
+
+    Rex&gt; Out of curiosity, how are you populating the /.root_mirror
+    Rex&gt; filesystem?
+
+1.  Insert distribution CD, install to /dev/hda1.
+2.  When I feel like it, mount /dev/hda3, and do
+
+	      cp -options `find / -xdev` /.root_mirror/
+
+or something like that.
+
+I don't need to be _that_ paranoid.  "When I feel like it" = when
+/etc/passwd changes (very inconvenient for other users if I miss
+this), or when I install new packages.
+
+    Rex&gt; My approach would probably be to unmount it, dd from ?da1 to
+    Rex&gt; ?da3 when you "know" (hmmphf) nothing is being modified in /,
+    Rex&gt; then fsck ?da3 to be sure and remount.
+
+Too much trouble; I just do a sync, diff, umount, and fsck.
+
+I don't need a true clone, just something that's close enough to get
+rolling again; the housekeeping data that dpkg and rpm et al keep is
+in /var, and there's very little in /etc that would _kill_ me if I
+corrupted a file.
+
+I use backups (as defined above) to deal with /var and /home, and try
+hard to avoid polluting /usr and /playpen with locally generated
+data.  As long as I've still got /, I've still got the localhost
+hardware services (eg, I only have one floppy tape drive, should I
+ever need it) and can get to the net for other hosts.
+
+    Rex&gt; The only thing that's missing to be able to accomplish the
+    Rex&gt; same thing with a Linux system is the ability to "clone" an
+    Rex&gt; ext2 filesystem reliably.  On an Auspex, ax_clonefs will
+    Rex&gt; ensure that any modifications that occur while the copy is
+    Rex&gt; running are handled correctly (there is actually a brief
+    Rex&gt; lockout at the very end to ensure that all metadata is
+    Rex&gt; synched on both sides correctly).
+
+That sounds like a very hard problem without designing the fs around
+that requirement from the ground up.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00218" HREF="msg00218.html">Re: tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00223" HREF="msg00223.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00184" HREF="msg00184.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> karlmax@example.com (Karl-Max Wagner)</LI></UL></LI>
+<LI><STRONG><A NAME="00188" HREF="msg00188.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00199" HREF="msg00199.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00204" HREF="msg00204.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00214.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00216.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00204.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00218.html">Re: tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00215"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00215"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Iptables trouble -->
+<!--X-From-R13: Rnivq X Wnaahppv <wyvahkNchapuphggre.zy1.arg> -->
+<!--X-Date: Thu, 11 Jan 2018 12:31:31 +0900 -->
+<!--X-Message-Id: 1515641488.1593636.1231426376.22933952@webmail.messagingengine.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00006.html">Date Prev</a>][<a href="msg00008.html">Date Next</a>][<a href="msg00006.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a href="maillist.html#00007">Date Index</a>][<a href="threads.html#00007">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Iptables trouble</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 10 Jan 2018 17:31:28 -1000</li>
+<li><strong>From</strong>: <strong>David J Iannucci &lt;<a href="mailto:jlinux@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Iptables%20trouble">jlinux@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Iptables trouble</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi again TLUGgers... I have another request for help. Note that my last
+plea, about tethering my iPhone, is still under investigation... I've
+already spent quite a bit of time on the phone with Apple support
+without solving it, but will report here when it is solved :=)
+
+This time it's about iptables... maybe something a bit more
+straightforward for this group. I'm just learning to write these rules,
+and have been frustrated because the following is not doing what I
+expect. This is on a server in my university's data center. The VM has a
+public-facing interface on 133.171[*], and also a private interface to
+the IT dept's maintenance subnet, which is numbered in the 172.16
+private range. I've already tried to ask them for help, but apparently
+they do not provide that level of support :=\
+
+The problem is that the IT dept cannot communicate with this box over
+the private subnet when these rules are in place, and I don't know why.
+I've annotated them with my idea of what the rules mean. My
+understanding is that after the first three policy lines, each rule is
+tried in order until one matches, and then the given action is taken and
+evaluation stops.
+
+If someone could point out where I'm mistaken, I'd be very grateful.
+
+Dave
+
+
+## Default policy: allow nothing coming in, everything going out
+:INPUT DROP [150:10296]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [42178:3090645]
+
+## Accept anything over the loopback i/f
+-A INPUT -i lo -j ACCEPT 
+
+## Accept any packets that are part of an already ESTABLISHED
+## connection, or RELATED(?) to something? Not sure about
+## RELATED, but I don't think it's hurting me :=)
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+## Accept all TCP connection packets whose origin IP is in the
+## given range. This is SUPPOSED to allow the IT dept to talk to me.
+-A INPUT -p tcp -m tcp --source 172.16.0.0/12 -j ACCEPT 
+
+## Accept all TCP connection packets to ports 80 and 443. I suppose
+## this is only needed on initial establishment, as the ESTABLISHED
+## rule should then take over, no?
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+
+## Accept all TCP connection packets to port 22 only if the origin
+## is in the given IP range.
+-A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -s 112.160.0.0/16 -p tcp -m tcp --dport 22 -j ACCEPT
+
+## More like the ones above for SSH, but for different ports
+-A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 3000 -j ACCEPT
+-A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 3030 -j ACCEPT
+-A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 4040 -j ACCEPT
+-A INPUT -s 133.171.0.0/16 -p tcp -m tcp --dport 4200 -j ACCEPT
+COMMIT
+
+[*] Note that I've changed the IP addresses in an attempt at obscurity
+      security, though against what I'm not sure.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00008" href="msg00008.html">Re: [tlug] Iptables trouble</a></strong>
+<ul><li><em>From:</em> Furkan Mustafa</li></ul></li>
+<li><strong><a name="00011" href="msg00011.html">Re: [tlug] Iptables trouble</a></strong>
+<ul><li><em>From:</em> Kalin KOZHUHAROV</li></ul></li>
+<li><strong><a name="00012" href="msg00012.html">Re: [tlug] Iptables trouble</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00006.html">Re: [tlug] Urxvt, Source Code Pro Font and Braille Patterns</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00008.html">Re: [tlug] Iptables trouble</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00006.html">Re: [tlug] Urxvt, Source Code Pro Font and Braille Patterns</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">Re: [tlug] Iptables trouble</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00007"><strong>Date</strong></a></li>
+<li><a href="threads.html#00007"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Journaling Filesystems (Re: tlug: Ext3) -->
+<!--X-From: "Oliver M . Bolzer" <oliver@example.com> -->
+<!--X-Date:  Thu, 9 Mar 2000 00:03:00 +0900 -->
+<!--X-Message-Id: 20000307202249.B30560@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200003061423.e26ENZ102077@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00078.html">Date Prev</A>][<A HREF="msg00080.html">Date Next</A>][<A HREF="msg00062.html">Thread Prev</A>][<A HREF="msg00080.html">Thread Next</A>][<A HREF="maillist.html#00079">Date Index</A>][<A HREF="threads.html#00079">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Journaling Filesystems (Re: tlug: Ext3)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Journaling Filesystems (Re: tlug: Ext3)</strong></LI>
+<LI><strong>From</strong>: <strong>"Oliver M . Bolzer" &lt;<A HREF="mailto:oliver@example.com">oliver@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 7 Mar 2000 20:22:49 -0700</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00062.html">200003061423.e26ENZ102077@example.com</A>&gt;; from Austin Kurahone on Mon, Mar 06, 2000 at 11:23:35PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00062.html">200003061423.e26ENZ102077@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Mon, Mar 06, 2000 at 11:23:35PM +0900
+Austin Kurahone wrote...
+
+&gt; I've been meaning to post this for a while (Ok, at least since the last
+&gt; nomikai), butI've been too busy.a  Since a bunch of people seemed
+&gt; interested in tryng out ext3, here's my quick and dirty guide
+&gt; (&lt;PLUG&gt;The april issue of Linux Japan also has a article on this by
+&gt; yours truely&lt;/PLUG&gt;)
+
+I have done some testing on the subject ext3 VS Reiserfs
+(&lt;AOL TYPE="metoo"&gt;Detailed benchmarks and results in Linux Japan May&lt;/AOL&gt;)
+Ext3 is really not yet where we would like it. The drawback is that all
+write operations double in time, since all data has to be written
+twich due to full-journaling.
+If you need journaling, use ReiserFS, is is not only more stable, but
+is also as fast or sometimes even faster then ext2. The problem is that
+you can't boot from it, so you'll need a separate /boot partition.
+The only place you want to use ext3 is, for a pretty limited / which
+is not offen written to or a fairly static data partition (like MP3s)
+for which you don't have the extra space to switch from ext2 to ReiserFS.
+The only advantage ext3 offers is not to need to reformat.
+If anybody need's an ext3 patch for 2.2.14, mine can be found at
+<A HREF="http://www.sukisuki.org/linux/">http://www.sukisuki.org/linux/</A> I really hope it's seemingly stopped
+development gets moving again real soon.
+
+I've also attached some benchmarks results. I won't explain what each benchmark
+did, but the test have been done on a DualCeleron 300 with 128MB RAM and
+8GB partitions and a PIII 500MHz x 4 with 2GB system with a 140GB RAID-5
+system.
+
+write-tests          magi                            |   edelweiss
+		ext2	ext3   reiserfs			ext2	reiserfs
+maketestdir	 6:18	12:39	 5:43	1: 2  : 0,9	1:16	1:29
+maketestdir x4	22:55	45:26	20:25	1: 1,9: 0,9	5:50	5:10
+dd 1000MB	 0:18    1:20	 0:21	1: 4,4: 1,1	-	-
+append		 2:12	 3:24	 3:46	1: 1,5: 1,7	1:20	1:36
+
+read-tests
+		ext2	ext3  reiserfs			
+cat 100MB	 0:29	 0:29	 0:27	1: 1  : 0,9	 -	-
+readrnd		 0:11	 0:13	 0:12	1: 1,2: 1,1	0:05	0:04
+	
+Also if you want to learn kernel internals and implementation of a
+filesystem, watch IBM's JFS. When first released, it could only mount
+and ls (showing . adn ..). After 4 weeks touch,mkdir,rm,rmdir work.
+If things wo in this speed, we'll be able to read and write to files
+in 4 weeks.
+
+Regarding SGI's XFS, I have hearded that they have it working,
+but it has sooooo bad performance, they can't show it publicly.
+
+Filesystems are a hot topic to watch out, this year as 
+all these evolve further.
+
+
+-- 
+
+	Oliver M. Bolzer
+	oliver@example.com
+
+$B!V?x$(A7?)$o$L$b!"CK$N@example.com$-MM!W(B
+
+GPG (PGP) Fingerprint = 621B 52F6 2AC1 36DB 8761  018F 8786 87AD EF50 D1FF
+--------------------------------------------------------------------
+Next Technical Meeting: March 11 (Sat) 13:00 Temple University Japan
+* Topic: "What's new in Perl 5.6"
+Guest speaker: Simon Cozens (TLUG Perl guru)
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+--------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00080" HREF="msg00080.html">Journaling Filesystems (Re: tlug: Ext3)</A></STRONG>
+<UL><LI><EM>From:</EM> Marcus Metzler &lt;mocm@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00093" HREF="msg00093.html">tlug: developerWorks (was Re: Journaling Filesystems)</A></STRONG>
+<UL><LI><EM>From:</EM> Alberto Tomita &lt;atomita@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">tlug: Ext3</A></STRONG>
+<UL><LI><EM>From:</EM> Austin Kurahone &lt;austin@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00078.html">Re: tlug: Moving a web server</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00080.html">Journaling Filesystems (Re: tlug: Ext3)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00062.html">tlug: Ext3</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00080.html">Journaling Filesystems (Re: tlug: Ext3)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00079"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00079"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

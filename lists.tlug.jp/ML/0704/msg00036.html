@@ -1,0 +1,174 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Serious clock wrongness -->
+<!--X-From-R13: "[vpunry(gz) Ezvgu" <fzvguNfvqrfubjonexre.arg> -->
+<!--X-Date: Tue, 03 Apr 2007 20:41:26 +0900 -->
+<!--X-Message-Id: 20070403114027.GE8999@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: f118b8b90704022209s909f70axdff41355de9909d9@example.com -->
+<!--X-Reference: 20070403065900.GF3435@example.com -->
+<!--X-Reference: ba75897e0704030331y36cd5999v1a89a15f42dc64bd@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00035.html">Date Prev</a>][<a href="msg00037.html">Date Next</a>][<a href="msg00034.html">Thread Prev</a>][<a href="msg00037.html">Thread Next</a>][<a href="maillist.html#00036">Date Index</a>][<a href="threads.html#00036">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Serious clock wrongness</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 3 Apr 2007 20:40:29 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Michael(tm) Smith&quot; &lt;<a href="mailto:smith@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Serious%20clock%20wrongness">smith@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Serious clock wrongness</strong></li>
+<li>References: &lt;<a href="msg00031.html">f118b8b90704022209s909f70axdff41355de9909d9@example.com</a>&gt;	&lt;<a href="msg00032.html">20070403065900.GF3435@example.com</a>&gt;	&lt;<a href="msg00034.html">ba75897e0704030331y36cd5999v1a89a15f42dc64bd@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.13 (2006-08-11)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Arwyn Hainsworth &lt;arwynh@example.com&gt;, 2007-04-03 19:31 +0900:
+
+&gt; Your ntpd is actually being very disciplined and doing exactly what it is
+&gt; supposed to do. Ntpd does adjust for 'natural drift', but natural drift is
+&gt; usually only a few ms per day or so. If it detects a large difference it
+&gt; will refuse to update the clock, assuming some kind of error has occurred.
+&gt; It would be right. A drift of a few seconds per minute is very large and
+&gt; means something somewhere is not working as it is supposed to. I suspect
+&gt; parallels is to blame, since it is the one providing the 'hardware' clock,
+&gt; but there are a number of other things it could be so I'm not certain. If
+&gt; you can't find out what is causing it, it might be possible to configure
+&gt; ntpd to adjust the time even if the drift is larger than expected. If your
+&gt; drift is constant, then that'll solve the problem.
+
+I found something similar reported in the Parallels support forum:
+
+  <a  href="http://forum.parallels.com/archive/index.php/t-8821.html">http://forum.parallels.com/archive/index.php/t-8821.html</a>
+
+To quote:
+
+  the drift is really bad. Thirty minutes after setting the clock
+  with ntpdate the clock will be about 10 minutes slow.
+
+And suggested workaround:
+
+  This is a common problem with VMs - not just Parallels but the
+  Other People too...
+
+  The solution in Linux is to change the way the clock is
+  calulated using the &quot;clock=pit&quot; kernel parameter, or to
+  re-compile the kernel with the interrupt rate reduced from 1000
+  to 100 Hz. I know you are asking about FreeBSD, not linux, but
+  this might provide some clues...
+
+But checking my kernel logs, I see lots of the following being
+logged at startup:
+
+  TSC appears to be running slowly.
+  Time: pit clocksource has been installed.
+
+So I assume that means the system is already automatically
+switching to clock=pit, but that's still not fixing the problem.
+
+I resetting the interrupt rate worth trying? And even if it is,
+isn't that likely to have some side effects?
+
+  --Mike
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00031" href="msg00031.html">Re: [tlug] Serious clock wrongness</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00032" href="msg00032.html">Re: [tlug] Serious clock wrongness</a></strong>
+<ul><li><em>From:</em> Michael(tm) Smith</li></ul></li>
+<li><strong><a name="00034" href="msg00034.html">Re: [tlug] Serious clock wrongness</a></strong>
+<ul><li><em>From:</em> Arwyn Hainsworth</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00035.html">[tlug] Feisty Upgrade, USB issues and other oddities</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00037.html">Re: [tlug] Serious clock wrongness</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00034.html">Re: [tlug] Serious clock wrongness</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00037.html">Re: [tlug] Serious clock wrongness</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00036"><strong>Date</strong></a></li>
+<li><a href="threads.html#00036"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

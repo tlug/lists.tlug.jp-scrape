@@ -1,0 +1,205 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Xconfig problems -->
+<!--X-From: ulrike@example.com -->
+<!--X-Date:  Thu, 18 May 2000 17:42:01 +0900 -->
+<!--X-Message-Id: 20000518084134.26FD6157DD@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00206.html">Date Prev</A>][<A HREF="msg00208.html">Date Next</A>][<A HREF="msg00206.html">Thread Prev</A>][<A HREF="msg00208.html">Thread Next</A>][<A HREF="maillist.html#00207">Date Index</A>][<A HREF="threads.html#00207">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Xconfig problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Xconfig problems</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:ulrike@example.com">ulrike@example.com</A></strong></LI>
+<LI>Date: Thu, 18 May 2000 17:41:34 +0900</LI>
+<LI>Cc: <A HREF="mailto:ulrike@example.com">ulrike@example.com</A></LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hello,
+
+I am having problems with configuring X windows on debian, and before i start 
+further experiments I think I have to change /etc/inittab so that the machine 
+does not try to start x and I have tried to understand the inittab manpage but 
+am forced to give up. The machine starts with runlevel 2, which I thought is ok, 
+but later tries to start x out of some reasons ...  here is /etc/inittab, but is  
+the neccessary information in some other file, maybe?:
+
+
+
+# /etc/inittab: init(8) configuration.
+# $Id: inittab,v 1.8 1998/05/10 10:37:50 miquels Exp $
+
+# The default runlevel.
+id:2:initdefault:
+
+# Boot-time system configuration/initialization script.
+# This is run first except when booting in emergency (-b) mode.
+si::sysinit:/etc/init.d/rcS
+
+# What to do in single-user mode.
+~~:S:wait:/sbin/sulogin
+
+# /etc/init.d executes the S and K scripts upon change
+# of runlevel.
+#
+# Runlevel 0 is halt.
+# Runlevel 1 is single-user.
+# Runlevels 2-5 are multi-user.
+# Runlevel 6 is reboot.
+
+l0:0:wait:/etc/init.d/rc 0
+l1:1:wait:/etc/init.d/rc 1
+l2:2:wait:/etc/init.d/rc 2
+l3:3:wait:/etc/init.d/rc 3
+l4:4:wait:/etc/init.d/rc 4
+l5:5:wait:/etc/init.d/rc 5
+l6:6:wait:/etc/init.d/rc 6
+# Normally not reached, but fallthrough in case of emergency.
+z6:6:respawn:/sbin/sulogin
+
+# What to do when CTRL-ALT-DEL is pressed.
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+# Action on special keypress (ALT-UpArrow).
+kb::kbrequest:/bin/echo "Keyboard Request--edit /etc/inittab to let this work."
+
+# What to do when the power fails/returns.
+pf::powerwait:/etc/init.d/powerfail start
+pn::powerfailnow:/etc/init.d/powerfail now
+po::powerokwait:/etc/init.d/powerfail stop
+
+# /sbin/getty invocations for the runlevels.
+#
+# The "id" field MUST be the same as the last
+# characters of the device (after "tty").
+#
+# Format:
+#  &lt;id&gt;:&lt;runlevels&gt;:&lt;action&gt;:&lt;process&gt;
+1:2345:respawn:/sbin/getty 38400 tty1
+2:23:respawn:/sbin/getty 38400 tty2
+3:23:respawn:/sbin/getty 38400 tty3
+4:23:respawn:/sbin/getty 38400 tty4
+5:23:respawn:/sbin/getty 38400 tty5
+6:23:respawn:/sbin/getty 38400 tty6
+
+# Example how to put a getty on a serial line (for a terminal)
+#
+#T0:23:respawn:/sbin/getty -L ttyS0 9600 vt100
+#T1:23:respawn:/sbin/getty -L ttyS1 9600 vt100
+
+# Example how to put a getty on a modem line.
+#
+#T3:23:respawn:/sbin/mgetty -x0 -s 57600 ttyS3
+
+#-- isdnutils begin
+# Change the lines below for your local setup and uncomment them.
+# Use "init q" to reread inittab.
+# look at the vboxgetty / mgetty manpage for more information (mgetty isn't
+# standard!)
+#
+#I0:2345:respawn:/usr/sbin/vboxgetty -d /dev/ttyI0
+#I1:2345:respawn:/sbin/mgetty -D -m '"" ATZ OK AT&amp;Eyourmsnhere OK AT&amp;B512 OK' -s 
+38400 ttyI1
+#-- isdnutils end
+
+My last configuration attempt ended in black-white-grey blinking garbage and I 
+did not know how to get back to a console, and the system always started this 
+garbage after bootup ... I read somewhere that the runlevel can be defined 
+during bootup, I thought 2 would be nice, but this is what is written in the 
+inittab, isn't it? Before my next try: how should I edit what? Or how can I get 
+back to a console after garbage on my screen? 
+
+Thanks
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: June 16 (Fri), 19:00   Tengu TokyoEkiMae
+Next Technical Meeting: July 8 (Sat) 13:30   Topic: TBA
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00206.html">tlug: canna user dictionaries</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00208.html">tlug: Hosting a Domain</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00206.html">tlug: canna user dictionaries</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00208.html">tlug: Hosting a Domain</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00207"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00207"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Big5 Vs. Unicode Vs. Netscape 4.x Vs. deadline -->
+<!--X-From-R13: Eunja <wninwhaxvrNxblheh.pbz> -->
+<!--X-Date: 07 May 2003 17:20:00 +0900 -->
+<!--X-Message-Id: 1052295599.1287.52.camel@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 200305070726.h477Qtxh012459@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00105.html">Date Prev</a>][<a href="msg00107.html">Date Next</a>][<a href="msg00098.html">Thread Prev</a>][<a href="msg00093.html">Thread Next</a>][<a href="maillist.html#00106">Date Index</a>][<a href="threads.html#00106">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Big5 Vs. Unicode Vs. Netscape 4.x Vs. deadline</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 07 May 2003 17:20:00 +0900</li>
+<li><strong>From</strong>: <strong>Shawn &lt;<A HREF="mailto:javajunkie@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Big5%20Vs.%20Unicode%20Vs.%20Netscape%204.x%20Vs.%20deadline">javajunkie@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Big5 Vs. Unicode Vs. Netscape 4.x Vs. deadline</strong></li>
+<li>References: &lt;200305070726.h477Qtxh012459@example.com&gt;</li>
+<li>Organization: </li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Dear Jonathan,
+
+ Attached is the servlet filter distributed with Tomcat for character
+encoding (plain text made junk out of the commented explainations so I
+attached as opposed to pasted).
+
+Also, at the bottom of the attachment is what goes in web.xml to enable
+it.
+
+You or she can take out the log4j stuff unless you're using it.
+
+Not sure how of if it would need to be modified with Jboss, but if the
+sevlet specs are the same 2.3, then seems like it should work.
+
+In real use, I've always also had to put 
+&lt;%@example.com contentType=&quot;text/html;charset=Shift_JIS&quot;%&gt;
+on my jsp pages to get it to work 100% correctly.
+
+Cheers,
+
+Shawn
+
+&gt; I also hypothetically advised her that she really needs to
+&gt; have a good input filter to make sure that whatever the
+&gt; customer's staff input to the database, it is converted to 
+&gt; Unicode or whatever else the database ends up finally using,
+&gt; since otherwise your database will doubtless quickly fill with
+&gt; all sorts of crap.
+ 
+</pre>
+<pre>
+ 
+
+package filters;
+
+import org.apache.log4j.Category;
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.UnavailableException;
+
+
+/**
+ * &lt;p&gt;Example filter that sets the character encoding to be used in parsing the
+ * incoming request, either unconditionally or only if the client did not
+ * specify a character encoding.  Configuration of this filter is based on
+ * the following initialization parameters:&lt;/p&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;strong&gt;encoding&lt;/strong&gt; - The character encoding to be configured
+ *     for this request, either conditionally or unconditionally based on
+ *     the &lt;code&gt;ignore&lt;/code&gt; initialization parameter.  This parameter
+ *     is required, so there is no default.&lt;/li&gt;
+ * &lt;li&gt;&lt;strong&gt;ignore&lt;/strong&gt; - If set to &quot;true&quot;, any character encoding
+ *     specified by the client is ignored, and the value returned by the
+ *     &lt;code&gt;selectEncoding()&lt;/code&gt; method is set.  If set to &quot;false,
+ *     &lt;code&gt;selectEncoding()&lt;/code&gt; is called &lt;strong&gt;only&lt;/strong&gt; if the
+ *     client has not already specified an encoding.  By default, this
+ *     parameter is set to &quot;true&quot;.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Although this filter can be used unchanged, it is also easy to
+ * subclass it and make the &lt;code&gt;selectEncoding()&lt;/code&gt; method more
+ * intelligent about what encoding to choose, based on characteristics of
+ * the incoming request (such as the values of the &lt;code&gt;Accept-Language&lt;/code&gt;
+ * and &lt;code&gt;User-Agent&lt;/code&gt; headers, or a value stashed in the current
+ * user's session.&lt;/p&gt;
+ *
+ * @example.com Craig McClanahan
+ * @example.com $Revision: 1.1.2.1 $ $Date: 2001/10/17 22:52:17 $
+ */
+
+public class SetCharacterEncodingFilter implements Filter {
+
+static Category logCat = Category.getInstance(SetCharacterEncodingFilter.class.getName());
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The default character encoding to set for requests that pass through
+     * this filter.
+     */
+    protected String encoding = null;
+
+
+    /**
+     * The filter configuration object we are associated with.  If this value
+     * is null, this filter instance is not currently configured.
+     */
+    protected FilterConfig filterConfig = null;
+
+
+    /**
+     * Should a character encoding specified by the client be ignored?
+     */
+    protected boolean ignore = true;
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Take this filter out of service.
+     */
+    public void destroy() {
+
+        this.encoding = null;
+        this.filterConfig = null;
+
+    }
+
+
+    /**
+     * Select and set (if specified) the character encoding to be used to
+     * interpret request parameters for this request.
+     *
+     * @example.com request The servlet request we are processing
+     * @example.com result The servlet response we are creating
+     * @example.com chain The filter chain we are processing
+     *
+     * @example.com IOException if an input/output error occurs
+     * @example.com ServletException if a servlet error occurs
+     */
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain)
+	throws IOException, ServletException {
+
+        // Conditionally select and set the character encoding to be used
+        if (ignore || (request.getCharacterEncoding() == null)) {
+            String encoding = selectEncoding(request);
+            logCat.debug(&quot;doFilter encoding=&quot;+encoding);
+            if (encoding != null)
+                request.setCharacterEncoding(encoding);
+        }
+
+	// Pass control on to the next filter
+        chain.doFilter(request, response);
+
+    }
+
+
+    /**
+     * Place this filter into service.
+     *
+     * @example.com filterConfig The filter configuration object
+     */
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+	this.filterConfig = filterConfig;
+        this.encoding = filterConfig.getInitParameter(&quot;encoding&quot;);
+        logCat.debug(&quot;encoding=&quot;+encoding);
+        String value = filterConfig.getInitParameter(&quot;ignore&quot;);
+        logCat.debug(&quot;value=&quot;+value);
+        if (value == null)
+            this.ignore = true;
+        else if (value.equalsIgnoreCase(&quot;true&quot;))
+            this.ignore = true;
+        else if (value.equalsIgnoreCase(&quot;yes&quot;))
+            this.ignore = true;
+        else
+            this.ignore = false;
+
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Select an appropriate character encoding to be used, based on the
+     * characteristics of the current request and/or filter initialization
+     * parameters.  If no character encoding should be set, return
+     * &lt;code&gt;null&lt;/code&gt;.
+     * &lt;p&gt;
+     * The default implementation unconditionally returns the value configured
+     * by the &lt;strong&gt;encoding&lt;/strong&gt; initialization parameter for this
+     * filter.
+     *
+     * @example.com request The servlet request we are processing
+     */
+    protected String selectEncoding(ServletRequest request) {
+logCat.debug(&quot;selectEncoding = &quot;+ this.encoding);
+        return (this.encoding);
+
+    }
+
+
+}
+
+
+//end of filter
+//start of web.xml
+&lt;web-app&gt;
+  &lt;filter&gt;
+    &lt;filter-name&gt;Set Character Encoding&lt;/filter-name&gt;
+    &lt;filter-class&gt;filters.SetCharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;encoding&lt;/param-name&gt;
+      &lt;param-value&gt;Shift_JIS&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/filter&gt;
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;Set Character Encoding&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00105.html">Re: [tlug] Japanese bankmanagers</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00107.html">Re: [tlug] ||||| Linux-Cafe....where?|||||||</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00098.html">Re: [tlug] Big5 Vs. Unicode Vs. Netscape 4.x Vs. deadline</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00093.html">[tlug] Weird (network) Science</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00106"><strong>Date</strong></a></li>
+<li><a href="threads.html#00106"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

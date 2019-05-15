@@ -1,0 +1,273 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Questions about skydb -->
+<!--X-From-R13: Sqjneq [vqqyrgba <rqjneq.zvqqyrgbaNibegbehf.arg> -->
+<!--X-Date: Sun, 27 Jan 2013 00:04:55 +0900 -->
+<!--X-Message-Id: 5103F009.6040808@vortorus.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 5103EE05.7010507@vortorus.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00107.html">Date Prev</a>][<a href="msg00109.html">Date Next</a>][<a href="msg00107.html">Thread Prev</a>][<a href="msg00109.html">Thread Next</a>][<a href="maillist.html#00108">Date Index</a>][<a href="threads.html#00108">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Questions about skydb</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 27 Jan 2013 00:02:33 +0900</li>
+<li><strong>From</strong>: <strong>Edward Middleton &lt;<a href="mailto:edward.middleton@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Questions%20about%20skydb">edward.middleton@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Questions about skydb</strong></li>
+<li>References: &lt;<a href="msg00107.html">5103EE05.7010507@vortorus.net</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; Linux x86_64;	rv:10.0.11) Gecko/20130116 Thunderbird/10.0.11</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 01/26/2013 11:53 PM, Edward Middleton wrote:
+&gt; Ben Johnson the creator of skydb posted answers to a few of the
+&gt; questions people asked during the meeting.  His twitter is @benbjohnson
+&gt; and if you have further questions the skydb mailing list is hosted on
+&gt; sky@example.com
+
+I also forgot to show the code for the loader, it is structured as a
+yaml file given bellow.
+
+
+file_type: :tsv
+headers:
+- app_id
+- platform
+- dt
+- tm
+- event_name
+- txn_id
+- v_tracker
+- v_collector
+- v_etl
+- user_id
+- user_ipaddress
+- visit_id
+- page_url
+- page_title
+- page_referrer
+- mkt_source
+- mkt_medium
+- mkt_term
+- mkt_content
+- mkt_campaign
+- ev_category
+- ev_action
+- ev_label
+- ev_property
+- ev_value
+- tr_orderid
+- tr_affiliation
+- tr_total
+- tr_tax
+- tr_shipping
+- tr_city
+- tr_state
+- tr_country
+- ti_orderid
+- ti_sku
+- ti_name
+- ti_category
+- ti_price
+- ti_quantity
+- br_name
+- br_family
+- br_version
+- br_type
+- br_renderengine
+- br_lang
+- br_features_pdf
+- br_features_flash
+- br_features_java
+- br_features_director
+- br_features_quicktime
+- br_features_realplayer
+- br_features_windowsmedia
+- br_features_gears
+- br_features_silverlight
+- br_cookies
+- os_name
+- os_family
+- os_manufacturer
+- dvce_type
+- dvce_ismobile
+- dvce_screenwidth
+- dvce_screenheight
+fields:
+  object_id: object_id:int
+  timestamp: timestamp:date
+  action: {}
+  data: {}
+translate: |
+  output['object_id']
+
+  bdb = TokyoCabinet::BDB::new
+  if !bdb.open(&quot;.objects.tcb&quot;, TokyoCabinet::BDB::OWRITER |
+TokyoCabinet::BDB::OCREAT)
+    ecode = bdb.ecode
+    STDERR.printf(&quot;open error: %s\n&quot;, bdb.errmsg(ecode))
+  end
+  if bdb.has_key? input['user_id']
+    output['object_id'] = bdb.get(input['user_id']).to_i
+  else
+    id = bdb.rnum.to_i + 1
+    output['object_id'] = id
+    bdb.put(input['user_id'],id)
+  end
+  if !bdb.close
+    ecode = bdb.ecode
+    STDERR.printf(&quot;close error: %s\n&quot;, bdb.errmsg(ecode))
+  end
+
+  year,month,day     =* input['dt'].split(/-/)
+  hour,minute,second =* input['tm'].split(/-/)
+  output['timestamp'] = Time.new(year,month,day,hour,minute,second)
+
+  output['action'] ||= {}
+  case
+  when input['ev_category'] == '\N'
+    uri = URI.parse(input['page_url'])
+    output['action']['name']       = 'page_view' + &quot;[&quot; + uri.path + &quot;]&quot;
+    output['action']['protocol']   = uri.scheme
+    output['action']['host']       = uri.host
+    output['action']['port']       = uri.port
+    output['action']['path']       = uri.path.gsub(/^\/(en|ja|tw|cn)/,'')
+    output['action']['args']       = uri.query unless uri.query.nil?
+    output['action']['referrer']   = input['page_referrer'] unless
+input['page_referrer'] == '\N'
+    output['action']['locale']     =
+uri.path.gsub(/^\/(en|ja|tw|cn).*/,'\1') if uri.path =~ /^\/(en|ja|tw|cn).*/
+  when input['ev_category'].downcase == 'adobeflash' &amp;&amp;
+input['ev_action'].downcase == 'pageload'
+    output['action']['name']       = 'custom.adobeflash.version'
+    output['data'] ||= {}
+    output['data']['flashversion'] = input['ev_value'] unless
+['\N','undefined'].include?(input['ev_value'])
+  when input['ev_action'].downcase == 'login'
+    output['action']['name']       = 'custom.session.login'
+    output['data'] ||= {}
+    output['data']['logged_in']    = true
+    output['data']['guid']         = input['ev_property'] unless
+['\N','undefined'].include?(input['ev_property'])
+    output['data']['login']        = input['ev_label']    unless
+['\N','undefined'].include?(input['ev_label'])
+  when input['ev_action'].downcase == 'logout'
+    output['action']['name']       = 'custom.session.logout'
+    output['data'] ||= {}
+    output['data']['logged_in']    = true
+  else
+    output['action']['name']       =
+&quot;custom.#{input['ev_category']}.#{input['ev_action']}&quot;.downcase
+    output['action']['page']       = input['page_url']
+    ['label','property','value'].each do |atr|
+      ev_key = &quot;ev_#{atr}&quot;
+      output['action'][atr] = input[ev_key] unless
+['\N','undefined'].include?(input[ev_key])
+    end
+
+  end
+require: [uri,tokyocabinet]
+
+
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00107" href="msg00107.html">[tlug] Questions about skydb</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00107.html">[tlug] Questions about skydb</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00109.html">[tlug] Yahoo.co.jp mail blacklisting</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00107.html">[tlug] Questions about skydb</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00109.html">[tlug] Yahoo.co.jp mail blacklisting</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00108"><strong>Date</strong></a></li>
+<li><a href="threads.html#00108"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

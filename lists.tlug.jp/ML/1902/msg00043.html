@@ -1,0 +1,234 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] True Gigabit ISP in Tokyo? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Fri, 15 Feb 2019 17:20:15 +0900 -->
+<!--X-Message-Id: 20190215082010.GD25862@elliptic -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CA+04B5BV&#45;pHp7Rvc4HWvuYpt2kK&#45;R6DQE0+u2Afi5yuHU8Zinw@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00042.html">Date Prev</a>][<a href="msg00044.html">Date Next</a>][<a href="msg00045.html">Thread Prev</a>][<a href="msg00046.html">Thread Next</a>][<a href="maillist.html#00043">Date Index</a>][<a href="threads.html#00043">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] True Gigabit ISP in Tokyo?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 15 Feb 2019 17:20:10 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20True%20Gigabit%20ISP%20in%20Tokyo%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] True Gigabit ISP in Tokyo?</strong></li>
+<li>User-agent: Mutt/1.9.4 (2018-02-28)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2019-02-15 10:29 +0900 (Fri), Jean-Christian Imbeault wrote:
+
+&gt; Searching on the internet I found the Reddit thread below that implies that
+&gt; Softbank is using a custom implementation of IPoE which forces you to use
+&gt; their box if you want gigabit speeds.
+&gt; 
+&gt; <a  rel="nofollow" href="https://www.reddit.com/r/japanlife/comments/9146ya/internet_provider_asking_for_monthly_fee_to/">https://www.reddit.com/r/japanlife/comments/9146ya/internet_provider_asking_for_monthly_fee_to/</a>
+
+Oh, that is a great link! It has a few critical facts in one of the
+repsonses which made everything click into place.
+
+So here's the deal:
+
+Your modem or fiber converter gives you an Ethernet connection into
+NTT's internal network. You still need to talk to an ISP to carry your
+packets to the Internet and bring back responses; NTT is just
+responsible for getting your packets to that ISP.
+
+Usually when using Ethernet you use standard RFC 894 encapsulation of
+IPv4 packets into Ethernet packets; this is what you're using when you
+run an Ethernet cable between your computer and a router or between
+two computers. This can work at longer distances, too, such as between
+your apartment and some NTT central office somewhere or even an ISP,
+but it's still a &quot;LAN&quot; connection.
+
+In the old days of modems of course there was no Ethernet or LAN
+connection to them; it was just a point-to-point serial connection to
+the modem, which basically extended that serial connection to another
+modem at the other end which demodulated it and had a serial output
+(or moral equivalant); so in the same way that Ethernet &lt;-&gt; Fiber &lt;-&gt;
+Whatever &lt;-&gt; Ethernet can be looked at, from the endpoints' view, as
+&quot;just an Ethernet connection,&quot; the modem-to-modem connection from the
+endpoint view is &quot;just a serial connection.&quot;
+
+A point-to-point connection is quite different from an Ethernet: with
+point-to-point there are only two nodes on the network so you don't
+have to bother putting a destination address on the data you're
+sending. This, and various other desirable features such as being
+able to authenticate with a name and password ('cause who knows who's
+calling in) meant that a different protocol, called PPP (Point to Point
+protocol) was developed to encapsulate IPv4 on serial connections. (You
+may also have heard of its ancestor, SLIP).
+
+For various complex reasons I won't get into, when people starting
+bringing Ethernet into homes rather than using telephones and modems,
+the PPP protocol was still used to connect to an ISP, only they had to
+make a variant of it that would run over Ethernet: PPPoE. One of the
+various reasons was for authentication: the name and password you set
+in your router is used as part of the PPPoE authentication process.
+Once the PPPoE connection is up and running, your router encapsulates
+IPv4 packets into PPPoE packets instead of RFC 894 Ethernet packets
+and sends them off over this &quot;virtual&quot; point-to-point link.
+
+When NTT introduced IPv6 in a big way, they dropped PPPoE for it and
+instead changed how their network works: your Ethernet connection now
+looks like it's connected directly to your ISP and you standard IPv6
+over Ethernet encapsulation. Once facet of this change is that your
+line is now configured (&quot;hardwired,&quot; if you will) to connect to only
+one ISP for IPv6; you can't, as I do with PPPoE, set up multiple
+connections to multiple ISPs.
+
+This is where the connection speed issue comes in. I don't recall who
+I was talking to a few months ago about this, but apparently the
+hardware that terminates the PPPoE connection can't move data for any
+particular connection faster than about 300 Mbps or so. So it doesn't
+matter if your link to that hardware is faster: that device limits the
+speed.
+
+The IPoE connections, since they don't go through that hardware, don't
+have the speed limitation. However, since IPoE is used only for IPv6,
+only your IPv6 connections will be fast; if the site you're connecting
+to doesn't support IPv6 you'll fall back to IPv4 which in the usual
+case would still be over your PPPoE connection.
+
+Softbank fixed this problem by, instead of sending IPv4 packets over
+PPPoE, encapsulating them in IPv6 packets and sending them over the
+IPv6-over-Ethernet connection. Works great, but of course you need a
+router than knows how to do that sort of encapsulation and is
+configured to do so. From the thread you linked, it sounds like what
+they're doing is standard enough that you could convince another
+device to do this, perhaps even a Linux box.
+
+A (Japanese) friend told me that he'd heard that NTT will also offer
+IPv4 over Ethernet connectivity in the same way that they do for IPv6,
+but it's only available for businesses. That would solve the IPv4
+speed problem.
+
+On 2019-02-15 10:52 +0900 (Fri), Jean-Christian Imbeault wrote:
+
+&gt; Can you use your own router with Asahi or do you need to use an Asahi box?
+
+&gt;From reading Asahi's pages, it sounds as if you continue to use PPPoE
+for IPv4 connectivity, so your own router should be no problem at all
+so long as it will either also route IPv6 and provide NAT for the
+internal network hosts or just do a straight pass-through of the IPv6
+over Ethernet packets.
+
+I'm curious if multiple devices work over the IPv6 connection when
+it's just plugged into the local LAN. I.e., if you don't want to use
+IPv4, can you just plug the NTT modem/DSU/fiber converter into the
+Ethernet switch that all your home computers are using and all of them
+(that support IPv6) will just work, each getting its own address?
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00046" href="msg00046.html">Re: [tlug] True Gigabit ISP in Tokyo?</a></strong>
+<ul><li><em>From:</em> Kalin KOZHUHAROV</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00033" href="msg00033.html">[tlug] True Gigabit ISP in Tokyo?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00042.html">Re: [tlug] True Gigabit ISP in Tokyo?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00044.html">Re: [tlug] True Gigabit ISP in Tokyo?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00045.html">Re: [tlug] True Gigabit ISP in Tokyo?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00046.html">Re: [tlug] True Gigabit ISP in Tokyo?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00043"><strong>Date</strong></a></li>
+<li><a href="threads.html#00043"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

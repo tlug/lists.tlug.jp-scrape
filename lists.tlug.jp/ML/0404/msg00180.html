@@ -1,0 +1,224 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] iptables and port&#45;forwarding concerns -->
+<!--X-From-R13: Xbfu Uybire <gyhtNwztybi.arg> -->
+<!--X-Date: Wed, 21 Apr 2004 20:02:40 &#45;0400 -->
+<!--X-Message-Id: 20040422000240.GH11018%jmglov@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20040422001900.130cfff5.gstewart@example.com -->
+<!--X-Derived: pgp00055.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00179.html">Date Prev</a>][<a href="msg00181.html">Date Next</a>][<a href="msg00189.html">Thread Prev</a>][<a href="msg00185.html">Thread Next</a>][<a href="maillist.html#00180">Date Index</a>][<a href="threads.html#00180">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptables and port-forwarding concerns</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 21 Apr 2004 20:02:40 -0400</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20iptables%20and%20port-forwarding%20concerns">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptables and port-forwarding concerns</strong></li>
+<li>References: &lt;<a href="msg00177.html">20040422001900.130cfff5.gstewart@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.4i-ja.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Quoth Godwin Stewart (Thu 2004-04-22 12:19:00AM +0200):
+
+&gt; OK, here's another excuse for Josh to have a good laugh while someone points
+&gt; out what an idiot I am :)
+
+Heh. I have never seriously thought you an idiot. I just get my jollies by
+poking fun at you when you give me a huge opening! ;)
+
+&gt; The IP range I've assigned to my LAN is 192.168.0.0/23. The local IP address
+&gt; of the box facing the 'net is 192.168.1.1, it's doing IP masquerading for
+&gt; the other boxen in the LAN, its 'net-facing interface is ppp0 and the
+&gt; LAN-facing interface is eth0. Its name is 'spider'.
+
+OK, 23 of the 32 bits in your address are denoting the network portion (yes
+kids, that is how CIDR notation works), so you have the IP addresses
+192.168.0.0 - 192.168.1.1 in your subnet, right? Just making sure *I* am
+not making a stupid mistake! :)
+
+&gt; iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+
+Right, don't MASQUERADE, first of all. Try this instead:
+
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source &lt;IP&gt;
+
+where &lt;IP&gt; is ppp0's static IP. (Sorry, I forgot the '-t nat' in my
+previous post.)
+
+&gt; Spider needs to be told that anything coming in through ppp0 on tcp ports
+&gt; 10000 through 10100 needs to be relayed directly to the corresponding ports
+&gt; on fly, so I'd have to insert this rule in spider's nat table:
+&gt; 
+&gt; iptables -t nat -I POSTROUTING 1 -i ppp0 -p tcp --dports 10000:10100 \ 
+&gt;   -j DNAT --to-destination 192.168.0.3
+&gt;
+&gt; Also, spider needs to know that anything coming from tcp ports 10000-10100
+&gt; on fly and going outside needs to go out from the same ports on spider:
+&gt; 
+&gt; iptables -t nat -I PREROUTING 1 -i eth0 -p tcp -s 192.168.0.3 \
+&gt;   -d ! 192.168.0.0/23 --dports 10000:10100 \
+&gt;   -j SNAT --from-destination my.pub.lic.ip
+
+You have things backwards. DNAT *must* be done pre-routing, with --from:
+
+iptables -t nat -I PREROUTING 1 -i eth0 -p tcp -s 192.168.0.3 \
+  -d ! 192.168.0.0/23 -j DNAT --from 192.168.0.3:10000-10100
+
+...and SNAT is post-routing, with --to:
+
+iptables -t nat -I POSTROUTING 1 -o ppp0 -p tcp -s 192.168.0.3 \
+  -j SNAT --to my.pub.lic.ip:10000-10100
+
+This is not complete, but hopefully it corrects your misconceptions
+enough to get you started. This will help:
+
+<A  HREF="http://www.stearns.org/iptables/NAT-HOWTO.txt">http://www.stearns.org/iptables/NAT-HOWTO.txt</A>
+
+&gt; Four questions:
+&gt; 
+&gt; 1) Does this look right so far?
+
+See above. :)
+
+&gt; 2) How is this going to interact with IP masquerading and should the
+&gt;    &quot;-j DNAT&quot; rule appear before the &quot;-j MASQUERADE&quot; rule or after?
+
+Get rid of masquerading altogether and do SNAT.
+
+&gt; 3) spider runs its own software, including Apache, an MTA, BIND and a few
+&gt;    other odds and ends. What happens if one of these applications tries to
+&gt;    open a connection with a remote host from a TCP port in the range
+&gt;    forwarded to fly, are packets coming back going to be directed to fly or
+&gt;    is the IP routing in the Linux kernel (2.4.25) smarter than that?
+
+Bugger if I know. :)
+
+&gt; 4) Given that I have a static public IP address, is IP masquerading the
+&gt;    right solution for distributing the Internet connection to the LAN or
+&gt;    should I be looking at full NAT instead in the first place?
+
+Quoth the iptables(8) man page:
+
+MASQUERADE
+    This  target  is only valid in the nat table, in the POSTROUTING chain.
+    It should only be used with dynamically assigned  IP  (dialup)  connec-
+    tions: if you have a static IP address, you should use the SNAT target.
+
+-- 
+Josh Glover
+
+GPG keyID 0xDE8A3103 (C3E4 FA9E 1E07 BBDB 6D8B  07AB 2BF1 67A1 DE8A 3103)
+gpg --keyserver pgp.mit.edu --recv-keys DE8A3103
+</pre>
+<p><strong>Attachment:
+<a href="pgp00055.pgp" ><tt>pgp00055.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00185" href="msg00185.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00190" href="msg00190.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00177" href="msg00177.html">[tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00179.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00181.html">Re: [tlug] Kernel 2.6.5 Compiling problem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00189.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00185.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00180"><strong>Date</strong></a></li>
+<li><a href="threads.html#00180"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

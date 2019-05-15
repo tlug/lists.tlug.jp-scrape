@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: pine, mutt, Chinese, Japanese -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 4 Aug 1999 14:26:47 +0900 -->
+<!--X-Message-Id: 14247.52981.74635.211486@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.05.9907250938270.4720&#45;100000@example.com&#45;yi&#45;song.cn.org -->
+<!--X-Reference-Id: Pine.LNX.3.95.990725134553.263B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00013.html">Date Prev</A>][<A HREF="msg00015.html">Date Next</A>][<A HREF="msg00013.html">Thread Prev</A>][<A HREF="msg00015.html">Thread Next</A>][<A HREF="maillist.html#00014">Date Index</A>][<A HREF="threads.html#00014">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: pine, mutt, Chinese, Japanese</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: pine, mutt, Chinese, Japanese</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 4 Aug 1999 14:26:13 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;Pine.LNX.3.95.990725134553.263B-100000@example.com&gt;</LI>
+<LI>References: &lt;Pine.LNX.4.05.9907250938270.4720-100000@example.com&gt;&lt;Pine.LNX.3.95.990725134553.263B-100000@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "jdb" == J David Beutel &lt;jdb@example.com&gt; writes:
+
+    jdb&gt; On Sun, 25 Jul 1999, Tony Laszlo wrote:
+    &gt;&gt; Setting Unicode aside for the moment, is there any _single_
+    &gt;&gt; Japanese encoding that has been suggested to take the place of
+    &gt;&gt; euc, jis and sjis?  Seems like a needless hassle having to
+    &gt;&gt; convert between two or three and make sure that software can
+    &gt;&gt; display all of the three.
+
+Talk to Microsoft and Apple about SJIS.  Don't bet on getting a
+sensible reply; Microsoft uses Unicode internally but doesn't provide
+any software (well, Word-2000 is supposed to) to handle that format,
+instead making SJIS the default.
+
+JIS is used almost exclusively in messaging applications---mail and
+netnews---in a rather usable variant of ISO-2022.  Due to rules in
+RFC-822, it is unlikely that 7-bit encodings in mail headers will go
+away soon.  So you'll keep seeing `=?iso-2022-jp?B?...' in raw mail
+headers for a while.  Then you'll start seeing '=?utf-7?B?' or so....
+EUC-JP is a rather efficient and simple encoding for Japanese only, so
+it makes sense to use it for file systems.  (Although if you compress
+the files, the advantage over ISO-2022-JP for most files will almost
+completely go away.  Almost all the kanji-in/kanji-out sequences will
+be treated as part of the newline sequence, and everything else is a
+1-1 map.)
+
+The 7/8-bit (JIS/EUC) thing affects Chinese and Korean, too, I believe.
+
+    jdb&gt; Unicode is exactly it.  Why set it aside?  I doubt there is
+    jdb&gt; any other.
+
+Well, no, Unicode is not exactly it.  UCS (ISO-10646) is.  Unicode is
+just a 99.44% accurate approximation.  ;-)
+
+Unicode is going to require a certain amount of implementation of
+infrastructure.  The problem is that Unicode does not preserve
+collating orders and the like for anything except American English
+(and maybe British English).  So sorts are going to have to be
+table-driven.  This is actually a good thing; JIS order isn't really
+all that interesting.  It would make it very easy to specify a sort
+like "kyouiku kanji by year, first, then jouyou kanji, then other
+Japanese kanji, then non-Japanese kanji, then other characters" by
+writing appropriate tables.  (Not to mention "unifying" zen and
+hankaku romaji, etc.)
+
+But that's very inefficient.  So a good general-purpose UCS text
+sorter is going to need to preprocess a text to be sorted so that
+characters are in collation order, not in UCS order.  That's going to
+take a while to shake out; there will be lots of reimplementations due 
+to NIH-itis, most of them buggy, many developers will be too lazy,
+etc.
+
+And there are gonna be lots of gotchas.  For example, what does
+`[a-z]' mean in a regexp?  Well, presumably it changes according to
+the language; normally I can't see it including `1' but surely in
+es_ES locales it will include enye.  But everybody has their own
+favorite flavor of regexp; I bet hardly anybody uses the standard C
+library versions for languages like Perl, and so on.  More
+reimplementations....
+
+As for "no other", the answer is (according to rumor), unfortunately,
+"not yet".  Evidently JIS is working on a unification of JIS X 0208,
+JIS X 0212, and JIS X 0213.  Presumably it's mostly going to be a
+regularization and slight tweaking of the familiar sets, but no,
+they're not planning on going to UCS in any form as a Japanese
+national standard any time soon.  Only the US can really do this,
+since all pure ASCII documents are already encoded in UTF-8 ;-)
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Technical Meeting: August 14 (Sat), 13:00  place: Temple Univ.
+*** Special guest: Marc Christensen (Salt Lake Linux Users Group)
+Next Nomikai: September 20 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00013.html">tlug: J-Mutt build errors</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00015.html">tlug: What decides Japanese file name encoding?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00013.html">tlug: J-Mutt build errors</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00015.html">tlug: What decides Japanese file name encoding?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00014"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00014"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

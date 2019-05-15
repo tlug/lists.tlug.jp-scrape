@@ -1,0 +1,195 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: edict and mule delta -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 27 Nov 1996 05:46:42 GMT -->
+<!--X-Message-Id: m0vScjV&#45;00002wC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0vSbl3&#45;00010MC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00122.html">Date Prev</A>][<A HREF="msg00124.html">Date Next</A>][<A HREF="msg00122.html">Thread Prev</A>][<A HREF="msg00127.html">Thread Next</A>][<A HREF="maillist.html#00123">Date Index</A>][<A HREF="threads.html#00123">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: edict and mule delta</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>David Walter &lt;<A HREF="mailto:djw18@example.com">djw18@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: edict and mule delta</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 27 Nov 96 14:40 JST</LI>
+<LI>CC: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-reply-to: &lt;<A HREF="msg00122.html">m0vSbl3-00010MC@example.com</A>&gt; (message from David Walter on Tue, 26 Nov 96 23:38 EST)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I'm copying TLUG so this information will (hopefully) not get
+duplicated....
+
+&gt;&gt;&gt;&gt;&gt; "DW" == David  &lt;djw18@example.com&gt; writes:
+
+    DW&gt; situlei simasu.
+
+Tondemonai.
+
+    DW&gt; I have just found the edict interface to emacs and tried it
+    DW&gt; with the mule delta.  I don't know if I have some thing
+    DW&gt; misconfigured but it seems that the euc code is not being
+    DW&gt; converted to a display font.  Someone reading my post to the
+    DW&gt; mule list (mule@example.com) suggested that there are people who
+    DW&gt; have seen this problem here?
+
+Um, what's your platform?  Hardware, OS, window system, etc, and full
+version information on Mule might be useful (M-X "emacs-version" RET,
+M-X "mule-version" RET).
+
+Nobody here is seeing that kind of problem with edict.el---here, it
+just plain doesn't work :-) (see below).
+
+There should be no need for any special conversion of the kind you
+discuss to be done on the Edict files.  My mule ("Mule Version 2.3
+(SUETSUMUHANA) of 1995.7.24" over "GNU Emacs 19.28.1
+(i486-AMI_Enterprise_III-linux) of Wed May 8 1996 on turnbull") does
+not balk at editing "edict" itself (well, it takes a few seconds to
+load, but that's not very stubborn for a mule).  Using jconv on it
+will break most other software, in particular xjdic.  I'm not sure
+what you mean by "elisp files' escaped characters" either.  If you
+mean edict.el itself, again, I have no trouble on my mule.  If you
+mean the byte-compiled versions (".elc"), then there is going to be
+big trouble....  It sounds to me like you have serious problems with
+your mule configuration, and should bounce it back to that list,
+especially if you can find the same problem with other files or
+packages.
+
+First try reading "edict" as a file (C-X C-F "edict" RET), and do
+the same with edict.el.  If those don't work, you have mule problems,
+not edict problems.
+
+If that works and switching to the *edict* buffer after loading the
+edict package is the only time you have problems, that's either
+because your environment is too small (with edict loaded and not much
+else mule is consuming nearly 8MB) or because edict.el itself (as
+found at ftp.cc.monash.edu.au) is just plain broken in its current
+state.  It cannot be compiled correctly under mule, at least not under
+mine.  I could load but not use it in its native state (edict.el) (I
+think the buffer was readable, but don't remember for sure), but
+managed to compile it by disabling most of the grammar parsing and
+removing the Common Lisp hacks that were added.  (The problems with
+the package stem from being heavily augmented by a person mostly
+familiar with Common Lisp who wrote a bunch of hacks to emulate Common
+Lisp features under Emacs 18.)  The package did work under
+Nemacs/Emacs 18.59....
+
+The Common Lisp hacker can't be located; the original author is busy
+writing a dissertation and has disclaimed interest in it at this time.
+I personally plan to do something with it, but it won't happen soon as
+massive work needs to be done.
+
+    DW&gt; I appreciate any help.
+
+xjdic is a GoodThang, but not Emacs-oriented (needs C compiler):
+	<A TARGET="_top" HREF="ftp://ftp.cc.monash.edu.au/pub/nihongo/xjdic22.tar.gz">ftp://ftp.cc.monash.edu.au/pub/nihongo/xjdic22.tar.gz</A>
+trans.el + locate by Jeff Friedl (needs Perl, maybe Perl 5):
+      <A TARGET="_top" HREF="ftp://ftp.cc.monash.edu.au/pub/nihongo/lookup_v1.01_tar.gz">ftp://ftp.cc.monash.edu.au/pub/nihongo/lookup_v1.01_tar.gz</A>
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00122" HREF="msg00122.html">edict and mule delta</A></STRONG>
+<UL><LI><EM>From:</EM> David Walter&lt;djw18@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00122.html">edict and mule delta</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00124.html">Re: Evaporation of Netscape+Java</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00122.html">edict and mule delta</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00127.html">mailing list archive</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00123"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00123"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

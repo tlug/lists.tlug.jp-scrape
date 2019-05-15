@@ -1,0 +1,184 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Only 32bits for Linux on UltraSparc II :( -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sun, 21 Aug 2005 17:58:50 +0900 -->
+<!--X-Message-Id: 87hddjhdit.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 875a4213050820074033cc3cda@example.com -->
+<!--X-Reference: 20050820204231.5a0dc716.plate@example.com -->
+<!--X-Reference: 875a421305082016131e3b299b@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00160.html">Date Prev</a>][<a href="msg00162.html">Date Next</a>][<a href="msg00160.html">Thread Prev</a>][<a href="msg00162.html">Thread Next</a>][<a href="maillist.html#00161">Date Index</a>][<a href="threads.html#00161">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Only 32bits for Linux on UltraSparc II :(</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 21 Aug 2005 17:58:50 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Only%2032bits%20for%20Linux%20on%20UltraSparc%20II%20%3A%28">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Only 32bits for Linux on UltraSparc II :(</strong></li>
+<li>References: &lt;<a href="msg00154.html">875a4213050820074033cc3cda@example.com</a>&gt;&lt;<a href="msg00158.html">20050820204231.5a0dc716.plate@example.com</a>&gt;&lt;<a href="msg00159.html">875a421305082016131e3b299b@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b21 (corn, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Zuco&quot; == Zuco Pietro &lt;zucomailinglist@example.com&gt; writes:
+
+    Zuco&gt; There is something I don't understand. If the benefit of use
+    Zuco&gt; 64 bits for userland applications is so poor, why spend time
+    Zuco&gt; and money, compiling an entire operating system to 64 bits
+    Zuco&gt; as Solaris?  One of the elements of the race to improve
+    Zuco&gt; performance is incrementing from 16, 32, 64, and so
+    Zuco&gt; forth. UltraSparc is useful only for large databases or
+    Zuco&gt; complex mathematical operations?
+
+If you think of graphics or national accounting (this definition of
+accounting includes Toyota and GM and Microsoft as nations :-) as
+complex, yes.  For most purposes, it's clock speed and how much you
+can get into RAM (somebody else covered that, though).  I don't know
+anybody who has more than 65535 fingers, and for most applications
+that's what you're doing: math that's about as complex as counting on
+your fingers.  Think about it: how often do you use numbers bigger
+than 255?  As we used to say in junior high, &quot;more than a mouthful is
+a waste!&quot;
+
+In fact there's a theory of the &quot;natural distribution&quot; of integers,
+and it's basically negative exponential: the probability of
+encountering the integer n is proportional to exp(-n) or something
+like that.
+
+Wide words can be used in a lot of situations.  For example, if you
+know that a string is word-aligned, there are algorithms that allow
+you to detect whether there are any zero bytes in the word in two
+machine instructions.  So these algorithms buy nothing with 16 bit
+words, a 2:1 speed up for 32 bit words, and 4:1 for 64 bit words, plus
+some overhead for handling memory alignment.  That's a lot if you're
+doing a lot of strlen() or memcpy().
+
+However, these situations are fairly specialized.  In most cases,
+except for the big speedup that comes if the CPU (and your wallet) can
+handle enough RAM to never use swap, most advanced applications spend
+most of their CPU chasing pointers!  Ie, the size of the address
+doesn't matter.
+
+    Zuco&gt; For example the X server will not be faster if it is 64 bits
+    Zuco&gt; compiled?
+
+With the Render extension (heavily used in Xft), the device
+independent portion will get faster, I suspect, and the device
+dependent portions will get faster if and only the graphics bus for
+the card can handle 64 bits.
+
+However, there's lots and lots of code that is not 64-bit safe.
+
+-- 
+School of Systems and Information Engineering <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00154" href="msg00154.html">[tlug] Only 32bits for Linux on UltraSparc II :(</a></strong>
+<ul><li><em>From:</em> Zuco Pietro</li></ul></li>
+<li><strong><a name="00158" href="msg00158.html">Re: [tlug] Only 32bits for Linux on UltraSparc II :(</a></strong>
+<ul><li><em>From:</em> Ulrich Plate</li></ul></li>
+<li><strong><a name="00159" href="msg00159.html">Re: [tlug] Only 32bits for Linux on UltraSparc II :(</a></strong>
+<ul><li><em>From:</em> Zuco Pietro</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00160.html">Re: [tlug] Only 32bits for Linux on UltraSparc II :(</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00162.html">[tlug] Yet another followup, this one on Vector Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00160.html">Re: [tlug] Only 32bits for Linux on UltraSparc II :(</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00162.html">[tlug] Yet another followup, this one on Vector Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00161"><strong>Date</strong></a></li>
+<li><a href="threads.html#00161"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

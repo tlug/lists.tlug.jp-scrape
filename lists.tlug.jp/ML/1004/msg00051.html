@@ -1,0 +1,186 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] strange nfs crashes -->
+<!--X-From-R13: Ynyva YALVGVODAH <zr.xnyvaNtznvy.pbz> -->
+<!--X-Date: Thu, 15 Apr 2010 08:46:53 +0900 -->
+<!--X-Message-Id: x2zabb599561004141646k1474f7a7m30579b2c51273344@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100414192546.GC25606@wasi.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00050.html">Date Prev</a>][<a href="msg00052.html">Date Next</a>][<a href="msg00050.html">Thread Prev</a>][<a href="msg00058.html">Thread Next</a>][<a href="maillist.html#00051">Date Index</a>][<a href="threads.html#00051">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] strange nfs crashes</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 15 Apr 2010 08:46:32 +0900</li>
+<li><strong>From</strong>: <strong>Kalin KOZHUHAROV &lt;<a href="mailto:me.kalin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20strange%20nfs%20crashes">me.kalin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] strange nfs crashes</strong></li>
+<li>References: &lt;<a href="mailto:20100414192546.GC25606@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20strange%20nfs%20crashes">20100414192546.GC25606@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello Michal,
+
+In the last TLUG I was suggesting a similar testing to somebody else :-)
+
+On Thu, Apr 15, 2010 at 04:25, Michal Hajek &lt;hajek1@example.com&gt; wrote:
+&gt; I have several linux machines which mount nfs dir from yet another linux
+&gt; machine (aka server). All worked fine in the office room. Later the
+&gt; machines were moved to server-room, and were connected to different
+&gt; switch. After that change, nfs starts crashing/freezing.
+&gt; I am short of imagination of what could go wrong.
+&gt;
+&gt; The only apparent change was the switch and thus the speed of net - in
+&gt; office we used 100Mb/s and in the server-room there is 1Gb/s switch.
+&gt;
+&gt; Other services, like ssh or vnc, are not affected. Both work very well.
+&gt; The only problem seems to be nfs.
+&gt;
+&gt; I have checked logs on server and clients too. Nothing suspicious.
+&gt;
+&gt; One thing I may mention is that I have set MTU on the clients to be
+&gt; 1500. But I do not know if that may cause any troubles with new switch,
+&gt; since I do not have any experience with switches whatsoever.
+&gt;
+&gt; Unfortunately, the switch is not mine and I cannot access it. Thus I
+&gt; would like to find out some more convincing argument that the problem
+&gt; actually is the switch (or not).
+&gt;
+&gt; I do not exclude other possible sources of nfs misbehaviour, if you have
+&gt; suggestions how to troubleshoot that, all are welcome.  Maybe I shall
+&gt; mention that nfs freezes typically after several hours (2,3 or so) of
+&gt; usage. Freezing means that nfs directory on clients is not accessible.
+&gt; (i.e. no response to ls)
+&gt;
+&gt; Could you please suggest some ideas how to investigate this peculiar
+&gt; problem?
+
+First, comparing NFS to ssh is more like comparing bikes and trucks on
+a highway...
+So if ssh works it only means that your TCP/IP layer is OK for
+(usually) small bursts of data over TCP.
+
+NFS usually uses UDP. YOu can by the way try first to switch it to use
+TCP. You might loose some performance, but you'll gain reliability.
+`man nfs`, but the short answer is mount with `-o proto=tcp`
+
+This will probably solve your problem, but will not find the culprit.
+If you want to blame the switch you need packet log of what is going
+there and what is getting on the other side. So, sync the time (with
+ntp) on both ends, then run tcpdump/tshark on both machines and log
+all traffic until the freeze occurs.
+
+tcpdump -i &lt;interface&gt; -s 65535 -w &lt;some-file&gt;
+
+Then analyze if you are getting everything you sent in both
+directions. Check for retransmitted packets as well. I think there was
+a good utility for comparing packet captures of the send and receive
+end, but I cannot remember its name :-| Searching for it I found
+pcapdiff which seems like it will do:
+<a  rel="nofollow" href="http://www.eff.org/testyourisp/pcapdiff">http://www.eff.org/testyourisp/pcapdiff</a>
+
+Opening the captures in wireshark will allow you to go through them manually.
+
+Try and let us know (if) you had (any) success ;-)
+
+Cheers,
+Kalin.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00050" href="msg00050.html">[tlug] strange nfs crashes</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00050.html">[tlug] strange nfs crashes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00052.html">[tlug] Home printer suggestions</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00050.html">[tlug] strange nfs crashes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00058.html">Re: [tlug] strange nfs crashes</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00051"><strong>Date</strong></a></li>
+<li><a href="threads.html#00051"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

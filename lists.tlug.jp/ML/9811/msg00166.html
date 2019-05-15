@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: PCMCIA Network trouble (D&#45;Link DE&#45;660) -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Sun, 8 Nov 1998 17:29:14 +0900 -->
+<!--X-Message-Id: m3ww56r4ct.fsf@example.com&#45;325.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199811071312.WAA00721@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: m33e7vzjk7.fsf@example.com&#45;325.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00165.html">Date Prev</A>][<A HREF="msg00167.html">Date Next</A>][<A HREF="msg00154.html">Thread Prev</A>][<A HREF="msg00167.html">Thread Next</A>][<A HREF="maillist.html#00166">Date Index</A>][<A HREF="threads.html#00166">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: PCMCIA Network trouble (D-Link DE-660)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: PCMCIA Network trouble (D-Link DE-660)</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 08 Nov 1998 17:11:30 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: Frank Bennett's message of "07 Nov 1998 23:03:36 +0900"</LI>
+<LI>References: &lt;<A HREF="msg00153.html">199811071312.WAA00721@example.com</A>&gt;&lt;<A HREF="msg00154.html">m33e7vzjk7.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hmm.  I wonder why trouble always seems to strike on weekends
+when the experts are away from the office?  My first posting on
+this was too long-winded for anyone to have stuck with it to the
+punch line, so a quick recap:
+
+I'm trying to back up a laptop that has to be booted via LILO off
+the hard disk to a filesystem in memory, so that I can back up
+the disk's data across a network.  I've decided to adapt tomsrtbt
+for use as an "initrd" (for those who haven't worked with this
+one, it's a ramdisk that can be loaded when Linux boots; it is
+mounted as root, read-write, and persists as long as a program or
+script called "linuxrc" continues to run; it can then either be
+cleared from memory before mounting a physical root device like
+/dev/hda1, or it can be mounted as a final root device in
+memory).
+
+The idea for the final configuration will be that the laptop
+boots, performs some of the initial checks (like running e2fsck
+on the local partitions) and then prompts me for the possibility
+of backing up the hard disk data in one of several ways, before
+proceeding to mount /dev/hda1 read-write and firing up the rest
+of the system.
+
+That's what I want to do, and the strategy seems to be working
+out, up to a point.  But I'm having trouble getting the PCMCIA
+card services package to bring up a working network interface
+during the "linuxrc" part of the session --- and without that, I
+can't get at the backup device across the network.
+
+Tracing my steps back, it occurs to me that the problems began
+when I changed to a kernel different from that used in tomsrtbt.
+This was necessary because (oddly) the tomsrtbt kernel is
+compiled without initrd support.
+
+I have experimented with various combinations of the kernel
+modules used by the PCMCIA subsytem, all without success.  But
+through all of these trials, I have stuck with the version 2.9.12
+"cardmgr" that shipped with tomsrtbt, because it (and everything
+else in tomsrtbt) is linked against libc5, while my TL compiler
+and later-model, known-to-work-with-my-network-card 3.0.5
+"cardmgr" is linked against glibc.
+
+I am now working on the hypothesis that ALL of the card services
+package (not just the modules) has to be compiled with access to
+the current kernel in order to work properly.
+
+So ... I have broken out an old Libretto 20 that has an old
+libc5-based Linux compiler in it, shifted my kernel sources and
+card services sources to it, and am now recompiling the kernel,
+its modules and the card services stuff on it.  When that's
+finished (quite a long time from now, at 75mhz), I'll shift the
+kernel into position for use in the backup entry in
+/etc/lilo.conf, and move its modules and the card services
+utilities into the appropriate locations in the initrd disk
+image.
+
+Then I'll be able to make a clean attempt using drivers, daemons
+and a kernel that I know will work following a normal boot.  If I
+still have problems after that, I'll report to the list.  For
+that matter, if f things work correctly after that, I'll report
+to the list.
+
+Is anyone interested in having this stuff if I get it working
+correctly?  It seems to me that a lot of laptops won't boot from
+floppy; have I missed something, or is it difficult to do a
+proper backup of such a machine?
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@:
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+----------------------------------------------------------------
+Next Nomikai: 20 November, 19:30   Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00167" HREF="msg00167.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00175" HREF="msg00175.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00189" HREF="msg00189.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00153" HREF="msg00153.html">tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00154" HREF="msg00154.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00165.html">Re: tlug: Re: ISDN problems</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00167.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00154.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00167.html">Re: tlug: PCMCIA Network trouble (D-Link DE-660)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00166"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00166"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

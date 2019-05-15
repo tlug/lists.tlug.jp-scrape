@@ -1,0 +1,237 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Yatta!  XEmacs Japanese input with kinput2 via XIM -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 20 May 1997 07:25:00 GMT -->
+<!--X-Message-Id: m0wTjAp&#45;00005TC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00187.html">Date Prev</A>][<A HREF="msg00189.html">Date Next</A>][<A HREF="msg00180.html">Thread Prev</A>][<A HREF="msg00190.html">Thread Next</A>][<A HREF="maillist.html#00188">Date Index</A>][<A HREF="threads.html#00188">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Yatta!  XEmacs Japanese input with kinput2 via XIM</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Yatta!  XEmacs Japanese input with kinput2 via XIM</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 20 May 1997 16:17:30 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+XEmacs and kinput2 disagree about the need to provide non-null areas
+for unused subwindows.  The patch to XEmacs below corrects this, and I
+successfully used kinput2 to input "korehanihongodesu." and henkan it
+in XEmacs.  I have not tried simultaneous use with kterm, either via
+XIM or kinput2 protocol.
+
+I'm not sure how happy I am with the kinput2 implementation; kinput2's
+`hiragana a' Status window is awkward.  If you use Canna or Wnn, you
+don't really need it; the henkan server gives sufficient feedback.  (I
+guess people who use other features such as JIS-code input and such
+might want more mode info, but I'd rather not have it.)  Other than
+that, I don't see that Egg fence-mode is that much of an improvement,
+and I positively like the (potentially) large separate window for
+selection that kinput2 offers near the spot.  The position of the
+Status area can be changed, but you can't get rid of it.  There seem
+to be three possible resource settings:
+
+! Default: PreEdit over the spot with Status in minibuffer
+Emacs*ximStyles: XIMPreeditPosition|XIMStatusArea
+! PreEdit over the spot with Status immediately below the spot
+Emacs*ximStyles: XIMPreeditPosition|XIMStatusNothing
+! PreEdit and Status together in separate window
+! (ie, child of root, not Emacs frame)
+Emacs*ximStyles: XIMPreeditNone|XIMStatusNone
+
+There may be others, but the several variations I tried all ended up
+being equivalent to one of the above.  See xemacs-20.2/etc/Emacs.ad.
+You might also want to fiddle with the foreground and background
+colors and font settings.  (The defaults are yoo-gly.)
+
+I have not done any fooling around to figure out what good resources
+for starting and stopping henkan are; I just use kinput2's default of
+shift-SPACE.  XEmacs does not seem to provide any; apparently once the 
+IM is open, XEmacs passes all keyboard events to it.
+
+This patch works in the Xlib implementation of XIM for XEmacs; it may
+also work for the Motif implementation.  I don't plan to try it
+anytime soon.
+
+The necessary patch is in src/input-methods-xlib.c at line 157:
+
+#ifdef DONT_PANDER_TO_KINPUT2
+  XRectangle p_area = {0,0,0,0}, s_area={0,0,0,0};   /* original code */
+#else /* use Steve's patch to make kinput2 happy */
+  XRectangle p_area = {0,0,1,1}, s_area={0,0,1,1};
+#endif
+
+Technical details
+
+Configurations:
+
+XEmacs 20.2 + patch above
+  ./configure  'i486-homebrew-linux' '--with-mule' '--with-xim' '--verbose'
+  Configured for `i486-homebrew-linux'.
+  Where should the build process find the source code?    /var/tmp/xemacs-20.2
+  What installation prefix should install use?		  /usr/local
+  What operating system and machine description files should XEmacs use?
+        `s/linux.h' and `m/intel386.h'
+  What compiler should XEmacs be built with?              gcc  -g -O 
+  Should XEmacs use the GNU version of malloc?            yes
+  Should XEmacs use the relocating allocator for buffers? yes
+  What window system should XEmacs use?                   x11
+  Where do we find X Windows header files?                /usr/X11R6/include
+  Where do we find X Windows libraries?                   /usr/X11R6/lib
+  Compiling in support for XAUTH.
+  Compiling in support for XPM.
+  Compiling in support for GIF image conversion.
+  Compiling in support for Berkeley DB.
+  Compiling in support for GNU DBM.
+  Compiling in support for ncurses.
+  Compiling in Mule (multi-lingual) support.
+  Compiling in XIM (X11R5+ I18N input method) support.
+    Using raw Xlib to provide XIM support.
+  Using the Lucid menubar.
+  Using the Lucid scrollbar.
+  Using the Motif dialog boxes.
+
+kinput2 v2 pl3 + no local patches
+  #define USECANNA
+  #undef USEWnn
+  #undef USESJ3
+  + configuration for local installation directories of Canna
+
+Canna 3.5b2
+  (I forget the configuration; if it seems to matter, ask me.)
+
+Bug analysis:
+
+The crashes I experienced are caused because kinput2 refused to give
+XEmacs an X Input Context, so the XIC pointer was null.  XEmacs was
+handing that null pointer to XmbLookupString
+(xemacs-20.2/src/event-Xt.c:644) with the predictable disastrous
+result.  This is a bug in XEmacs, which is assuming that once an input
+method is opened, nothing can go wrong.
+
+The problem with opening the input context is due to the fact that
+XEmacs hands null rectangles to the input method for the Status and
+PreEdit areas.  kinput2 doesn't like this, throws an error, and
+returns a failure to XEmacs.  (XEmacs detects and reports this on
+stderr, by the way, but then proceeds to try to use XIM anyway, as
+described above.  There's an obvious patch for this, but I'm not
+enough of an Emacs hacker to know whether the obvious patch makes
+sense.  There's also the issue that in the long run this code must be
+reorganized to allow use of multiple input methods and multiple input
+contexts in Emacs; the current setup only works in the current Unix
+locale, and does not allow, say, a locale-per-buffer or changing
+locales on the fly in a buffer.)
+
+Providing trivial rectangles for the PreEdit and Status areas solves
+the crash and allow the IM to open.
+
+I don't see on a quick reading what the XIM standard requires here.
+Tentatively I'd say it's a bug in kinput2.
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00190" HREF="msg00190.html">Re: tlug: Yatta!  XEmacs Japanese input with kinput2 via XIM</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00187.html">tlug: Re: Lesstif</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00189.html">tlug: Rehash: Indexing Japanese</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00180.html">tlug: Laser Master 1000dpi printer</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00190.html">Re: tlug: Yatta!  XEmacs Japanese input with kinput2 via XIM</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00188"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00188"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] Sticky problem with pipes, head and tails -->
+<!--X-From-R13: Eghneg Zhccrfph <fyhNppfe.hpuvpntb.rqh> -->
+<!--X-Date: Wed, 01 Sep 2010 08:28:32 +0900 -->
+<!--X-Message-Id: 1283296883.10830.33.camel@musume.snl.home -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: p7sWC9OC29gHu.p7s -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00007.html">Date Prev</a>][<a href="msg00009.html">Date Next</a>][<a href="msg00016.html">Thread Prev</a>][<a href="msg00009.html">Thread Next</a>][<a href="maillist.html#00008">Date Index</a>][<a href="threads.html#00008">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Sticky problem with pipes, head and tails</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 31 Aug 2010 18:21:23 -0500</li>
+<li><strong>From</strong>: <strong>Stuart Luppescu &lt;<a href="mailto:slu@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Sticky%20problem%20with%20pipes%2C%20head%20and%20tails">slu@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Sticky problem with pipes, head and tails</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello, As you can see from my signature in this message (yes, I know
+it's longer than 4 lines), I use the R fortune function to generate a
+fortune, which is then fed to the signature program, which constructs a
+named pipe containing the fortune-bearing sig, which is then included in
+mail messages. The problem is that it's got extraneous junk in it and I
+can't figure out how to get rid of it. This is the command that
+generates the fortune:
+
+/usr/bin/R --no-save --no-restore -q &lt; /home/sl70/print-fortune.R
+
+This produces this:
+&gt; library(fortunes)                                                             
+&gt; fortune()
+
+Michael Watson: Hopefully this one isn't in the manual or I am about to get shot :-S
+Peter Dalgaard: *Kapow*...
+   -- Michael Watson and Peter Dalgaard (question on axis())
+      R-help (February 2006)
+
+&gt; 
+
+I would like to remove the first two lines and the last line, so I
+changed the command to this:
+/usr/bin/R --no-save --no-restore &lt; /home/sl70/print-fortune.R  |tail \
+-n  +23  | head -n -2 2&gt; /dev/null
+
+That give the desired result when I run it at the command line, but when
+I feed it to the signature program, I get this message:
+
+Program /usr/local/bin/r-fortune doesn't seem to exist
+
+This is the program code that produces this error:
+
+         /* check for existence of program by forking and then trying to
+               exec() it in the child */
+            pid = fork();
+            switch (pid) {
+            case -1:            /* oh well */
+                perror(&quot;Couldn't fork() a child process&quot;);
+                exit(EXIT_FAILURE);
+            case 0:             /* in child */
+                /* close stdout */
+                close(1);
+                execlp(producer, producer, (char *) 0);
+                exit(EXIT_FAILURE);
+            default:
+                waitpid(pid, &amp;exit_status, 0);
+                if (exit_status != EXIT_SUCCESS) {
+                    fprintf(stderr, &quot;Program %s doesn't seem to exist\n&quot;,
+                            producer);
+                    exit(EXIT_FAILURE);
+                }
+
+Unfortunately, I don't understand this at all. Can anyone give me a clue
+as to what's happening?
+
+Thanks.
+-- 
+Stuart Luppescu -=- slu .at. ccsr.uchicago.edu        
+University of Chicago -=- CCSR 
+才文と智奈美の父 -=-    Kernel 2.6.34-gentoo-r1                
+&gt; library(fortunes) &gt; fortune()  Maybe you should
+ contact Microsoft, and get them to modify their
+ tools so they work on the R sources?    -- Duncan 
+ Murdoch (answering the question if there is a way 
+ compiling the R       sources using VisualC++)    
+ R-help (April 2004)  &gt;  
+ 
+ 
+ 
+</pre><p><strong>Attachment:
+<a href="p7sWC9OC29gHu.p7s" ><tt>smime.p7s</tt></a></strong><br>
+<em>Description:</em> S/MIME cryptographic signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00009" href="msg00009.html">Re: [tlug] Sticky problem with pipes, head and tails</a></strong>
+<ul><li><em>From:</em> Kalin KOZHUHAROV</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00007.html">Re: [tlug] Network performance</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00009.html">Re: [tlug] Sticky problem with pipes, head and tails</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00016.html">Re: [tlug] Further adventures in stability and security: backups</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00009.html">Re: [tlug] Sticky problem with pipes, head and tails</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00008"><strong>Date</strong></a></li>
+<li><a href="threads.html#00008"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

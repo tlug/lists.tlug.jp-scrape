@@ -1,0 +1,191 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] [X]Emacs file association (auto&#45;mode) -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 23 Dec 2005 13:50:18 +0900 -->
+<!--X-Message-Id: 87u0d0ifhx.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: d8fcc0800512201916y7602ff30i@example.com -->
+<!--X-Reference: 87vexhmo80.fsf@example.com -->
+<!--X-Reference: d8fcc0800512221748x68d9902dh@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00578.html">Date Prev</a>][<a href="msg00580.html">Date Next</a>][<a href="msg00575.html">Thread Prev</a>][<a href="msg00592.html">Thread Next</a>][<a href="maillist.html#00579">Date Index</a>][<a href="threads.html#00579">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [X]Emacs file association (auto-mode)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 23 Dec 2005 13:50:18 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%5BX%5DEmacs%20file%20association%20%28auto-mode%29">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [X]Emacs file association (auto-mode)</strong></li>
+<li>References: &lt;<a href="msg00463.html">d8fcc0800512201916y7602ff30i@example.com</a>&gt;&lt;<a href="msg00569.html">87vexhmo80.fsf@example.com</a>&gt;&lt;<a href="msg00575.html">d8fcc0800512221748x68d9902dh@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b23 (daikon, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Josh&quot; == Josh Glover &lt;jmglov@example.com&gt; writes:
+
+    Josh&gt; Um... pretty hard, when I forget about Emacs's online
+    Josh&gt; help. Sorry. :(
+
+Wow, you don't use the help and you still like Emacs?  I'd find it
+pretty unbearable, myself.&lt;wink&gt;
+
+    Josh&gt; I tried [inter alia]:
+
+    Josh&gt; (setq auto-mode-alist (append (list &quot;\\.m4$&quot; nil 'YOW!)
+    Josh&gt;       auto-mode-alist))
+
+That is correct, though
+
+    (setq auto-mode-alist
+          (append (list &quot;\\.m4$&quot; nil 'YOW!) auto-mode-alist))
+
+is the preferred layout.  More convenient and easy to read are
+
+    (push '(&quot;\\.m4$&quot; nil YOW!) auto-mode-alist)
+    (add-to-list 'auto-mode-alist '(&quot;\\.m4$&quot; nil YOW!))
+
+(For intermediate LISPers: push is a macro so it can properly update
+the value of auto-mode-alist even though it's not quoted.  In both,
+since the list literal is quoted, the symbol YOW! doesn't need to be
+quoted.)
+
+push is best in this case, since it's less complex than setq
+... append, and add-to-list really is &quot;add-to-set&quot;, because it only
+adds it if it's not already in the list, which would fail to work as
+expected if your auto-mode-alist was
+
+    ((&quot;\\.m4$&quot; m4-mode) (&quot;\\.m4$&quot; nil YOW!))
+
+since alist processing depends on order.
+
+The &quot;push&quot; version works for me immediately.  Ie
+
+M-: (push '(&quot;\\.m4$&quot; nil YOW!) auto-mode-alist) RET
+C-x C-f junk.tex.m4 RET
+
+gives me a fresh buffer in LaTeX mode.  I also tested an existing file
+by cp Makefile.in.in Makefile.in.in.m4 and the latter comes up in
+Makefile mode.
+
+Check that this form of element for auto-mode-alist is supported in
+your version of Emacs (start by checking the docstring if you haven't
+done so already).
+
+
+-- 
+School of Systems and Information Engineering <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00592" href="msg00592.html">Re: [tlug] [X]Emacs file association (auto-mode)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00463" href="msg00463.html">[tlug] [X]Emacs file association (auto-mode)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00569" href="msg00569.html">Re: [tlug] [X]Emacs file association (auto-mode)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00575" href="msg00575.html">Re: [tlug] [X]Emacs file association (auto-mode)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00578.html">Re: [tlug] Free Linux for Desktop Newbies ?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00580.html">Re: [tlug] Buying a Palm from the US</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00575.html">Re: [tlug] [X]Emacs file association (auto-mode)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00592.html">Re: [tlug] [X]Emacs file association (auto-mode)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00579"><strong>Date</strong></a></li>
+<li><a href="threads.html#00579"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

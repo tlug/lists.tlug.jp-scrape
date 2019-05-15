@@ -1,0 +1,183 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] RH9 install probelm: error enabling swap device -->
+<!--X-From-R13: Egrcura Zrr <fy2001Nvanzr.pbz> -->
+<!--X-Date: Wed, 25 Jun 2003 02:00:17 +0900 -->
+<!--X-Message-Id: 20030625012842.76AA.SL@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030623124651.0083866a.gstewart@example.com -->
+<!--X-Reference: 3EF7982F.6000800@example.com&#45;bucks.co.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00231.html">Date Prev</a>][<a href="msg00233.html">Date Next</a>][<a href="msg00218.html">Thread Prev</a>][<a href="msg00239.html">Thread Next</a>][<a href="maillist.html#00232">Date Index</a>][<a href="threads.html#00232">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] RH9 install probelm: error enabling swap device</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 25 Jun 2003 02:00:17 +0900</li>
+<li><strong>From</strong>: <strong>Stephen Lee &lt;<A HREF="mailto:sl@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20RH9%20install%20probelm%3A%20error%20enabling%20swap%20device">sl@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] RH9 install probelm: error enabling swap device</strong></li>
+<li>References: &lt;<a href="msg00215.html">20030623124651.0083866a.gstewart@example.com</a>&gt; &lt;<a href="msg00218.html">3EF7982F.6000800@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jean-Christian Imbeault &lt;jc@example.com&gt; wrote:
+&gt; Maybe I my recollection of fdisk and partitions is wrong but I though
+&gt; you could fit up to 4 logical partitions on every extended partition?
+
+You could fit practically any number of logical partitions you want into
+one extended partition.
+
+&gt; Is my HD flaky? It's a 40GB drive so I'm wondering if there is BIOS
+&gt; problem perhaps?
+
+How big is your primary partition? Have you run into a size limit?  e.g.
+8GB?  I do not think Linux have a 8GB limit though, it does not go
+through the BIOS once you've booted up that far.  It is more probably
+hardware.
+
+&gt; I'm not so sure it's the HD but feel it more of a BIOS/mobo problem
+&gt; (this is that strange korean server with (hot-swapable ?) IDE drive
+&gt; bays). On the motherboard there seems to be two IDE controller
+&gt; connectors, each with a round type of IDE cable I haven't seen before.
+&gt; These two cables then connect into a board that has four connectors that
+&gt; accept one HD each. The IDE drive itself needs a special adaptor/board
+&gt; plugged into it to be plugged into the board with the four connectors.
+
+I suggest the first thing you try to do is go to the HD manufacturer's
+web site and get their diagnostic program on a floppy and test your disk
+out on that.  IBM, Maxtor, Seagate all have one.
+
+Then try a CD-ROM based linux like Knoppix, partition your disk, mount
+partitions, put large files on them, make several copies and compare
+them.
+
+The four connectors are probably channel 1 master/slave and channel 2
+master/slave.  The HDD should go into channel 1 master.  i.e. If it were
+a cable it should go to the end of the cable.  Helps signal integrity
+that way.
+
+The CD-ROM if you have an IDE one should go to channel 2 master.
+
+Try skipping those boards/bays (bad signal path can probably screw up
+the signal a lot) and plug your drive directly into the motherboard. 
+Try it for the install with the case open if neccessary.  If that works
+I suggest getting a better bay if you need swappable bays.
+
+Get new cables if neccessary.  Are the rounded cables good?  Get 80-wire
+ATA-100 (or ATA-133 but I don't think your 40GB disk needs that) cables.
+
+Some BIOS or drives are too aggresive selecting DMA mode.  Try lowering
+that with hdparm.  You can try changing it in BIOS too but you'd better
+verify it in linux with hdparm too 'cos the IDE driver could have
+changed it.  In the extreme case try turning off DMA altogether but that
+would make disk access very slow/CPU intensive.
+
+Stephen
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00239" href="msg00239.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00215" href="msg00215.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00218" href="msg00218.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00231.html">Re: [tlug] The Archives Password</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00233.html">[tlug] Re: New G5 Macs out using 64Bit PowerPC from IBM</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00218.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00239.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00232"><strong>Date</strong></a></li>
+<li><a href="threads.html#00232"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

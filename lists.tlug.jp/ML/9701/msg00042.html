@@ -1,0 +1,196 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Wnn / Xwnmo / mule&#45;19.33&#45;delta woes -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 20 Jan 1997 04:42:10 GMT -->
+<!--X-Message-Id: m0vmBQv&#45;00003mC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00041.html">Date Prev</A>][<A HREF="msg00043.html">Date Next</A>][<A HREF="msg00041.html">Thread Prev</A>][<A HREF="msg00045.html">Thread Next</A>][<A HREF="maillist.html#00042">Date Index</A>][<A HREF="threads.html#00042">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Wnn / Xwnmo / mule-19.33-delta woes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Abusers' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Wnn / Xwnmo / mule-19.33-delta woes</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 20 Jan 1997 13:34:09 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Wnn-zilla is back!  And it's hairier than ever!  And it _just_ _don't_ 
+_work_!  Sigh.
+
+It's almost enough to make one think about converting to Windowze 94.3 
+on your FM dial....  Obviously I'm losing it....  Yow!  Maybe MADONNA
+could SPICE UP this BOX!
+
+Back at the ranch...
+
+I'd like to hear about anybody's experience with Wnn/Uum/Xwnmo
+(especially the last).  As much detail as possible.  What worked and
+what didn't.  But if you simply exactly followed instructions for
+installing JE, for example, I don't need to know what those
+instructions were, I can find them as long as you give version
+numbers.  I'm not going to just go looking at lots of different
+versions of JE, though, since I know that some of them don't work.
+
+Here's my personal saga:
+
+The latest versions of Mule are being prepared for integration into
+the general Emacs 19.3x line.  They don't even mention Mule in the
+docs in mule-19.33 (I assume this will eventually get fixed :-)!  This 
+means that the old version-of-Mule-per-FEP approach is unacceptable.
+I don't know what is going to be done for consoles; I guess you'll
+have to run Mule inside of uum or some such environment.  For X, the
+XIM protocol is to be used.
+
+Years ago, I tried installing JE 0.9.5.  I installed both Wnn and
+Canna; Wnn never could make its user dictionaries (I have often had
+this problem on SunOS 4.1.3-JLE, too, it's Wnn, not Linux).  Nor did
+the Imake file work; I couldn't get the libraries set up so that Mule
+would compile at all.  Canna worked and worked with Mule.
+
+I've been using Canna with good results for about 3 years now (it has
+a smaller footprint than Wnn and more important, it worked on the
+first try with Mule; I have yet to get Wnn to work at all).  But Canna 
+doesn't support XIM.  Wnn (allegedly) does.
+
+I tried installing Wnn from the JE 0.9.8a distribution.  I had an wnn
+user left over from the last time, so that was no problem.  I had to
+run the "doinst.sh" scripts by hand, OK.  But the jserver couldn't
+open a socket.  OK, I put it in /etc/services, at port 601 like the
+Suns here.  Oops, wnn is not root so no privileged ports (&lt; 1024)
+allowed.  OK, we put it at 6680.  Now jserver can't open its
+dictionary files.  Yada.  Try uum anyway.  uum complains about being
+unable to make directories and user dictionary files.  uum is suid
+root!  uum won't go into henkan mode with C-\ or C-o or C-SPC (the
+keys that usually work on most FEPs), despite the fact that uumkey
+says that C-\ should work.  OK, jserver isn't working, so maybe that's
+the problem.  Try xwnmo anyway.  Can't connect to server.  Tell it to
+use localhost.  OK.  But with no client, can't do much.  Try
+mule-delta.  Mule-delta hangs (and eats lots of time according to
+top).
+
+Don't know what to do about those dictionaries or the Mule hang;
+anyway, I like to build things from scratch.  Get the Wnn4.2-tar.gz
+from etlport.etl.go.jp (it's the same size as the file at Omron, Wnn's
+home, so it's presumably a mirror).  Build Wnn.  Xwnmo doesn't build
+because of an inaccurate declaration in a source file (always a bad
+sign when prototypes for system calls appear in a source file!)  Fix
+it, pray that the millions of warning about comparing pointers to
+integers and implicit casts don't matter.
+
+uum now has no trouble connecting to jserver, but still won't go into
+henkan mode (and the uumkey file is seriously broken for xterms, lots
+of missing and/or illegal keycodes).  And it still can't build those
+user dictionaries.  Exit.  Run xwnmo.  Xwnmo builds the user
+dictionaries, thank you.  Try uum again, now uum hangs.  Kill uum, try
+mule-delta.  Mule-delta hangs.  Give up, and write to TLUG.  :-)
+
+I guess I'm just going to have to use Quail, the IM supplied with
+Mule-delta.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00045" HREF="msg00045.html">Re: Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00041.html">Various Info</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00043.html">Mule delta and FEPs</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00041.html">Various Info</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00045.html">Re: Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00042"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00042"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

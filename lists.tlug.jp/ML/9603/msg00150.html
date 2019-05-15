@@ -1,0 +1,224 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: [berman@example.com: LINUX on Alpha info] -->
+<!--X-From: TMatsumu@example.com -->
+<!--X-Date:  Tue, 26 Mar 1996 10:10:18 GMT -->
+<!--X-Message-Id: F0235831016B1673@&#45;SMF&#45; -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0u1RCD&#45;00mMNvC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00149.html">Date Prev</A>][<A HREF="msg00151.html">Date Next</A>][<A HREF="msg00147.html">Thread Prev</A>][<A HREF="msg00143.html">Thread Next</A>][<A HREF="maillist.html#00150">Date Index</A>][<A HREF="threads.html#00150">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: [berman@example.com: LINUX on Alpha info]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: [berman@example.com: LINUX on Alpha info]</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:TMatsumu@example.com">TMatsumu@example.com</A></strong></LI>
+<LI>Date: 26 Mar 96 19:06:00 EST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00147.html">m0u1RCD-00mMNvC@example.com</A>&gt;</LI>
+<LI>Priority: Urgent </LI>
+<LI>References: &lt;<A HREF="msg00147.html">m0u1RCD-00mMNvC@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Form: Reply
+Header: Adaptec
+Text: (18 lines follow)
+re:
+	Unless you use Linux,
+	and can recompile the whole lot to use the more efficient 64-bit
+	operations, or can afford to buy all your software again when the
+	vendor gets around to rebuilding them.  And even there, you really
+	need the 64-bit bus to buy any help from the 64-bit processor.
+
+Even with Linux on a fast 64-bit Alpha, I still think it's still the clock 
+speed that is going to give the big bang in performance.  You might think 
+that re-compiling your Linux source with a gcc Alpha 64-bit compiler is 
+going to make a native 64-bit application, or Ultrasparc app, but as you 
+specified, unless you write your graphics or financial app to utilize 64-bit 
+words, you're doing nothing to optimize the application.
+
+Running on, and Utilizing are not synonymous.
+
+
+
+Original text: (87 lines follow)
+&gt;From owner-tlug@example.com, on 3/26/96 2:21 PM:
+To: tlug@example.com
+
+Ted,
+
+   Virtually the running of any 16 or 32 bit native application will run 
+   slower [on a 64-bit machine.  
+
+Yup, that's what I was thinking of---assuming that you are using
+something like a 64-bit Windows that needs to be "thunked", or a
+cross-platform emulation.  (What 16-bit apps are there for the Alpha?)
+But otherwise, if there's a compatibility mode, I'm not aware of a
+performance hit; an 8MHz Pentium &lt;giggle&gt; runs DOS programs just as
+fast as an 8MHz 8086.  No?  Anyway, under Linux, that's not going to
+be a problem.  You recompile the ones that matter.
+
+   Where you are getting confused is clock speed.  Clock speed is what will 
+   improve performance of apps not written to utilize 64 bit word sizes.
+
+Apps don't have to be *written* to utilize 64-bit word sizes.  They
+need to be compiled to use them, in general.  (A big win for Linux, if
+it has the app you need.  For MS, you'll have to pay, and pay big, to
+upgrade to the new machine.)  Network apps are one counterexample:
+they *must* be written to use 32-bit ints (at least for addresses) and
+also have correct endianness.  As far as I know, GCC has been ported
+to the Alpha's 64-bit mode; if not, please tell me.  Most programs use
+the local machine's standard ints.
+
+To give you an example that would surely make a difference on a 64-bit
+bus at the same clock speed, and might make a difference on a 32-bit
+bus at the same clock speed (either way depending on how loads and
+stores are optimized) is the use of word-size memory moves in
+strcpy()-like functions.  This made a nearly 4:1 difference for the
+DJGPP libc string and memory move functions for large (&gt;1kB) block
+moves.  These functions get used in most user applications.
+
+Graphics (bitmaps, pixmaps), like net apps, must be rewritten to use
+different word sizes efficiently.  But most modern graphics libraries
+(ever looked at any X windows server source?) are extremely heavily
+parametrized to deal with word size and endianness.
+
+   George is probably not running any native 64 bit applications, so 
+therefore 
+   this affects George greatly.  Almost nothing will run faster with a 64bit 
+
+   processor change only.
+
+Depends on load/store optimization.  Unless you allow me the 64-bit
+bus at the same clock speed.  Then memory moves will go double-quick,
+improving most buffered software, which is just about everything that
+reads the disk or blits graphics to the screen.
+
+   DX-2, DX-4, these are not ;64 bit processors, these are double external 
+   clocked versions of the DX-xx family.  Where did you think they were 64 
+   bits?
+
+They are bus-restricted, though.  Some 64-bit ops will be faster, for
+example if you need big integers (a lot of financial software uses
+64-bit integers; this would probably need a rewrite, though---I doubt
+these programs are parametrized the way graphics software is).  It's
+quite reasonable to suppose that a 64-bit load or store on a 32-bit
+bus can be faster than two 32-bit accesses (only one instruction read
+and address decode; on second thought, probably not in practice since
+indexing will be done in a register on both architectures for block
+moves).  64 bits will not give you anywhere near the improvement that
+internal clock multiplication does.  But to the extent that it's
+faster than 32 bits, it helps a little even on the same bus and clock.
+
+As for slower, I just don't see it, unless you need to emulate a
+different processor family, or use thunks to interface a 64-bit app to
+a 32- or 16-bit library such as Windows, or vice-versa (for that
+mythical 64-bit Windows; or is Alpha Windows NT 64-bit?)
+
+Agreed, I can't see that the minor improvements I'm talking about will
+do anything for the typical user.  It's the clocks that matter, and
+will determine whether it's worth paying more.  Unless you use Linux,
+and can recompile the whole lot to use the more efficient 64-bit
+operations, or can afford to buy all your software again when the
+vendor gets around to rebuilding them.  And even there, you really
+need the 64-bit bus to buy any help from the 64-bit processor.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+Use Proportional Font: true
+Previous From: owner-tlug@example.com
+Previous To: tlug@example.com
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00147" HREF="msg00147.html">Re: [berman@example.com: LINUX on Alpha info]</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00149.html">Re: [berman@example.com: LINUX on Alpha info]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00151.html">ISDN uses for Linux [was something unrelated  ;-)   ]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00147.html">Re: [berman@example.com: LINUX on Alpha info]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00143.html">Re: [berman@example.com: LINUX on Alpha info]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00150"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00150"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

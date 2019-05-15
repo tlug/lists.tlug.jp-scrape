@@ -1,0 +1,253 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re:  mail&#45;slip numbers -->
+<!--X-From: "Howard R. Abbey" <hrabbey@example.com> -->
+<!--X-Date:  Sat, 28 Nov 1998 04:07:27 +0900 -->
+<!--X-Message-Id: 199811271906.EAA04060@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00711.html">Date Prev</A>][<A HREF="msg00713.html">Date Next</A>][<A HREF="msg00711.html">Thread Prev</A>][<A HREF="msg00713.html">Thread Next</A>][<A HREF="maillist.html#00712">Date Index</A>][<A HREF="threads.html#00712">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re:  mail-slip numbers</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re:  mail-slip numbers</strong></LI>
+<LI><strong>From</strong>: <strong>"Howard R. Abbey" &lt;<A HREF="mailto:hrabbey@example.com">hrabbey@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 28 Nov 1998 04:05:46 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:hrabbey@example.com">hrabbey@example.com</A></LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+This message is for those of you who would rather not see the way
+the TLUG majordomo server messes with Subject: lines of messages. 
+This was inspired by Steve Turnbull's Emacs code that was posted on
+tlug-admin, which I've included at the end for anyone interested
+who's not on tlug-admin.  First though, I've included the changes I
+made to my .procmailrc file to do the same thing, for those of us
+who don't use Emacs.  It seems to work, and hopefully won't destroy
+any e-mail.  :)   If you know of any way to improve it, let me
+know!
+
+----------- from my .procmailrc --------------------------------
+
+# Used in most of my procmail stuff, and needed below
+FORMAIL=/usr/bin/formail 
+
+# Tokyo Linux Users Group (TLUG) mailing list
+#     This one gets so much traffic, route it to it's own mailbox.
+#   Since it's in its own mailbox, don't need the tlug... in the Subject line.
+#   and since mutt threads messages, the number can be cut too.
+
+# Inspiration, and a starting regular expression from Yaseppochi-Gumi, 
+#  so I'll guess I'll GPL this as he did his.  ( GPL is our friend.)
+#; You may copy, use and modify this code as provided under the GNU
+#; Public License, version 2, or any more recent version at your
+#; option.  The GPL should be available via M-X describe-copying in
+#; any handy GNU Emacs variant (specifically including XEmacs).
+
+#; This code comes with NO WARRANTIES.  If it RPMs everything in
+#; /usr/local/bin, such is life.  Every attempt has been made to
+#; insure that it can't RPM anything, but this is LISP, [err procmail &amp; sh]
+#  Suggestions / bug fixes desired (and needed).  
+#	For instance, proper Japanese &amp; non-ascii handling.
+
+# Get the subject line for later use
+SUBJECT=`$FORMAIL -xSubject:`
+# For tlug-advocacy and tlug-admin
+:0
+*  ^(To:|Cc:).*(tlug-advocacy@example.com)|\
+   ^From.*(owner-tlug-advocacy@example.com)|\
+  ^(To:|Cc:).*(tlug-admin@example.com)|\
+   ^From.*(owner-tlug-admin@example.com)
+{
+   #   Cut out the [tlug-ETC: ####]'s from Subject line
+   #   and also any 'Re: Re:'s that result
+   NEWSUBJECT=`echo $SUBJECT|sed -e"s/\[tlug-\(admin: \|advocacy:\)[0-9]\+\] *//g" -e"s/^Re: Re:/Re:/g"`
+   #
+   #  Get the sequence number.  
+   #   I wouldn't have bothered, because this was a ROYAL pain, 
+   #	but it was done in the LISP emacs code I started with, so...
+   #       if anyone can clean up this UGLY mess, it would be appreciated
+   # After eliminating extra tlug-ad...'s, this eliminates every 
+   # non-numerical, non-space printable ASCII character.  I can't get rid 
+   # of trailing numbers, therefore I left spaces to separate them.
+   # Can eliminate tlug generated seqence numbers from replies.
+   # So the only extra numbers left are ones that were in the original subject
+   MSGNO=`echo $SUBJECT | sed -e"s/^\[tlug-\(admin\): //" -e"s/^\[tlug-\(advocacy\)://" -e"s/\] //" -e"s/\[tlug-\(admin: \|advocacy:\)[0-9]\+\] //g" -e"s/[!-/]\+//g" -e"s/[:-}]\+//g"`
+   #  Put the message number from above in a new header called X-TLUG-serial:,
+   #  save the old Subject as Old-Subject, and put in the new cleaner Subject:
+   :0
+   | $FORMAIL -A"X-Sorted: Bulk" -i"Subject: $NEWSUBJECT" -A"X-TLUG-serial: $MSGNO" &gt;&gt;$MAILDIR/incoming.computer.eml
+}
+:0
+* ^(To:|Cc:).*(tlug@example.com)|\
+   ^From.*(owner-tlug@example.com)
+{
+   # For mail to tlug, just cut 'tlug:' from Subject line
+   #   and also any 'Re: Re:'s that result
+   NEWSUBJECT=`echo $SUBJECT|sed -e"s/tlug: *//g" -e"s/^Re: Re:/Re:/g"`
+   :0
+   | $FORMAIL -A"X-Sorted: Bulk" -i"Subject: $NEWSUBJECT" &gt;&gt;$MAILDIR/incoming.computer.eml
+}
+
+-------------------------------------------
+In mail Re: mail-slip numbers, Stephen J. Turnbull wrote:
+&gt; ;; Copyright 1998 Yaseppochi-Gumi
+&gt; ;; You may copy, use and modify this code as provided under the GNU
+&gt; ;; Public License, version 2, or any more recent version at your
+&gt; ;; option.  The GPL should be available via M-X describe-copying in
+&gt; ;; any handy GNU Emacs variant (specifically including XEmacs).
+&gt; 
+&gt; ;; This code comes with NO WARRANTIES.  If it RPMs everything in
+&gt; ;; /usr/local/bin, such is life.  Every attempt has been made to
+&gt; ;; insure that it can't RPM anything, but this is LISP....
+&gt; 
+&gt; ;; Since this is called via vm-select-message-hook, buffer is already
+&gt; ;; narrowed to message boundaries.
+&gt; 
+&gt; (defun sjt-vm-clean-tlug-subjects-function ()
+&gt;   "Restore Subject header to pristine state intended by God and author."
+&gt;   ;; be polite
+&gt;   (save-excursion
+&gt;     ;; narrow to headers
+&gt;     (goto-char (point-min))
+&gt;     (search-forward "\n\n")
+&gt;     (backward-char 2)
+&gt;     (narrow-to-region (point-min) (point))
+&gt;     (goto-char (point-min))
+&gt;     ;; re-narrow to subject header, ok, this is yuguly
+&gt;     (if (not (re-search-forward "^Subject:" (point-max) t))
+&gt;         nil
+&gt;       (let ((start (point))
+&gt;             (data nil))
+&gt;         (forward-line 1)
+&gt;         ;; don't forget that headers can be continued!
+&gt;         (while (looking-at "[ \\t]") (forward-line 1))
+&gt;         (narrow-to-region start (point))
+&gt;         ;; search out the most recent sequence number ...
+&gt;         (goto-char (point-min))
+&gt;         (if (re-search-forward
+&gt;               "\\[tlug\\(-admin\\|-advocacy\\):[ \t][0-9]+\\][ \t]*" nil t)
+&gt; 	    (progn
+&gt; 	      ;; ... save it ...
+&gt; 	      (setq data (match-string 0))
+&gt; 	      (toggle-read-only)
+&gt; 	      ;; ... and "Hasta la vista, baby!"
+&gt; 	      (replace-match "" nil nil)
+&gt; 	      ;; now, snuff any others
+&gt; 	      (while (re-search-forward
+&gt;                       ;; this regexp should be a buffer-local variable
+&gt; 		      "\\[tlug\\(-admin\\|-advocacy\\):[ \t][0-9]+\\][ \t]*"
+&gt; 		      nil t)
+&gt; 		(replace-match "" nil nil))
+&gt; 	      ;; after three days...
+&gt; 	      (goto-char (point-max))
+&gt; 	      (insert (concat "X-TLUG-serial: " data "\n"))
+&gt; 	      (toggle-read-only)
+&gt;               ;; clean out summary, too
+&gt; 	      (vm-discard-cached-data)))))))
+&gt; 
+&gt; ;; Next I should make this buffer-local so that only TLUG folders
+&gt; ;; incur this barbarous overhead
+&gt; (add-hook vm-select-message-hook 'sjt-vm-clean-tlug-subjects-function)
+&gt; 
+		later,
+
+                        Howard Abbey
+-- 
+__(O_O)____(._.)____(\@example.com@/)____(o_o)____(^_^;)____(-.-)____(^o^)/~~___
+I From: Howard Measurement System site 1; Current Readings: 1 howard I
+I E-mail: hrabbey@example.com  Web: <A TARGET="_top" HREF="http://www.bitsmart.com/hrabbey">http://www.bitsmart.com/hrabbey</A> I
+I  "Do not rejoice that the spirits submit to you, but rejoice that  I
+I       your names are written in heaven." - Jesus - Luke 10:20.     I
+`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00711.html">RE: tlug: qpopper vs. tcpd</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00713.html">tlug: Time for action</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00711.html">RE: tlug: qpopper vs. tcpd</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00713.html">tlug: Time for action</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00712"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00712"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

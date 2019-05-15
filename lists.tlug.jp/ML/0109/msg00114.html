@@ -1,0 +1,218 @@
+<!-- MHonArc v2.4.9 -->
+<!--X-Subject: interface name &#45; module name assoc SOLVED -->
+<!--X-From-R13: "Epbgg [. Egbar" <ffgbarNsbb3.pbz> -->
+<!--X-Date: Tue, 4 Sep 2001 16:04:13 &#45;0700 (PDT) -->
+<!--X-Message-Id: Pine.GSO.4.05.10109041558250.451&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00113.html">Date Prev</a>][<a href="msg00115.html">Date Next</a>][<a href="msg00112.html">Thread Prev</a>][<a href="msg00115.html">Thread Next</a>][<a href="maillist.html#00114">Date Index</a>][<a href="threads.html#00114">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>interface name - module name assoc SOLVED</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong>&quot;Tokyo Linux Users' Group&quot; &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>interface name - module name assoc SOLVED</strong></li>
+<li><strong>From</strong>: <strong>&quot;Scott M. Stone&quot; &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 4 Sep 2001 16:04:13 -0700 (PDT)</li>
+<li>Content-Type: TEXT/PLAIN; charset=US-ASCII</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;sstone@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;1kyFTB.A.XLD.53Vl7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+Ok, well, I did have to write a kernel module, but this should work on all
+machines and reliably tell you &quot;what driver module is the owner of the
+interface&quot;, assuming you're using dynamic modules for your network
+drivers.  Amazingly enough, I did NOT manage to crash my system while
+testing this thing, I guess I got lucky this time :)
+
+compile with:
+
+gcc -Wall -DMODULE -D__KERNEL__ -DLINUX -o ndmassoc.o -c ndmassoc.c
+
+then,
+
+insmod ./ndmassoc.o
+
+then
+
+cat /proc/ndmassoc
+
+the number is the &quot;interface index number&quot; as seen by the kernel, if
+you're wondering.
+
+rmmod ndmassoc
+
+will get rid of it.
+
+
+--cut here--
+
+/* ndmassoc.c
+   this driver provides /proc/ndmassoc, which lets you associate network 
+   devices with
+   the module that owns it.
+
+   this code released under the terms of the GNU GPL
+   (C) 2001 by Scott Stone &lt;sstone@example.com&gt;
+
+   This module comes with NO WARRANTY - if it breaks your kernel, reboot and 
+   don't load it
+   again, or try it again, and be angry.  It's really up to you, but I take 
+   no responsibility either way.
+*/
+
+#include &lt;linux/kernel.h&gt;
+#include &lt;linux/module.h&gt;
+#if CONFIG_MODVERSIONS==1
+#define MODVERSIONS
+#include &lt;linux/modversions.h&gt;
+#endif
+#include &lt;linux/proc_fs.h&gt;
+#include &lt;linux/netdevice.h&gt;
+
+#define MODNAME &quot;ndmassoc&quot;
+#define VERSION &quot;1.0.0&quot;
+#define COPYRIGHT &quot;(C) 2001 by Scott Stone &lt;sstone@example.com&gt;&quot;
+#define MAX_INTERFACES 50
+#define BUFFER_SIZE ((MAX_INTERFACES * 80) + 1)
+
+int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer_length, int *eof, void *data) {
+	int len=0;
+	static char my_buffer[BUFFER_SIZE];
+	struct net_device *nd=NULL;
+	static int zz;
+
+	memset(my_buffer,0,BUFFER_SIZE);
+	strcpy(my_buffer,&quot;:Interfaces:\n&quot;);
+	if (offset &gt; 0) return 0;
+	for (zz=0;zz &lt; MAX_INTERFACES;zz++) {
+		nd=dev_get_by_index(zz);
+		if (nd &amp;&amp; (nd-&gt;owner) &amp;&amp; (nd-&gt;owner-&gt;name)) {
+			sprintf(my_buffer,&quot;%s%d:%s:%s\n&quot;,
+				my_buffer,
+				zz,
+				nd-&gt;name,
+				nd-&gt;owner-&gt;name);
+		}
+	}
+	len=strlen(my_buffer);
+	*buffer_location=my_buffer;
+	return len;
+}
+
+int init_module(void) {
+	struct proc_dir_entry *p=NULL;
+	printk(&quot;%s v%s - %s\n&quot;, MODNAME, VERSION, COPYRIGHT);
+	p=create_proc_entry(MODNAME,(S_IFREG | S_IRUGO),&amp;proc_root);
+	if (!p) {
+		printk(&quot;%s: error registering /proc/%s !!\n&quot;,MODNAME,MODNAME);
+		return -1;
+	}
+	p-&gt;read_proc=procfile_read;
+	p-&gt;data=NULL;
+	return 0;
+}
+
+void cleanup_module(void) {
+	remove_proc_entry(MODNAME,&amp;proc_root);
+	printk(&quot;%s unloaded successfully.\n&quot;,MODNAME);
+}
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00115" href="msg00115.html">Re: interface name - module name assoc SOLVED</a></strong>
+<ul><li><em>From:</em> &quot;roylo&quot; &lt;roylo@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00113.html">Re: FreeWNN questions</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00115.html">Re: interface name - module name assoc SOLVED</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00112.html">Re: KDE, unicode messege files, non-unicode font?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00115.html">Re: interface name - module name assoc SOLVED</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00114"><strong>Date</strong></a></li>
+<li><a href="threads.html#00114"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

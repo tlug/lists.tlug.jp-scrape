@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: ipv6 -->
+<!--X-From: Tobias Diedrich <ranma@example.com> -->
+<!--X-Date: Fri, 25 May 2001 15:18:13 +0200 -->
+<!--X-Message-Id: 20010525151813.A11876@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00677.html">Date Prev</A>][<A HREF="msg00679.html">Date Next</A>][<A HREF="msg00715.html">Thread Prev</A>][<A HREF="msg00690.html">Thread Next</A>][<A HREF="maillist.html#00678">Date Index</A>][<A HREF="threads.html#00678">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>ipv6</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>ipv6</strong></LI>
+<LI><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 25 May 2001 15:18:13 +0200</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Mail-Followup-To: Tobias Diedrich &lt;ranma@example.com&gt;,TLUG &lt;tlug@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;KEaf3D.A.LuF.gulD7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.3.12i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi all,
+
+I started playing a bit with IPv6 and have the following problem:
+
+I have two machines, both with global ipv6 addresses:
+
+|mobileunit:~# ifconfig eth0
+|eth0      Link encap:Ethernet  HWaddr 00:00:B4:4E:3C:FF
+|          inet addr:192.168.2.251  Bcast:192.168.2.255  Mask:255.255.255.0
+|          inet6 addr: fe80::200:b4ff:fe4e:3cff/10 Scope:Link
+|          inet6 addr: 1234:5678:abcd:ef02::251/64 Scope:Global
+|          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+|          RX packets:38342 errors:0 dropped:1 overruns:0 frame:608
+|          TX packets:24342 errors:0 dropped:0 overruns:0 carrier:0
+|          collisions:147 txqueuelen:100
+|          RX bytes:31555836 (30.0 Mb)  TX bytes:8373207 (7.9 Mb)
+|          Interrupt:11 Base address:0x300
+
+|router:~# ifconfig eth2
+|eth2      Link encap:Ethernet  HWaddr 00:80:48:DD:22:9D
+|          inet addr:192.168.2.1  Bcast:192.168.2.255  Mask:255.255.255.0
+|          inet6 addr: 1234:5678:abcd:ef02::1/64 Scope:Global
+|          inet6 addr: fe80::280:48ff:fedd:229d/10 Scope:Link
+|          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+|          RX packets:534082 errors:0 dropped:0 overruns:0 frame:0
+|          TX packets:413972 errors:0 dropped:0 overruns:0 carrier:0
+|          collisions:0 txqueuelen:100
+|          RX bytes:478651900 (456.4 Mb)  TX bytes:469715618 (447.9 Mb)
+|          Interrupt:10 Base address:0x2000
+ 
+
+ping6 ::1 works
+ping6 -I inetrface linklocaladdress works
+
+ping6 globaladdress gives:
+"From ::1: Destination unreachable: Address unreachable"
+if it's not the localhost
+
+|mobileunit:~# ping6 -n -c 1 router
+|
+|PING router(1234:5678:abcd:ef02::1) from 1234:5678:abcd:ef02::251 : 56 data bytes
+|From ::1: Destination unreachable: Address unreachable
+|
+|--- router ping statistics ---
+|1 packets transmitted, 0 packets received, +1 errors, 100% packet loss
+|
+|mobileunit:~# ping6 -n -c 1 mobileunit
+|
+|PING mobileunit(1234:5678:abcd:ef02::251) from ::1 : 56 data bytes
+|64 bytes from 1234:5678:abcd:ef02::251: icmp_seq=0 hops=64 time=319 usec
+|
+|--- mobileunit ping statistics ---
+|1 packets transmitted, 1 packets received, 0% packet loss
+|round-trip min/avg/max/mdev = 0.319/0.319/0.319/0.000 ms
+
+tcpdump shows that the other machine does not respond to neighbour discovery 
+
+|mobileunit:/home/ranma# tcpdump -i eth0 ip6
+|device eth0 entered promiscuous mode
+|tcpdump: listening on eth0
+|15:11:28.235018 mobileunit.ranmachan.dyndns.org &gt; ff02::1:ff00:1: icmp6: neighbor sol: who has router.ranmachan.dyndns.org
+|15:11:29.229701 mobileunit.ranmachan.dyndns.org &gt; ff02::1:ff00:1: icmp6: neighbor sol: who has router.ranmachan.dyndns.org
+|15:11:30.229708 mobileunit.ranmachan.dyndns.org &gt; ff02::1:ff00:1: icmp6: neighbor sol: who has router.ranmachan.dyndns.org
+
+/proc/sys/net/ipv6/conf/all/ settings are
+
+accept_ra=0
+accept_redirects=0
+autoconf=0
+forwarding=1
+router_solicitations=0
+
+on both hosts.
+
+Any ideas why it's not working ?
+
+-- 
+Tobias
+nya~ni ?
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00690" HREF="msg00690.html">Re: ipv6</A></STRONG>
+<UL><LI><EM>From:</EM> Tobias Diedrich &lt;ranma@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00677.html">Re: Linux and ADSL</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00679.html">Re: Japanese in Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00715.html">Re: Japanese in Linux</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00690.html">Re: ipv6</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00678"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00678"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

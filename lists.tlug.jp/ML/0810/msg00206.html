@@ -1,0 +1,267 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Trouble with external USB hard disk -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Tue, 21 Oct 2008 20:06:39 +0900 -->
+<!--X-Message-Id: 87od1etd6n.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 48FC2568.3030500@gol.com -->
+<!--X-Reference: 78d7dd350810200012n2e4668a9saa471fca1296abb4@mail.gmail.com -->
+<!--X-Reference: 48FC42F0.8010605@gol.com -->
+<!--X-Reference: 78d7dd350810200200w19b458abu826dfd66c758345@mail.gmail.com -->
+<!--X-Reference: 48FC5B1D.1010902@gol.com -->
+<!--X-Reference: 78d7dd350810200357p7299320bj14e38d3a5c4ac57e@mail.gmail.com -->
+<!--X-Reference: 48FC8477.40206@gol.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00205.html">Date Prev</a>][<a href="msg00207.html">Date Next</a>][<a href="msg00228.html">Thread Prev</a>][<a href="msg00216.html">Thread Next</a>][<a href="maillist.html#00206">Date Index</a>][<a href="threads.html#00206">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Trouble with external USB hard disk</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 21 Oct 2008 20:12:00 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Trouble%20with%20external%20USB%20hard%20disk">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Trouble with external USB hard disk</strong></li>
+<li>References: &lt;<a href="msg00172.html">48FC2568.3030500@gol.com</a>&gt;	&lt;<a href="msg00173.html">78d7dd350810200012n2e4668a9saa471fca1296abb4@mail.gmail.com</a>&gt;	&lt;<a href="msg00174.html">48FC42F0.8010605@gol.com</a>&gt;	&lt;<a href="msg00176.html">78d7dd350810200200w19b458abu826dfd66c758345@mail.gmail.com</a>&gt;	&lt;<a href="msg00178.html">48FC5B1D.1010902@gol.com</a>&gt;	&lt;<a href="msg00179.html">78d7dd350810200357p7299320bj14e38d3a5c4ac57e@mail.gmail.com</a>&gt;	&lt;<a href="msg00203.html">48FC8477.40206@gol.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>David Bernat writes:
+
+ &gt; root@example.com:~# mount
+ &gt; /dev/sda1 on / type ext3 (rw,relatime,errors=remount-ro)
+
+Note that this *is* rw, not ro, so your internal hard drive (partition
+1) mounted successfully.
+
+All of the others are virtual file systems that present various system
+facilities as if they were files, and are not directly relevant to
+this situation.  Your external hard drive is nowhere in sight; I
+suspect that if you look at dmesg (and/or /var/log/syslog,
+/var/log/messages, /var/log/kern.log, or something along those lines)
+you will see that failed mount recorded in the log.
+
+ &gt; &gt; &gt; and ls -l /etc; ls -l /root; Are they empty?
+
+Given the information above, the output you present is not surprising
+since /dev/sdb* haven't been mounted onto /etc and /root.
+
+ &gt; root@example.com:~# ls -l /root
+ &gt; total 4
+ &gt; -rw-r--r-- 1 root root 2970 2008-10-06 21:42 gparted_details.htm
+
+This is where you (or somebody) looked up documentation for gparted a
+couple of weeks ago.  Are you sure you've *never* played with
+/etc/fstab yourself?  Not even back in the days of &quot;Addled Arthropod&quot;
+or whatever it was?
+
+ &gt; &gt; &gt; You should type &quot;man mount&quot; for list of filesystems that mount supports.
+ &gt; &gt; &gt; Here we mount
+ &gt; &gt; &gt; mount -t vfat /dev/sdb1 /etc
+
+Good grief, what *were* we thinking??  50 lashes with an udon noodle!
+
+We do not want to mount something on /etc without checking to see if
+/etc is already populated with the system configs!  No standard system
+will try to do something like this because of the trouble it causes
+with mount (cf the error messages about /etc/mtab and /etc/mtab~) and
+user identification (cf the error messages from sudo).
+
+ &gt; root@example.com:~# mount -t vfat /dev/sdb1 /etc
+
+*You* in particular don't want to do that.  What you *know* at this
+point is that /etc (on /dev/sda1) is populated with lots and lots of
+stuff (which looks pretty familiar to the experienced eye).  Mounting
+something on to /etc will actually hide all that stuff.  (What &quot;mount
+... /etc&quot; does is cause the kernel to believe that the entity at /etc
+is *not* a directory, but rather a device that contains a file system,
+and instead of the directory on disk, the kernel should look in the
+root directory of the mounted file system for whatever it's after.
+&quot;mount&quot; does not care if there's anything already there.[1])
+
+ &gt; can't link lock file /etc/mtab~: Operation not permitted (use -n flag to
+ &gt; override)
+
+This is a confusing error, almost certainly due to the fact that
+you've just mounted /dev/sdb1 in a place that will interfere with the
+kernel finding /etc/mtab~ and /etc/mtab (into which it would like to
+write the information about mounted filesystems, which it just
+changed).  The mount was successful, but now you have a broken system,
+because (as Ken B pointed out, IIRC) just about everything of interest
+stores config and sometimes status information in /etc.
+
+Once more, don't do that.
+
+ &gt; root@example.com:~# mount -t vfat /dev/sdb1 /etc -n
+ &gt; mount: /dev/sdb1 already mounted or /etc busy
+
+See?  Already mounted.  I'm mildly surprised you didn't get a syntax
+error for that trailing &quot;-n&quot;, but whatever....
+
+What you almost certainly want to do now is delete the lines
+
+/root/sdb5 /root auto users,atime,noauto,rw,nodev,noexec,nosuid 0 0
+/dev/sdc1 /home auto users,atime,auto,rw,nodev,noexec,nosuid 0 0
+/dev/sdb1 /etc auto users,atime,auto,rw,nodev,noexec,nosuid 0 0
+
+from /etc/fstab (you'll need to be root), and add
+
+/dev/sdb1 $SOMEDIR auto users,atime,auto,rw,nodev,noexec,nosuid 0 0
+
+where $SOMEDIR is an appropriate place to put the contents of your
+external drive.  Possibly /home, if there's nothing in it right now.
+If you find you are missing some data, it's probably in /dev/sdb5.
+To find out, do
+
+mkdir /tmp/foomnt
+mount -t auto /dev/sdb5 /tmp/foomnt
+
+and if that succeeds, you can do
+
+ls /tmp/foomnt
+
+to find out what's in the file system, if anything.  Then figure out
+where to put it in the file system and add an appropriate line to
+/etc/fstab to make it happen, then
+
+umount /tmp/foomnt
+rmdir /tmp/foomnt
+mount /dev/sdb5
+
+If it doesn't succeed, then you probably don't have a partition 5 on
+the external hard drive.
+
+ &gt; Hardy had no trouble mounting the disk prior to the upgrade last week.
+ &gt; What broke in the upgrade? Anybody know?
+
+I don't &quot;know&quot;, but I have my suspicions.  Let me put it this way:
+
+I recommend you should *not* report a bug against Hardy, unless a
+search of the bug tracker shows that somebody else has reported a
+similar experience, or you can be a lot more specific about how Hardy
+led you down the garden path.
+
+Footnotes: 
+[1]  Mounting over a directory with non-null contents turns out to be
+occasionally useful, and mounting file systems is something that is
+rarely enough done that it's unlikely to cause confusion in a
+well-configured system ... which yours isn't at this point.
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00216" href="msg00216.html">Re: [tlug] Trouble with external USB hard disk: /etc/fstab was	mucked; simply and don't fight defaults</a></strong>
+<ul><li><em>From:</em> jep200404</li></ul></li>
+<li><strong><a name="00218" href="msg00218.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00172" href="msg00172.html">[tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+<li><strong><a name="00173" href="msg00173.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00174" href="msg00174.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+<li><strong><a name="00176" href="msg00176.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00178" href="msg00178.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+<li><strong><a name="00179" href="msg00179.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+<ul><li><em>From:</em> David Bernat</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00205.html">Re: [tlug] Trouble with external USB hard disk: /root/sdb5; copy	and paste; corrected commands</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00207.html">Re: [tlug] Trouble with external USB hard disk: /dev/scd0 versus	/dev/sdc</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00228.html">Re: [tlug] Trouble with external USB hard disk</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00216.html">Re: [tlug] Trouble with external USB hard disk: /etc/fstab was	mucked; simply and don't fight defaults</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00206"><strong>Date</strong></a></li>
+<li><a href="threads.html#00206"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

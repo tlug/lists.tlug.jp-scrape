@@ -1,0 +1,155 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Re: Weird sorting of japanese filenames -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 02 May 2007 13:19:13 +0900 -->
+<!--X-Message-Id: 878xc7hmr2.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20070501100104.GA20069@melchior.yamamaya.is&#45;a&#45;geek.org -->
+<!--X-Reference: 87fy6ghhcd.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Reference: 20070501122318.GA21535@melchior.yamamaya.is&#45;a&#45;geek.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00019.html">Date Prev</a>][<a href="msg00021.html">Date Next</a>][<a href="msg00011.html">Thread Prev</a>][<a href="msg00013.html">Thread Next</a>][<a href="maillist.html#00020">Date Index</a>][<a href="threads.html#00020">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Weird sorting of japanese filenames</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 02 May 2007 13:29:05 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re:%20Weird%20sorting%20of%20japanese%20filenames">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Weird sorting of japanese filenames</strong></li>
+<li>References: &lt;<a href="msg00009.html">20070501100104.GA20069@melchior.yamamaya.is-a-geek.org</a>&gt;	&lt;<a href="msg00010.html">87fy6ghhcd.fsf@uwakimon.sk.tsukuba.ac.jp</a>&gt;	&lt;<a href="msg00011.html">20070501122318.GA21535@melchior.yamamaya.is-a-geek.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Tobias Diedrich writes:
+
+ &gt; Indeed &quot;LC_COLLATE=ja_JP.UTF-8 ls&quot; does help. I wonder why I didn't
+ &gt; think of trying that myself...
+
+Because you were never bitten by the &quot;LANG=en_US ls [A-Z]*&quot; bug,
+perhaps?  (The bug is that in that locale, the collation order is
+&quot;AaBbCc...Zz&quot;, so the range [A-Z] includes all lowercase ASCII except
+&quot;z&quot;.)
+
+ &gt; I just expected that with utf-8 sorting decisions would only marginally
+ &gt; differ between locales...
+
+No, IIRC the Japanese locale sorts in JIS order, which is more or less
+50 onjun through JIS X 0208, while Chinese locales sort according to
+bushu and stroke count.  Radically different!
+
+You see, LC_COLLATE is one of the reasons why locales require so much
+space and effort in Your Linux System.  Sorting is table-driven, not
+code-point-driven.  Probably what happens is that all of the
+characters not in the current LC_COLLATE table get the same value,
+lower precedence than any character in the table.  So what you get is
+a sort which gives higher precedence to a string whose first Latin
+character is early, and when the first Latin position is the same,
+sorts according to the locale's table.  See strxfrm(3) (and on Linux
+systems, strfry(3), which may have something to do with Dave M G's
+Firefox mojibake woes ;) for more information.  You'll have to read
+between the lines, it *specifies* strxfrm rather than telling you how
+it's used.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00009" href="msg00009.html">[tlug] Weird sorting of japanese filenames</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+<li><strong><a name="00010" href="msg00010.html">[tlug] Weird sorting of japanese filenames</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00011" href="msg00011.html">[tlug] Re: Weird sorting of japanese filenames</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00019.html">[tlug] GREAT NEWS</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00021.html">Re: [tlug] GREAT NEWS</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00011.html">[tlug] Re: Weird sorting of japanese filenames</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00013.html">[tlug] Re: &quot;Long Live Portable OGG-Players&quot;</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00020"><strong>Date</strong></a></li>
+<li><a href="threads.html#00020"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

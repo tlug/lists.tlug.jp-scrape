@@ -1,0 +1,218 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Two Qs re translation project -->
+<!--X-From: "Frank Bennett (=?iso&#45;2022&#45;jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Sat, 29 Jan 2000 16:12:47 +0900 -->
+<!--X-Message-Id: 20000129161208.A924@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000701bf6968$d3c9db80$10210685@example.com&#45;325&#45;lt.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00205.html">Date Prev</A>][<A HREF="msg00207.html">Date Next</A>][<A HREF="msg00197.html">Thread Prev</A>][<A HREF="msg00205.html">Thread Next</A>][<A HREF="maillist.html#00206">Date Index</A>][<A HREF="threads.html#00206">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Two Qs re translation project</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Two Qs re translation project</strong></LI>
+<LI><strong>From</strong>: <strong>"Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 29 Jan 2000 16:12:08 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00197.html">000701bf6968$d3c9db80$10210685@example.com</A>&gt;; from Frank Bennett on Fri, Jan 28, 2000 at 05:22:33PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00197.html">000701bf6968$d3c9db80$10210685@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I've installed freeWAIS-sf with Baba-san's Japanese patch,
+and run a simple test against a grep for the same term.
+Here are the results, if anyone is interested.  The scripts
+I used, both of them Tcl wrappers, are reproduced below.
+
+One thing that emerged is that they turn up different
+results.  I was searching for the work "saibansho" (court),
+and the Kakasi word-splitter (correctly) leaves
+"saikosaibansho" (Supreme Court) as one word unsplit.
+One section (section 3) of the new Code of Civil
+Procedure (the text base used for the search) contains
+this term, and no instance of "saibansho" on its own.
+WAIS passed this over.  Grep picked it up.  I'm not sure
+yet which is the better behavior for us, but it's a
+difference, anyway.
+
+There is a pretty important difference in performance:
+
+*****
+
+bash-2.01# time ./TEMP.grep
+
+[snip]
+
+Hits: 237
+
+real    0m3.096s
+user    0m1.730s
+sys     0m1.370s
+
+*****
+
+bash-2.01# time ./TEMP.wais
+
+[snip]
+
+Hits: 236
+
+real    0m0.702s
+user    0m0.630s
+sys     0m0.080s
+
+bash-2.01# 
+
+*****
+
+Here are the scripts ...
+
+("grep" suffers extra loss in the way the script is
+written, but Tcl wouldn't recognize a command-line wildcard
+under the "exec" command, so I had to make a list of files
+and tackle them one at a time.)
+
+*****
+
+#!/usr/bin/tclsh
+#
+# For grep ...
+#
+set ifh [open "|find ./civpro/ -mindepth 1 -maxdepth 1 -type f" r]
+set count 0
+while {[gets $ifh line]&gt;-1} {
+  catch {exec grep -l --extended-regexp \(^|/\)\(\[^/\]\[^/\]\)*裁判所 $line} error
+  if {![regexp process $error]} {
+#    puts [file tail $error]
+incr count
+  }
+}
+puts \n\[snip\]\n
+puts "Hits: $count"
+
+*****
+
+#!/usr/bin/tclsh
+#
+# For WAIS ...
+#
+set ifh [open "|waisq -s /.commons/waisindexes/ \
+            -m 2000 \
+            -S civpro_ja.src \
+            -f - \
+            裁判所 | \
+          waisq -g" r]
+set count 0
+while {[gets $ifh line]&gt;-1} {
+  if {[regexp ":headline \\\"(\[a-zA-Z0-9=_-\]*)" $line ignore file]} {
+#   puts $file
+   incr count
+  }
+}
+puts \n\[snip\]\n
+puts "Hits: $count"
+
+*****
+
+And, uh ... that's it.
+
+Cheers,
+Frank Bennett
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00197" HREF="msg00197.html">RE: tlug: Two Qs re translation project</A></STRONG>
+<UL><LI><EM>From:</EM> "Frank Bennett" &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00205.html">FW: tlug: Two Qs re translation project</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00207.html">tlug: mysterious X core / namazu</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00197.html">RE: tlug: Two Qs re translation project</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00205.html">FW: tlug: Two Qs re translation project</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00206"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00206"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

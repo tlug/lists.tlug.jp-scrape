@@ -1,0 +1,331 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] measureTemp_hot.c: release early, release often . . . . . . . . . . (was Re: just a quick note... more to come later :)) -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Fri, 28 Jul 2006 01:55:34 +0900 -->
+<!--X-Message-Id: 20060727125530.0e46af81.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20060727081940.GM5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00428.html">Date Prev</a>][<a href="msg00430.html">Date Next</a>][<a href="msg00457.html">Thread Prev</a>][<a href="msg00430.html">Thread Next</a>][<a href="maillist.html#00429">Date Index</a>][<a href="threads.html#00429">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] measureTemp_hot.c: release early, release often . . . . . . . . . . (was Re: just a quick note... more to come later :))</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Jul 2006 12:55:30 -0400</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureTemp_hot.c:%20release%20early%2C%20release%20often%20.%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] measureTemp_hot.c: release early, release often . . . . . . . . . . (was Re: just a quick note... more to come later :))</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureTemp_hot.c:%20release%20early%2C%20release%20often%20.%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">20060726125907.GH5111@example.com</a>&gt;	&lt;<a href="mailto:20060727081940.GM5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureTemp_hot.c:%20release%20early%2C%20release%20often%20.%20.%20.%20.%20.%20.%20.%20.%20.%20.%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">20060727081940.GM5111@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Thu, 27 Jul 2006 10:19:40 +0200 Michal Hajek &lt;hajek1@example.com&gt; wrote:
+
+&gt; [1] <a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/pec/">http://material.karlov.mff.cuni.cz/people/hajek/pec/</a>
+
+measureTemp_hot.c
+
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;string.h&gt;
+#include &lt;getopt.h&gt;
+#include &lt;gpib/ib.h&gt;
+#include &lt;sys/timeb.h&gt;
+#include &lt;time.h&gt;
+#include &lt;math.h&gt;
+#include &quot;lojza.h&quot;
+
+/*^^^ maybe constants should go in a header file, perhaps kcoefficients_inverse.h */
+
+/* data from <a  rel="nofollow" href="http://srdata.nist.gov/its90/type_k/kcoefficients_inverse.html">http://srdata.nist.gov/its90/type_k/kcoefficients_inverse.html</a> */
+/* ^^^ nice reference! */
+
+#define A0 (-0.176004136860E-01)
+#define A1 ( 0.389212049750E-01)
+#define A2 ( 0.185587700320E-04)
+#define A3 (-0.994575928740E-07)
+#define A4 ( 0.318409457190E-09)
+#define A5 (-0.560728448890E-12)
+#define A6 ( 0.560750590590E-15)
+#define A7 (-0.320207200030E-18)
+#define A8 ( 0.971511471520E-22)
+#define A9 (-0.121047212750E-25)
+
+/* ^^^ I'm uncomfortable with the following constant names being
+*  lower-case. (Making them variables would be a feeble workaround)
+*  Having such similar names with upper-case names is also uncomfortable.
+*  Good luck choosing better names */
+
+#define a0 ( 0.118597600000E+00)
+#define a1 (-0.118343200000E-03)
+#define a2 ( 0.126968600000E+03)
+
+#define B0 (  0.000000E+00)
+#define B1 (  2.508355E+01)
+#define B2 (  7.860106E-02)
+#define B3 ( -2.503131E-01)
+#define B4 (  8.315270E-02)
+#define B5 ( -1.228034E-02)
+#define B6 (  9.804036E-04)
+#define B7 ( -4.413030E-05)
+#define B8 (  1.057734E-06)
+#define B9 ( -1.052755E-08)
+
+#define C0 (-1.318058E+02)
+#define C1 ( 4.830222E+01)
+#define C2 (-1.646031E+00)
+#define C3 ( 5.464731E-02)
+#define C4 (-9.650715E-04)
+#define C5 ( 8.802193E-06)
+#define C6 (-3.110810E-08)
+#define C7 ( 0.000000E+00)
+#define C8 ( 0.000000E+00)
+#define C9 ( 0.000000E+00)
+
+double measureTemp_hot(double tc)
+{
+   char buffer[MAX_KEITHLEY_REPLY_LEN+1];
+
+   float e2;
+   float e1; /* thermocouple voltage */
+   float e;
+   float th;
+
+   struct timeval time_now;
+
+   /* MERENI VZORKU */
+
+   /* configure K706 */
+
+   e2 = A0
+   + A1*powf(Tc,1)
+   + A2*powf(Tc,2)
+   + A3*powf(Tc,3)
+   + A4*powf(Tc,4)
+   + A5*powf(Tc,5)
+   + A6*powf(Tc,6)
+   + A7*powf(Tc,7)
+   + A8*powf(Tc,8)
+   + A9*powf(Tc,9)
+   + a0*expf(a1 * powf(Tc-a2,2));
+
+   ibwrtstr(K706Ud,&quot;C10C13X&quot;);
+   ibwrtstr(K2182Ud,&quot;*trg&quot;);
+
+   ibwrtstr(K2182Ud,&quot;:sense:data:fresh?&quot;);
+   ibrd(K2182Ud,buffer,MAX_KEITHLEY_REPLY_LEN);
+   gettimeofday(&amp;time_now,NULL);
+   buffer[ibcnt]='\0';
+   ibwrtstr(K706Ud,&quot;N10N13X&quot;);
+   e1 = 1000*atof(buffer);
+   e = e1 + e2;
+
+   if (e&lt;=20.644)
+      th = B0
+      + B1*powf(e,1)
+      + B2*powf(e,2)
+      + B3*powf(e,3)
+      + B4*powf(e,4)
+      + B5*powf(e,5)
+      + B6*powf(e,6)
+      + B7*powf(e,7)
+      + B8*powf(e,8)
+      + B9*powf(e,9);
+   else
+      th = C0
+      + C1*powf(e,1)
+      + C2*powf(e,2)
+      + C3*powf(e,3)
+      + C4*powf(e,4)
+      + C5*powf(e,5)
+      + C6*powf(e,6)
+      + C7*powf(e,7)
+      + C8*powf(e,8)
+      + C9*powf(e,9);
+
+   printf(&quot;t= %d.%06ld s \t T= %.2f C \n&quot;
+   , (int)time_now.tv_sec,time_now.tv_usec,th);
+   /* ^^^ why case to an int? why not allow big values: */
+   printf(&quot;t= %ld.%06ld s \t T= %.2f C \n&quot;
+   , time_now.tv_sec,time_now.tv_usec,th);
+
+   /* ^^^ also, beware of hard tabs. They are not portable. 
+   *  different programs and printers do different things with them */
+
+   return th;
+}
+
+#if 0
+don't arbitrarily restrict your constants to float.
+You loose accuracy and speed, since all floats are converted to doubles
+before expressions are evaluated.
+avoid super long lines.
+Keep in mind that the = part of &lt;= in E&lt;=20.644,
+has little practical meaning because of the nature of
+round off errors in floating point math.
+
+It later on you are really concerned about execution speed,
+consider eliminating the use of powf() function.
+If it uses logarithms, it might be slow.
+consider replacing the formulas that use powf() with a loop
+that does simple (albeit repeated) multiplication.
+Here's the incomplete ideas:
+
+   const double c_coefficient_table[COEFFICIENT_TABLE_LEN]={
+      -1.318058E+02,
+       4.830222E+01,
+      -1.646031E+00,
+       5.464731E-02,
+      -9.650715E-04,
+       8.802193E-06,
+      -3.110810E-08,
+       0.000000E+00,
+       0.000000E+00,
+       0.000000E+00
+   };
+
+   if (e&lt;=20.644)
+      coefficient_table=b_coefficient_table;
+   else
+      coefficient_table=c_coefficient_table;
+
+   or
+
+   coefficient_table = (e&lt;=20.644) ? b_coefficient_table : c_coefficient_table;
+
+   th=0.0;
+   product=1.0;
+   for (i=0;i&lt;COEFFICIENT_TABLE_LEN;i++) {
+      th+=coefficient_table[i]*product;
+      product*=e;
+   }
+
+   or
+
+   double *p;
+
+   p = (e&lt;=20.644) ? b_coefficient_table : c_coefficient_table;
+
+   th=0.0;
+   product=1.0;
+   for (i=0;i&lt;COEFFICIENT_TABLE_LEN;i++) {
+      th+=*p++*product;
+      product*=e;
+   }
+
+In this case, the constants would be stored in variables,
+so the names would be lower case.
+
+Whatever you do, don't worry about speed too soon.
+Make your code clear first.
+Maximize clarity.
+#endif
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00430" href="msg00430.html">Re: [tlug] measureTemp_hot.c: release early, release often</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00411" href="msg00411.html">[tlug] just a quick note... more to come later :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00428.html">[tlug] lojza.h: release early, release often . . . . . . . . (was Re: just a quick note... more to come later :))</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00430.html">Re: [tlug] measureTemp_hot.c: release early, release often</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00457.html">Re: [tlug] Bugger Job Security</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00430.html">Re: [tlug] measureTemp_hot.c: release early, release often</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00429"><strong>Date</strong></a></li>
+<li><a href="threads.html#00429"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

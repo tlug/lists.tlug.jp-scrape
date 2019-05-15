@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] smbfs &#38; kana/kanji -->
+<!--X-From-R13: Sqjneq [vqqyrgba <rqjneqzvqqyrgbaNx3.qvba.ar.wc> -->
+<!--X-Date: 03 Aug 2003 01:36:11 +0900 -->
+<!--X-Message-Id: 1059842171.2156.52.camel@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1059721537.1022.45.camel@example.com&#45;linux -->
+<!--X-Reference: 3F2A4C24.6070603@example.com -->
+<!--X-Reference: 1059739132.1022.60.camel@example.com&#45;linux -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00007.html">Date Prev</a>][<a href="msg00009.html">Date Next</a>][<a href="msg00005.html">Thread Prev</a>][<a href="msg00009.html">Thread Next</a>][<a href="maillist.html#00008">Date Index</a>][<a href="threads.html#00008">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] smbfs &amp; kana/kanji</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 03 Aug 2003 01:36:11 +0900</li>
+<li><strong>From</strong>: <strong>Edward Middleton &lt;<A HREF="mailto:edwardmiddleton@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20smbfs%20%26%20kana%2Fkanji">edwardmiddleton@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] smbfs &amp; kana/kanji</strong></li>
+<li>References: &lt;<a href="msg00001.html">1059721537.1022.45.camel@example.com</a>&gt; &lt;<a href="msg00003.html">3F2A4C24.6070603@example.com</a>&gt;  &lt;<a href="msg00004.html">1059739132.1022.60.camel@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Fri, 2003-08-01 at 20:58, Neil Bortnak wrote:
+&gt; Hi,
+&gt; 
+&gt; I don't think that's it. Most of my tests were conducted on the Japanese
+&gt; version of knoppix which displays the kana just fine. Also, at least
+&gt; some portion of the filenames were being received as question marks
+&gt; directly from the server because unicode transport failed for one reason
+&gt; or another.
+&gt; 
+&gt; Do you have kana displayed on filenames you are accessing over a
+&gt; CIFS/SMB link to a non-samba server? I would have thought this to be an
+&gt; amazingly common setup
+
+I will try to explain how to get Japanese samba shares working.
+
+Firstly, filenames can be encoded in a range of character sets EUC_JP
+JIS, Shift_JIS, Unicode etc.  You need to know which one your filenames
+are encoded in.  This can be done by listing them using ls in a terminal
+that supports multiple character sets e.g. gnome-terminal
+
+#LANG=ja_JP gnome-terminal
+
+set the encoding to EUC-JP using the menu
+
+テーミナル&gt;Character Coding&gt;EUC-JP
+
+#ls  --show-control-chars 
+
+if the characters display they are in EUC-JP.  Step thought the
+encodings till you get a match.  This is the encoding used to store the 
+file names on your Linux box. For samba purposes Unicode is probably the
+best choice because samba my have some problems with other encodings.
+
+To the best of my knowledge windows will always use Shift_JIS to encode
+Japanese filenames.
+
+Samba will do the conversion automatically for you if you set.
+
+        coding system = UTF8
+        client code page = 932
+
+where UTF8 is the character set of the Linux filenames. It is explained
+in the smb.conf man page.
+from the manual
+
+coding system (G)
+	This parameter is used to determine how incoming Shift-JIS 	Japanese
+characters are mapped from the incoming client code 	page used by the
+client, into file names in the UNIX filesystem.
+        Only  useful  if client code page is set to 932 (Japanese Shift-
+        JIS). The options are
+ 
+With this set correctly the filenames should display correctly under
+Windows and Linux.
+
+Edward Middleton
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00009" href="msg00009.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+<ul><li><em>From:</em> simon colston</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">[tlug] smbfs &amp; kana/kanji</a></strong>
+<ul><li><em>From:</em> Neil Bortnak</li></ul></li>
+<li><strong><a name="00003" href="msg00003.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+<ul><li><em>From:</em> Guy W</li></ul></li>
+<li><strong><a name="00004" href="msg00004.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+<ul><li><em>From:</em> Neil Bortnak</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00007.html">Re: [tlug] hard disk access in every in 10s</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00009.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00005.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00009.html">Re: [tlug] smbfs &amp; kana/kanji</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00008"><strong>Date</strong></a></li>
+<li><a href="threads.html#00008"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

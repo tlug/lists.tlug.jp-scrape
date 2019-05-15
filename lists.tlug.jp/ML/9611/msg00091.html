@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: SJIS & HTML &#45; potential trouble? -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 20 Nov 1996 00:40:45 GMT -->
+<!--X-Message-Id: m0vQ0dC&#45;00001OC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199611200000.LAA00937@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00090.html">Date Prev</A>][<A HREF="msg00092.html">Date Next</A>][<A HREF="msg00090.html">Thread Prev</A>][<A HREF="msg00092.html">Thread Next</A>][<A HREF="maillist.html#00091">Date Index</A>][<A HREF="threads.html#00091">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: SJIS &amp; HTML - potential trouble?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: SJIS &amp; HTML - potential trouble?</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 20 Nov 96 09:35 JST</LI>
+<LI>CC: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-reply-to: &lt;<A HREF="msg00090.html">199611200000.LAA00937@example.com</A>&gt; (jwb@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; Why on earth would SJIS be dear to anyone's heart??
+
+:-)  Bill Gates must love the wonderful joke he played on thousands of 
+hapless nihongo programmers.
+
+    Jim&gt; Well I can quite imagine some Americo-centric programmer
+    Jim&gt; stumbling on codes &gt; 128. OTOH, do they really write parsers
+    Jim&gt; that could not handle the ISO-8859-1 codes wich are very
+    Jim&gt; widely used in Europe?
+
+Be a little fair; almost nobody writes code that isn't 8-bit clean
+anymore; the big problem was that "8-bit-dirty" was embedded in lots
+and lots of libc.a's.  Oriental languages which are inherently 2-byte
+*must* by the RFC mix with single byte ISO646 ("bare ASCII", you might 
+say), and that is surely hairy.
+
+    Jim&gt; Seriously, though, people writing parsers, etc, should be
+    Jim&gt; producing code which is: (a) configurable for a series of
+    Jim&gt; muti-byte codes with the MSB set and not set (b) able to
+    Jim&gt; handle the UTF codings of Unicode/ISO10646
+
+You don't ask for much, do you?  I've looked at the source for Mule,
+and it's hairy; no, let me say it's positively furry.
+
+Let's at least say that Netscape 2.0 international beta regularly
+choked in documents including JIS and EUC codes both in auto-code mode
+and in assume JIS mode.  To its credit, it always (in my experience)
+retrained to the correct mode after a couple of bytes, but I lost a
+few paragraph markers (I forget what "&lt;p" is in escapeless JIS) and
+gained many extras that way.
+
+I'm not sure what exactly is legal in HTML, but I suspect you need to
+read RFC-MIME as well as RFC-HTML.  I wouldn't be surprised if a
+strict reading of the RFCs led to the conclusion that each passage in
+an oriental language needs to be embedded in a separate part of a MIME
+multi-part document.
+
+What really needs to be done is a solid GPL-(or freer)-license lexing
+library which does all the above and also is extensible for national
+standards which are old and incompatible with the Unicode standard.
+This is not a project I'm willing to attempt at present, though.
+Presumably the Mule internal routines could be adapted, or jcode.c
+converted into a library (although the latter is just as Japan-centric 
+as 7-bit ASCII is Americo-centric).
+
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; "Proper" handling of SJIS (an oxymoron if there ever was one)
+    Jim&gt; involves a lot of checking for valid/invalid sequences, as
+    Jim&gt; you have to cater for the unspeakable hankaku katakana as
+
+"Unspeakable?"  Is this a technical linguistics term?  :-)
+
+    Jim&gt; well. Trying to scan backwards, e.g. in a WP program, through
+    Jim&gt; some raw SJIS sends you grey. Usually developers do something
+    Jim&gt; like holding everything as 16-bit codes internally.
+
+Mule uses 32-bit codes, mostly!!
+
+    Jim&gt; (No excuse for bad parsing, though.)
+
+I've tried to write lex code to reproduce Ken Lunde's jcode.c; it's
+not easy unless you're looking at Ken's source.
+
+The author of xjdic should know this, though :-)
+
+Let's face it, the Japanese language is fundamentally just an attempt
+to postpone the day when Turing's Test is passed.  What you're saying
+is that all programmers need to learn Japanese *and* Japanese
+character codesets?
+
+Realistically, we're going to have to accept that Japanese is not
+going to be well-handled by most software for some time to come, until 
+most authors are using Unicode-emitting tools.  Right.  You really
+expect that on your Sharp Internet-capable wapuro?  Maybe, but...
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00090" HREF="msg00090.html">Re: SJIS &amp; HTML - potential trouble?</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00090.html">Re: SJIS &amp; HTML - potential trouble?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00092.html">Re: SJIS &amp; HTML - potential trouble?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00090.html">Re: SJIS &amp; HTML - potential trouble?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00092.html">Re: SJIS &amp; HTML - potential trouble?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00091"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00091"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

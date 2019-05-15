@@ -1,0 +1,191 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] [samba] Ubuntu <&#45;> MacOS connectivity -->
+<!--X-From-R13: "Pehab Dnbhyg" <oenbhygNtznvy.pbz> -->
+<!--X-Date: Sat, 05 Jul 2008 20:27:14 +0900 -->
+<!--X-Message-Id: c0f4e2b00807050427p3270494dp1a68b571f7e968ea@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00029.html">Date Prev</a>][<a href="msg00031.html">Date Next</a>][<a href="msg00018.html">Thread Prev</a>][<a href="msg00032.html">Thread Next</a>][<a href="maillist.html#00030">Date Index</a>][<a href="threads.html#00030">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] [samba] Ubuntu &lt;-&gt; MacOS connectivity</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 5 Jul 2008 20:27:12 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Bruno Raoult&quot; &lt;<a href="mailto:braoult@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%5Bsamba%5D%20Ubuntu%20%3C-%3E%20MacOS%20connectivity">braoult@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] [samba] Ubuntu &lt;-&gt; MacOS connectivity</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi all,
+
+You maybe remember my previous questions about my terastation, where
+we ended up discussing about bridging/nating, etc...
+
+Pfff... No way, I resigned to setup NAT, and it was the only
+possibility (for different reasons explained before).
+
+So the new setup is simple:
+  Terastation &lt;---eth---&gt; Ubuntu &lt;--- wifi ---&gt; world (lan, in fact)
+
+On the lan, there is my wife's MacOs. I have so many issues, that I
+don't know where to start from :-(
+
+Let's try: Terastation shares are samba shares. Why not.
+So I mount these shares on my linux box, with entries like that in fstab:
+//terastation/music      /tera/music  cifs
+credentials=/home/br/.smbcredentials-bruno,rw,charset=utf8,setuids,file_mode=0666,dir_mode=0777
+0 0
+
+My current plan is to share this directory to my lan. It looks simple.
+
+First plan: NFS: I tried to export /terastation/music. Result:
+  exportfs: Warning: /tera/music does not support NFS export.
+I made a test, and was able to export local directories successfully.
+Then I found that this is linked with the file system (cifs). Google
+showed me some issues with that, and I stopped to look after this
+preferred solution, as I my kernel is *not* the standard Ubuntu one (I
+have to use 2.6.20 for my wifi card).
+
+Well... I will export with Samba then.
+
+But I have an issue even before that, with Japanese names. If I copy a
+file from terminal to the server, &quot;ls&quot; shows the correct filename. But
+Nautilus shows garbage characters. But If I copy from Nautilus to the
+drive, &quot;ls&quot; in terminal shows garbage (but Nautilus shows the correct
+Japanese name). I thought this could be an environment issue,  and
+started a new Nautilus from command line. No change :-(
+I am not an expert on filesystems filename encoding, so this is my
+first question, if you can help (by the way, on my local filesystems,
+both terminal &amp; Nautilus show the correct names).
+
+Next step ( I spent the night on googling/experimenting everything).
+Exporting to my wife computer (samba, no choice, as explained before).
+The setup on my Linux box is (I removed what I think is unnecessary):
+[global]
+	netbios aliases = br
+	null passwords = Yes
+	usershare allow guests = Yes
+	create mask = 0777
+[music]
+	path = /tera/music
+	read only = No
+	guest ok = Yes
+
+With that, I am able to mount the &quot;music&quot; drive to the Mac. The next
+problems comes then.
+1) from &quot;finder&quot; (the Apple graphical tool), I may create directories,
+but no files (WTF?). The error is &quot;-36&quot;. I spent all the night to
+google/test about it, without success. This error is common, with
+apparently as many reasons as there are ants on our Earth :-(
+2) from the Apple terminal, I can copy files with no issue (and, when
+done,  Japanese filenames are correct only on my Linux terminal, not
+Nautilus). I guess that if somebody can answer my question above, this
+issue will be over).
+
+This was my second question. Obviously, I may plug the terastation
+directly to the wifi network, I think this would avoid the &quot;finder&quot;
+issue (hum... guess only). If you have no clue, this will be my next
+try (the problem being that my wife will kill me when she sees the box
+in the main room :-(
+
+Thanks, if you have some ideas, I prefer to be alive for some more years :-)
+
+Bruno.
+
+--
+2 + 2 = 5, for very large values of 2.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00029.html">Re: [tlug] Color postscript network printer</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00031.html">[tlug] Re: Color postscript network printer</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00018.html">[tlug] eeepc-questions</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00032.html">[tlug] Once again - japanese input problems</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00030"><strong>Date</strong></a></li>
+<li><a href="threads.html#00030"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

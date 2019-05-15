@@ -1,0 +1,154 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark) -->
+<!--X-From-R13: Tenapbvf Qnegrtavr <spnegrtavrNserr.se> -->
+<!--X-Date: Thu, 06 Nov 2008 02:18:12 +0900 -->
+<!--X-Message-Id: 200811051743.18977.fcartegnie@free.fr -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 87fxm9tfx7.fsf&#45;genuine&#45;vii@john.fremlin.org -->
+<!--X-Reference: 200811050006.06239.fcartegnie@free.fr -->
+<!--X-Reference: 20081104235613.GB9096@pragmatic.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00081.html">Date Prev</a>][<a href="msg00083.html">Date Next</a>][<a href="msg00062.html">Thread Prev</a>][<a href="msg00083.html">Thread Next</a>][<a href="maillist.html#00082">Date Index</a>][<a href="threads.html#00082">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 5 Nov 2008 17:43:18 +0100</li>
+<li><strong>From</strong>: <strong>Francois Cartegnie &lt;<a href="mailto:fcartegnie@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re:%20%5BRFC%5D%20Outline%20of%20the%20fast%20HTTP%20talk%20%28PHP%20benchmark%29">fcartegnie@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</strong></li>
+<li>References: &lt;<a href="msg00029.html">87fxm9tfx7.fsf-genuine-vii@john.fremlin.org</a>&gt;	&lt;<a href="msg00061.html">200811050006.06239.fcartegnie@free.fr</a>&gt;	&lt;<a href="msg00062.html">20081104235613.GB9096@pragmatic.cynic.net</a>&gt;</li>
+<li>User-agent: KMail/1.9.9</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt; I'm not clear what all this means. FastCGI from lighttpd does not issue
+&gt; multiple simultaneous requests to an FCGI server, so one generally has
+&gt; hundreds of FCGI servers runnning on a reasonably well loaded machine.
+&gt; These processes certainly are preemptible, and while the individual
+&gt; back-ends are FIFO, neither the group as a whole nor lighttpd is.
+&gt;
+&gt; I'm also not sure on what CPU affinity is being set; with this many
+&gt; processes, one would think that the automatic CPU affinity would be
+&gt; fine.
+
+There's the cpu affinity, which sets wich process runs on which cpu (the 
+dynamic you mention) but he uses the affinity tool function that changes the 
+process scheduler SCHED_FIFO (realtime) for the lighttpd process. Such a 
+process runs until it releases the cpu by itself, and is only interruptible 
+by a process of a higher priority. (and as kmigrate is FIFO/prio 99, can 
+still be migrated to another cpu on multi core systems).
+
+So I think lighty is just doing sequencial processing of requests (as their 
+process are with same prio, so all exclusive) and no more paralellism in 
+processing is possible. 
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00083" href="msg00083.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00086" href="msg00086.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00029" href="msg00029.html">[tlug] [RFC] Outline of the fast HTTP talk</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+<li><strong><a name="00061" href="msg00061.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+<ul><li><em>From:</em> Francois Cartegnie</li></ul></li>
+<li><strong><a name="00062" href="msg00062.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00081.html">Re: [tlug] Fast HTTP Talk, Httperf and Libevent, Pre-talk Hacking	Session</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00083.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00062.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00083.html">Re: [tlug] Re: [RFC] Outline of the fast HTTP talk (PHP benchmark)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00082"><strong>Date</strong></a></li>
+<li><a href="threads.html#00082"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

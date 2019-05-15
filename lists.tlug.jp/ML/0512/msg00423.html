@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] timing for geeks II. -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Sun, 18 Dec 2005 17:23:10 +0100 -->
+<!--X-Message-Id: 20051218162310.GD4525@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20051202154627.GB4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051202152527.302e2f6f.jep200404@example.com -->
+<!--X-Reference: 20051203122655.GG4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20051203092314.3118db01.jep200404@example.com -->
+<!--X-Reference: 20051204100726.GH4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 30ce84360512040313l351f16c4r1872cb4f6f34679e@example.com -->
+<!--X-Reference: 20051206082734.GB4319@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00422.html">Date Prev</a>][<a href="msg00424.html">Date Next</a>][<a href="msg00080.html">Thread Prev</a>][<a href="msg00424.html">Thread Next</a>][<a href="maillist.html#00423">Date Index</a>][<a href="threads.html#00423">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] timing for geeks II.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 18 Dec 2005 17:23:10 +0100</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<A HREF="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20timing%20for%20geeks%20II.">hajek1@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] timing for geeks II.</strong></li>
+<li>References: &lt;<a href="msg00016.html">20051202154627.GB4348@example.com</a>&gt; &lt;<a href="msg00018.html">20051202152527.302e2f6f.jep200404@example.com</a>&gt; &lt;<a href="msg00025.html">20051203122655.GG4348@example.com</a>&gt; &lt;<a href="msg00031.html">20051203092314.3118db01.jep200404@example.com</a>&gt; &lt;<a href="msg00042.html">20051204100726.GH4348@example.com</a>&gt; &lt;<a href="msg00043.html">30ce84360512040313l351f16c4r1872cb4f6f34679e@example.com</a>&gt; &lt;<a href="msg00070.html">20051206082734.GB4319@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.11</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hello :)
+
+Just for those who are curious but lazy enough to do the tests
+themselves.... finaly I come up with results of my own testing. 
+
+I will be brief. 
+The gettimeofday() can get as bad as 0.03s time diference between
+succesive readings (TDBSR). 
+clock_gettime(CLOCK_MONOTONIC..) can get as bad as 0.077034s TDBSR.
+clock_gettime(CLOCK_REALTIME..) can get as bad as 0.0416s TDBSR.
+
+I wonder if this can get even worse in a &quot;longrun&quot; test. Say one or two
+days instead of 10s. What would be the worst result in case of single
+reading precision in such a longrun test? 
+
+With all test, most of the time one gets 1e-06s TDBSR. Second most of the
+time one gets 0s TDBSR. 
+This is far much more than every other result. For example, in 19361914 
+readings, I got 8959642 times zero, 10332815 times 1e-06. Next
+number is 36231 times 1.2e-05.
+
+With all three types of clock, one gets allways monotonic results (at
+least something :))
+
+During ~10s test, I got roughly 300-400 diferent time values of TDBSR (ie.
+frequencies).
+
+So that's it folks, technical or other info regarding &quot;experimental
+setup&quot; will be kindly served upon request. ;)
+
+I assume all of the above tests are based on RTC [1]. Thus the results may
+vary from PC to PC. :/
+
+There is a related question - can one buy a better clock for a linux
+mashine? I imagine a gigaherz source in a PCI slot .... :)  
+
+[1] which is a _bad_ clock as far as I understand. 
+
+Best regards
+Michal
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00424" href="msg00424.html">Re: [tlug] timing for geeks II.</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00016" href="msg00016.html">[tlug] timing for geeks :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00031" href="msg00031.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00042" href="msg00042.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00043" href="msg00043.html">Re: [tlug] A Rich Experiment Indeed</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00070" href="msg00070.html">Re: [tlug] timing for geeks II.</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00422.html">[tlug] [tlug-digest] [tlug-test-footer] Testing footer</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00424.html">Re: [tlug] timing for geeks II.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00080.html">Re: [tlug] It's time_t to Party!</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00424.html">Re: [tlug] timing for geeks II.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00423"><strong>Date</strong></a></li>
+<li><a href="threads.html#00423"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Re: Localhost connection refused -->
+<!--X-From-R13: Fubznf A'Rbjq <gbzNabbcre.pbz> -->
+<!--X-Date: Mon, 9 Jul 2001 21:24:30 +0900 -->
+<!--X-Message-Id: 20010709212430.T1168@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20010708202945.E1215@example.com -->
+<!--X-Reference: 0107082058480F.13271@example.com -->
+<!--X-Reference: 87lmlznonj.wl@example.com -->
+<!--X-Reference: 20010709113935.EA580124005@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00089.html">Date Prev</a>][<a href="msg00091.html">Date Next</a>][<a href="msg00087.html">Thread Prev</a>][<a href="msg00098.html">Thread Next</a>][<a href="maillist.html#00090">Date Index</a>][<a href="threads.html#00090">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: Localhost connection refused</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: Localhost connection refused</strong></li>
+<li><strong>From</strong>: <strong>Thomas O'Dowd &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></li>
+<li>Date: Mon, 9 Jul 2001 21:24:30 +0900</li>
+<li>Content-Disposition: inline</li>
+<li>Content-Type: text/plain; charset=us-ascii</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00087.html">20010709113935.EA580124005@example.com</a>&gt;; from dehoog@example.com on Mon, Jul 09, 2001 at 08:39:35PM +0900</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;tom@example.com&gt;</li>
+<li>References: &lt;<a href="msg00062.html">20010708202945.E1215@example.com</a>&gt; &lt;<a href="msg00063.html">0107082058480F.13271@example.com</a>&gt; &lt;<a href="msg00074.html">87lmlznonj.wl@example.com</a>&gt; &lt;<a href="msg00087.html">20010709113935.EA580124005@example.com</a>&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;ioI37B.A.H5H.9MaS7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+<li>Sender: Thomas O'Dowd &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</li>
+<li>User-Agent: Mutt/1.2.5i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+John,
+
+You're running RH 7.1. There is nothing difficult about it, honest :)
+At this stage I know more about leafnode, ie it runs from inetd services.
+On RH 7.1, inetd is not used but rather xinetd is. So /etc/inetd.conf
+is the wrong file unless you are running inetd. Ok, I'll assume you
+want to get it running on xinetd, and as we've seen, your firewall is
+ipchains and accepting everything, so its a config problem. The trouble
+with following docs is that sometimes they're for a different setup.
+
+Okay you've installed leafnode from source right?
+
+All you have to do is make sure xinetd is running and knows about the
+service to connect from localhost on the default RH 7.1 install.
+
+# ps -aef | grep '[x]inetd'
+
+is it running?
+
+If not this is your first problem, to solve. I'll assume it is running
+for now, as it is by default.
+
+Lets check the config file for xinetd next. Where did you put the 
+new entry to start leafnode? You can either modify /etc/xinetd.conf
+or put it in its own file in /etc/xinetd.d?
+
+Is it there? Is it disabled? Without it enabled here xinetd won't
+know anything about it. Here is what I have for finger, note that
+it is disabled...
+
+# cat /etc/xinetd.d/finger 
+# default: on
+# description: The finger server answers finger requests. Finger is \
+#	a protocol that allows remote users to see information such \
+#	as login name and last login time for local users.
+service finger
+{
+	socket_type	= stream
+	wait		= no
+	user		= nobody
+	server		= /usr/sbin/in.fingerd
+	disable		= yes
+}
+
+So, add you own file for leafnode and make sure disable = no.
+
+After, you put it in there, you'll have to tell xinetd to look for
+it. On RH, this is easy...
+
+# /etc/rc.d/init.d/xinetd reload
+
+Now check /var/log/messages and look for error messages from the reload.
+It should tell you that one new service was added.
+
+Next check that its listening with netstat again?
+
+# netstat -l -A inet
+
+Does it mention nntp or port 119? I assume this is the default port for
+this program to run on...
+
+If it is, you should be able to connect to it now. If it doesn't work,
+please tell us exactly what doesn't work and perhaps include log file
+output and the output of netstat/ps etc which should help us. You've
+been very vague so far just saying that you followed the instructions
+and its not working. Be more specific and then we will.
+
+Good luck!
+
+Tom.
+
+On Mon, Jul 09, 2001 at 08:39:35PM +0900, John De Hoog wrote:
+&gt; Takeshi Hakamata &lt;tkh@example.com&gt; wrote:
+&gt; 
+&gt;      At Sun, 8 Jul 2001 20:58:48 +0900,
+&gt;      John De Hoog wrote:
+&gt;      &gt;
+&gt;      &gt; The leafnode config file itself says nothing about who may access 
+&gt;      &gt; localhost; it only controls access to the remote servers. I have 
+&gt;      &gt; /etc/nntpserver set to localhost. I have /etc.hosts.allow set to 
+&gt;      &gt; &quot;leafnode localhost&quot;. I've followed the installation instructions to the 
+&gt;      &gt; letter, and fetchnews works fine. The problem that remains is lack of 
+&gt;      &gt; permission to access localhost, even from root.
+&gt;      
+&gt;      I use leafnode, though I use debian unstable.
+&gt;      I believe that leafnode is invoked by inetd. Take a look at
+&gt;      /etc/inetd.conf. if the nntp entry is not commented out,
+&gt;      leafnode is invoked by inetd.
+&gt; 
+&gt; It's set as I explained earlier, exactly as described in the INSTALL 
+&gt; file.
+&gt;      
+&gt;      Then, you may want to check /etc/hosts.{allow,deny} files.
+&gt;      These files control how tcpd restricts the access to specific daemon.
+&gt;      Make sure that there is 'leafnode: ALL' entry in hosts.deny and
+&gt;      'leafnode: 127.0.0.1' entry in hosts.allow.
+&gt; 
+&gt; Yes, these are set, too. But I get Connection refused when I try to 
+&gt; access localhost or 127.0.0.1 from my NNTP client. Any NNTP client.
+&gt; 
+&gt; I've set up local servers on WinNT and Win2K with no problem. I don't 
+&gt; understand what's going on here. None of the suggestions made so far 
+&gt; have worked, I'm afraid, since I had already followed all the 
+&gt; instructions that come with the leafnode package.
+&gt; 
+&gt; --
+&gt; John De Hoog, Tokyo        &lt;dehoog@example.com&gt;
+&gt; 
+&gt; 
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, July 14 13:30- 
+&gt; Next Nomikai Meeting:    Fri, Aug  10 19:30-  Tengu Tokyo Eki-Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A  HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+
+-- 
+Thomas O'Dowd. - Nooping - <A  HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A  HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00098" href="msg00098.html">Re: Localhost connection refused</a></strong>
+<ul><li><em>From:</em> John De Hoog &lt;dehoog@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00062" href="msg00062.html">Re: Localhost connection refused</a></strong>
+<ul><li><em>From:</em> Jonathan Q &lt;jq@example.com&gt;</li></ul></li>
+<li><strong><a name="00063" href="msg00063.html">Re: Localhost connection refused</a></strong>
+<ul><li><em>From:</em> John De Hoog &lt;dehoog@example.com&gt;</li></ul></li>
+<li><strong><a name="00074" href="msg00074.html">Re: Localhost connection refused</a></strong>
+<ul><li><em>From:</em> Takeshi Hakamata &lt;tkh@example.com&gt;</li></ul></li>
+<li><strong><a name="00087" href="msg00087.html">Re: Localhost connection refused</a></strong>
+<ul><li><em>From:</em> John De Hoog &lt;dehoog@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00089.html">Re: RAID questions</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00091.html">Re: Enabling Fast Ethernet</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00087.html">Re: Localhost connection refused</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00098.html">Re: Localhost connection refused</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00090"><strong>Date</strong></a></li>
+<li><a href="threads.html#00090"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

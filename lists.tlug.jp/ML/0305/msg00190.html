@@ -1,0 +1,157 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] missing parition /dev/hdb2?? -->
+<!--X-From-R13: FZGU [OWZ <gyhtNnznytnz.qlaqaf.bet> -->
+<!--X-Date: Thu, 15 May 2003 10:23:20 +0900 -->
+<!--X-Message-Id: 20030515012320.GA7538@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: Pine.SUN.3.95.1030514212134.5854A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00189.html">Date Prev</a>][<a href="msg00191.html">Date Next</a>][<a href="msg00189.html">Thread Prev</a>][<a href="msg00191.html">Thread Next</a>][<a href="maillist.html#00190">Date Index</a>][<a href="threads.html#00190">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] missing parition /dev/hdb2??</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 15 May 2003 10:23:20 +0900</li>
+<li><strong>From</strong>: <strong>TLUG MAIL &lt;<A HREF="mailto:tlug@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20missing%20parition%20%2Fdev%2Fhdb2%3F%3F">tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] missing parition /dev/hdb2??</strong></li>
+<li>References: &lt;<a href="msg00187.html">Pine.SUN.3.95.1030514212134.5854A-100000@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Wed, May 14, 2003 at 09:28:15PM +0900, Nguyen Vu Hung wrote:
+&gt; I have just installed a new IDE harddisk. When i boot into windows,
+&gt; I get 3 new drives which contains *alots* of files. But when I boot into
+&gt; Linux, I can only mount /dev/hdb1 and /dev/hdb5.
+
+Based on the other output provided, this is the correct behavior.  
+/dev/hdb2 is an extended partition and thus not mountable.
+
+&gt; [root@example.com vuhung]# cat /proc/partitions 
+&gt; major minor  #blocks  name     rio rmerge rsect ruse wio wmerge wsect wuse
+&gt; running use aveq
+&gt; 
+1&gt;    3    64    2062368 hdb 48 218 328 100 0 0 0 0 -2 581460 -1162820
+2&gt;    3    65    2048256 hdb1 16 15 51 40 0 0 0 0 0 40 40
+3&gt;    3    66          1 hdb2 1 0 1 0 0 0 0 0 0 0 0
+4&gt;    3    69    7389868 hdb5 16 15 51 20 0 0 0 0 0 20 20
+
+Something is very strange about your output here.  Do you realize that 
+your total harddisk size is about 1/5th of the space you are attempting
+to use on it?  Your harddisk parameters are out of whack womewhere.
+Totals from line 2 + 4 block column are larger than line 1's.
+
+&gt; [root@example.com vuhung]# /sbin/fdisk -l /dev/hdb
+&gt; [root@example.com vuhung]# 
+
+Another symptom of trouble with /dev/hdb's parameters?
+ 
+&gt; [root@example.com vuhung]# cat /etc/fstab
+&gt; /dev/hdb2               /mnt/hdb2               vfat    defaults        0
+&gt; 0
+
+Delete this.
+
+Michael
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00187" href="msg00187.html">[tlug] missing parition /dev/hdb2??</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00189.html">Re: [tlug] missing parition /dev/hdb2??</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00191.html">[tlug] Workaround for Japanese IM in RH 8. Plus: is MS style localization  the best we can do?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00189.html">Re: [tlug] missing parition /dev/hdb2??</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00191.html">[tlug] Workaround for Japanese IM in RH 8. Plus: is MS style localization  the best we can do?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00190"><strong>Date</strong></a></li>
+<li><a href="threads.html#00190"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

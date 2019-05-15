@@ -1,0 +1,213 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] perl scoping problem -->
+<!--X-From-R13: [ngg Rbhtugl <jlaqvtbNmnq.ngg.ar.wc> -->
+<!--X-Date: Wed, 4 Dec 2002 18:17:38 +0900 -->
+<!--X-Message-Id: 20021204091738.GA23212@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 156FB393C5E1A248B3CC24FA33EE9EB27C6297@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00032.html">Date Prev</a>][<a href="msg00034.html">Date Next</a>][<a href="msg00030.html">Thread Prev</a>][<a href="msg00031.html">Thread Next</a>][<a href="maillist.html#00033">Date Index</a>][<a href="threads.html#00033">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] perl scoping problem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 4 Dec 2002 18:17:38 +0900</li>
+<li><strong>From</strong>: <strong>Matt Doughty &lt;<A HREF="mailto:wyndigo@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20perl%20scoping%20problem">wyndigo@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] perl scoping problem</strong></li>
+<li>References: &lt;<a href="msg00030.html">156FB393C5E1A248B3CC24FA33EE9EB27C6297@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+lexicals don't go in the symbol table. In layman's terms:
+my $foo; and $main::foo aren't the same thing.  Get rid
+of the my, and your code should work.
+
+--Matt
+On Wed, Dec 04, 2002 at 12:09:24AM -0800, Brett Robson wrote:
+&gt; 
+&gt; Hi all
+&gt; 
+&gt; For those that remember me, I've just moved to Tokyo from Nagoya. I've been threating to attend a nomikai for a while now.
+&gt; 
+&gt; 
+&gt; I've got a problem with Perl namespaces. I haven't used strict and packages before. I thought that variables in main are accessible from with packages. 
+&gt; 
+&gt; The following code doesn't do what I expect. I expect that $main::foo will have the value robbo.
+&gt; 
+&gt; T
+&gt; 
+&gt; 
+&gt; 
+&gt; $cat x.pl
+&gt; #!/usr/bin/perl -w
+&gt; use x1;
+&gt; 
+&gt; my $foo;
+&gt; my $bar = &quot;brett&quot;;
+&gt; 
+&gt; 
+&gt; $foo = &quot;robbo&quot;;
+&gt; 
+&gt; print &quot;main\n&quot;;
+&gt; print &quot;foo=&quot;.$foo;
+&gt; print &quot;\n&quot;;
+&gt; 
+&gt; &amp;x1::set1();
+&gt; 
+&gt; print &quot;back in main\n&quot;;
+&gt; print &quot;foo=&quot;, $main::foo;
+&gt; 
+&gt; print &quot;\n&quot;;
+&gt; 
+&gt; --------------------------------------
+&gt; $ cat x1.pm
+&gt; package x1;
+&gt; use Exporter;
+&gt; 
+&gt; sub set1
+&gt; {
+&gt; print &quot;set\n&quot;;
+&gt; print &quot;foo=&quot;, $main::foo , &quot;\n&quot;;
+&gt; print &quot;foo=&quot;, $::foo , &quot;\n&quot;;
+&gt; #print &quot;foo=&quot;, $foo , &quot;\n&quot;;
+&gt; print &quot;leaving set\n&quot;;
+&gt; }
+&gt; 
+&gt; 1;
+&gt; 
+&gt; --------------------------------------
+&gt; 
+&gt; $ ./x.pl
+&gt; main
+&gt; foo=robbo
+&gt; set
+&gt; Use of uninitialized value in print at x1.pm line 7.
+&gt; foo=
+&gt; Use of uninitialized value in print at x1.pm line 8.
+&gt; foo=
+&gt; leaving set
+&gt; back in main
+&gt; Use of uninitialized value in print at ./x.pl line 19.
+&gt; foo=
+&gt; $
+&gt; --------------------------------------
+&gt; 
+&gt; 
+&gt; 
+&gt; 
+&gt; 
+&gt; **********************************************************
+&gt; TLUG server is hosted by Open Source Development Lab Japan
+&gt; <A  HREF="http://www.osdl.jp/">http://www.osdl.jp/</A>
+&gt; **********************************************************
+&gt; 
+&gt; ==========================================================
+&gt; To unsubscribe from this mailing list, 
+&gt; please see instructions at
+&gt; <A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>
+&gt; ==========================================================
+&gt; 
+&gt; 
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00030" href="msg00030.html">[tlug] perl scoping problem</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00032.html">Re: [tlug] DSL through Yahoo BB</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00034.html">Re: [tlug] Repotec print server &amp; Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00030.html">[tlug] perl scoping problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00031.html">RE: [tlug] perl scoping problem</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00033"><strong>Date</strong></a></li>
+<li><a href="threads.html#00033"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

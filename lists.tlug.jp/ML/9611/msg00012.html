@@ -1,0 +1,256 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Programmers: need motif help in Japanese -->
+<!--X-From: Gaspar Sinai <gsinai@example.com> -->
+<!--X-Date:  Sun, 3 Nov 1996 09:38:57 GMT -->
+<!--X-Message-Id: ML&#45;2.3.847013769.9124.gsinai@example.com -->
+<!--X-ContentType: multipart/mixed -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00011.html">Date Prev</A>][<A HREF="msg00013.html">Date Next</A>][<A HREF="msg00025.html">Thread Prev</A>][<A HREF="msg00018.html">Thread Next</A>][<A HREF="maillist.html#00012">Date Index</A>][<A HREF="threads.html#00012">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Programmers: need motif help in Japanese</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Abusers' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Programmers: need motif help in Japanese</strong></LI>
+<LI><strong>From</strong>: <strong>Gaspar Sinai &lt;<A HREF="mailto:gsinai@example.com">gsinai@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 3 Nov 1996 18:36:09 +0900 (JST)</LI>
+<LI>Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-889801541-847013769=:15633"</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi,
+I complied X11 with X_LOCALE and I succeeded to compile several programs
+that use Xaw and Xt. But motif (Moo-Tiff) 2.0 and caldera 1.2 does not 
+seem to like me. 
+
+They can display Japanese in a label O.K. but when I create
+a text widget they all  die a disgraceful death:
+
+#0  handler (display=0x8013800, error=0xbffff4d0) at multifont.c:102
+#1  0x4026710a in _XError ()
+#2  0x40265a70 in _XReply ()
+#3  0x402624ff in XSync ()
+#4  0x40100396 in _XmImRealize ()
+#5  0x4011b8aa in Realize ()
+#6  0x4010ea64 in RealizeWrapper ()
+#7  0x4010e823 in RealizeWrapper2 ()
+#8  0x401de618 in RealizeWidget ()
+#9  0x401de884 in XtRealizeWidget ()
+#10 0x8001e9c in main (argc=1, argv=0xbffff738) at multifont.c:87
+#11 0x8001ccb in ___crt_dummy__ ()
+
+I need help because I want to port ML mail application.
+Sample motif code included:
+Background:
+==========
+linux-1.2.13 ot linux-2.0.24,
+        libXm.so.2 =&gt; /usr/X11R6/lib/libXm.so.2.0
+        libXt.so.6 =&gt; /usr/X11R6/lib/libXt.so.6.0
+        libXpm.so.4 =&gt; /usr/X11R6/lib/libXpm.so.4.7
+        libSM.so.6 =&gt; /usr/X11R6/lib/libSM.so.6.0
+        libICE.so.6 =&gt; /usr/X11R6/lib/libICE.so.6.0
+        libXext.so.6 =&gt; /usr/X11R6/lib/libXext.so.6.1
+        libX11.so.6 =&gt; /usr/X11R6/lib/libX11.so.6.1
+        libc.so.5 =&gt; /lib/libc.so.5.4.7
+Engine: canna or wnn
+IM: kinput2 version 2.0 fix 2  (1996/09/26)
+
+--------------------------------------------------
+Gaspar Sinai void(*signal(int,void(*)(int)))(int);
+<A TARGET="_top" HREF="mailto:gsinai@example.com">mailto:gsinai@example.com</A>
+<A TARGET="_top" HREF="http://www2.gol.com/users/gsinai/both.html">http://www2.gol.com/users/gsinai/both.html</A>
+<A TARGET="_top" HREF="http://www2.gol.com/users/gsinai/screenshot.gif">http://www2.gol.com/users/gsinai/screenshot.gif</A>
+</PRE>
+<PRE>
+/*
+ * For Gaspar
+ */
+
+#define X_LOCALE
+#include &lt;stdio.h&gt;
+#include &lt;Xm/XmAll.h&gt; 
+#include &lt;X11/Xlib.h&gt;
+#include &lt;X11/Xlocale.h&gt;
+
+/*
+ * TAGS that are assigned by ":" indicate that motif should look for a fontset
+ * in the current locale rather than a fontlist
+ */
+String fallbacks[] ={
+"*.inputMethod: kinput2",
+"*.preeditType: OverTheSpot",
+"*.resize: False",
+"*.labelFontList: \
+*-13-*:TAG1,\
+*-14-*:TAG2,\
+*-24-*:TAG3",\
+"*.buttonFontList: \
+*-13-*:TAG1,\
+*-14-*:TAG2,\
+*-24-*:TAG3",\
+"*.textFontList: \
+*-24-*:", \
+"*.fontList: \
+*-24-*:", \
+"*.defaultFontList: \
+*-24-*:",
+NULL
+};
+
+int handler(Display *, XErrorEvent *);
+
+int
+main (int argc, char ** argv)
+{
+	Widget toplevel;
+	Widget base;
+	Widget label;
+	Widget textf;
+	Widget button;
+
+	XtAppContext	app;
+	XmString s1,s2,s3,text,tmp;
+	String	string1="This is a string ";
+	String	string2="ÆüËÜ";
+	String	string3="three character sets";
+	ArgList	arglist;
+
+	setlocale (LC_ALL, "ja");
+	XtToolkitInitialize ();
+	XtSetLanguageProc (NULL, NULL, NULL);
+
+	toplevel = XtVaAppInitialize (&amp;app, "String", NULL, 0,
+		&amp;argc, argv, fallbacks, NULL);
+
+	XSetErrorHandler (handler);
+	s1 = XmStringCreate (string1, "TAG1");
+	s2 = XmStringCreate (string2, "TAG2");
+	s3 = XmStringCreate (string3, "TAG3");
+
+	tmp = XmStringConcat (s1,s2);
+	text = XmStringConcat (tmp, s3);
+
+	base = XtVaCreateManagedWidget ("base",
+		xmRowColumnWidgetClass, toplevel,	
+		NULL);
+
+	label = XtVaCreateManagedWidget ("label1",
+		xmLabelWidgetClass, base,
+		XmNlabelString, text,
+		NULL);
+
+	button = XtVaCreateManagedWidget ("pushme",
+		xmPushButtonWidgetClass, base,
+		XmNlabelString, text,
+		NULL);
+
+	textf = XtVaCreateManagedWidget ("text1", 
+		xmTextWidgetClass, base,
+		XmNvalue, "", NULL);
+
+	XtRealizeWidget (toplevel);
+
+	XmStringFree (s1);
+	XmStringFree (s2);
+	XmStringFree (s3);
+	XmStringFree (tmp);
+	XmStringFree (text);
+
+
+	XtAppMainLoop (app);
+}
+
+int
+handler (Display *display, XErrorEvent *error)
+{
+	fprintf (stderr, "Boo:\n");
+	return 1;
+}
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00018" HREF="msg00018.html">Re: Programmers: need motif help in Japanese</A></STRONG>
+<UL><LI><EM>From:</EM> turnbull@example.com (Stephen J. Turnbull)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00011.html">Re: Fax software</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00013.html">Re: Fax software</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00025.html">RE: Library problems with Java DK</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00018.html">Re: Programmers: need motif help in Japanese</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00012"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00012"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

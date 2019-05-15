@@ -1,0 +1,202 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] a japanese dictionary: regex v. db query -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 05 Apr 2006 16:16:41 +0900 -->
+<!--X-Message-Id: 87wte4eblq.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 442EADBF.3060701@example.com -->
+<!--X-Reference: a2588e100604010926o733cdc7en57335349dac956a8@example.com -->
+<!--X-Reference: aaa8c4580604011516m6605d116j3df1fb29deabb94b@example.com -->
+<!--X-Reference: a2588e100604031616v60663498qdb3d3d03bed3a3f6@example.com -->
+<!--X-Reference: 4432084F.6050400@example.com -->
+<!--X-Reference: 87u099h8rt.fsf@example.com -->
+<!--X-Reference: 20060404103045.507444eb.jep200404@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00132.html">Date Prev</a>][<a href="msg00134.html">Date Next</a>][<a href="msg00134.html">Thread Prev</a>][<a href="msg00046.html">Thread Next</a>][<a href="maillist.html#00133">Date Index</a>][<a href="threads.html#00133">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] a japanese dictionary: regex v. db query</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 05 Apr 2006 16:16:17 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20a%20japanese%20dictionary:%20regex%20v.%20db%20query">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] a japanese dictionary: regex v. db query</strong></li>
+<li>References: &lt;<a href="msg00025.html">442EADBF.3060701@example.com</a>&gt;	&lt;<a href="msg00027.html">a2588e100604010926o733cdc7en57335349dac956a8@example.com</a>&gt;	&lt;<a href="msg00033.html">aaa8c4580604011516m6605d116j3df1fb29deabb94b@example.com</a>&gt;	&lt;<a href="msg00108.html">a2588e100604031616v60663498qdb3d3d03bed3a3f6@example.com</a>&gt;	&lt;<a href="msg00116.html">4432084F.6050400@example.com</a>&gt;	&lt;<a href="msg00117.html">87u099h8rt.fsf@example.com</a>&gt;	&lt;<a href="msg00122.html">20060404103045.507444eb.jep200404@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.4.19 (linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; &quot;Jim&quot; == Jim  &lt;jep200404@example.com&gt; writes:
+
+    Jim&gt; &quot;Stephen J. Turnbull&quot; wrote:
+
+    &gt;&gt; What is the regular expression for &quot;all characters with 16
+    &gt;&gt; strokes&quot;?
+
+    Jim&gt; Oh boy. That made me think. That was the right question to
+    Jim&gt; highlight the limitations of regexes.
+
+Regexps as such are somewhat limited, but they're actually quite
+flexible and powerful when used judiciously.  It's just that they
+suffer from the &quot;to a man with a hammer, every problem looks like a
+thumb&quot; syndrome, perhaps more so than any other tool I know of.
+
+The issues here are different.  It's easy enough to design a flat file
+format like
+
+KANJI&lt;TAB&gt;ON1 ... ONn&lt;TAB&gt;KUN1 ... KUNm&lt;TAB&gt;STROKES&lt;TAB&gt;RADICAL ...
+
+and do &quot;egrep '^(.)\t[^\t]\t[^\t]\t(\d+)\t' db-file&quot;.  The problem is
+if you ever decide to change the format, you break all programs
+written to the old standard.  And if you decide to add &quot;\t&quot; as a
+character in your database, you're really hosed.  For David, these
+*probably* don't much matter since he'll probably use an existing
+database like EDICT.
+
+Finally, queries involving multiple features, connected with logical
+operators, are going to be O(n^m) where n is the size of the database
+and m is the number of features.  If you have a real database, on the
+other hand, you can generally get that down to something like O(m*lg
+n), which can be important in some applications.  Probably not for an
+input method, though.
+
+    Jim&gt; I can not think of how to express &quot;all characters with 16
+    Jim&gt; strokes&quot; in the present schemes of regexes as I know them.
+
+POSIX character classes, eg, [:UPPER:] can easily be table driven.
+Write the table, add the extension class, you're done.  I believe that
+XML already has a regex spec for Unicode.  Also Emacs Lisp regexps
+have all the necessary features.
+
+    Jim&gt; Of course one could extend regexes to also match _attributes_
+    Jim&gt; of characters, such as brush stroke count. As if the syntax
+    Jim&gt; of regexes wasn't &quot;simple&quot; enough already, I shudder at the
+    Jim&gt; thought of what the extended regex syntax would be.
+
+Extend POSIX classes, with a &quot;FILTER&quot; keyword.  Then the syntax for
+&quot;16 stroke kanji&quot; would be &quot;[[:FILTER STROKECOUNT 16:]]&quot;, where
+STROKECOUNT would be
+
+typedef int (*filter_function) (widechar);
+
+This could be done reasonably efficiently by constructing a table at
+compile-time (assuming that you're going to be reusing the regexp).
+
+
+-- 
+School of Systems and Information Engineering <a  rel="nofollow" href="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</a>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00025" href="msg00025.html">[tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> David Stibbe</li></ul></li>
+<li><strong><a name="00027" href="msg00027.html">Re: [tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> dabicho</li></ul></li>
+<li><strong><a name="00033" href="msg00033.html">Re: [tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> Michael Engel</li></ul></li>
+<li><strong><a name="00108" href="msg00108.html">Re: [tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> dabicho</li></ul></li>
+<li><strong><a name="00116" href="msg00116.html">Re: [tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> David Stibbe</li></ul></li>
+<li><strong><a name="00117" href="msg00117.html">Re: [tlug] a japanese dictionary</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00122" href="msg00122.html">[tlug]  a japanese dictionary: regex v. db query</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00132.html">Re: [tlug] a japanese dictionary: regex v. db query</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00134.html">Re: [tlug] a japanese dictionary: regex v. db query</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00134.html">Re: [tlug] a japanese dictionary: regex v. db query</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00046.html">Re: [tlug] a japanese dictionary</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00133"><strong>Date</strong></a></li>
+<li><a href="threads.html#00133"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

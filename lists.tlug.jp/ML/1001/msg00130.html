@@ -1,0 +1,161 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] how to tune reiser4 for millions of files? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 29 Jan 2010 00:31:55 +0900 -->
+<!--X-Message-Id: 87wrz2s08d.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100128073847.GH13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Reference: 20100128095957.GB24344@analytic.cynic.net -->
+<!--X-Reference: 20100128132701.GI13095@wasi.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00129.html">Date Prev</a>][<a href="msg00131.html">Date Next</a>][<a href="msg00129.html">Thread Prev</a>][<a href="msg00131.html">Thread Next</a>][<a href="maillist.html#00130">Date Index</a>][<a href="threads.html#00130">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] how to tune reiser4 for millions of files?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 29 Jan 2010 00:44:18 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] how to tune reiser4 for millions of files?</strong></li>
+<li>References: &lt;<a href="mailto:20100128073847.GH13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128073847.GH13095@example.com</a>&gt;	&lt;<a href="mailto:20100128095957.GB24344@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128095957.GB24344@example.com</a>&gt;	&lt;<a href="mailto:20100128132701.GI13095@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20how%20to%20tune%20reiser4%20for%20millions%20of%20files%3F">20100128132701.GI13095@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Michal Hajek writes:
+
+ &gt; &quot;Fast handling of very large directories with hundreds of millions of
+ &gt; files (yes, millions of files in a single directory without affecting
+ &gt; performance).&quot; 
+
+What that means is that you can find one file very quickly, even if
+there are millions of files.  It does not mean that you can process
+millions of files quickly.  The problem you have here is that you're
+doing millions of operations on files, and every one means a system
+call, which means slow.
+
+ &gt; All maybe a different filesystem altogether?  Or maybe using lvm with
+ &gt; the idea to &quot;spread&quot; the fs onto more hw, or maybe use ssd disk? Or...I
+ &gt; do not know. So maybe somebody comes with an interesting idea :]
+
+No, I don't think any of those will help.  You need to rewrite the app.
+
+One thing: ls is possibly the slowest possible application imaginable,
+because all it does is make syscalls.  I would expect that the problem
+is not the syscall overhead (although I bet that's non-negligible),
+it's that the syscall yields the processor to another process.  I
+would imagine that every syscall means you block for a couple ms.
+Suppose it's 5ms.  Then 5ms X 7,000,000 = 35,000 seconds, or 10
+hours.  And that's just the overhead for the stats to get file
+information; ls also writes to the screen which is going to mean more
+syscalls and more delays.
+
+So it's quite possible that your analysis program will be *faster*
+than ls because it does fewer syscalls.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00131" href="msg00131.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Patrick Bernier</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00126" href="msg00126.html">[tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00128" href="msg00128.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00129.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00131.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00129.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00131.html">Re: [tlug] how to tune reiser4 for millions of files?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00130"><strong>Date</strong></a></li>
+<li><a href="threads.html#00130"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

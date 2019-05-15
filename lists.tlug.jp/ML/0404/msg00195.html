@@ -1,0 +1,389 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] iptables and port&#45;forwarding concerns -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Fri, 23 Apr 2004 00:33:38 +0200 -->
+<!--X-Message-Id: 20040423003338.774bc626.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20040422001900.130cfff5.gstewart@example.com -->
+<!--X-Reference: 20040422000240.GH11018%jmglov@example.com -->
+<!--X-Reference: 20040422134511.5c9d8c88.gstewart@example.com -->
+<!--X-Derived: pgp00060.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00194.html">Date Prev</a>][<a href="msg00196.html">Date Next</a>][<a href="msg00190.html">Thread Prev</a>][<a href="msg00197.html">Thread Next</a>][<a href="maillist.html#00195">Date Index</a>][<a href="threads.html#00195">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptables and port-forwarding concerns</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 23 Apr 2004 00:33:38 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20iptables%20and%20port-forwarding%20concerns">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptables and port-forwarding concerns</strong></li>
+<li>References: &lt;<a href="msg00177.html">20040422001900.130cfff5.gstewart@example.com</a>&gt;&lt;<a href="msg00180.html">20040422000240.GH11018%jmglov@example.com</a>&gt;&lt;<a href="msg00190.html">20040422134511.5c9d8c88.gstewart@example.com</a>&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 22 Apr 2004 13:45:11 +0200, Godwin Stewart &lt;gstewart@example.com&gt;
+wrote:
+
+&gt; Having read the excellent documentation at the NAT HOWTO link Josh gave
+&gt; here:
+&gt; 
+&gt; &gt; <A  HREF="http://www.stearns.org/iptables/NAT-HOWTO.txt">http://www.stearns.org/iptables/NAT-HOWTO.txt</A>
+
+I've come up with a new script for the firewall. I'll only be able to try
+the port-forwarding bit tomorrow but I tried it slightly scaled down by
+forwarding port 22 of my workstation to port 222 of the gateway box. I was
+subsequently able to ssh directly into my workstation from a remote host by
+using &quot;-p 222&quot; on the ssh command line, so it looks encouraging.
+
+Here's the script I came up with anyway. Try not to show how much you're
+enjoying it while tearing it to shreds:
+
+#!/bin/bash
+###################################################
+# Raise a firewall and SNAT for the LAN behind it #
+###################################################
+# Written: 22-APR-2004                            #
+###################################################
+
+# A few useful variables:
+
+IPT=&quot;/usr/sbin/iptables&quot;
+IPFILTER=&quot;$IPT -t filter&quot;
+IPFIN=&quot;$IPFILTER -A INPUT&quot;
+IPFOUT=&quot;$IPFILTER -A OUTPUT&quot;
+IPFWD=&quot;$IPFILTER -A FORWARD&quot;
+IPNAT=&quot;$IPT -t nat&quot;
+
+EXT_IF=&quot;ppp0&quot;
+INT_IF=&quot;eth0&quot;
+LO_IF=&quot;lo&quot;
+
+LOOPBACK=&quot;127.0.0.0/8&quot;
+CLASS_A=&quot;10.0.0.0/8&quot;
+CLASS_B=&quot;172.16.0.0/12&quot;
+CLASS_C=&quot;192.168.0.0/16&quot;
+CLASS_D_MULTICAST=&quot;224.0.0.0/4&quot;
+CLASS_E_RESERVED=&quot;240.0.0.0/5&quot;
+PUBLIC_IP=&quot;xxx.xxx.xxx.xxx&quot;
+WINBOX=&quot;192.168.0.1&quot;
+FLY=&quot;192.168.0.3&quot;
+
+MY_SUBNET=&quot;192.168.0.0/23&quot;
+PRIVPORTS=&quot;0:1023&quot;
+UNPRIVPORTS=&quot;1024:65535&quot;
+
+############################################################
+# Here are a few useful functions which will save time:
+
+# DROP incoming connections from specified IP/block on the floor
+# example: dropfromblock 38.0.0.0/8
+dropfromblock() {
+  $IPFIN  -s $1 -i $EXT_IF -j DROP
+  $IPFOUT -d $1 -o $EXT_IF -j REJECT --reject-with icmp-host-prohibited
+}
+
+# REJECT incoming connections from specified IP/block with an
+# ICMP Host Prohibited message
+# exmple: rejectfromblock 200.0.0.0/7
+rejectfromblock() {
+  $IPFIN  -s $1 -i $EXT_IF -j REJECT --reject-with icmp-host-prohibited
+  $IPFOUT -d $1 -o $EXT_IF -j REJECT --reject-with icmp-host-prohibited
+}
+
+# Log attempts to connect to the specified port using the specified
+# protocol.
+# example: logattack tcp 1080
+logattack() {
+  $IPFILTER -I INPUT 1 -i $EXT_IF -p $1 --dport $2 -j LOG \
+            --log-prefix &quot;$1 $2: &quot; --log-level notice
+}
+
+# Allow this machine to connect to the given tcp or udp port of a
+# remote host.
+# example: letmeconnectto tcp 80
+letmeconnectto() {
+  case $1 in
+    tcp|TCP)
+      EXTRA=&quot; ! --syn&quot;;;
+    *)
+      EXTRA=&quot;&quot;
+  esac
+  $IPFOUT -p $1 -o $EXT_IF --sport $UNPRIVPORTS --dport $2 -j ACCEPT
+  $IPFIN  -p $1 -i $EXT_IF --sport $2$EXTRA --dport $UNPRIVPORTS -j ACCEPT
+}
+
+# Allow remote machines to connect to the given tcp or udp port of mine.
+# example: openupmy tcp 443
+openupmy() {
+  $IPFIN  -p $1 -i $EXT_IF --sport $UNPRIVPORTS --dport $2 -j ACCEPT
+  $IPFOUT -p $1 --sport $2 --dport $UNPRIVPORTS -o $EXT_IF -j ACCEPT
+}
+#########################################################
+
+# Have a go at the ipv4 routing...
+cd /proc/sys/net/ipv4
+/bin/echo &quot;1&quot; &gt; icmp_echo_ignore_all
+/bin/echo &quot;0&quot; &gt; icmp_echo_ignore_broadcasts
+/bin/echo &quot;0&quot; &gt; conf/all/accept_source_route
+/bin/echo &quot;0&quot; &gt; conf/all/accept_redirects
+/bin/echo &quot;1&quot; &gt; icmp_ignore_bogus_error_responses
+/bin/echo &quot;1&quot; &gt; ip_forward
+for interface in conf/*/rp_filter; do
+  /bin/echo &quot;1&quot; &gt; ${interface}
+done
+
+# Now remove all rules and user-defined chains in the &quot;filter&quot; and &quot;nat&quot; tables
+$IPFILTER -F
+$IPFILTER -X
+$IPFILTER -Z
+$IPNAT -F
+$IPNAT -X
+$IPNAT -Z
+
+# Next, set the default policy for the INPUT and OUTPUT chains to DROP
+# but allow everything to pass through the FORWARD chain (we'll be
+# placing a couple of restrictions just afterwards)
+$IPFILTER -P INPUT   DROP
+$IPFILTER -P OUTPUT  DROP
+$IPFILTER -P FORWARD ACCEPT
+
+
+# 192.168.0.1 is a Windoze box. Don't let it connect to port 25 of any
+# machine other then the 4 official SMTP servers of my ISP and the
+# other remote host I'm allowed to use. Start by allowing these
+# particular connections explicitly then deny connections to port 25:
+for ip in &lt;list_of_5_IP_addresses&gt;; do
+  $IPFWD -s $WINBOX -p tcp -d $ip --dport 25 -o $EXT_IF -j ACCEPT
+  $IPFWD -s $ip -p tcp -d $WINBOX --sport 25 -i $EXT_IF -j ACCEPT
+done
+$IPFWD -p tcp -s $WINBOX --dport 25 -o $EXT_IF -j DROP
+
+# Now prevent the Windoze box from connecting to common proxy ports
+for port in 23 81 85 1080 1180 1181 1182 1282 2280 2281 2282 2283 \
+            3128 4480 6588 7033 8000 8080 8081 8085 8090 8095 \
+            8100 8105 8110 8888; do
+  $IPFWD -p tcp -s $WINBOX --dport $port -o $EXT_IF -j DROP
+done
+
+
+
+# Disallow connections from obviously spoofed addresses:
+dropfromblock $LOOPBACK
+dropfromblock $CLASS_A
+dropfromblock $CLASS_B
+dropfromblock $CLASS_C
+dropfromblock $CLASS_D_MULTICAST
+dropfromblock $CLASS_E_RESERVED
+dropfromblock $PUBLIC_IP
+
+# Disallow connections from a$$wipes on the net:
+
+# cyveillance.com
+dropfromblock 63.148.99.227/27
+dropfromblock 65.118.41.192/27
+
+# nameprotect.com
+dropfromblock 12.148.209.192/26
+
+# Allow unrestricted connectivity within the LAN
+$IPFILTER -A INPUT  -s $MY_SUBNET -j ACCEPT
+$IPFILTER -A OUTPUT -d $MY_SUBNET -j ACCEPT
+
+# Allow unrestricted connectivity over the loopback interface
+$IPFILTER -A INPUT  -i $LO_IF -d $LOOPBACK -j ACCEPT
+$IPFILTER -A OUTPUT -o $LO_IF -s $LOOPBACK -j ACCEPT
+
+
+# Allow ssh in both directions:
+letmeconnectto tcp 22
+openupmy tcp 22
+
+# Allow smtp in both directions:
+letmeconnectto tcp 25
+openupmy tcp 25
+
+# Allow http in both directions:
+letmeconnectto tcp 80
+openupmy tcp 80
+
+# I serve https but don't need to wget any:
+openupmy tcp 443
+
+# Allow pop3 in both directions:
+letmeconnectto tcp 110
+openupmy tcp 110
+
+# I'll need to access DNS but my own nameserver isn't public:
+letmeconnectto tcp 53
+letmeconnectto udp 53
+
+# I need whois access
+letmeconnectto tcp 43
+letmeconnectto udp 43
+
+# I also need to sync the system clock
+letmeconnectto tcp 37
+letmeconnectto udp 37
+letmeconnectto tcp 123
+letmeconnectto udp 123
+
+# I might need to wget stuff via ftp
+# Use active ftp to simplify things
+letmeconnectto tcp 21
+letmeconnectto tcp 20
+
+# Open up the ProFTPd daemon to the outside and
+# allow passive ftp on ports 50000-60000
+openupmy tcp 21
+openupmy tcp 50000:60000
+
+
+# Set up SNAT for machines in the 192.168.0.0-255 range
+$IPNAT -A POSTROUTING -s 192.168.0.0/24 -o $EXT_IF -j SNAT \
+       --to-source $PUBLIC_IP
+
+
+
+# portforward inbound tcp &amp; udp ports 10000-10100 to same ports on $FLY
+$IPNAT -A PREROUTING -p udp -i $EXT_IF --dport 10000:10100 \
+       -j DNAT --to-destination $FLY:10000-10100
+$IPNAT -A PREROUTING -p tcp -i $EXT_IF --dport 10000:10100 \
+       -j DNAT --to-destination $FLY:10000-10100
+
+
+
+
+# Set up proxy hijack logging
+logattack tcp 1080
+logattack tcp 3128
+logattack tcp 6588
+logattack tcp 8000
+logattack tcp 8080
+
+# Set up UDP port 135 logging
+logattack udp 135
+
+echo &quot;Firewall up!&quot;
+
+
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.5)
+--------------------------------------------------------------
+Light travels faster than sound. That is why some people appear
+bright until you hear them speak.
+</pre>
+<p><strong>Attachment:
+<a href="pgp00060.pgp" ><tt>pgp00060.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00197" href="msg00197.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00177" href="msg00177.html">[tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00180" href="msg00180.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00190" href="msg00190.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00194.html">[tlug] As Seen on Freshmeat</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00196.html">Re: [tlug] As Seen on Freshmeat</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00190.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00197.html">Re: [tlug] iptables and port-forwarding concerns</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00195"><strong>Date</strong></a></li>
+<li><a href="threads.html#00195"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

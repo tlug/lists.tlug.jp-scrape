@@ -1,0 +1,220 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Installing Windows after installing Linux -->
+<!--X-From-R13: Rnir [ U <znegvaNnhgbgryvp.pbz> -->
+<!--X-Date: Tue, 25 Apr 2006 01:45:11 +0900 -->
+<!--X-Message-Id: 444D002D.5000504@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 44475874.3010606@example.com -->
+<!--X-Reference: 44477A65.8090908@example.com -->
+<!--X-Reference: 44486A2D.6010406@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00450.html">Date Prev</a>][<a href="msg00452.html">Date Next</a>][<a href="msg00422.html">Thread Prev</a>][<a href="msg00452.html">Thread Next</a>][<a href="maillist.html#00451">Date Index</a>][<a href="threads.html#00451">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Installing Windows after installing Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 25 Apr 2006 01:43:25 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:martin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Installing%20Windows%20after%20installing%20Linux">martin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Installing Windows after installing Linux</strong></li>
+<li>References: &lt;<a href="msg00387.html">44475874.3010606@example.com</a>&gt; &lt;<a href="msg00400.html">44477A65.8090908@example.com</a>&gt;	&lt;<a href="msg00410.html">44486A2D.6010406@example.com</a>&gt;</li>
+<li>User-agent: Mail/News 1.5 (X11/20060309)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+TLUG,
+
+</pre><tt>I installed a second hard drive in order to install Windows XP. I 
+</tt><tt>managed to get XP installed while leaving Ubuntu alone by changing the 
+</tt><tt>boot order of hard drives in my CMOS during the install.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>At this point I have Linux on my main HD, which is an SATA drive, and 
+</tt><tt>Windows on an regular old IDE drive. They both work okay, and I can even 
+</tt><tt>browse the Windows drive, in /media/windows from within Linux.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>The only issue remaining is configuring GRUB to allow me to select which 
+</tt><tt>OS to go to at boot time. Right now GRUB has no idea the Windows drive 
+</tt><tt>exists at all.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Of course, I hit the 'net in search of GRUB configurations, and found 
+</tt><tt>that I need to edit a file called /boot/grub/menu.list.
+</tt><pre style="margin: 0em;">
+
+What I need to put in there is an entry like this:
+title        Windows XP
+root        (hd0,0)
+savedefault
+makeactive
+chainloader +1
+
+</pre><tt>At least one problem is that root (hd0,0) section. It says the same 
+</tt><tt>thing for all my Linux boot options:
+</tt><pre style="margin: 0em;">
+title        Ubuntu, kernel 2.6.15-20-686
+root        (hd0,0)
+kernel        /boot/vmlinuz-2.6.15-20-686 root=/dev/sda1 ro quiet splash
+initrd        /boot/initrd.img-2.6.15-20-686
+savedefault
+boot
+
+</pre><tt>I think that (hd0,0) is a standard option for when Windows is installed 
+</tt><tt>first, as seems to be the case with most, if not all, help files I see 
+</tt><tt>on the web.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>But in my case, since Linux occupies (hd0,0), I need to determine what 
+</tt><tt>the right settings for the Windows drive is.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>After a little more searching, it seemed that the output of fdisk is 
+</tt><tt>relevant:
+</tt><pre style="margin: 0em;">
+dave@example.com:~$ sudo fdisk -l
+
+Disk /dev/hdb: 30.7 GB, 30738677760 bytes
+255 heads, 63 sectors/track, 3737 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+
+  Device Boot      Start         End      Blocks   Id  System
+/dev/hdb1   *           1        3736    30009388+   7  HPFS/NTFS
+
+Disk /dev/sda: 250.0 GB, 250059350016 bytes
+255 heads, 63 sectors/track, 30401 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+
+  Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *           1       29647   238139496   83  Linux
+/dev/sda2           29648       30401     6056505    5  Extended
+/dev/sda5           29648       30401     6056473+  82  Linux swap / Solaris
+
+
+</pre><tt>But, here's where I hit a snag. In all the howto pages that I looked at, 
+</tt><tt>there was a quantum leap from taking the information under &quot;Device Boot&quot; 
+</tt><tt>to what goes into the menu.lst file.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>For example, one site I'm looking at says that if a Windows partition is 
+</tt><tt>at /dev/hda5, then the right entry for menu.list is (hd0,4). But it 
+</tt><tt>doesn't say how you derive one from the other.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>And that is why I am turning here. What am I supposed to enter into 
+</tt><tt>menu.lst if my Windows drive is at /dev/hdb1?
+</tt><pre style="margin: 0em;">
+
+Thank you for any advice.
+
+--
+Dave M G
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00452" href="msg00452.html">Re: [tlug] Installing Windows after installing Linux</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00387" href="msg00387.html">[tlug] Installing Windows after installing Linux</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00400" href="msg00400.html">Re: [tlug] Installing Windows after installing Linux</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+<li><strong><a name="00410" href="msg00410.html">Re: [tlug] Installing Windows after installing Linux</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00450.html">Re: [tlug] Printer Not Responding</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00452.html">Re: [tlug] Installing Windows after installing Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00422.html">Re: [tlug] linux supercomputer generates black hole	collision	simulation</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00452.html">Re: [tlug] Installing Windows after installing Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00451"><strong>Date</strong></a></li>
+<li><a href="threads.html#00451"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

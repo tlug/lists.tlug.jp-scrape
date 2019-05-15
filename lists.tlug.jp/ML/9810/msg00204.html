@@ -1,0 +1,214 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: root mirror (was: LILO Vs. 1024??) -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 7 Oct 1998 13:32:54 +0900 -->
+<!--X-Message-Id: 19981007133247.A11940@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810062007.UAA00264@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981007092838.635C&#45;100000@example.com -->
+<!--X-Reference-Id: 13850.57974.611501.31116@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00203.html">Date Prev</A>][<A HREF="msg00205.html">Date Next</A>][<A HREF="msg00201.html">Thread Prev</A>][<A HREF="msg00215.html">Thread Next</A>][<A HREF="maillist.html#00204">Date Index</A>][<A HREF="threads.html#00204">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: root mirror (was: LILO Vs. 1024??)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: root mirror (was: LILO Vs. 1024??)</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Oct 1998 13:32:47 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00199.html">13850.57974.611501.31116@example.com</A>&gt;; from Stephen J. Turnbull on Wed, Oct 07, 1998 at 12:39:34PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00184.html">199810062007.UAA00264@example.com</A>&gt; &lt;<A HREF="msg00188.html">Pine.LNX.3.96LJ1.1b7.981007092838.635C-100000@example.com</A>&gt; &lt;<A HREF="msg00199.html">13850.57974.611501.31116@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Oct 07, 1998 at 12:39:34PM +0900, Stephen J. Turnbull wrote:
+
+&gt; Paranoid structure:
+&gt; 
+&gt; /dev/?da1	 50 MB		 /
+&gt; /dev/?da2	 128 MB		 &lt;swap&gt;
+&gt; /dev/?da3	 50 MB		 /.root_mirror
+&gt; 
+&gt; etc.  I've yet to have a LILO problem with this, I think that's
+&gt; because everything of interest to LILO always fits under the magic
+&gt; BIOS limit.  (But maybe somebody can tell me whether that's right or
+&gt; wrong; I could just be lucky.)
+
+Right.
+
+I also recommend this, but I caution against the word "mirror".  I
+prefer the word "clone" or "backup".  That is I don't think you're
+really referring to raid1 mirroring, are you?  I strongly recommend
+doing periodic copies from /dev/?da1 to /dev/?da3 (via a backup program,
+dd, or whatever) rather than actually doing raid1 mirroring.  
+
+Most of the problems I've seen in this area come from operator error:
+deleting or mangling an important file in the / filesystem.  Often you
+don't notice the problem until months later when you reboot the
+system for whatever reason.  Having a copy of / around can really make
+your day in this situation.  If you're actually doing raid1, though,
+deleting/mangling a file will corrupt *both* partitions, leaving you
+with an unbootable machine.
+
+Out of curiosity, how are you populating the /.root_mirror filesystem?
+My approach would probably be to unmount it, dd from ?da1 to ?da3 when
+you "know" (hmmphf) nothing is being modified in /, then fsck ?da3 to be
+sure and remount.
+
+Ideally, I'd also prefer to keep /usr mounted read-only at all times and
+keep a clone of it laying around as well.  Big disks are cheap these
+days.
+
+On the high-end fileservers my company sells, standard practice is to
+periodically "clone" the entire "root disk" (a dedicated disk containing
+*only* the OS and configuration info -- root, usr, and var, no user
+data) to a separate "root clone" disk.  Since all drives are in hot-plug
+cannisters, this made it really easy to physically exchange disks and
+reboot from a known good image in the event of a problem.
+
+This is particularly nice for OS upgrades.  Standard procedure for an
+upgrade is to clone the root disk, run the update utility on the cd
+(which uses chroot to ensure changes are *only* made to the root clone,
+not the live root disk).  After all updates are applied, local
+modifications/configuration is performed, etc., the system is shutdown,
+root and root-prime are physically swapped, and the system is booted
+with the new OS.  
+
+The beauty is that backouts in the event of unforseen incompatibilities
+are swift and GUARANTEED.  The original root disk was never touched, so
+you KNOW you can get back to where you started from.  You just shutdown,
+swap the disks back to the way they were, boot, and your back running
+your original OS *EXACTLY* as you were before the upgrade.
+
+Even when everything goes according to plan (usually the case ;-) it's
+awfully nice to be able to mount the original root/usr/var partitions to
+copy over some data you forgot about in the upgrade.
+
+The only thing that's missing to be able to accomplish the same thing
+with a Linux system is the ability to "clone" an ext2 filesystem
+reliably.  On an Auspex, ax_clonefs will ensure that any modifications
+that occur while the copy is running are handled correctly (there is
+actually a brief lockout at the very end to ensure that all metadata is
+synched on both sides correctly).  
+
+You can use dd or whatever with an ext2 filesystem today, but if any
+meta-data blocks are modified during the copy you will probably end up
+with garbage.  Using a filesystem based utility like tar/cpio or cp
+would help limit damage to individual files or directories rather than
+wholesale filesystem corruption, but at the expense of longer copy
+windows and other little gotchas ("holey files", unrestorable images,
+etc.).
+
+I'd REALLY like something like ax_clonefs for Linux.  
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00215" HREF="msg00215.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00184" HREF="msg00184.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> karlmax@example.com (Karl-Max Wagner)</LI></UL></LI>
+<LI><STRONG><A NAME="00188" HREF="msg00188.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00199" HREF="msg00199.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00203.html">Re: tlug: Sparc Classic memory</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00205.html">tlug: Wine and Windows Printers</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00201.html">Re: tlug: LILO Vs. 1024??</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00215.html">tlug: Re: root mirror (was: LILO Vs. 1024??)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00204"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00204"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

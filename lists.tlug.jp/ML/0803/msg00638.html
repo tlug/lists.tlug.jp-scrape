@@ -1,0 +1,212 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] genkou youshi templates -->
+<!--X-From-R13: Oggvyn Yvanyv <nggvynNxvanyv.pu> -->
+<!--X-Date: Mon, 31 Mar 2008 18:33:26 +0900 -->
+<!--X-Message-Id: 20080331113254.47b76acc.attila@kinali.ch -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 8a4ece5c0803300926ke2b6fa0kdb16e6d367d8c970@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00637.html">Date Prev</a>][<a href="msg00639.html">Date Next</a>][<a href="msg00622.html">Thread Prev</a>][<a href="msg00643.html">Thread Next</a>][<a href="maillist.html#00638">Date Index</a>][<a href="threads.html#00638">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] genkou youshi templates</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 31 Mar 2008 11:32:54 +0200</li>
+<li><strong>From</strong>: <strong>Attila Kinali &lt;<a href="mailto:attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20genkou%20youshi%20templates">attila@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] genkou youshi templates</strong></li>
+<li>References: &lt;<a href="msg00621.html">8a4ece5c0803300926ke2b6fa0kdb16e6d367d8c970@mail.gmail.com</a>&gt;</li>
+<li>Organization: SEELE</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Sun, 30 Mar 2008 09:26:21 -0700
+&quot;David Arroyo&quot; &lt;david.a.arroyo@example.com&gt; wrote:
+
+&gt; I've become very good friends with the people in my Japanese class and
+&gt; I want to make them all japanese-style threadbound notebooks with
+&gt; genkoyoushi paper in them. I want to make them very personalized, so
+&gt; I've been looking for LaTeX templates for genkoyoushi paper so I could
+&gt; put their name and other stuff on them. However I haven't found any
+&gt; and I'm about to try and make them myself. Does anybody know of or
+&gt; have anything I can start from? It doesn't necessarily have to be
+&gt; LaTeX, it may be easier to use a graphics program. Conversely, would
+&gt; anybody be interested in the finished work?
+
+Some time ago i was faced with a similar problem to create
+papers with grids on them. Unfortunately, i wasn't able
+to find a solution using latex. In the end i reverted
+to a solution using a perl script to directly generating
+postscript code. I attached the script, but beware that
+it's very ugly (10min quick and dirty work). You should
+be able to adjust it to create genkouyoushi without problem.
+
+			Attila Kinali
+
+
+-- 
+Praised are the Fountains of Shelieth, the silver harp of the waters,
+But blest in my name forever this stream that stanched my thirst!
+                         -- Deed of Morred
+</pre><pre>#!/usr/bin/perl -w
+
+# outputs a postscript file with a adjustable grid in it
+
+use strict;
+
+my $max_x = 595;
+my $max_y = 841;
+my $grid = 50;
+my $inches = 2.54;
+
+print &quot;%!PS-Adobe-3.0\n&quot;;
+print &quot;%%BoundingBox: 0 0 $max_x $max_y\n&quot;;
+print &quot;%%Creator: gridgen 0.0.pi\n&quot;;
+print &quot;%%Pages: 1\n&quot;;
+print &quot;%%EndComments\n&quot;;
+print &quot;%%Page: 1\n&quot;;
+
+sub modulo($$)
+{
+	my $a = shift;
+	my $b = shift;
+
+	return $a-int($a/$b)*$b;
+}
+
+print &quot;% grid*inches=&quot; . ($grid*$inches) . &quot;\n&quot;;
+my $tmp = modulo($max_x,$grid*$inches); 	print &quot;% tmp=$tmp\n&quot;;
+my $x_start = $tmp/2; 			print &quot;% x_start=$x_start\n&quot;;
+my $x_end = $max_x - $tmp/2;		print &quot;% x_end=$x_end\n&quot;;
+$tmp = modulo($max_y,$grid*$inches);	print &quot;% tmp=$tmp\n&quot;;
+my $y_start = $tmp/2;			print &quot;% y_start=$y_start\n&quot;;
+my $y_end = $max_y - $tmp/2;		print &quot;% y_end=$y_end\n&quot;;
+
+print &quot;20 dict begin\n&quot;;
+print &quot;/setlineparms { [] 0 setdash 0 setlinecap 1 setlinejoin 10 setmiterlimit} def\n&quot;;
+print &quot;/ostroke { stroke setlineparms } def\n&quot;;
+print &quot;/endstroke { ostroke } def /npath { newpath } def\n&quot;;
+
+print &quot;setlineparms\n&quot;;
+print &quot;0.8 setlinewidth\n&quot;;
+
+my ($i,$j);
+for($i=$x_start;$i &lt;= $x_end; $i+=$grid*$inches)
+{
+	print &quot;npath\n&quot;;
+	print &quot;$i $y_start moveto\n&quot;;
+	print &quot;$i $y_end lineto endstroke\n&quot;;
+}
+for($i=$y_start;$i &lt;= $y_end; $i+=$grid*$inches)
+{
+	print &quot;npath\n&quot;;
+	print &quot;$x_start $i moveto\n&quot;;
+	print &quot;$x_end $i lineto endstroke\n&quot;;
+}
+
+
+print &quot;showpage end\n&quot;;
+print &quot;%%EOF\n&quot;;
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00643" href="msg00643.html">Re: [tlug] genkou youshi templates</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00621" href="msg00621.html">[tlug] genkou youshi templates</a></strong>
+<ul><li><em>From:</em> David Arroyo</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00637.html">Re: [tlug] Paul Graham's Disagreement Hierarchy</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00639.html">Re: [tlug] Ubuntu won't format a 2GB SD card as fat 16</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00622.html">Re: [tlug] genkou youshi templates</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00643.html">Re: [tlug] genkou youshi templates</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00638"><strong>Date</strong></a></li>
+<li><a href="threads.html#00638"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

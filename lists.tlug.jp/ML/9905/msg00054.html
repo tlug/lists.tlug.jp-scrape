@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Booting from SCSI and IDE drives -->
+<!--X-From: Neil Booth <NeilB@example.com> -->
+<!--X-Date:  Wed, 12 May 1999 22:45:54 +0900 -->
+<!--X-Message-Id: 19990512224633.A18314@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.990504134839.472A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00053.html">Date Prev</A>][<A HREF="msg00055.html">Date Next</A>][<A HREF="msg00009.html">Thread Prev</A>][<A HREF="msg00010.html">Thread Next</A>][<A HREF="maillist.html#00054">Date Index</A>][<A HREF="threads.html#00054">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Booting from SCSI and IDE drives</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Booting from SCSI and IDE drives</strong></LI>
+<LI><strong>From</strong>: <strong>Neil Booth &lt;<A HREF="mailto:NeilB@example.com">NeilB@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 12 May 1999 22:46:33 +0900</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00009.html">Pine.LNX.3.96.990504134839.472A-100000@example.com</A>&gt;; from Dennis McMurchy on Tue, May 04, 1999 at 02:03:47PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00009.html">Pine.LNX.3.96.990504134839.472A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Dennis McMurchy wrote:-
+&gt;   Hi,
+&gt; 
+&gt;   Some of you with SCSI disks may find this tip useful.  I was
+&gt; booting my main Lignux installation from a floppy for almost a year
+&gt; because even with SCSI selected as the bootdisk in the BIOS setup (of
+&gt; this ASUS P2B motherboard), 'lilo' didn't seem to be able write
+&gt; anything bootable to the MBR on the SCSI disk.  It wouldn't interfere
+&gt; with an existing IDE hard drive MBR, but would just fill the screen
+&gt; with zeroes when I tried to boot it.  Hey, and I kind of like the idea
+&gt; of booting a state-of-the-art system from a legacy floppy anyway, so I
+&gt; didn't pursue the issue.   
+&gt; 
+&gt;   This spring I was building a similar machine in my cabin back in 
+&gt; Canada (ASUS P2BDual/U2WSCSI motherboard), and didn't bother attaching
+&gt; any IDE devices at first.  So I discovered by chance that as long as
+&gt; no hard disk is on the IDE bus (it's not enough just to disable IDE in
+&gt; the BIOS - you have to actually disconnect the device from the
+&gt; motherboard), then 'lilo' does a perfectly fine job of making the SCSI
+&gt; disk bootable.  When you then (re)attach an IDE hard drive, it will
+&gt; work as expected  and you can boot from either the SCSI or IDE drive by
+&gt; selecting the bootdisk in the BIOS setup.  
+&gt; 
+&gt;   Somehow I suspect this is probably not a limitation only of the
+&gt; ASUS motherboards I'm using
+
+No, it's not - I suspect you ignored a lilo warning message.  I wrote
+about this around 6 months ago; this is how I see it.
+
+The way lilo works is it writes some assembler code to hard disk that
+does a couple of BIOS calls to get the BIOS to load a few sectors from
+the disk, and then lilo executes them.  The relevant BIOS calls take a
+device number as hex, with the somewhat vague coding that 0x80 is disk
+"one", 0x81 is disk "two" and so on.  The problem is to get lilo and
+the BIOS to agree on which drive is represented by disk "one" etc.
+
+Well, BIOS defaults to (assuming no disk in the floppy drive - if
+there is, shift all the numbers up one)
+
+0x80 = hda, 0x81 = hdb, .., 0x83 = hdd provided these exist.
+Then it adds SCSI drives it whatever order your SCSI card tells it
+(you can set this order in the SCSI card's BIOS).
+
+So if you have one IDE and one SCSI, the default BIOS setup is
+
+0x80 = IDE
+0x81 = SCSI
+
+Now, modern BIOSes allow you to override this, and you can set the
+boot order to be SCSI first, in which case BIOS renumbers as follows:-
+
+0x80 = SCSI
+0x81 = IDE.
+
+The trick is to ensure lilo agrees about the numbering, so that
+its BIOS calls load its second stage from the sectors of the correct
+disk.  Remembering that BIOS only attempts to load the boot sector from disk
+"one", the trick is to get BIOS and lilo to agree 0x80 = SCSI.
+
+Lilo defaults to IDE = 0x80, SCSI = 0x81 as BIOS does.  The lines
+
+disk=/dev/sda
+  bios=0x80
+
+in your lilo main section mean that lilo writes assembler code to disk
+assuming /dev/sda is BIOS 0x80.  If you do this, I bet you can boot
+from SCSI with both a SCSI and IDE drive present and with BIOS set to
+boot from SCSI (I do this regularly).  All this is documented in the
+lilo docs, but it's not particularly clear.
+
+One final catch to note is that most BIOSes require that at least one
+"real" partition on disk "one" be flagged active, otherwise they
+refuse to even try to boot from it even though it would work, giving
+up with "non system disk" or "boot failed" or something similar
+(i.e. they assume you're runnning MSDOS.)
+
+Neil.
+--
+
+-------------------------------------------------------------------
+Next Nomikai: May 26 (Wed), 19:30                        Place: TBD
+*** Special guest: Eric S. Raymond
+Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00009" HREF="msg00009.html">tlug: Booting from SCSI and IDE drives</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00053.html">tlug: Local domains and sendmail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00055.html">RE:Kernel compile trouble.(Was Re: tlug: new debian user...)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00009.html">tlug: Booting from SCSI and IDE drives</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00010.html">tlug: on demand dialing in pppd</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00054"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00054"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Reverse DNS Delegatation -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Thu, 18 Jul 2013 14:02:50 +0900 -->
+<!--X-Message-Id: 20130718050249.GD4297@skeptic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CAA3AF9f7c0Htm7cbn&#45;6m=2WOdYLgeROUXwZ4bbUmH9xUChC=JA@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00017.html">Date Prev</a>][<a href="msg00019.html">Date Next</a>][<a href="msg00007.html">Thread Prev</a>][<a href="msg00019.html">Thread Next</a>][<a href="maillist.html#00018">Date Index</a>][<a href="threads.html#00018">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Reverse DNS Delegatation</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 18 Jul 2013 14:02:49 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Reverse%20DNS%20Delegatation">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Reverse DNS Delegatation</strong></li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>One suggestion to start with: refer to this as &quot;in-addr.arpa&quot;
+delegation, since reverse DNS does actually exist, and is an entirely
+different thing (albeit probably entirely unused for many years now).
+
+(in-addr.arpa lookups are done as forward, not reverse, lookups, BTW.)
+
+On 2013-07-13 14:00 +0900 (Sat), Shaun Hughes wrote:
+
+&gt; I've been tearing my hair out trying to get an ISP to understand that I
+&gt; would like to buy their product and have them delegate the DNS reverse zone
+&gt; to my DNS Servers.
+
+Unless there's a trick I don't remember, they can't do this unless
+you've contracted for an entire /24 from them, since the zones for
+in-addr.arpa. records are based on octets within the IP address.
+
+So first, if you don't have a /24, and you also don't have
+a good explanation of how you'd have the ISP delegate
+1.220.73.198.in-addr.arpa. to your DNS servers without delegating
+255.220.73.198.in-addr.arpa. as well, you need to find that explanation
+or you should probably give up your quest for delegation. (I would be
+extremely nervous about running systems with a DNS configuration that I
+didn't thoroughly understand.)
+
+The more common way of changing the PTR records for your in-addr.arpa
+names is simply to ask the ISP to use PTR records you specify for these.
+(In this case, their name servers, not yours, are authoratative for
+these records.) Some ISPs might do this, some might not.
+
+In general, my recommendation is that you use the ISP-supplied records
+for these names, because the ISP, unless they're utterly incompetent,
+will ensure that the PTR records point to valid A records with matching
+IP addresses.
+
+Note that under normal circumstances where people are checking PTR
+records according to IETF recommendations, the actual name of the PTR
+record isn't relevant, and need not have anything to do with the host
+using that IP address. All that's checked is that there is a PTR record,
+and following it produces an A record with an IP address that matched
+the one used to generate the in-addr.arpa name used to look up the PTR
+record.
+
+So, for example, when you receive an SMTP connection from a
+particular one of my mail servers, you'll recieve a connection from
+219.117.251.194. Looking up 194.251.117.219.in-addr.arpa, you'll find
+that you get a PTR record with name 219.117.251.194.static.zoot.jp,
+and looking up that you'll find you get an A record with address
+219.117.251.194. Since the loop checks out, you can then safely record
+&quot;219.117.251.194.static.zoot.jp&quot; as a name of the host that connected
+to you. (This may be just one of many names assigned to that host, of
+course, and you should also always record the IP address in case the
+name to IP address mapping changes later.)
+
+That you soon get a &quot;HELO priv.dyadic.cynic.net&quot; message on that SMTP
+connection later on is perfectly fine; you're simply learning another
+name that the host believes is assigned to it, which may or may not be
+the name for the address from which you received the connection. (In a
+correctly configured system, it might also be a name assigned to another
+address used by the same host.)
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00019" href="msg00019.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Pier Fumagalli</li></ul></li>
+<li><strong><a name="00020" href="msg00020.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> SCHWARTZ, Fernando G.</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00002" href="msg00002.html">[tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Shaun Hughes</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00017.html">Re: [tlug] Something Called Gaimen Kirikae...</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00019.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00007.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00019.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00018"><strong>Date</strong></a></li>
+<li><a href="threads.html#00018"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

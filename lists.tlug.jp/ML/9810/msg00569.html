@@ -1,0 +1,234 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS question -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 19:36:22 +0900 -->
+<!--X-Message-Id: 19981014193356E.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810140858.RAA03506@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00568.html">Date Prev</A>][<A HREF="msg00570.html">Date Next</A>][<A HREF="msg00604.html">Thread Prev</A>][<A HREF="msg00571.html">Thread Next</A>][<A HREF="maillist.html#00569">Date Index</A>][<A HREF="threads.html#00569">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:bennett@example.com">bennett@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS question</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 19:33:56 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Wed, 14 Oct 1998 17:58:15 +0900"&lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Frank" == Frank Bennett &lt;bennett@example.com&gt; writes:
+
+    Frank&gt; The design strategy (someone step on my fingers if I'm
+    Frank&gt; crawling in the wrong direction...) is to load processing
+    Frank&gt; overhead onto the terminals, and to centralize data storage
+    Frank&gt; and machine configuration details on the server.  The
+    Frank&gt; terminal machines will run Applix and Netscape and what
+    Frank&gt; have you, from the disk in each terminal.  Data, mail, and
+    Frank&gt; bootpd parameters will be stored on the server.
+
+Is it really necessary to have the applications on the individual
+machines? I would just through them on the server and make upgrade
+easier.
+ 
+    Frank&gt; This will require that the user's home directory be in an
+    Frank&gt; NFS or other remote-mounted filesystem, and I just realized
+    Frank&gt; that I don't know how best to set this up, nor indeed
+    Frank&gt; whether it will work at all.
+
+    Frank&gt; Am I going to run into massive overhead by exporting /home
+    Frank&gt; to every terminal (there will be about 20 at the start, but
+    Frank&gt; numbers will grow; and there will be 300+ subdirectories in
+    Frank&gt; /home)?  Will this require that the /etc/password on the
+    Frank&gt; server is cloned to the client to assure that permissions
+    Frank&gt; are synced between the two systems?  Are permissions on an
+    Frank&gt; NFS-mounted filesystem going to be as easy to walk around
+    Frank&gt; as, thinking idly about the problem here at my desk this
+    Frank&gt; evening, I think they will be --- by hacking the
+    Frank&gt; /etc/passwd ID number or password on the client machine?
+    Frank&gt; It all seems rather scary somehow.
+
+Easiest way to tackle this is to make use of the automounter. What the
+automounter does is, as its name implies, automatically mount
+directories, under some give mount point. First, lets look at how this
+would this would work manually: 
+
+	Lets say I have two server machines, server1 and server2. My
+home directory is on server1, /home/andy. Yours is on server2,
+/home1/frank.
+
+To make things simple, I want to always mount my home directory under
+the same mount point, no mater which client machine I'm on. Lets make
+the mount point "/h". My passwd entry would look like:
+
+andy:12345:150:15:Andrew S. Howell:/h/andy:/usr/local/bin/tcsh
+
+On client machine client1, I would need to run mount as root:
+
+mount server1:/home/andy /h/andy
+
+If you logged in, it would be:
+
+mount server2:/home1/frank /h/frank
+
+You could setup all client machines to mount all the home directories
+from all the servers, but that would 1) mount lots of stuff that would
+never be used, 2) be a pain to maintain.
+
+This is where the automounter, or autofs [1] comes in. The automounter
+needs some maps to tell it 1) what are the mount points it looks
+after, and 2) what machines to mount directories from. The first,
+normally /etc/auto.master:
+
+# Sample auto.master file
+# Format of this file:
+# mountpoint map options
+# For details of the format look at autofs(8).
+/h     /etc/auto.h      --timeout 60
+
+This shows a mount point, /h, in the first column. The second column
+file to look for that maps directory name to server mount
+point. /etc/auto.h would look like:
+
+andy	server1:/home/andy
+frank   server2:/home1/frank
+
+If I'm on client1, and I cd to /h/frank, the autofs intervenes, looks
+up frank in /etc/auto.h, finds it need to mount from
+server2:/home1/frank. 
+
+THe next step is to figure out how to distribute the maps. This can be
+done by copying them to all the clients, maybe by rdist or rsync, or
+using NIS.
+
+The other thing that the automounter does is automatically unmounts
+directories when they are no longer in use.
+
+One big advantage of the automounter is that when you need to users to
+another disk, or even another server, all you have to do is move their
+files, change the map and have them logout. When they log back in,
+there home directory will be mounted from its new location.
+( Providing that the automount had enough time to unmount the old one)
+
+I'll be glad to provide more details if you want. Note that this is
+not limited to just home directories. You can use for apps as well. I
+have stuff automounted under /apps/APPLICATION. Example
+/apps/netscape. The full path ends up being
+/apps/APPLICATION/VERSION/PLATFORM/bin, say
+/apps/netscape/4.5.0.b1/sun4-55/bin
+
+Hope this helps,
+
+	Andy
+
+[1] There are two "automounters" used under linux. The older one is
+amd, and newer one, which is also used under various commercial Unix
+system, is autofs. amd has gads of options, but more of a pain to use,
+and probably not as well supported now, and in the future.
+
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00571" HREF="msg00571.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00698" HREF="msg00698.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00564" HREF="msg00564.html">tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00568.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00570.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00604.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00571.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00569"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00569"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

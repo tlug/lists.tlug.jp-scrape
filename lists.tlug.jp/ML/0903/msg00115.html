@@ -1,0 +1,250 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Re: Mysterious LVM issue -->
+<!--X-From-R13: "Pvexve O. Pnexnefba" <ovexveoNfgbvpivxvat.arg> -->
+<!--X-Date: Thu, 12 Mar 2009 03:46:10 +0900 -->
+<!--X-Message-Id: 49B7D8D6.6060605@stoicviking.net -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 49B789EA.1050404@stoicviking.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00114.html">Date Prev</a>][<a href="msg00116.html">Date Next</a>][<a href="msg00113.html">Thread Prev</a>][<a href="msg00127.html">Thread Next</a>][<a href="maillist.html#00115">Date Index</a>][<a href="threads.html#00115">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Mysterious LVM issue</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 12 Mar 2009 00:29:26 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Birkir A. Barkarson&quot; &lt;<a href="mailto:birkirb@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re:%20Mysterious%20LVM%20issue">birkirb@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Mysterious LVM issue</strong></li>
+<li>References: &lt;<a href="msg00107.html">49B789EA.1050404@stoicviking.net</a>&gt;</li>
+<li>User-agent: Thunderbird 2.0.0.19 (X11/20090114)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>John, Francois and others.
+
+Thanks for the feedback.
+
+I did indeed do the initial copy as root and then subsequent checks were
+done as a plain user, and the second copy attempt as well. So it seems
+like the initial 0 reported but everything still fits can be due to the
+extra 5% reserved for root.
+
+LV size is reported 218GB of which 5% would be about 10GB, and even if
+the 2GB difference between the LV size and the du size is space reserved
+for root it would account for why the copy succeeded with 0 bytes left
+(even though you would expect root to get different values reported than
+other users then, so there is definitely some lying going).
+
+The crazy values after that must be some kind of bug, as Francois noted.
+The 232GB reported doesn't add up no matter how you look at it.
+
+If anyone is interested, I attach the tune2fs and lvdisplay logs.
+
+Cheers,
+Birkir
+</pre><pre>birkirb@example.com:~$ sudo /sbin/tune2fs -l /dev/mapper/america_main-store 
+tune2fs 1.41.3 (12-Oct-2008)
+Filesystem volume name:   store
+Last mounted on:          &lt;not available&gt;
+Filesystem UUID:          7684a222-a800-477b-8cd9-b0f3453e4685
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype needs_recovery sparse_super large_file
+Filesystem flags:         unsigned_directory_hash 
+Default mount options:    (none)
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              14344192
+Block count:              57361408
+Reserved block count:     2868070
+Free blocks:              3421556
+Free inodes:              14276794
+First block:              0
+Block size:               4096
+Fragment size:            4096
+Reserved GDT blocks:      1010
+Blocks per group:         32768
+Fragments per group:      32768
+Inodes per group:         8192
+Inode blocks per group:   512
+Filesystem created:       Sun Mar  8 18:26:24 2009
+Last mount time:          Wed Mar 11 18:18:00 2009
+Last write time:          Wed Mar 11 18:18:00 2009
+Mount count:              1
+Maximum mount count:      38
+Last checked:             Wed Mar 11 17:58:26 2009
+Check interval:           15552000 (6 months)
+Next check after:         Mon Sep  7 17:58:26 2009
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:	          256
+Required extra isize:     28
+Desired extra isize:      28
+Journal inode:            8
+Default directory hash:   half_md4
+Directory Hash Seed:      0c4b1477-3920-40dd-b5e0-de2b3ddfa20f
+Journal backup:           inode blocks
+
+birkirb@example.com:~$ sudo pvdisplay
+  --- Physical volume ---
+  PV Name               /dev/hda4
+  VG Name               america_main
+  PV Size               222.54 GB / not usable 2.97 MB
+  Allocatable           yes (but full)
+  PE Size (KByte)       4096
+  Total PE              56970
+  Free PE               0
+  Allocated PE          56970
+  PV UUID               waEJHf-j16Y-R1o9-mdAq-c8nS-Z81m-U7Hux8
+   
+
+birkirb@example.com:~$ sudo lvdisplay
+  --- Logical volume ---
+  LV Name                /dev/america_main/home
+  VG Name                america_main
+  LV UUID                IUzhnE-BJK1-rz35-oS53-4jSi-UJGg-ZFxd8F
+  LV Write Access        read/write
+  LV Status              available
+  # open                 1
+  LV Size                952.00 MB
+  Current LE             238
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           254:0
+   
+  --- Logical volume ---
+  LV Name                /dev/america_main/local
+  VG Name                america_main
+  LV UUID                52NL39-FdGo-AIfy-w3IC-3FtC-UhhP-dwPUCU
+  LV Write Access        read/write
+  LV Status              available
+  # open                 1
+  LV Size                2.79 GB
+  Current LE             715
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           254:1
+   
+  --- Logical volume ---
+  LV Name                /dev/america_main/store
+  VG Name                america_main
+  LV UUID                Dm6jfZ-zg1n-U09h-Vwxd-95nB-459P-46Fx4c
+  LV Write Access        read/write
+  LV Status              available
+  # open                 1
+  LV Size                218.82 GB
+  Current LE             56017
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           254:2
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00127" href="msg00127.html">[tlug] Re: Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> John Fremlin</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00107" href="msg00107.html">[tlug] Mysterious LVM issue</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00114.html">[tlug] Re: Pretty Japanese font for latex-cjk beamer presentation</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00116.html">Re: [tlug] Re: Pretty Japanese font for latex-cjk beamer presentation</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00113.html">Re: [tlug] Mysterious LVM issue</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00127.html">[tlug] Re: Mysterious LVM issue</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00115"><strong>Date</strong></a></li>
+<li><a href="threads.html#00115"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

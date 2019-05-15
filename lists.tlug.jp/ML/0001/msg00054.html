@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: gcc question -->
+<!--X-From: Fredric Fredricson <fredric.fredriksson@example.com> -->
+<!--X-Date:  Fri, 14 Jan 2000 08:40:29 +0900 -->
+<!--X-Message-Id: 387E6249.C2DD7F27@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.95.1000114003249.22027A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00053.html">Date Prev</A>][<A HREF="msg00055.html">Date Next</A>][<A HREF="msg00051.html">Thread Prev</A>][<A HREF="msg00041.html">Thread Next</A>][<A HREF="maillist.html#00054">Date Index</A>][<A HREF="threads.html#00054">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: gcc question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: gcc question</strong></LI>
+<LI><strong>From</strong>: <strong>Fredric Fredricson &lt;<A HREF="mailto:fredric.fredriksson@example.com">fredric.fredriksson@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 14 Jan 2000 00:39:53 +0100</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: MYDATA automation AB</LI>
+<LI>References: &lt;<A HREF="msg00051.html">Pine.LNX.3.95.1000114003249.22027A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Selva Nair wrote:
+&gt; 
+&gt; On Thu, 13 Jan 2000, Fredric Fredricson wrote:
+&gt; 
+&gt; &gt;    You are right that gcc/egcs, or any c compiler for that matter, does not
+&gt; &gt;    initialize the pointers but Linux will clear all new pages so in this
+&gt; &gt;    particular case both pointers will be "initialized" to 0.
+&gt; &gt;    It is of course a bug to rely on this but I have seem dozens of
+&gt; &gt;    programs that does (probably/hopefully unintentional).
+&gt; &gt;
+&gt; &gt;    From a developers point of view it is a good thing that Linux
+&gt; &gt;    does not allow access to memory address 0. This way uninitialized
+&gt; 
+&gt; Really? I have never seen that happening though. In my
+&gt; experience, uninitialized pointers on egcs/Linux do point to arbitrary
+&gt; locations..
+&gt; 
+&gt; Try this:
+&gt; 
+&gt; int main()
+&gt; {
+&gt;   char *c1, *c2, *c3;
+&gt; 
+&gt;   printf("%d %d %d\n", c1, c2, c3);
+&gt; 
+&gt;   return 0;
+&gt; }
+&gt; 
+&gt; Selva
+&gt; 
+Hmmmm.... it seems like my Linux 2.0/gcc 2.7/libc5 combination
+differs from my Linux 2.2/egcs 2.91/glibc .
+In 2.0/2.7/libc5 I always get the pointers in the example set to
+zero but in 2.2/2.91/glibc they get "arbitrary" values (always
+the same "arbitrary" values).
+
+But consider:
+
+char *c0 ; // variable in the data segment (or whatever it is called
+           // in Linux)
+int main()
+{
+   char *c1, *c2, *c3;  // on the stack (automatic)
+   char **c4 ;
+   c4 = (char**) malloc(sizeof(char*)) ; // pointer on the heap
+ 
+   printf("%d %d %d %d %d\n", c0, c1, c2, c3, *c4);
+ 
+   return 0;
+}
+
+Using egcs/libc6 here c0 gets initiated to 0 and *c4 will 
+also be 0. c1,c2,and c3 are set to "arbitraty" values. c1, c2 and
+c3 are all located on the stack so I suspect that
+the stack area get clobbered by some initialization routine
+(one of those mysterious __libc_start_main, _init and _start).
+
+So obviously it is not always true that the first variables
+pointers get initiated to zero. 
+Nor is it true that you can trust the simplest c program
+unless you initialize your variables properly, but this is
+hardly news.....
+
+/Fredric
+
+PS I tried to confirm the stack-area-gets-clobberer theory 
+   by looking at the stack contents but I failed and it's 
+   getting late and I need some sleep so I give up and leave
+   the explanation to somebody else.
+-------------------------------------------------------------------
+Next Technical Meeting: January 14 (Fri) 19:00
+* Topic: "glibc - current status and future developments"
+* Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+* Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00051" HREF="msg00051.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Selva Nair &lt;selva@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00053.html">tlug: 1/14 Meeting - Seminar RealVideo Live Transmission</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00055.html">tlug: Viewer for Microsoft Project (.mpp) files?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00051.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00041.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00054"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00054"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

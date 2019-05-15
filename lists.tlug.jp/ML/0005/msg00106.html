@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: External DNS woes -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 11 May 2000 13:40:42 +0900 -->
+<!--X-Message-Id: 14618.14762.813377.812341@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00105.html">Date Prev</A>][<A HREF="msg00107.html">Date Next</A>][<A HREF="msg00105.html">Thread Prev</A>][<A HREF="msg00107.html">Thread Next</A>][<A HREF="maillist.html#00106">Date Index</A>][<A HREF="threads.html#00106">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: External DNS woes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: External DNS woes</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 11 May 2000 13:40:10 +0900 (JST)</LI>
+<LI>CC: <A HREF="mailto:steve@example.com">steve@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Not really a Linux question, but the biggest concentration of net
+admins/security geeks I know is on TLUG.  And it is making use of my
+Linux box difficult in mail applications.
+
+I'm having trouble with mail being intermittently refused from various
+sites because "Sender domain must exist."  I believe these are all
+recent sendmail implementations (8.9 or 8.10).  (What does sendmail
+use to make that check, gethostbyaddress()?  Surely not auth.)  It has
+happened with Japanese sites (in particular, TLUG), New Zealand
+(vuw.ac.jp), and US (best.com and lucent.com).  The domain in question
+is my Linux box turnbull.sk.tsukuba.ac.jp.  Its SOA is
+shako.sk.tsukuba.ac.jp.
+
+I've tried querying the remote nameservers for those domains with dig,
+and in general it seems that once the cached negative expires things
+work OK (both DNS and SMTP).  Right now all of the above sites are
+apparently fine, except that one of the nameservers for vuw.ac.jp
+(ns1.waikato.ac.nz) can't find the ac.jp domain!  (It just returns
+information for the jp domain's name servers and a null ANSWER field.
+Maybe it's set not to do recursive queries or something?)
+
+However, my mail is still being rejected at vuw.ac.nz, while the main
+departmental server got through.  It turns out there are "internal"
+nameservers which reject my DNS queries (and one of which is the MX
+used by the ML I'm trying to post to).  So I suspect that the internal
+nameserver cached the failed lookup result, but have no way to check it.
+
+The problems started on April 27 or 28, when my domain got
+accidentally deleted from the local DNS.  That was fixed at about 6pm
+on the 28th, and normal service resumed (so I thought) on the evening
+of the 29th, when caches expired.
+
+However, service to all of the sites above has been intermittent since
+then, mostly things go through but every once in a while the DNS seems
+to fail again, starting on May 1.  It's really annoying, since it
+means I can't send mail to those sites until the cache expires,
+usually in 24 hours.  I have never managed to get a Tsukuba-dai server
+to deny that I exist since April 29, so I suspect some external
+problem, probably the Tsukuba-dai packet-filter.
+
+Coincidentally (?) on May 1 Tsukuba-dai started a packet-filter, but
+it does let udp/dns and tcp/auth queries through.  Strangely enough,
+incoming tcp/dns is (according to the docs) blocked, as is all
+incoming ICMP and all incoming UDP except to the DNS port (which means
+I have to use TCP queries to remote nameservers).  (If you have
+detailed well-informed comments about how stupid this all is, please
+do send them; I'll take your name off and forward them to the relevant
+committee.)  Further details available if you think it's related and
+would help diagnose.
+
+Anybody have any idea what might be going on?  Unfortunately, the
+local techs are not particularly clued in to the relevant RFCs, so
+they're not much help.  And, no, they won't give me root so I can play
+with the DNS myself.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: Crypto and Security	Speaker: Chris Sekiya
+Next Nomikai Meeting: June 16 (Fri), Tengu TokyoEkiMae.
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00107" HREF="msg00107.html">Re: tlug: External DNS woes</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;sekiya@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00108" HREF="msg00108.html">Re: tlug: External DNS woes</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00105.html">Re: tlug: Linux World Expo</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00107.html">Re: tlug: External DNS woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00105.html">Re: tlug: Linux World Expo</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00107.html">Re: tlug: External DNS woes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00106"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00106"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

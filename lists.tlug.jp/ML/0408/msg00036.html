@@ -1,0 +1,214 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] "Interesting" printing issue. -->
+<!--X-From-R13: Sqjneq Ievtug <rqjNrC500.pbz> -->
+<!--X-Date: Fri, 6 Aug 2004 20:50:43 +0900 -->
+<!--X-Message-Id: 20040806115043.GP2365@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20040806112442.046c6f0e.gstewart@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00035.html">Date Prev</a>][<a href="msg00037.html">Date Next</a>][<a href="msg00034.html">Thread Prev</a>][<a href="msg00037.html">Thread Next</a>][<a href="maillist.html#00036">Date Index</a>][<a href="threads.html#00036">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] &quot;Interesting&quot; printing issue.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 6 Aug 2004 20:50:43 +0900</li>
+<li><strong>From</strong>: <strong>Edward Wright &lt;<A HREF="mailto:edw@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%22Interesting%22%20printing%20issue.">edw@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] &quot;Interesting&quot; printing issue.</strong></li>
+<li>References: &lt;<a href="msg00034.html">20040806112442.046c6f0e.gstewart@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Fri, Aug 06, 2004 at 11:24:42AM +0200, Godwin Stewart wrote:
+&gt; This is YAOTCHTNBM[1].
+&gt; 
+&gt; I have a server providing print services for 2 workstations.
+&gt; 
+&gt; The (Linux, Slackware 8.0) server is running the stock BSD line printer
+&gt; daemon - and before you all throw your arms up in despair, it works
+&gt; perfectly well except for this weirdness. The clients are spooling using
+&gt; LPRng, which hands the job off to apsfilter, which in turn pumps it through
+&gt; GhostScript/hpijs and then spits the raster over to the server's &quot;lp&quot; queue.
+&gt; An example entry of a client-site printcap is:
+&gt; 
+&gt; lp|ijs/DESKJET_5600;r=600x600;q=high;c=gray;p=a4;m=auto:\
+&gt;     :lp=:\
+&gt;     :rm=192.168.1.1:\
+&gt;     :rp=lp:\
+&gt;     :if=/etc/apsfilter/basedir/bin/apsfilter:\
+&gt;     :sd=/var/spool/lpd/lp:\
+&gt;     :lf=/var/spool/lpd/lp/log:\
+&gt;     :af=/var/spool/lpd/lp/acct:\
+&gt;     :mx#0:\
+&gt;     :sh:
+&gt; 
+&gt; The entry in the server's printcap file is:
+&gt; 
+&gt; # Generic printer:
+&gt; lp:lp=/dev/lp0:sd=/var/spool/lpd:sh:ff=
+&gt; 
+
+I have a very similar setup - the only significant difference that I see
+is that I am running the filter on the server rather that the client - I
+don't see why that should make any difference, though.
+
+client side printcap:
+
+p2txt:\
+        :sh:\
+        :lp=:\
+        :rm=192.168.0.9:\
+        :rp=djtxt:\
+        :ml=0:\
+        :mx=0:\
+        :sd=/var/spool/lpd/p2txt:\
+        :af=/var/spool/lpd/p2txt/p2txt.acct:\
+        :lpd_bounce=true:
+
+server side:
+
+djtxt:\
+        :sh:\
+        :ml=0:\
+        :mx=0:\
+        :sd=/var/spool/lpd/djtxt:\
+        :af=/var/spool/lpd/djtxt/djtxt.acct:\
+        :lp=/dev/lp0:\
+        :lpd_bounce=true:\
+        :if=/usr/local/bin/eQprint/txt1filt:
+
+&gt; For every print job, lpd mails off not one, but THREE identical mails to the
+&gt; originator of the job, saying &quot;Your printer job ((STDIN)) was not printed
+&gt; because it was not linked to the original file&quot;.
+&gt; 
+
+I DON'T know what that means :) but it sounds like the job is trying to print
+3 times (the default) and sending an email each time. Does lpd think it's
+printing from STDIN (a pipe?) rather than the file in the spool dir?
+
+&gt; Any ideas (other than &quot;don't use LPR&quot;)?
+&gt; 
+
+Does the same thing happen if you print locally on the server?
+Does it make any difference if you use a subdirectory of
+/var/spool/lpd as a spool for lp? (e.g. /var/spool/lpd/lp)
+
+You've probably tried these, but just in case:
+
+make sure all files &amp; directories are correctly setup on
+	both client and server (run &quot;checkpc -f&quot; a couple of times)
+HUP lpd after any config changes
+read the status files in the spool directories on both client and server
+	for clues
+
+Have fun,
+Ed
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00037" href="msg00037.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00038" href="msg00038.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00034" href="msg00034.html">[tlug] &quot;Interesting&quot; printing issue.</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00035.html">Re: [tlug] ImageMagic</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00037.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00034.html">[tlug] &quot;Interesting&quot; printing issue.</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00037.html">Re: [tlug] &quot;Interesting&quot; printing issue.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00036"><strong>Date</strong></a></li>
+<li><a href="threads.html#00036"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

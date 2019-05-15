@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Database design in Japan. (question) -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Thu, 05 Apr 2007 00:35:42 +0900 -->
+<!--X-Message-Id: Pine.NEB.4.64.0704050024000.8820@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46133EF7.1070005@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00088.html">Date Prev</a>][<a href="msg00090.html">Date Next</a>][<a href="msg00075.html">Thread Prev</a>][<a href="msg00095.html">Thread Next</a>][<a href="maillist.html#00089">Date Index</a>][<a href="threads.html#00089">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Database design in Japan. (question)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 5 Apr 2007 00:35:42 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Database%20design%20in%20Japan.%20%28question%29">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Database design in Japan. (question)</strong></li>
+<li>References: &lt;<a href="msg00059.html">46133EF7.1070005@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">I assume you're talking about products along the lines of</pre><br>
+<pre style="margin: 0em;">    electronics / computer / cpu / intel / ...
+    electronics / computer / printer / ...
+    electronics / digital-camera / dslr / ...
+    home-appliances / kitchen / ...</pre><br>
+<pre style="margin: 0em;">The method you described doesn't seem all *that* bad compared to many of
+the DBMS atrocities I've seen, especially given that trees and graphs
+in general are, well, let us be generous, &quot;not well supported&quot; in
+current relational models. Still, if each product has one and only one
+category, just having a key into a table containing each of the entries
+above would be more normalized; for multiple categories per product, a
+product_id / category_id table would be the equivalant.</pre><br>
+<pre style="margin: 0em;">More normalized yet would be to have a table of top-level categories,
+a second table of second-level categories and their corresponding
+top-level categories, and so on. It works if you've got a fixed number
+of levels.</pre><br>
+<pre style="margin: 0em;">Probably the biggest driver of your relational organization of trees
+is whether they are fixed in depth or variable. Variable depth methods
+can get pretty complex pretty quickly. I often prefer just to make a
+text field that contains a list of fixed-length keys in order of level;
+this tends to sort and index well, and selection of subtrees is pretty
+fast using the LIKE '...%' operator. Or use arrays, if you have them;
+it's probably one of the very few justified uses of the array type in
+PostgreSQL.</pre><br>
+<pre style="margin: 0em;">cjs
+--
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974</pre><br>
+<pre style="margin: 0em;">On Wed, 4 Apr 2007, Birkir A. Barkarson wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>Since I started working in software development here in Japan I<br>
+accept many of the odd idiosyncrasies I have encountered such as the<br>
+propensity for natural keys to peculiar naming conventions, but<br>
+this latest case just strikes me as being stupid so I feel a need to elicit 
+different opinions.</tt><br>
+<br>
+<tt>In front of me I have a database design where a product list table has a<br>
+product type property (this property is a hierarchical tree) and<br>
+is using six different fields to store each of the levels of the type tree 
+the<br>
+product belongs to.</tt><br>
+<br>
+<tt>My instinct would be to have an external type per product table (with a<br>
+field pointing to the product table and another to a type table). 
+Hierarchical<br>
+info could be in the type table (a parent field) if a single hierarchy is 
+used<br>
+or in a separate one for multiple hierarchies.</tt><br>
+<br>
+<pre style="margin: 0em;">Can anyone chip in some good reasons for and against the implementation I am
+faced with on the one hand and my suggestion on the other?</pre><br>
+<pre style="margin: 0em;">Regards,</pre><br>
+<pre style="margin: 0em;">BAB</pre><br>
+<pre style="margin: 0em;"><br></pre><br>
+</blockquote><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00095" href="msg00095.html">Re: [tlug] Database design in Japan. (question)</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00059" href="msg00059.html">[tlug] Database design in Japan. (question)</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00088.html">Re: [tlug] (no subject)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00090.html">Re: [tlug] Introduction: OpenSolaris</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00075.html">Re: [tlug] Database design in Japan. (question)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00095.html">Re: [tlug] Database design in Japan. (question)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00089"><strong>Date</strong></a></li>
+<li><a href="threads.html#00089"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

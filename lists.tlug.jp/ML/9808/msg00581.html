@@ -1,0 +1,217 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd) -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 31 Aug 1998 16:36:50 +0900 -->
+<!--X-Message-Id: 13802.21103.255526.545462@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199808310607.PAA06219@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980831153649.16975u&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00580.html">Date Prev</A>][<A HREF="msg00582.html">Date Next</A>][<A HREF="msg00575.html">Thread Prev</A>][<A HREF="msg00594.html">Thread Next</A>][<A HREF="maillist.html#00581">Date Index</A>][<A HREF="threads.html#00581">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 31 Aug 1998 16:36:15 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00575.html">Pine.LNX.3.96LJ1.1b7.980831153649.16975u-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00570.html">199808310607.PAA06219@example.com</A>&gt;&lt;<A HREF="msg00575.html">Pine.LNX.3.96LJ1.1b7.980831153649.16975u-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Scott" == Scott Stone &lt;sstone@example.com&gt; writes:
+
+    Scott&gt; On Mon, 31 Aug 1998, Matt Gushee wrote:
+
+    &gt;&gt; 1) If you have a System V -ish boot configuration (Red Hat,
+    &gt;&gt; TurboLinux?, maybe Debian, but I think not Slackware), you
+    &gt;&gt; should have
+
+    Scott&gt; Just FYI, everyone, yes, TL is a SystemV-ish configuration,
+    Scott&gt; very similar to Redhat's.
+
+Debian also is SysV-rashii.
+
+&gt;&gt;&gt;&gt;&gt; "Eric" == Eric S Standlee &lt;fwiw3980@example.com&gt; writes:
+
+    Eric&gt; I got ncurses3 installed and then canna and ckinput2
+    Eric&gt; installed fine I think...  I started
+    Eric&gt; xemacs-with-canna-MULE-support, and then realized that there
+    Eric&gt; must be some other things I have to set up before I can
+    Eric&gt; actually type Japanese...
+
+Yup.  You can type it, but you won't see it  :-P
+
+    Eric&gt; 1) what is the best way to set up the system to run
+    Eric&gt; cannaserver on startup?
+
+If you have an /etc/init.d[/boot]/canna[server] script, as Matt said,
+all you need to do is put a link to that in your normal startup level
+(`fgrep default /etc/inittab' to find out, usually 2 or 3), eg:
+
+ln -s ../init.d/cannaserver /etc/rc2.d/S99cannaserver
+
+(This assumes the Debian layout, poke around and you'll figure out
+what's right for you.  Relative links are preferred for PMS reasons,
+you don't need to do so.)
+
+If you don't, you should probably have an rc.local file; put the
+cannastart command in there.
+
+You don't have to reboot, just run the cannaserver.
+
+    Eric&gt; 2) do I need an environment var initialized, if so where
+    Eric&gt; should I do that?
+
+If you are going to use kinput2, you need two variables set:
+
+LANG=ja_JP.euc
+XMODIFIERS="@example.com=kinput2"
+export LANG XMODIFIERS
+
+This should be done in the user's .bash_profile or .bashrc script, or
+possibly in /etc/profile.  Where is extremely system dependent, and
+mostly a matter of style.  As far as I can tell, nobody uses these
+files according to the documentation.
+
+I prefer using Canna directly through XEmacs, myself; you can either
+start XEmacs before the XMODIFIERS variable is exported, or you can
+start XEmacs with
+
+XMODIFIERS='' xemacs ...
+
+to achieve the same effect.  If you are going to stick with Canna, you
+may prefer to use kinput2 in both cases.
+
+For properly built XEmacs 20.4 and above (probably 20.3 as well), no
+customization of .emacs is needed.
+
+    Eric&gt; 3) It might be different, but in xemacs and kterm how do I
+    Eric&gt; initialize input of Japanese characters, and just as
+    Eric&gt; important, how do I stop Japanese input?
+
+Very system-dependent.  In a well-setup system tuned for Japanese
+keyboards, you can use the kanji key for both; it's a toggle, in and
+out on the same key.
+
+The default for kinput2 on non-Japanese-tuned systems is Shift-SPC,
+YMMV.  If it works, it works in both XEmacs and kterm.
+
+In recent XEmacs, the Canna subsystem is integrated with the Library
+of Emacs Input Methods (nice on the outside, inside an FSF
+abomination).  You toggle the currently selected input method with
+Ctrl-\.  If there is none, you will be prompted for it; type 
+j&lt;TAB&gt;c&lt;TAB&gt;&lt;RET&gt; (or if you're a Real Man, japanese-canna&lt;RET&gt;).
+
+If that doesn't work, you'll need to use the code Matt provided in
+your .emacs.  The default canna-toggle is Ctrl-o, which is very
+inconvenient for me.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00594" HREF="msg00594.html">Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> "Eric S. Standlee" &lt;fwiw3980@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00570" HREF="msg00570.html">tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00575" HREF="msg00575.html">Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00580.html">Re: tlug: yudit</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00582.html">tlug: Linux Programmer Position</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00575.html">Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00594.html">Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00581"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00581"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

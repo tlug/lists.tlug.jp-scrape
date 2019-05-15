@@ -1,0 +1,205 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Reverse DNS Delegatation -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 19 Jul 2013 19:12:24 +0900 -->
+<!--X-Message-Id: 87k3kmrh88.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20130718050249.GD4297@skeptic.cynic.net -->
+<!--X-Reference: 51E81045.2080807@fgs.eti.br -->
+<!--X-Reference: 20130719040353.GA26790@skeptic.cynic.net -->
+<!--X-Reference: CAPx5V520y0djd0yOkwe8ZBQ&#45;kpsjBaCgs8yYzWUeAu4RG9szdw@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00028.html">Date Prev</a>][<a href="msg00030.html">Date Next</a>][<a href="msg00028.html">Thread Prev</a>][<a href="msg00031.html">Thread Next</a>][<a href="maillist.html#00029">Date Index</a>][<a href="threads.html#00029">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Reverse DNS Delegatation</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 19 Jul 2013 19:12:23 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Reverse%20DNS%20Delegatation">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Reverse DNS Delegatation</strong></li>
+<li>References: &lt;<a href="msg00018.html">20130718050249.GD4297@skeptic.cynic.net</a>&gt;	&lt;<a href="msg00025.html">51E81045.2080807@fgs.eti.br</a>&gt;	&lt;<a href="msg00026.html">20130719040353.GA26790@skeptic.cynic.net</a>&gt;	&lt;<a href="msg00028.html">CAPx5V520y0djd0yOkwe8ZBQ-kpsjBaCgs8yYzWUeAu4RG9szdw@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Pier Fumagalli writes:
+
+ &gt; For small domains/servers (I'd say handful of thousands of messages
+ &gt; per day) things should be pretty easy as the IP you're sending from
+ &gt; won't be flagged in any of the automated blacklist/rate limiting of
+
+Not something to bet your life on.  In general, it's common for shady
+ISPs to sell on IPs that have been blacklisted.
+
+ &gt; The best practices I would follow are (see RFC-2119 for terminology):
+ &gt; 
+ &gt; * you MUST have a reverse IP DNS entry: it doesn't matter to who, but
+ &gt; if you don't, some finicky sysadmin might consider your IP as being a
+ &gt; dynamic IP and immediately reject email.
+ &gt; 
+ &gt; * you MUST have the name resolved by the reverse IP DNS lookup point
+ &gt; back to the same name (if 1.2.3.4 resolves as customerX.providerY.dom
+ &gt; then customerX.providerY.dom MUST resolve to 1.2.3.4).
+
+OK so far.
+
+ &gt; * you SHOULD use the reverse IP DNS entry as your EHLO hostname: if
+ &gt; your ISP lists 1.2.3.4 as customerX.providerY.dom, use that as your
+ &gt; EHLO string,
+
+This simply isn't true, not by RFC and not in practice.  There are far
+too many reasons why an outgoing MX may be an alias.  See below for
+the most important one.
+
+ &gt; if you don't you MUST use a name that DNS resolves to that IP.
+
+Yes.
+
+ &gt; * you MUST an SPF record in your domain's DNS allowing the IP you're
+ &gt; sending from as a designated sender (just because it's 2013).
+
+Not by RFC and not in practice.  It does help you get past some spam
+and phishing filters.  I would say this is a SHOULD, for that reason,
+but I don't think there's any authoritative RFC that says so.
+
+ &gt; * you SHOULD sign your outgoing messages for your domain with DKIM
+ &gt; (again, be a kind and trusted internet citizen).
+
+Nope.  DKIM is too fscked to be a SHOULD.  For example, DKIM makes no
+sense for discussion-style mailing lists, eg, TLUG.  A certain class
+of mail will get better treatment if you DKIM sign.
+
+ &gt; * you MUST have some MX records for the domain in questions (it MAY be
+ &gt; better to have one pointing to the same IP address you're sending
+ &gt; from) and MUST make sure the &quot;postmaster@domain&quot; and &quot;abuse@domain&quot;
+ &gt; are valid mailboxes (per RFC-822 and RFC-2142).
+
+Nope.  You MUST have an A (or AAAA) record for any domain (host) that
+acts as an incoming MX.  (This is why an *outgoing* MX may not have a
+PTR that points to itself.)  If you wish to accept mail for domains
+that are different from that of the incoming MX, you MUST have MX
+records for those (but they don't need to be a domain you own and they
+may not be in your DNS).
+
+ &gt; * you SHOULD make sure that the host you're sending from accepts
+ &gt; connections on port 25 back
+
+Huh?  Not at all.  You just need to make sure that there is somebody
+accepting connections and mail to the HELO domain on port 25.
+
+ &gt; and MAY accept messages for your domain (see above), and if you do
+ &gt; you MUST make sure that you're not an open relay.
+
+Indeed.
+
+ &gt; * you MUST make sure that your IP is never listed into any of the RBL
+ &gt; tables (check periodically)
+
+Not at all -- anybody who uses an RBL doesn't deserve to receive my
+mail anyway.&lt;0.5 wink/&gt;  YMMV of course.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00018" href="msg00018.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> SCHWARTZ, Fernando G.</li></ul></li>
+<li><strong><a name="00026" href="msg00026.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+<ul><li><em>From:</em> Pier Fumagalli</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00028.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00030.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00028.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00031.html">Re: [tlug] Reverse DNS Delegatation</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00029"><strong>Date</strong></a></li>
+<li><a href="threads.html#00029"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

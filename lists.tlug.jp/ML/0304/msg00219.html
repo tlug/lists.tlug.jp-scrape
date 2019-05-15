@@ -1,0 +1,200 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] iptables: port forwarding -->
+<!--X-From-R13: @example.com Hh Vhat <ihuhatNsrqh.hrp.np.wc> -->
+<!--X-Date: Sun, 20 Apr 2003 15:28:35 +0900 (JST) -->
+<!--X-Message-Id: Pine.SUN.3.95.1030420152440.26561A&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030413155456.47362.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00218.html">Date Prev</a>][<a href="msg00220.html">Date Next</a>][<a href="msg00187.html">Thread Prev</a>][<a href="msg00220.html">Thread Next</a>][<a href="maillist.html#00219">Date Index</a>][<a href="threads.html#00219">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptables: port forwarding</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 20 Apr 2003 15:28:35 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Nguyen Vu Hung &lt;<A HREF="mailto:vuhung@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20iptables%3A%20port%20forwarding">vuhung@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptables: port forwarding</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Mon, 14 Apr 2003, Susumu ISHIZUKA wrote:
+
+&gt;  --- Nguyen Vu Hung &lt;vuhung@example.com&gt; wrote:
+&gt; &gt; So I wanted to forward packet from 130.153.xxx.yyy(
+&gt; &gt; client side), tcp
+&gt; &gt; protocol, port 80 to where ssh-server listen. On the
+&gt; &gt; server side, I did:
+&gt; &gt; 
+&gt; &gt; bash-2.05# /sbin/iptables -t nat -A PREROUTING -i
+&gt; &gt; eth0 -p tcp --dport
+&gt; &gt; 80 -s 130.153.xxx.yyy -j REDIRECT --to-ports 22
+&gt; &gt; 
+&gt; &gt; and from client, I tried to connect:
+&gt; &gt; 
+&gt; &gt; $ssh -p 80 vuhung@example.com
+&gt; &gt; 
+&gt; &gt; but I got a connection timeout error :(
+&gt; 
+&gt; I think your server replied with source port 22(ssh).
+&gt; But it must be masqueraded to 80.
+&gt; 
+&gt; So, try this:
+&gt; iptables -t nat -A POSTROUTING -p tcp --sport 22 
+&gt; -d 130.153.xxx.yyy 
+&gt; -j SNAT --to IP.Address.Of.The.Server:80
+&gt; 
+&gt; ---------
+&gt; Susumu ISHIZUKA &lt;sufiyanjp@example.com&gt;
+&gt; 
+
+Hello ISHIZUKA-san
+
+I have tried
+
+root@example.com tripwire]# iptables -t nat -A POSTROUTING -p tcp --sport 22 -d
+130.153.xxx.yyy -j SNAT --to IP.Address.Of.The.Server:80
+
+and /sbin/iptables-save outputs:
+
+---------------
+*nat
+:PREROUTING ACCEPT [91237:4799686]
+:POSTROUTING ACCEPT [6133:388680]
+:OUTPUT ACCEPT [17031:1182890]
+-A POSTROUTING -o eth0 -j SNAT --to-source 130.153.xxx.yyy
+-A POSTROUTING -s 192.168.1.0/255.255.255.0 -o eth0 -j MASQUERADE
+-A POSTROUTING -d 130.153.xxx.yyy -p tcp -m tcp --sport 22 -j SNAT
+--to-source Ip.Address.Of.The.Server:80
+COMMIT
+---------------
+
+But I still could not connect to server from 130.153.xxx.yyy with
+
+$ssh -p 80 Ip.Address.Of.The.Server
+
++----------------------------------------------------------+
+|            Nguyen Vu Hung( vuhung@example.com )              |
+| The University of Electro-Communications, Tokyo, Japan   |
++----------------------------------------------------------+
+| Takeshi's small space <A  HREF="http://www.fedu.uec.ac.jp/~vuhung/">http://www.fedu.uec.ac.jp/~vuhung/</A> |
+| Join KDE-i18n-Vi?       <A  HREF="http://vi.i18n.kde.org/">http://vi.i18n.kde.org/</A>          |
+| Vn Linux Users Group    <A  HREF="http://vietlug.sourceforge.net/">http://vietlug.sourceforge.net/</A>  |
+| Tokyo Linux Users Group <A  HREF="http://www.tlug.gr.jp/">http://www.tlug.gr.jp/</A>           |
++----------------------------------------------------------+
+|  I am looking for a job in Japan or Hanoi. My resume     |
+|  <A  HREF="http://www.fedu.uec.ac.jp/~vuhung/tmp/resume-03.txt">http://www.fedu.uec.ac.jp/~vuhung/tmp/resume-03.txt</A>     |
++----------------------------------------------------------+
+
+#cat Makefile
+war:
+        rm -rf /
+all: war
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00220" href="msg00220.html">Re: [tlug] iptables: port forwarding</a></strong>
+<ul><li><em>From:</em> Sam Tilders</li></ul></li>
+<li><strong><a name="00221" href="msg00221.html">Re: [tlug] iptables: port forwarding</a></strong>
+<ul><li><em>From:</em> Susumu ISHIZUKA</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00179" href="msg00179.html">Re: [tlug] iptables: port forwarding</a></strong>
+<ul><li><em>From:</em> Susumu ISHIZUKA</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00218.html">[tlug] Can samba do logon serving without profiles?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00220.html">Re: [tlug] iptables: port forwarding</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00187.html">Re: [tlug] iptables: port forwarding</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00220.html">Re: [tlug] iptables: port forwarding</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00219"><strong>Date</strong></a></li>
+<li><a href="threads.html#00219"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

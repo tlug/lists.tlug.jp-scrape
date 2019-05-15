@@ -1,0 +1,72 @@
+#! /bin/bash
+# Automated conversion script for turning Japanese C760 into English mode
+# with Japanese input. Original conversion tips taken from 
+# http://mspencer.net/stuff/c700conv.html
+homedir=`pwd`
+bakext=.bak
+# Comment out all Name[ja] entries, so we get the English default
+echo "Converting Icons and Tabs"
+cd /home/QtPalmtop/apps
+for tabdir in *
+do
+	if [ -d $tabdir ] 
+	then
+		# loop through all files in directory
+		echo "Fixing $tabdir....."	
+		cd $tabdir
+		for filename in `ls -A` 
+		do 
+			sed -e's/Name\[ja/#Name\[ja/' $filename > $filename$bakext
+			mv $filename$bakext ${filename%$bakext}
+		done
+		cd ..
+	else
+		# fix files in apps dir	
+        	sed -e's/Name\[ja/#Name\[ja/' $tabdir > $tabdir$bakext
+        	mv $tabdir$bakext ${tabdir%$bakext} 	
+	fi
+done
+# Convert Themes and related files 
+cd /home/QtPalmtop/etc 
+for dirname in colors zstyles zdecorations zthemes
+do
+         cd $dirname
+         echo "Converting $dirname"
+         for filename in `ls -A`
+         do
+                 sed -e's/Name\[ja/#Name\[ja/' $filename > $filename$bakext
+                 mv $filename$bakext ${filename%$bakext}
+         done
+         cd ..
+done
+# Move all qm files so apps show English
+echo "Converting apps"
+cd /home/QtPalmtop/i18n/ja
+mkdir hide
+mv *.qm* hide/
+cd hide
+mv libqpe.qm libcrim.qm libjpn* ../
+cd ..
+rm -rf hide
+# Return Hanconword menus to English
+echo "Converting HancomWord" 
+cd /home/QtPalmtop/bin
+rm word-eucJP.rc
+# Give more room in dialog boxes in ToDo
+cd /home/zaurus/Settings
+sed -e's/FontLogicalSize=0/FontLogicalSize=-1/' todo.conf > todo.conf.bak
+mv todo.conf.bak todo.conf
+# Copy the converted qmid files to get MoviePlayer with English menus
+# Thanks to tz for converting these :)
+if [ -e $homedir/movieplayer.qmid ] 
+then
+	echo "Converting MoviePlayer"
+	cp $homedir/movieplayer.qmid /home/QtPalmtop/i18n/ja/ 
+	cp $homedir/libsl.qmid /home/QtPalmtop/i18n/ja/
+else
+	echo "Skipping MoviePlayer conversion"
+	echo "Download the qmid files from http://homepage.mac.com/tz1/movieplayer.qmid"
+	echo "and http://homepage.mac.com/tz1/libsl.qmid"
+fi 
+echo "All done, please reboot or run 'killall qpe' to finish the conversion"
+exit 0

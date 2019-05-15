@@ -1,0 +1,188 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] xen and windows -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcurawgheaohyyNtznvy.pbz> -->
+<!--X-Date: Mon, 15 Oct 2007 01:38:36 +0900 -->
+<!--X-Message-Id: 2bfd4e060710140938i334a9225i1ccb6b9c02ca671f@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4711CD52.6080309@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00090.html">Date Prev</a>][<a href="msg00091.html">Date Next</a>][<a href="msg00090.html">Thread Prev</a>][<a href="msg00125.html">Thread Next</a>][<a href="maillist.html#00123">Date Index</a>][<a href="threads.html#00123">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] xen and windows</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 14 Oct 2007 09:38:32 -0700</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephenjturnbull@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20xen%20and%20windows">stephenjturnbull@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] xen and windows</strong></li>
+<li>References: &lt;<a href="msg00085.html">4711CD52.6080309@dcook.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; Darren writes:
+
+&gt; So, what's all this about Xen and windows? I've read up enough to know I
+&gt; need an Intel &quot;VT&quot; CPU. But does it just work?
+
+Supposedly AMD had a feature equivalent to VT (&quot;virtualization
+technology&quot;?); does that not work?
+I've been really happy with the performance on my Opteron boxes,
+though the price may be higher than you want to go, I don't know.
+
+As for &quot;just work&quot;, yes and no.  The theory of VT is that a monitor
+like Xen can just do very low level stuff like granting access to
+hardware and process switching (each OS is the equivalent to a
+process) without help from the guest OS.  This just works, although
+there are probably still bugs in the VT implementation.  But you
+shouldn't have a problem with that.  (VM, on the other hand, depends
+on substantial help from the guest OS.)
+
+What isn't going to &quot;just work&quot; is that you still have shared
+resources to manage, and this is non-trivial.  (Consider that the
+smartest, most flexible, shared resources available are *people*, and
+that matrix management is now a fad of the distant past.)  I think I
+posted just about a year ago about my experience with PVM which is the
+process equivalent of a virtual machine monitor: due to communication
+contention, a multiprocess parallel program ran 2 orders of magnitude
+slower than a one-process version of the same.
+
+So, maybe you'll get lucky.  Everything you want to do &quot;just works&quot;,
+and does so efficiently.  This is IMO the most likely case, at least
+for your basic applications.  And maybe you won't, in which case
+you've increased the odds of running into a fiendishly difficult
+debugging problem.
+
+&gt; Can I buy a new machine
+&gt; with windows pre-installed, then add xen and linux afterwards?
+
+I think you can do this, but you *will* have to resize Windows
+partitions.  I've never had much success with that.
+
+&gt; Or does xen and linux need to go on first?
+
+I recommend that you have an install disk for Windows, not one of
+those awful &quot;Windows in a hidden partition&quot; deals.  Up to XP, a
+reinstall has always been the remedy of choice for a horked Windows
+installation, and I can't imagine that Vista is any different.
+
+&gt; P.S. xensource.com is running aspx pages: is that a good or bad sign? :-)
+
+It says either that they don't care about security, or that they have
+enough money that they can afford a full time person to monitor the
+intrusion monitors and make sure that all patches are applied and
+things nonetheless go smoothly.  The former is a bad sign, the latter
+is a good one.
+:-)
+
+And, of course, get lots of memory.  At least 1GB for each guest OS,
+and at least 2.5GB per Vista instance (that includes the 1GB for Vista
+as a guest OS).
+
+I have to wonder if you wouldn't be better off using Mac OS X and
+Parallels, though.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00125" href="msg00125.html">Re: [tlug] xen and windows</a></strong>
+<ul><li><em>From:</em> Jason Hall</li></ul></li>
+<li><strong><a name="00126" href="msg00126.html">Re: [tlug] xen and windows</a></strong>
+<ul><li><em>From:</em> Daniel A. Ramaley</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00085" href="msg00085.html">[tlug] xen and windows</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00090.html">Re: [tlug] xen and windows</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00091.html">Re: [tlug] xen and windows</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00090.html">Re: [tlug] xen and windows</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00125.html">Re: [tlug] xen and windows</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00123"><strong>Date</strong></a></li>
+<li><a href="threads.html#00123"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

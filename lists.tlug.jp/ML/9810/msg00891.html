@@ -1,0 +1,183 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Quick mule question -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 21 Oct 1998 20:23:09 +0900 -->
+<!--X-Message-Id: 13869.50179.678089.10477@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13869.35259.563918.226294@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981021164553.3483E&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00890.html">Date Prev</A>][<A HREF="msg00892.html">Date Next</A>][<A HREF="msg00878.html">Thread Prev</A>][<A HREF="msg00879.html">Thread Next</A>][<A HREF="maillist.html#00891">Date Index</A>][<A HREF="threads.html#00891">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Quick mule question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Users Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Quick mule question</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 21 Oct 1998 20:22:43 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00878.html">Pine.LNX.3.96LJ1.1b7.981021164553.3483E-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00877.html">13869.35259.563918.226294@example.com</A>&gt;&lt;<A HREF="msg00878.html">Pine.LNX.3.96LJ1.1b7.981021164553.3483E-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jonathan" == Jonathan Byrne &lt;- 3Web &lt;jq@example.com&gt;&gt; writes:
+
+    Jonathan&gt; On Wed, 21 Oct 1998, Stephen J. Turnbull wrote:
+    &gt;&gt; Kinput2*ConversionStartKeys: \ Ctrl&lt;Key&gt;Kanji
+    &gt;&gt; 
+    &gt;&gt; to .Xresources or .Xdefaults (whichever you have), then do
+    &gt;&gt; `xrdb &lt; .Xresources'.  But this means no other application can
+    &gt;&gt; use shift-space
+
+    Jonathan&gt; I just did this, (in my .Xdefaults) and now ctrl-kanji
+
+Oops, you also need to restart kinput2.  I may also have spelled that
+resource wrong, maybe it should be KInput2*ConversionStartKeys, or you 
+could try simply *ConversionStartKeys.
+
+    Jonathan&gt; starts input but won't turn it off.  Shift-space and
+    Jonathan&gt; ctrl-space will both turn it off.  Moreover, shift-space
+
+Is this in a kterm?  I now seem to recall you need to _also_ fix
+kterm's resources, but now I forget how to do it (setting a
+translation is easy, removing one may be as easy as setting to null,
+but...).  Try the following:
+
+    KTerm*VT100.Translations: #override Shift&lt;Key&gt;Space: 
+
+do the xrdb thing, and restart kterm.
+
+Assuming it's mule in its own X frame....  Arrgh.  !@#$% mule.  I
+despise the Lisp code used to support Japanese.  It's been kludgy,
+crocky, and a complete pile of s**t[1] for as long as I've been using
+nemacs and mule.  That said, I don't think it's mule itself, but it
+could be.
+
+Try C-h k C-SPC and C-h k Shift-SPC to see if those are bound to Emacs
+functions.  In my XEmacs they're bound to `canna-set-mark-command' and
+`canna-henkan-region-or-self-insert' respectively (in fact, Shift-SPC
+is interpreted as SPC).  I'm not using kinput2 at the moment (it
+interferes with some stuff I'm working on for edict.el), though, so I
+can't check here.
+
+As far as I can tell the conversion termination keys are determined by
+the server.  Kinput2 doesn't seem to define a resource for that,
+anyway.  For Canna, I dunno how to change this.  The docs are
+incomplete (surprisingly, for Debian) and unclear....
+
+    Jonathan&gt; will still start Japanese input.  What would I need to
+    Jonathan&gt; do to get on and off both working on the same
+    Jonathan&gt; combination of key strokes and only that combination?
+
+
+Footnotes: 
+[1]  That's pronounced "incestuous spaghetti" in case you weren't
+aware.  Don't worry about the character count, they're all silent.
+The Lisp code for Japanese support winds around like an Ouroboros in
+hyperspace and makes Escher look like a perfectly sane individual.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00877" HREF="msg00877.html">tlug: Quick mule question</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00878" HREF="msg00878.html">Re: tlug: Quick mule question</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00890.html">Re: tlug: My Pine turned black!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00892.html">Re: tlug: more strange ISP behavior</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00878.html">Re: tlug: Quick mule question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00879.html">tlug: My Pine turned black!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00891"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00891"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

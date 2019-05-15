@@ -1,0 +1,346 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Re: tlug] Security question with grep/e... -->
+<!--X-From-R13: Xnxr [beevfba <wnxr_zbeevfbaNlnubb.pbz> -->
+<!--X-Date: Wed, 24 Mar 2004 03:35:43 &#45;0800 (PST) -->
+<!--X-Message-Id: 20040324113543.54555.qmail@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 200403230503.i2N53juu011858@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00366.html">Date Prev</a>][<a href="msg00368.html">Date Next</a>][<a href="msg00356.html">Thread Prev</a>][<a href="msg00353.html">Thread Next</a>][<a href="maillist.html#00367">Date Index</a>][<a href="threads.html#00367">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: tlug] Security question with grep/e...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 24 Mar 2004 03:35:43 -0800 (PST)</li>
+<li><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Re%3A%20tlug%5D%20Security%20question%20with%20grep%2Fe...">jake_morrison@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: tlug] Security question with grep/e...</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jim,
+
+Just for fun and reference purposes.... 
+
+Here is a C program I wrote years ago that uses the 
+PCRE (Perl Compatible Regular Expressions) package from
+<A  HREF="http://www.pcre.org/">http://www.pcre.org/</A>  to strip HTML tags out of a file. 
+
+Obviously, this is much more painful than the equivalent in Python
+or Perl. But it does work. And it's portable (once you
+have installed the PCRE libs...). Maybe you could modify it to do
+what you want. There is now a C++ wrapper which makes the
+library easier to use, too. 
+
+Regards,
+Jake</pre>
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;malloc.h&gt;
+#include &lt;assert.h&gt;
+
+#include &lt;pcre.h&gt;
+
+#define VECSIZE 60 
+#define BUFLEN 10000
+
+int debugMode = 0;
+
+void 
+print_re_error(int pairs) 
+{
+    switch (pairs) {
+    case PCRE_ERROR_NOMATCH:
+        fprintf(stderr, &quot;No match.\n&quot;);
+        break;
+    case PCRE_ERROR_NULL:
+        fprintf(stderr, &quot;One or more NULL input params.\n&quot;);
+        break;
+    case PCRE_ERROR_BADOPTION:
+        fprintf(stderr, &quot;Invalid option specified.\n&quot;);
+        break;
+    case PCRE_ERROR_BADMAGIC:
+        fprintf(stderr, &quot;Bad magic.\n&quot;);
+        break;
+    case PCRE_ERROR_UNKNOWN_NODE:
+        fprintf(stderr, &quot;Unknown node.\n&quot;);
+        break;
+    case PCRE_ERROR_NOMEMORY:
+        fprintf(stderr, &quot;Out of memory.\n&quot;);
+        break;
+    default:
+        fprintf(stderr, &quot;Unknown error %d.\n&quot;, pairs);
+    }
+}
+
+pcre*
+re_compile(const char* re_str, int options) 
+{
+    pcre* re = NULL;
+    const char *errptr = NULL;
+    int erroffset = 0;
+
+#ifdef RE_DEBUG
+    printf(&quot;re_compile&gt; re_str: %s\n&quot;, re_str);
+#endif
+    re = pcre_compile(re_str, options, &amp;errptr, &amp;erroffset, NULL);
+    if (re == NULL) {
+        fprintf(stderr, &quot;pcre_compile: error at offset %d: %s\n&quot;, erroffset, errptr);
+        return ((pcre*)NULL);
+    }
+#ifdef RE_DEBUG
+    printf(&quot;re_compile&gt; pcre_compile succeeded\n&quot;);
+#endif
+    return (re); 
+}
+
+int 
+strip_html(char* dest, const char* src, size_t src_len, 
+           pcre *re, pcre_extra *extra, int debug);
+
+int 
+main (int argc, char *argv[])
+{
+    pcre_extra *extra = NULL;
+    const char* study_error = NULL;
+    pcre *html_re = NULL;
+
+    const char* html_re_str =  &quot;&lt;(?:[^&gt;'\&quot;]*|(['\&quot;]).*?\\1)*&gt;&quot;;
+    int rc;
+
+    char source[BUFLEN]; 
+    char dest[BUFLEN]; 
+
+    html_re = re_compile(html_re_str, 0);
+    if (html_re == NULL) {
+        exit (3);
+    }
+    extra = pcre_study(html_re, 0, &amp;study_error);
+    if (study_error != NULL) {
+        fprintf(stderr, &quot;pcre_study: %s\n&quot;, study_error);
+    }
+
+    while ( (fgets(source, BUFLEN, stdin)) != NULL) { 
+        rc = strip_html(dest, source, strlen(source), 
+                        html_re, extra, debugMode);
+        if (rc != 0) {
+            fprintf(stderr, &quot;Problem parsing string %s\n&quot;, source);
+            continue;
+        }
+        printf(&quot;%s&quot;, dest);
+    } 
+
+    pcre_free(extra);
+    pcre_free(html_re);
+
+    exit (0);
+}
+
+/* Strip HTML tags from source, copying to dest buffer */
+int
+strip_html(char* dest, const char* src, size_t src_len, 
+           pcre *re, pcre_extra *extra, int debug)
+{
+    int ovector[VECSIZE];  /* List of matches */
+    int pairs = 0;         /* Number of matches */
+    int start_offset = 0; /* Point in src string to start searching */
+    int flags = 0; /* Regex matching flags */
+    char* dest_cur = dest; /* Pointer to current location in dest buffer */
+
+#ifdef DEBUG
+    int i; /* Utility counter */
+    char buf[BUFLEN]; /* buffer used for debugging */
+#endif
+
+    assert(re);
+
+#ifdef DEBUG
+        fprintf(stderr, &quot;strip_html&gt; parsing string %s\n&quot;, src); 
+#endif
+
+    if (!src &amp;&amp; src[0]) {
+#ifdef DEBUG
+        fprintf(stderr, &quot;strip_html&gt; Null input string\n&quot;); 
+#endif
+        return (0);
+    }
+
+    while (1) {
+        pairs = pcre_exec(re, extra, src, src_len, start_offset, 
+                          flags, ovector, VECSIZE);  
+        if (pairs &lt; 0) {
+            if (pairs == PCRE_ERROR_NOMATCH) {
+#ifdef DEBUG
+                fprintf(stderr, 
+                        &quot;strip_html&gt; No match for string '%s'.\n&quot;, 
+                        src + start_offset);
+#endif
+
+                /* No HTML found in remainder of string, 
+                   just copy input to output */
+                strcpy(dest_cur, src + start_offset);
+                return (0);
+            }
+            else {
+                if (debug) {
+                    fprintf(stderr, 
+                        &quot;strip_html: Problem running regex for string %s: &quot;, 
+                        src);
+                    print_re_error(pairs);
+                }
+                return (1);
+            }
+        }
+        else if (pairs == 0) {
+            /* This should not happen */
+#ifdef DEBUG
+                fprintf(stderr, 
+                    &quot;strip_html&gt; More than %d matches for string %s\n&quot;, 
+                    VECSIZE / 3, src);
+#endif
+            pairs = VECSIZE / 3;
+        }
+        else {
+            /* This should always be 1 for this regex */
+#ifdef DEBUG
+            fprintf(stderr, &quot;strip_html&gt; Matched %d pair(s)\n&quot;, pairs); 
+#endif
+        }
+
+#ifdef DEBUG
+        fprintf(stderr, &quot;strip_html&gt; ovector[0]: %d\n&quot;, ovector[0]);
+        fprintf(stderr, &quot;strip_html&gt; ovector[1]: %d\n&quot;, ovector[1]);
+
+        for (i = 0; i &lt; pairs; i++) {
+            int len;
+            fprintf(stderr, &quot;strip_html&gt; pair: %d\n&quot;, i);
+            len = pcre_copy_substring(src, ovector, pairs, i, 
+                                      buf, sizeof(buf));
+            if (len &lt; 0) {
+                fprintf(stderr, 
+                        &quot;strip_html&gt; Problem getting substring %d: %d\n&quot;, i, len);
+            }
+            else {
+                fprintf(stderr, 
+                        &quot;strip_html&gt; Matched string %d: %s\n&quot;, i, buf);
+            }
+        }
+#endif
+
+        /* Copy part before the match */
+        memcpy(dest_cur, src + start_offset, ovector[0] - start_offset); 
+
+        /* Update current location in destination buffer */
+        dest_cur += ovector[0] - start_offset;
+
+#ifdef DEBUG
+        fprintf(stderr, &quot;dest: %s\n&quot;, dest);
+#endif
+
+        /* Update offset to point after data */
+        start_offset = ovector[1];
+    }
+  
+    return (0);
+}
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00345" href="msg00345.html">[tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00366.html">Re: [tlug] Tech Meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00368.html">Re: [tlug] Re: Security question with grep/e...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00356.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00353.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00367"><strong>Date</strong></a></li>
+<li><a href="threads.html#00367"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

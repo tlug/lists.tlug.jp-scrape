@@ -1,0 +1,178 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: GTK+&#45;1.2.3 undefined ref to .Xsetlocale -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 12 May 1999 18:15:07 +0900 -->
+<!--X-Message-Id: 14137.18047.811658.112283@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.990512145717.4658O&#45;100000@example.com -->
+<!--X-Reference-Id: 19990512162608U.andy@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00045.html">Date Prev</A>][<A HREF="msg00047.html">Date Next</A>][<A HREF="msg00060.html">Thread Prev</A>][<A HREF="msg00066.html">Thread Next</A>][<A HREF="maillist.html#00046">Date Index</A>][<A HREF="threads.html#00046">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 12 May 1999 18:14:39 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00041.html">19990512162608U.andy@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00040.html">Pine.LNX.3.96LJ1.1b7.990512145717.4658O-100000@example.com</A>&gt;&lt;<A HREF="msg00041.html">19990512162608U.andy@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "ash" == Andrew S Howell &lt;andy@example.com&gt; writes:
+
+    ash&gt; The _Xsetlocale is being referred to in one of the libraries
+    ash&gt; or .o files. Use nm again to find out which. There is an
+    ash&gt; option for the linker to get it to tell you what it is doing,
+    ash&gt; "-t"
+
+This is deep dark magic.  It's a good thing Chris isn't here to launch 
+a tirade.
+
+Note that if you purge references to _Xsetlocale from your libraries,
+Japanese on X is highly likely to stop working (to be precise, show
+random bugginess) in the near future, since glibc locale support for
+Japanese is in, uh, flux.
+
+&lt;gory_details&gt;
+What happened is that as of X11R4, nobody had implemented the (to be)
+POSIX locale standard.  The X Consortium wanted to make transition
+relatively painless, so they kludged up enough of a hack to get what
+they needed, and wrapped it in an #ifdef in /usr/X11/include/Xlocale.h.
+
+If your libc has native support for the locales you need, you =do not= 
+#define X_LOCALE (or something like that) in your build of libX11, and 
+calls to Xsetlocale() are routed to the libc routine, and Xlib looks
+in the usual places (as defined by the POSIX interface) for
+locale-related stuff.
+
+If libc loses (as all libcs currently do for Japanese, at least on
+Linux) you #define X_LOCALE and calls are routed to _Xsetlocale(),
+which uses the X11 subsystem.
+
+An alternative would have been to use liblocale.so as muriyari
+Netscape does, but X11 was not restricted to systems with DLLs, so
+that was out for portability reasons.
+&lt;/gory_details&gt;
+
+Some libcs (TL 2.x-J is not one of them according to Ulrich Drepper :(
+) are now close to supporting Japanese (they need libwctombs.so in
+addition to the libc stuff), but as of March they couldn't possibly do
+it using the correct implementation (= the one that Uli hadn't yet
+written at the time).  Sooooo....  Watch it, kidz.
+
+Uli did promise that glibc 2.2 will have proper wctombs support.
+Assuming RMS will let him release it ;-)
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: May 26 (Wed), 19:30                        Place: TBD
+*** Special guest: Eric S. Raymond
+Next Technical Meeting: June 12 (Sat), 12  :30   place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00040" HREF="msg00040.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00041" HREF="msg00041.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00045.html">Re: tlug: hostname setting of samba</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00047.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00060.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00066.html">Re: tlug: GTK+-1.2.3 undefined ref to .Xsetlocale</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00046"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00046"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: External DNS woes -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 11 May 2000 15:37:40 +0900 -->
+<!--X-Message-Id: 14618.21765.569153.193140@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 14618.14762.813377.812341@example.com -->
+<!--X-Reference-Id: 20000511142155.D253@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00109.html">Date Prev</A>][<A HREF="msg00111.html">Date Next</A>][<A HREF="msg00107.html">Thread Prev</A>][<A HREF="msg00115.html">Thread Next</A>][<A HREF="maillist.html#00110">Date Index</A>][<A HREF="threads.html#00110">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: External DNS woes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Chris Sekiya &lt;<A HREF="mailto:sekiya@example.com">sekiya@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: External DNS woes</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 11 May 2000 15:36:53 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00107.html">20000511142155.D253@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00106.html">14618.14762.813377.812341@example.com</A>&gt;&lt;<A HREF="msg00107.html">20000511142155.D253@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "wile y" == Chris Sekiya &lt;sekiya@example.com&gt; writes:
+
+    wile y&gt; On Thu, May 11, 2000 at 01:40:10PM +0900, Stephen
+    wile y&gt; J. Turnbull wrote:
+    &gt;&gt; I'm having trouble with mail being intermittently refused from
+    &gt;&gt; various sites because "Sender domain must exist."
+
+    wile y&gt; ... basic anti-spam measures added during the 8.9.x era
+    wile y&gt; check the SMTP envelope from: address.  If it doesn't
+
+Right check for the wrong reason; it's not going to filter much real
+spam (a quick check shows that 96% of the senders and return-paths out
+of 732 messages in my "abuse" folder have valid but often presumably
+forged domains), compared to the number of legitimate senders who will
+get hosed.  I suppose it probably worked for a while until the
+spammers caught up, though.
+
+    wile y&gt; resolve, it fails the test.  If you're behind a firewall,
+    wile y&gt; sending from a machine that doesn't have a lookup, it's
+    wile y&gt; going to fail.
+
+Oh, we don't have a firewall; DNS, SMTP, FTP, HTTP, HTTPS, WAIS,
+GOPHER, NNTP, POP3, and IMAP are all allowed through.  As well as SSH.
+It's just incoming ICMP, UDP (except destination dns), and TCP (almost
+all destinations) that's stopped.  Oh yeah, in/out spoofing will be
+dropped on the floor, too (sensible, that).  I guess RPC, Telnet, and
+RSH are more dangerous than average, but all of the usual complex
+servers with problematic security are permitted without supervision,
+as well as pretty much anything outgoing except X11 (including Tribe
+Flood Networks, if you can somehow subvert a host or 438 on the inside
+and set up an ssh tunnel or phone line to communicate over :-P).
+
+My guess is that there were probably scores of subverted machines
+inside the packet filter when it was established, and only the very
+dumbest script kiddies haven't figured out how to reestablish contact
+with their slaves by now.
+
+    wile y&gt; This is fixed by adding the following to your .mc:
+
+Uh, I don't have no steenkin' .mc.  :-)  Steve Baur figured it out;
+the serial number of the SOA is out of synch.  Bleah....  But although
+my local admins often lack a clue or two, they rarely get upset when
+asked to fix things.
+
+
+
+    wile y&gt; ... so, no matter how badly your network admins botch
+    wile y&gt; things, mail should still go through ...
+
+Chris, they're (University level) talking about sending all SMTP
+traffic through relays and "filtering" it for mail bombs (which they
+think are the same thing as spam).  Given that the external gateway
+goes down an average of twice a month for, uh, "unscheduled
+maintenance", I don't trust them to be able to keep a relay host
+running 24x7.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+--------------------------------------------------------------------
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: Crypto and Security	Speaker: Chris Sekiya
+Next Nomikai Meeting: June 16 (Fri), Tengu TokyoEkiMae.
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00106" HREF="msg00106.html">tlug: External DNS woes</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00107" HREF="msg00107.html">Re: tlug: External DNS woes</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;sekiya@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00109.html">tlug: bulkmailer test</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00111.html">Re: tlug: External DNS woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00107.html">Re: tlug: External DNS woes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00115.html">Re: tlug: External DNS woes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00110"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00110"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

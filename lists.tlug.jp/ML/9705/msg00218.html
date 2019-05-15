@@ -1,0 +1,207 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Hostname problems -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 23 May 1997 12:04:03 GMT -->
+<!--X-Message-Id: m0wUszD&#45;00005dC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.93.970523174322.385A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00217.html">Date Prev</A>][<A HREF="msg00219.html">Date Next</A>][<A HREF="msg00211.html">Thread Prev</A>][<A HREF="msg00219.html">Thread Next</A>][<A HREF="maillist.html#00218">Date Index</A>][<A HREF="threads.html#00218">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Hostname problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Hostname problems </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 23 May 1997 20:58:19 +0900</LI>
+<LI>In-reply-to: Your message of "Fri, 23 May 1997 17:51:21 +0900."            &lt;<A HREF="msg00211.html">Pine.LNX.3.93.970523174322.385A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Dennis" == Dennis McMurchy &lt;denismcm@example.com&gt; writes:
+
+    Dennis&gt;   Look, I know this has to be a very elementary problem,
+    Dennis&gt; but I have never solved it and it comes up again and again
+    Dennis&gt; at various intervals.  This error message is a good
+    Dennis&gt; example of the problem:
+
+    Dennis&gt;  talk: tangrending: Host name lookup failure
+
+    Dennis&gt; What on earth do I have to do to make it clear to other
+    Dennis&gt; programs like httpd and so on that 'tangrending', the
+    Dennis&gt; hostname specified in my /etc/HOSTNAME file is the local
+
+I'm not clear on what the problem is here.  Is 'tangrending'
+registered in a DNS somewhere?  Apparently not from the X-Sender
+header, which doesn't specify a parent domain.  Why do you want httpd
+and talk to recognize a domain that doesn't exist?  So you can do
+"netscape <A TARGET="_top" HREF="http://tangrending/">http://tangrending/</A>" and "talk denismcm@example.com" on the
+local host?  What's wrong with "netscape <A TARGET="_top" HREF="http://localhost/">http://localhost/</A>" and "talk
+denismcm"?
+
+    Dennis&gt; machine?  I can't just stick a line or an alias in
+    Dennis&gt; /etc/hosts because that seems to break the sendmail that
+    Dennis&gt; installs with Slackware 3.1 (used to be that sendmail was
+    Dennis&gt; broken without an entry defining the hostname in
+    Dennis&gt; /etc/hosts).
+
+So much the worse for sendmail.
+
+Look, these programs get IP addresses to open TCP streams by doing
+gethostbyname(3):
+
+       The gethostbyname() function returns a structure  of  type
+       hostent  for  the given host name.  The current domain and
+       its parents are searched unless name ends in  a  dot.   If
+       name  doesn't  end  in  a dot and the environment variable
+       HOSTALIASES is set, the alias file pointed to  by  HOSTAL(0-(B
+       IASES will first be searched for name.
+
+       The domain name queries carried out by gethostbyname() and
+       gethostbyaddr()  use  a  combination  of any or all of the
+       name server named(8), a broken out line  from  /etc/hosts,
+       and the Network Information Service (NIS or YP), depending
+       upon the contents of the  order  line  in  /etc/host.conf.
+       (See   resolv+(8)).    The  default  action  is  to  query
+       named(8), followed by /etc/hosts.
+
+There just isn't any way to do what you want, AFAIK---except to put
+that alias in /etc/hosts.
+
+Now, if you're not connected to the net, evidently some versions of
+sendmail will wait a long time for the net to come back up.  I know
+that this was reputed to be a problem with the SparcLinux sendmail.  I
+note in RHL 4.x sendmail.cf there is a Timeout.initial; setting that
+to something short might help.  (I guess that the timeout is 5 min by
+default; that's a long time....)
+
+Maybe you should set up your networking so that sendmail comes up
+after the network does, and is put down before the network goes down.
+A problem with this, though, is that maybe you can't do mail offline.
+But I think that this shouldn't be a problem, if sendmail can't find a
+remote host, it should be OK.
+
+Aha ... there's an option to set the hosts file!  Maybe if you make an 
+/etc/hosts with "127.0.0.1 localhost tangrending" in it and a file
+/etc/sendmail-hosts
+
+# set in sendmail.cf as O HostsFile /etc/sendmail-hosts
+127.0.0.1 localhost
+
+life will be good....
+
+Of course, you could just switch to smail or qmail.
+
+HTH
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00219" HREF="msg00219.html">Re: tlug: Hostname problems</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00211" HREF="msg00211.html">tlug: Hostname problems</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00217.html">tlug: Update of Meeting Vote</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00219.html">Re: tlug: Hostname problems</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00211.html">tlug: Hostname problems</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00219.html">Re: tlug: Hostname problems</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00218"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00218"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

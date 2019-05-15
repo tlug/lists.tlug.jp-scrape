@@ -1,0 +1,196 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Apache question -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Mon, 28 May 2001 23:44:44 +0900 -->
+<!--X-Message-Id: 20010528234444.A5613@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F230Glrn8LOLP9r70j000003bc8@example.com -->
+<!--X-Reference-Id: 15122.23696.763858.729789@example.com -->
+<!--X-Reference-Id: 15122.24249.971911.33465@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00746.html">Date Prev</A>][<A HREF="msg00749.html">Date Next</A>][<A HREF="msg00746.html">Thread Prev</A>][<A HREF="msg00738.html">Thread Next</A>][<A HREF="maillist.html#00748">Date Index</A>][<A HREF="threads.html#00748">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Apache question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Apache question</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 28 May 2001 23:44:44 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00746.html">15122.24249.971911.33465@example.com</A>&gt;; from vp@example.com on Mon, May 28, 2001 at 11:20:41PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00730.html">F230Glrn8LOLP9r70j000003bc8@example.com</A>&gt; &lt;<A HREF="msg00745.html">15122.23696.763858.729789@example.com</A>&gt; &lt;<A HREF="msg00746.html">15122.24249.971911.33465@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;jq5jNB.A.Hs.xPmE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.5i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Mon, May 28, 2001 at 11:20:41PM +0900, Viktor Pavlenko wrote:
+&gt; &gt;&gt;&gt;&gt;&gt; "JM" == Jake Morrison &lt;jake_morrison@example.com&gt; writes:
+&gt; 
+&gt;     JM&gt; Jc,
+&gt;     JM&gt; Under Unix, a "zombie" has a specific meaning. It's a
+&gt;     JM&gt; child process that has exited, and the system is holding its
+&gt;     JM&gt; return status around, but there is no parent process 
+&gt;     JM&gt; left around that cares to read it. They still show up 
+&gt;     JM&gt; on the ps display, but there is nothing there. So they 
+&gt;     JM&gt; are the "living dead". 
+&gt; 
+&gt;     JM&gt; In your case, it sounds like the processes are hung, waiting
+&gt;     JM&gt; for something to happen, or they are just working slowly. 
+&gt;     JM&gt; Sometimes this happens when all the processes are waiting
+&gt;     JM&gt; on a single resource, like an overloaded disk or network 
+&gt;     JM&gt; connection.
+&gt; 
+&gt; I should have read my email before posting, sorry...
+&gt; 
+&gt; But the last question remains: init has just to fetch the zombie's
+&gt; exit status, what takes it so long?
+
+This was the way it worked on sunos.
+
+parent forks child
+child exits
+parent does a wait
+all is well
+
+parent forks child
+parent exits
+init calls wait on parent
+init becomes parent of child
+child exits
+init calls wait
+all is well
+
+parent forks child
+child exits
+parent exits (doesn't call wait)
+since child is already dead, init can't become the parent and wait on it.
+child becomes a zombie.
+init can wait on the parent though.
+
+a zombie, just takes up an entry in the process table with the status
+of its exit. All other memory has been freed.
+
+Actually, I don't think linux suffers from zombies like sunos. If the
+parent doesn't call wait then init will, according to man ps and the
+program below. On sunos, it was there until the next reboot. So I would
+guess that the parent is hanging around somewhere and just hasn't got
+round to calling wait yet.
+
+Try this for example...
+
+#include &lt;unistd.h&gt;
+main()
+{
+	int pid = fork();
+
+	if(pid == 0) /* child */
+		exit(1);
+	else         /* parent */
+		sleep(2);
+
+	/* child is zombie, lets exit without wait. */
+	exit(2);
+}
+
+
+Tom.
+-- 
+Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00730" HREF="msg00730.html">Re: Apache question</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00745" HREF="msg00745.html">Re: Apache question</A></STRONG>
+<UL><LI><EM>From:</EM> Viktor Pavlenko &lt;vp@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00746" HREF="msg00746.html">Re: Apache question</A></STRONG>
+<UL><LI><EM>From:</EM> Viktor Pavlenko &lt;vp@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00746.html">Re: Apache question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00749.html">Re: Perl: how to do is x in @example.com</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00746.html">Re: Apache question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00738.html">Re: Apache question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00748"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00748"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

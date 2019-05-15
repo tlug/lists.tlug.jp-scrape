@@ -1,0 +1,172 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Update (success at last) on connecting to localhost -->
+<!--X-From-R13: Xbua Rr Vbbt <qrubbtNpe.kqfy.ar.wc> -->
+<!--X-Date: Tue, 10 Jul 2001 11:28:12 +0900 -->
+<!--X-Message-Id: 01071011281200.16244@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00105.html">Date Prev</a>][<a href="msg00108.html">Date Next</a>][<a href="msg00103.html">Thread Prev</a>][<a href="msg00108.html">Thread Next</a>][<a href="maillist.html#00107">Date Index</a>][<a href="threads.html#00107">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Update (success at last) on connecting to localhost</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Update (success at last) on connecting to localhost</strong></li>
+<li><strong>From</strong>: <strong>John De Hoog &lt;<A HREF="mailto:dehoog@example.com">dehoog@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 10 Jul 2001 11:28:12 +0900</li>
+<li>Content-Transfer-Encoding: 8bit</li>
+<li>Content-Type: text/plain; charset=&quot;iso-2022-jp&quot;</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;dehoog@example.com&gt;</li>
+<li>Organization: http://dehoog.org</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;2eoD4B.A.DhD._fmS7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Thanks to all the great advice, and especially that from Thomas O'Dowd, I 
+am at last able to connect to localhost from an NNTP client.
+
+The first problem was that RH7.1 uses xinetd instead of inetd, as many of 
+you pointed out. An additional problem was that even after putting in all 
+the correct information for the nntp service in the xinetd conf file and 
+reloading xinetd, nntp didn't show up as a service -- until I also issued 
+service xinetd start, and *then* reloaded [d'oh!]. That did the trick.
+
+Here are the play-by-play details, including the fetchnews command just 
+to show how that works.
+
+[root@example.com /]# service xinetd start
+Starting xinetd:                                           [  OK  ]
+[root@example.com /]# chkconfig --list nntp
+error reading information on service nntp: No such file or directory
+[root@example.com /]# etc/rc.d/init.d/xinetd reload
+Reloading configuration:                                   [  OK  ]
+[root@example.com /]# netstat -l -A inet
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 *:1024                  *:*                     LISTEN
+tcp        0      0 *:wnn4                  *:*                     LISTEN
+tcp        0      0 *:sunrpc                *:*                     LISTEN
+tcp        0      0 *:1328                  *:*                     LISTEN
+tcp        0      0 *:x11                   *:*                     LISTEN
+tcp        0      0 *:canna                 *:*                     LISTEN
+tcp        0      0 *:nntp                  *:*   LISTEN &lt;-- here it is!
+tcp        0      0 localhost.localdom:smtp *:*                     LISTEN
+udp        0      0 *:1024                  *:*
+udp        0      0 *:sunrpc                *:*
+udp        0      0 *:763                   *:*
+[root@example.com /]# fetchnews -vvv
+1.9.19: verbosity level is 3
+Trying to connect to news.alt.net ... connected.
+Getting new newsgroups from news.alt.net
+Read server info from /var/spool/news/leaf.node/news.alt.net
+Disconnected from news.alt.net.
+
+And now when I connect to localhost from my NNTP client, I no longer get 
+"Server refused connection" errors.
+
+This is an important milestone in my quest to get real Unix-like services 
+up and working. Next will be getting news to work with XEmacs, and then 
+mail. Thanks again for all the help! Essentially it was Thomas' 
+step-by-step instructions that helped me get it going.
+-- 
+John De Hoog, Tokyo
+dehoog@example.com
+<A HREF="http://dehoog.org">http://dehoog.org</A>
+Mailer: KMail on KDE (Linux)
+日本語対応
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00108" href="msg00108.html">Re: Update (success at last) on connecting to localhost</a></strong>
+<ul><li><em>From:</em> Thomas O'Dowd &lt;tom@example.com&gt;</li></ul></li>
+<li><strong><a name="00109" href="msg00109.html">Re: Update (success at last) on connecting to localhost</a></strong>
+<ul><li><em>From:</em> &quot;A.Sajjad Zaidi&quot; &lt;sajjad@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00105.html">Re: Thousands of erroneous syslogs about media changes</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00108.html">Re: Update (success at last) on connecting to localhost</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00103.html">secure first OS install?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00108.html">Re: Update (success at last) on connecting to localhost</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00107"><strong>Date</strong></a></li>
+<li><a href="threads.html#00107"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

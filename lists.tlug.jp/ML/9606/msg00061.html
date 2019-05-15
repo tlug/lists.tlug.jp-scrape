@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Targetting sparc -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 26 Jun 1996 03:32:17 GMT -->
+<!--X-Message-Id: m0uYl84&#45;00000SC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19960626011800680.AAB195@example.com&#45;3.cyberoz.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00060.html">Date Prev</A>][<A HREF="msg00062.html">Date Next</A>][<A HREF="msg00058.html">Thread Prev</A>][<A HREF="msg00059.html">Thread Next</A>][<A HREF="maillist.html#00061">Date Index</A>][<A HREF="threads.html#00061">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Targetting sparc</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Targetting sparc</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 26 Jun 96 12:18 JST</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00058.html">19960626011800680.AAB195@example.com</A>&gt; (darren@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Darren" == Darren Cook &lt;darren@example.com&gt; writes:
+
+    Darren&gt; everything it offered. Everything works so far, though I
+    Darren&gt; think I installed about half a dozen X servers before I
+    Darren&gt; realized what it was asking, so I may have problems when I
+    Darren&gt; get round to setting X up.
+
+Ask yourself a question:  What is my video card?  Then either the X
+setup process will ask you this, and fix it, or when you are ready to
+try to run X you simply do
+
+ln -sf XF86_Mach32 /usr/X11R6/bin/X
+
+(of course you substitute the appropriate card name for "Mach32"), and 
+then you can delete everything XF86_* (except of course the server
+that you just made the link to).  You could even do a 'mv', but then
+it's a little harder to figure out which server you're using.
+
+    Darren&gt; I noticed when going through the man pages for gcc, that
+    Darren&gt; it can target Sparc machines. Did I misunderstand this, or
+    Darren&gt; does it mean I can make a binary for a Sun machine on my
+    Darren&gt; Linux machine?  Has anyone tried this - is it really just
+    Darren&gt; as simple as adding -mSparc (or whatever the option was)
+    Darren&gt; to the cc command?
+
+Yes and no.  GCC is a retargetable development system, yes.  However,
+it needs to be built for that purpose.  Building a cross-compiler is
+relatively hairy.  About 2/3 of the GCC suite is target independent,
+but eventually you have to emit machine code.  What happens is that 
+GCC builds a hierarchy of the following sort:
+
+/usr/lib/gcc-lib/                # GCC's library area
+            |
+            +-- i486-linux/      # GCC's native i486 linux target
+            |       |
+            |       +-- 2.6.3/   # version 2.6.3 compilers &amp; libraries
+            |       |
+            |       +-- 2.7.2/   # version 2.7.2     "     "     "
+            |
+            +-- i486-linuxaout/  # GCC's native i486 linux (a.out) target
+            |       |
+            |       +-- 2.6.3/   # version 2.6.3     "     "     "
+            |       |
+            |       +-- 2.7.2/   # version 2.7.2     "     "     "
+            |
+            +-- sparc-solaris/   # GCC's cross to SPARC Solaris target
+                    |
+                    +-- 2.6.3/   # version 2.6.3     "     "     "
+
+These lowest level directories contain binaries and system-specific
+libraries.  On linux, the libraries include libgcc.a (helper functions
+that are not part of libc) and libobjc.a but not libc.a or libm.a
+because these are provided as part of the linux runtime system as
+DSOs.  Most current linux systems include both the i486-linux (ELF)
+target and the i486-linuxaout (old linker formet) target, so you can
+see how it works.
+
+On DOS (DJGPP) everything is statically linked so in principle you
+might find libc.a and libm.a there (if I remember the theory
+correctly).  I believe the exact behavior in this case is controlled by
+the specs file in that directory.
+
+Now, for the SPARC target, you would need to have appropriate jump
+tables to link to the DSOs on the actual SPARC machine (an alternative 
+would be to FTP the object files across, perhaps as an ar library and
+do the link step there).
+
+Probably someone has done all this.  I know that there was a
+DOS-to-HPUX cross compiler advertised on the DJGPP mailing list a
+couple of years ago.  But it is surely not included in your GCC
+distribution; you'll have to go looking around for it.
+
+Once you have the relevant cross-compilation system installed, yes,
+it's as easy as "gcc -m sparc".  DJGPP developers often use Linux (or
+*BSD) for their development system, and use a Un*x-based
+cross-compilation environment, they only use DOS/Windowze for testing.
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00058" HREF="msg00058.html">Targetting sparc</A></STRONG>
+<UL><LI><EM>From:</EM> darren@example.com (Darren Cook)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00060.html">Re: Documentation</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00062.html">PPP still not up</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00058.html">Targetting sparc</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00059.html">Documentation</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00061"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00061"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

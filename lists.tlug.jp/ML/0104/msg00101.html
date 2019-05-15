@@ -1,0 +1,178 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: jwb@example.com (Jim Breen) -->
+<!--X-Date: Wed, 11 Apr 2001 17:36:37 +0900 (JST) -->
+<!--X-Message-Id: 200104110836.RAA23274@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00100.html">Date Prev</A>][<A HREF="msg00102.html">Date Next</A>][<A HREF="msg00086.html">Thread Prev</A>][<A HREF="msg00103.html">Thread Next</A>][<A HREF="maillist.html#00101">Date Index</A>][<A HREF="threads.html#00101">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI>Date: Wed, 11 Apr 2001 17:36:37 +0900 (JST)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;gw2hM.A._jG.XeB16@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt; From: "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+
+&gt;&gt;   Tk has no idea how it is done.  The XIM model is that
+&gt;&gt; Kinput2 makes all the decisions about what to do with keystrokes,
+&gt;&gt; including the initiation sequence.  TheRe's no reason why Kinput2,
+&gt;&gt; xwnmo, et al need to use the same sequence, and (this being Eunuchs)
+&gt;&gt; they probably don't.  And of course the user or sysadmin can configure
+&gt;&gt; it to something else again.
+
+I can't argue against this (as I simply don't know), but
+kinput2 must be a bit different when there it is running in native mode
+as opposed to XIM mode.
+
+I do most of my kinput2 usage from within a kterm. If I don't have
+kinput2 running, kterm works quite happily, however if I press the 
+kinput2 initiation sequence, it starts squawking about there being no
+conversion process. The sequence is defined in my .Xresources:
+
+	kterm*VT100*Translations: #override \
+		Shift&lt;Key&gt;space: begin-conversion(_JAPANESE_CONVERSION)
+
+From this I conclude that the initiation sequence is detected by kterm,
+and it whistles up kinput2.
+
+It's similar in Yudit, although the sequence is in a function key. Again
+this is in Yudit's control file.
+
+Now working from what Stephen wrote above, kinput2 or whatever must be
+active and grabbing all keystrokes to trap any initiation sequences, etc.
+before passing them to whichever app they are intended for.
+
+How the hell does it do that? The kinput2 man page says: "kinput2 waits
+quietly for a Japanese text input request from another client (i.e. no
+windows  appear).   When  kinput2 receives a request, it pops up a
+window and starts conversion process." No mention whatsoever that
+traps the sequence itself.
+
+&gt;&gt; I believe the delegation of control of the keyboard to the IM is also
+&gt;&gt; true for Mac and Windows, but presumably The Kanji Key wins there
+&gt;&gt; "Because Bill-sama Says So."
+
+Actually divorcing the IM from the app is Good Thing, but in the case
+of Windblows, the app has the speak the IM's API for it to work (unless
+it's something like NJComm, in which case it just monkeys with
+keystrokes on the fly and the app is unaware.)
+
+&gt;&gt;     &gt;&gt;&gt; and (b) LANG="ja_JP.eucJP" (probably, works for me but YYMV)
+&gt;&gt;     &gt;&gt;&gt; in your environment or you will lose.  Of course, you may lose
+&gt;&gt;     &gt;&gt;&gt; anyway; this is XIM.
+&gt;&gt; 
+&gt;&gt;     Jim&gt; Doesn't work. Possibly because LC_ALL contains "C", according
+&gt;&gt;     Jim&gt; to the return from setlocale().
+&gt;&gt; 
+&gt;&gt; OK, well you can try invoking your "tkApp" (more forcibly) with
+&gt;&gt; "LC_ALL=ja_JP.eucJP tkApp".
+
+Hmph. I'm running Tk from within a C wrapper system (mktclapp). I've
+tried running it from a shell with LC_ALL set as you suggest, and it
+makes no difference.
+
+Jim
+-- 
+Jim Breen  [jwb@example.com  <A TARGET="_top" HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>]
+Visiting Professor, Institute for the Study of Languages and Cultures of 
+Asia and Africa, Tokyo University of Foreign Studies, Japan
++81 3 5974 3880         [$B%8%`!&amp;%V%j!&lt;%s(B@$BEl5~30Bg(B]
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00103" HREF="msg00103.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher SEKIYA &lt;wileyc@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00131" HREF="msg00131.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00100.html">Re: tar and directory information</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00102.html">Re: tar and directory information</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00086.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00103.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00101"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00101"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

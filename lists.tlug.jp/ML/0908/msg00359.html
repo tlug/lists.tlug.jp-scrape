@@ -1,0 +1,172 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] old and obscure problem with the gcc compiler -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Sat, 22 Aug 2009 12:26:32 +0900 -->
+<!--X-Message-Id: 20090822032629.GB4581@poetic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 2000d7bd0908211718u17d3bb7egd0673234ba16ff63@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00358.html">Date Prev</a>][<a href="msg00360.html">Date Next</a>][<a href="msg00358.html">Thread Prev</a>][<a href="msg00392.html">Thread Next</a>][<a href="maillist.html#00359">Date Index</a>][<a href="threads.html#00359">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] old and obscure problem with the gcc compiler</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 22 Aug 2009 12:26:31 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20old%20and%20obscure%20problem%20with%20the%20gcc%20compiler">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] old and obscure problem with the gcc compiler</strong></li>
+<li>References: &lt;<a href="mailto:2000d7bd0908211718u17d3bb7egd0673234ba16ff63@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20old%20and%20obscure%20problem%20with%20the%20gcc%20compiler">2000d7bd0908211718u17d3bb7egd0673234ba16ff63@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>First off, if anybody can tell me how (on an Ubuntu system) I'm running
+a kernel vulnerable to this or not, I'd appreciate it if you'd tell me.
+I can't even figure out how to find out what updates have been recently
+installed, much less get their descriptions.
+
+On 2009-08-22 09:18 +0900 (Sat), Shawn Brown wrote:
+
+&gt; I guess details are here <a  rel="nofollow" href="http://lwn.net/Articles/347006/">http://lwn.net/Articles/347006/</a>
+
+Actually, the best details are here:
+
+  <a  rel="nofollow" href="http://lwn.net/Articles/341620/">http://lwn.net/Articles/341620/</a>
+
+We were earlier discussing what a disaster PAM was, being too complex
+for a piece of security software, and how just using PAM by default
+could mean that setting 'AllowPasswords no' in one's sshd_config could
+mean that you allow password logins anyway.
+
+That was a small example of how more security software can make things
+less secure; this is a much bigger and better one, since it allows full
+exploit of the system. (Look for Linux boxes to start joining Windows
+boxes as spam/DoS zombies any day now.)
+
+In this case, we have a security mechanism that should stop these sorts
+of attacks:
+
+    $ cat /proc/sys/vm/mmap_min_addr 
+    65536
+
+However, this is a lie in two ways:
+
+    1. If you change the &quot;personality&quot; of the process to System V, it
+    immediately maps page zero, even though this setting appears to
+    inidicate that nobody may do this.
+
+    2. If you decide to decrease your security by installing futher
+    security modules (such as SELinux), the security modules will
+    override that setting.
+
+I've had experience before with apparmor, another module that's supposed
+to increase security. It turned my relatively secure bind configuration,
+which never ran as root, into something depending that did run as
+root, at least in part, and was dependent on hundreds of lines of
+configuration being correct in order to be secure. It would take me a
+day to properly audit this. Ouch!
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974
+           Functional programming in all senses of the word:
+                   <a  rel="nofollow" href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00356" href="msg00356.html">[tlug] old and obscure problem with the gcc compiler</a></strong>
+<ul><li><em>From:</em> Shawn Brown</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00358.html">Re: [tlug] old and obscure problem with the gcc compiler</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00360.html">Re: [tlug] Unix's 40th Birthday</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00358.html">Re: [tlug] old and obscure problem with the gcc compiler</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00392.html">[tlug] rooting the Android ION, adding a Japanese IME,	and using it with 	Softbank</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00359"><strong>Date</strong></a></li>
+<li><a href="threads.html#00359"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

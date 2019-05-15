@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re:Jim Breen's patched kterm (fwd) -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date:  Mon, 28 Oct 1996 00:40:59 GMT -->
+<!--X-Message-Id: Pine.LNX.3.91.961028091000.123A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00163.html">Date Prev</A>][<A HREF="msg00164.html">Date Next</A>][<A HREF="msg00182.html">Thread Prev</A>][<A HREF="msg00165.html">Thread Next</A>][<A HREF="maillist.html#00162">Date Index</A>][<A HREF="threads.html#00162">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re:Jim Breen's patched kterm (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re:Jim Breen's patched kterm (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 28 Oct 1996 09:15:26 +0900 (GMT+0900)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+  Hi,
+
+  Since I had raised this on the list recently, I thought y'all might
+be interested in what Jim Breen had to say about it.  When I do hear
+from Jim again, I'll let you all know.
+
+Dennis McMurchy, 
+Tojinmachi, Fukuoka
+
+
+---------- Forwarded message ----------
+Date: Mon, 28 Oct 1996 09:52:47 -0500
+From: Jim Breen &lt;jwb@example.com&gt;
+To: Dennis McMurchy &lt;denismcm@example.com&gt;
+Subject: Re:Jim Breen's patched kterm (fwd)
+
+On Oct 26, 12:05pm, Dennis McMurchy wrote:
+} Subject: Re:Jim Breen's patched kterm (fwd)
+
+Hullo Dennis,
+
+&gt;&gt;   Since I posted this request for help and/or info on the Tokyo Linux
+&gt;&gt; Users' Group list, I've had two replies.  One suggests that you're 
+&gt;&gt; waiting for me to send you the patches to make it work.  The other
+&gt;&gt; consists of the single word 'remove'.
+&gt;&gt; 
+&gt;&gt;   I don't have any pressing use for this patched kterm, but I am
+&gt;&gt; curious as to how I might get it to work.  Since you say unambiguously
+&gt;&gt; that you are using it under Ultrix and Linux, I am a little puzzled
+&gt;&gt; (but not discouraged or annoyed - don't misunderstand me) by the 
+&gt;&gt; experience I've had with it so far.
+
+Well I got the patches for kterm (which apply to the X11R6) and applied
+them. At the time I was using Ultrix V4.4 and Linux (kernel 1.0.9) both of
+which were R5. (Ultrix still is). I found, serendipitously, that I could
+more or less run the imake, and once I fixed a R6 funny by hand in the
+Makefile, it all compiled and installed OK in both environments.
+
+About 5 weeks ago I lost my HDD at home (my Linux box), so I have rebuilt
+the system, using Slackware with kernel 2.0.x and X11R6. Guess what, I have
+had the same compilation problems as you have!
+
+&gt;&gt;   Well, Steve was right.  Including time.h and types.h (I don't care 
+&gt;&gt; which did it) fixed that snag with the compile.  A little later on
+&gt;&gt; though, this happens:
+
+Yep, I found that one too. Adding time.h fixed it.
+
+&gt;&gt; gcc -c -O2 -m486 -ansi    -I/usr/X11R6/include  -Dlinux -D__i386__ -D_POSIX_SOUR
+&gt;&gt; CE -D_BSD_SOURCE -D_GNU_SOURCE -DX_LOCALE  -DFUNCPROTO=15 -DNARROWPROTO  -DKTERM
+&gt;&gt;  -DSTATUSLINE -DKEEPALIVE  misc.c
+&gt;&gt; misc.c: In function `Bell':
+&gt;&gt; misc.c:328: too few arguments to function `gettimeofday'
+&gt;&gt; make: *** [misc.o] Error 1
+&gt;&gt; 
+&gt;&gt;   The code at that point looks like this:
+&gt;&gt; 
+&gt;&gt;  gettimeofday(*curtime);
+&gt;&gt;         now_msecs = 1000*curtime.tv_sec + curtime.tv_usec/1000;
+
+&gt;From memory, you need to add a timezone struct and a second parameter to the
+gettimeofday.
+
+&gt;&gt;   I don't have time to pursue this right now, but even I can see (I think)
+&gt;&gt; that we need another argument to the system call 'gettimeofday'.
+
+Yep.
+
+&gt;&gt;   My question is, I guess, how on earth did Jim Breen ever get this to 
+&gt;&gt; compile if it's such a mess?  And is it worth my while fixing these problems
+&gt;&gt; one by one?  Does anyone else out there think they need/want this?  Want to
+&gt;&gt; help?
+
+See above 8-)}
+
+I have it compiling now, but have struck problems with the ld and the
+-lXaw etc.etc.  A Linux guru is trying to sort it out for me. I'll email
+you when I have some progress.
+
+The probelm seems to have entirely emerged with the move from R5 to R6.
+
+Cheers
+
+Jim
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00163.html">Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00164.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00182.html">Re: Craig's "Rainikkusu" site</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00165.html">Netscape 3.0 and Java</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00162"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00162"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

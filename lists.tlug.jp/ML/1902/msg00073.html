@@ -1,0 +1,179 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Stymied by emacs character display -->
+<!--X-From-R13: Eghneg Zhccrfph <yhccNhpuvpntb.rqh> -->
+<!--X-Date: Wed, 20 Feb 2019 08:47:22 +0900 -->
+<!--X-Message-Id: 4e46af96185ebe3b712e50a3e8b50b4501e46163.camel@uchicago.edu -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3457c09e095bd3c45066eddd95ba9fdc77f78039.camel@uchicago.edu -->
+<!--X-Reference: 23659.48778.935713.709773@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00072.html">Date Prev</a>][<a href="msg00074.html">Date Next</a>][<a href="msg00078.html">Thread Prev</a>][<a href="msg00074.html">Thread Next</a>][<a href="maillist.html#00073">Date Index</a>][<a href="threads.html#00073">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Stymied by emacs character display</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 19 Feb 2019 23:47:19 +0000</li>
+<li><strong>From</strong>: <strong>Stuart Luppescu &lt;<a href="mailto:lupp@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Stymied%20by%20emacs%20character%20display">lupp@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Stymied by emacs character display</strong></li>
+<li>References: &lt;<a href="msg00069.html">3457c09e095bd3c45066eddd95ba9fdc77f78039.camel@uchicago.edu</a>&gt;	&lt;<a href="msg00071.html">23659.48778.935713.709773@turnbull.sk.tsukuba.ac.jp</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tue, 2019-02-19 at 17:30 +0900, Stephen J. Turnbull wrote:
+&gt; Stuart Luppescu writes:
+&gt; 
+&gt;  &gt; I'm generating a report from an rmarkdown document
+&gt; 
+&gt; What language(s) are contained in this document?  What is it encoded
+&gt; in (UTF-8 I'm pretty sure, but confirmation would be nice)?
+
+This is kind of complicated. The original R program (which contains the
+strings copied and pasted from MS Word), is ascii, which writes the
+control file for the analysis software and is utf-8. The analysis
+program runs in Windows and produces an output file which is windows-
+1252. Then a python script extracts some tables (utf-8) for inclusion
+in the rmarkdown report, which is ascii.
+
+&gt;  &gt; When I try to generate the report I get error messages like this:
+&gt;  &gt; ! Package inputenc Error: Unicode char \u8:\200€ not set up for
+&gt; use
+&gt;  &gt; with LaTeX.
+&gt; 
+&gt; That's clearly from LaTeX, not Emacs.  Which LaTeX extension are you
+&gt; using to process Unicode?  Have you tried others (XeLaTeX, LuaTeX,
+&gt; LaTeXCJK)?
+&gt; 
+&gt; The message is hard to make sense of.  My best guess is that the file
+&gt; got corrupted somehow and you have a lonely &quot;€&quot; (which has decimal
+&gt; value 128 or octal value 200) in it somewhere.  That byte is legal
+&gt; only as a traling character in UTF-8.  You can enter it in Emacs with
+&gt; C-q 2 0 0 RET I think.
+
+So, I was getting nowhere just looking at the LaTeX error message so I
+found the problem line in the LaTeX source that is causing the problem.
+This is what it looks like:
+
+included in teachersâ&lt;U+0080&gt;&lt;U+0099&gt; evaluations.
+
+The whole string from the a-circumflex to &lt;U+0099&gt; was originally a
+single apostrophe. And the weird thing is that it was just an
+apostrophe in the output file, but became this string in the file
+produced by the python script. I have no idea why, but I now know how
+to deal with it, so I don't care anymore. 
+
+Thanks to everyone for the help.
+-- 
+Stuart Luppescu
+Chief Psychometrician (ret.)
+UChicago Consortium on School Research
+<a  rel="nofollow" href="http://consortium.uchicago.edu">http://consortium.uchicago.edu</a>
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00074" href="msg00074.html">Re: [tlug] Stymied by emacs character display</a></strong>
+<ul><li><em>From:</em> Raymond Wan</li></ul></li>
+<li><strong><a name="00075" href="msg00075.html">Re: [tlug] Stymied by emacs character display</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00069" href="msg00069.html">[tlug] Stymied by emacs character display</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+<li><strong><a name="00071" href="msg00071.html">[tlug]  Stymied by emacs character display</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00072.html">Re: [tlug] Stymied by emacs character display</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00074.html">Re: [tlug] Stymied by emacs character display</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00078.html">Re: [tlug] Stymied by emacs character display</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00074.html">Re: [tlug] Stymied by emacs character display</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00073"><strong>Date</strong></a></li>
+<li><a href="threads.html#00073"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

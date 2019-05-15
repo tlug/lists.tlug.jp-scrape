@@ -1,0 +1,263 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  SSH Tunneling basics -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 10 Jun 2011 12:40:13 +0900 -->
+<!--X-Message-Id: 87y61amk0z.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4DF17DDE.2080101@jj.em&#45;net.ne.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00042.html">Date Prev</a>][<a href="msg00044.html">Date Next</a>][<a href="msg00044.html">Thread Prev</a>][<a href="msg00048.html">Thread Next</a>][<a href="maillist.html#00043">Date Index</a>][<a href="threads.html#00043">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  SSH Tunneling basics</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 10 Jun 2011 12:40:12 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20SSH%20Tunneling%20basics">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  SSH Tunneling basics</strong></li>
+<li>References: &lt;<a href="mailto:4DF17DDE.2080101@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20SSH%20Tunneling%20basics">4DF17DDE.2080101@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Charles Muller writes:
+
+ &gt; Almost every time I go on an overseas conference trip, although I am 
+ &gt; able to access the web and my email accounts from my hotel room, I 
+ &gt; am usually not able to access my web site server via SSH.
+
+What do you do to access the web site server?  Please be precise.  I
+ask because recently I've always had SSH service at the hotels I've
+stayed at in the U.S. and France.  Have you asked your local admin
+whether their firewall passes SSH, or if SSH is restricted from (some)
+other countries?  If the answer is &quot;it should work&quot;, then the problem
+is probably filtering on the hotel side.  If the answer is &quot;filtered&quot;,
+then setting up a tunnel is prohibited.  Do you really want to do it
+in that case?  At my university, it's theoretically a firing offense.
+
+OK, here's the basic concept.
+
+Your computer sends a packet of information &quot;into the cloud&quot; where it
+is passed from gateway to gateway until it reaches the destination.
+The destination sends packets to you in the same way.  Source (ie,
+return address) and destination are identified by 32-bit numbers (for
+current standard IPv4, or 128 bits for TNG IPv6).  You don't need to
+know more about IP, just that each host on the internet is identified
+uniquely by such numbers, and that the DNS maps domain names to those
+numbers for your convenience.  (You probably know more than that
+already, though.)
+
+If this sounds chancy and unreliable, you're right.  All modern
+services use a system called TCP (transmission control protocol) in
+which each packet is augmented with a checksum (for integrity
+checking) and a serial number to allow concatenation of many packets'
+content into a single reliably receivable stream.
+
+However, note that this stream is going into the cloud and coming back
+out at the other end; conceptually there's only one physical
+connection between your local host and the remote host.  So each
+packet is also assigned port numbers, which allows applications to
+filter out packets containing information they don't need (and usually
+can't understand).  This allows each application to see only the
+packets that correspond to the stream of data it needs.
+
+A server must bind to a particular port and listen there, because
+otherwise how do you ensure the port number the local host sends to is
+the one the server is listening to?  The client needs to know in
+advance.  There are two ways this can happen.  One is the server admin
+tells the client user what port to connect to.  This method is almost
+arbitrary (subject to a requirement that the server have root
+privilege to bind to ports numbered &lt; 1024).  The other is that there
+may be a public convention about what port a server uses (see
+/etc/services for a long list).  FTP uses 20 &amp; 21, SSH uses 22, telnet
+uses 23, mail (SMTP) uses 25, HTTP uses 80, HTTPS uses 443, and so on.
+You probably know most of this, too. :-)
+
+Did you notice the word &quot;filter&quot; above?  Yup, there's the nub of your
+problem.  Although filtering allows applications to &quot;multiplex&quot; over
+the single &quot;cloud channel&quot;, administrators also filter.  They may
+filter out source or destination hosts (for example, to restrict
+printers to hosts on the LAN, or to keep out Beavis and Butthead), but
+they may also filter on ports.  In particular, it's common for hotel
+ISPs to restrict outgoing traffic to connections to well-known web
+services, and permit no incoming connections at all.  (Once an
+outgoing connection is established, retunring packets are allowed
+through.)  HTTP and HTTPS are absolutely necessary, FTP is probably
+OK, mail (SMTP of course, but also several other services such as IMAP
+and POP, as well as &quot;secure&quot; versions of the preceding services) all
+have their own &quot;well-known port numbers&quot; (see /etc/services).
+
+So you can probably connect to any of those services *and no others*
+at the hotel.  This *may* be why you are unable to SSH to your host.
+
+ &gt; I have been told that what I need to do is set up Tunneling before I 
+ &gt; go away.
+
+I think you need to find better advisors.  These folks are either
+lacking a clue or two, or not listening to *your* problem.  If you
+*need* tunneling, you are subverting your organization's firewall.
+There is a straightforward way using only your roadwarrior and the
+server, and there is a more reliable but circuitous way involving a
+third host that you trust.  The first requires nothing special except
+the option setting on sshd, and the second uses a tunnel (forwarding
+through the encrypted connection).
+
+The straightforward, cheap way is set up an sshd on a port that the
+hotel firewall allows through.  This could be done via a server-local
+tunnel (you can't do it from the client because you can't connect via
+SSH in the first place!), but that seems kinda dumb to me.  Among
+other things, you may want to configure the &quot;last-resort&quot; sshd with
+more restrictions than the &quot;daily-use&quot; sshd on port 22.  The best port
+to use is HTTP or HTTPS since you know those get through.
+Unfortunately, your web server is probably using both.  After that,
+I'd try an unused mail port such as POP, and after that I'd try FTP
+ports.
+
+For how to do it, I think you just add the &quot;-p ##&quot; option to the sshd
+command line.  See the sshd man page, search for &quot;port&quot;.
+
+ &gt; It seems that what I would be doing is setting up something on my 
+ &gt; remote server that will allow me access from my laptop when I am at 
+ &gt; my new location.
+
+Yes.
+
+ &gt; If this it the case, then, do I need to make 
+ &gt; changes on both the remote server and on my local machine?
+
+Yes.  The &quot;ssh -p ##&quot; option on the local machine must match the &quot;sshd
+-p ##&quot; option on the remote server.
+
+ &gt; offers the below sample command:
+ &gt; 
+ &gt; ssh -N -p 22 will@example.com -L 2110/localhost/110
+
+This is guaranteed to fail exactly when you need it.  22 is the
+well-known SSH port which you know doesn't work in many cases.
+
+ &gt; With this as a template, how would I know that the values 
+ &gt; 2110/localhost/110 are right for my setup? Or how would I determine 
+ &gt; what the right values are?
+
+You can't know for sure.  The circuitous and most reliable option is
+to find an Internet-visible host that (1) can ssh to your web host and
+(2) does *not* run a webserver on port 80.  This is your &quot;gateway&quot;.
+Then on the gateway run
+
+ssh your.webserver.net -L 80/localhost/22
+
+Note that the &quot;localhost/22&quot; part of the -L option refers to the
+*server*'s point of view.  Ie, here localhost actually means
+&quot;your.webserver.net&quot;.
+
+It might help if you draw a diagram using boxed hostnames for hosts,
+numbered circles attached to the host for TCP ports, and lines between
+circles to represent connections.  (The circles on your roadwarrior
+don't need to be labeled; your OS will automatically pick one for each
+connections.  You do need to use a different port for each connection,
+though, to make an accurate picture.)  The particular suggestions for
+notation here are pretty standard (eg, for concurrency theory diagrams).
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00048" href="msg00048.html">Re: [tlug] SSH Tunneling basics</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00039" href="msg00039.html">[tlug] SSH Tunneling basics</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00042.html">Re: [tlug] SSH Tunneling basics</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00044.html">Re: [tlug] SSH Tunneling basics</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00044.html">Re: [tlug] SSH Tunneling basics</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00048.html">Re: [tlug] SSH Tunneling basics</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00043"><strong>Date</strong></a></li>
+<li><a href="threads.html#00043"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

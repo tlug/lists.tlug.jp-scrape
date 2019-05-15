@@ -1,0 +1,254 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Java and Japanese e&#45;mail -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Sat, 23 Aug 1997 07:11:49 GMT -->
+<!--X-Message-Id: m0x2AKl&#45;00000wC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970823004932.17003B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00109.html">Date Prev</A>][<A HREF="msg00111.html">Date Next</A>][<A HREF="msg00107.html">Thread Prev</A>][<A HREF="msg00111.html">Thread Next</A>][<A HREF="maillist.html#00110">Date Index</A>][<A HREF="threads.html#00110">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Java and Japanese e-mail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Java and Japanese e-mail </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 23 Aug 1997 16:10:06 +0900</LI>
+<LI>In-reply-to: Your message of "Sat, 23 Aug 1997 01:08:57 +0900."            &lt;<A HREF="msg00107.html">Pine.HPP.3.95.970823004932.17003B-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; A couple of things, there seems to be a linux-i8n now.  I'm
+    Craig&gt; downloading it now and will give it a go.  Also, the dates
+    Craig&gt; indicate that it was made available only a few days ago.
+    Craig&gt; Fresh.
+
+I definitely am waiting for your report on this.  Especially if it
+makes HotJava stop swallowing memory.
+
+    Craig&gt; Back to my little e-mail problem.  I'm using servlets, not
+
+What's a servlet?  I assume it's a server crippled in basically the
+same way as an application is crippled to become an applet?  This
+shouldn't matter.
+
+    Craig&gt; applets.  The servlet talks to an Apache HTTP server.  It
+    Craig&gt; receives input from the Apache server and outputs to the
+    Craig&gt; server.  The end-user is inputing the information in a form
+    Craig&gt; in something like netscape.  Let's say that they are on Win
+    Craig&gt; 95J.  They input ShiftJIS.  The server catches it and gives
+    Craig&gt; it to the Java servlet.  The servlet gets the parameters
+
+What is Apache passing to the servlet?  SJIS or ISO-2022-JP or ASCII?
+I thought your users were like requesting files with ASCII names or
+something, but the file content might be Japanese.  If the server is
+passing munged nihongo in requests to the servlet, heaven only knows
+what it might be doing....
+
+    Craig&gt; and tosses it to the SMTP server on port 25.  Sendmail then
+    Craig&gt; takes it and spits it something like the POP server which
+    Craig&gt; spits it to something like Eudora or Netscape mail.
+
+No.  MTAs like sendmail normally receive input on stdin or the like
+from an MUA (Eudora), then pass it over the network to an MTA
+(sendmail) which passes it to a delivery agent (aka MDA, eg, procmail
+or deliver) or into a spool file.  Normally POPservers and imapds use
+those spool files.  The interface going through the Internet is very
+clean: pass an address and data to sendmail on stdin, get protocol
+replies on stdout.  (See RFC 1123 and 821.)  The complexity is all on
+the localhost side (composition on the sending side, delivery and
+display for the receiver).  If your mailers are properly set up, using
+sendmail should be as transparent as a named pipe.  It's not mail,
+it's your program's output stream that's the problem.  Have you tried
+writing a local file instead of passing the output to sendmail?
+Betcha get the same mojibake.
+
+File --+
+User --+--&gt; MUA --+--&gt; MTA --(SMTP)--&gt; MTA --&gt; spool file --+
+etc. --+          |                                         |
+                  |                        +-- POPserver &lt;--+
+stdin (usually) --+                 MUA &lt;--+-- procmail &lt;---+
+
+    Craig&gt; Correct me if I'm wrong, but I've thought that normally the
+    Craig&gt; POP server spit out JIS and that the mail client converted
+    Craig&gt; it to ShiftJIS for the Mac Windows world or to EUC for the
+    Craig&gt; Linux world.
+
+No.  The POP/IMAP server is also an MTA (or MDA).  MTAs and MDAs are
+expected to modify the headers (adding "Received" and "X-UIDL" and so
+on), but are not allowed to touch the message body.  (Some do anyway;
+in particular, they often do translations from ASCII to EBCDIC.  Thus
+we need "Content-Encoding: Base64".)
+
+    Craig&gt; This is what I thought:
+ 
+    Craig&gt; Windows '95 ==&gt; Eudora =====&gt; SMTP ====&gt; Internet =====&gt;
+    Craig&gt; ShiftJIS    Convert to JIS     JIS
+
+    Craig&gt; Something =======&gt; Eudora ====&gt; displays on Windows
+    Craig&gt; like POP JIS Converts to ShiftJIS     Monitor
+
+    Craig&gt; So, what I thought was that I had to convert into JIS
+    Craig&gt; before it got sucked in by the SMTP server.  What does
+    Craig&gt; everyone else think?
+
+No, they're not required to do any such thing.  Once you've received
+an "accepted for delivery" notification from the listener, you are
+supposed to assume that the same series of bytes you sent will be
+in the message body received by the remote user.  So you need to
+coordinate with the remote user on how to interpret your bytes, NOT
+with sendmail.  If the remote user can handle JIS, S-JIS, and EUC, it
+doesn't matter to sendmail which you use.  In fact, sendmail doesn't
+care if you send Russian to a user expecting SJIS.  It will faithfully 
+pass it on....
+
+What the MUA (Eudora and your servlet) should do is add Content-Type
+and Content-Encoding MIME headers.  The mail or web server isn't
+supposed to care.  Only the UA is involved in dealing with content
+(formatting, MIME encoding, and the like).  Every other element of the
+system should be thought of as allowed to add headers but not touch
+the rest of the message at all.  (This is not strictly true,
+especially for web servers with SHTML and so on, but it's close
+enough.)
+
+The reason for the specification of JIS (actually, ISO-2022 or 7-bit
+EUC) is that in the distant past many serial links used an 11-bit
+encoding with 1 start and two stop bits (or maybe vice versa) and 8
+bits of data.  With ASCII being 7 bits, and links being unreliable, 1
+bit was often used for parity _at the hardware level_ so that passing
+8 bit data was impossible.  So some software was "optimized" on the
+assumption that anything it was asked to pass over the net would use
+7-bit bytes.  Thus encodings were designed to fit into the 7-bit
+framework for mail transport.
+
+However, as I understand it, there is nothing mandating the use of
+7-bit codes in Internet mail as long as the proper MIME headers are
+attached.  If you send Shift-JIS to someone with a MIME-compliant
+mailer that does not understand Shift-JIS, it should say "this doc is
+in Shift-JIS, I'm lost---tell me what to do".  However, all mailers
+that claim to understand Japanese should implement ISO-2022-JP, since
+this is a base implementation that 99.44% of systems on the Internet
+and connected networks (Bitnet, UUCP) can pass without munging.
+
+The main mistake (from an RFC compliance point of view) in your
+program is failure to prepend a set of MIME headers.  (I believe that
+no MIME headers implies US-ASCII on the Internet.)  However, that
+should not affect sendmail or popmail at all; they should deliver
+exactly the set of headers and body they were passed, plus a few extra
+headers that describe (Received) or aid (X-UIDL) their activity.
+
+But without seeing more code for the file inclusion or examples of
+munged nihongo, it's hard to guess what might be going wrong.
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00107" HREF="msg00107.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00109.html">Re: tlug: Python woes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00111.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00107.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00111.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00110"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00110"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

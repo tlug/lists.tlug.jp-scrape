@@ -1,0 +1,212 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Not seeing linked directory in localhost -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Mon, 24 Apr 2006 21:40:44 +0900 -->
+<!--X-Message-Id: 20060424084025.3f31d1b1.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060423180300.68cd68aa.jep200404@example.com -->
+<!--X-Reference: 20060424001707.3a0a7d31.godwin.stewart@example.com -->
+<!--X-Reference: 20060423192231.2cf6db54.jep200404@example.com -->
+<!--X-Reference: 20060424.112453.11157873.dave@?om -->
+<!--X-Reference: 444C96A6.9040200@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00444.html">Date Prev</a>][<a href="msg00446.html">Date Next</a>][<a href="msg00443.html">Thread Prev</a>][<a href="msg00449.html">Thread Next</a>][<a href="maillist.html#00445">Date Index</a>][<a href="threads.html#00445">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Not seeing linked directory in localhost</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 24 Apr 2006 08:40:25 -0400</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Not%20seeing%20linked%20directory%20in%20localhost">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Not seeing linked directory in localhost</strong></li>
+<li>References: &lt;<a href="msg00436.html">20060423180300.68cd68aa.jep200404@example.com</a>&gt;	&lt;<a href="msg00437.html">20060424001707.3a0a7d31.godwin.stewart@example.com</a>&gt;	&lt;<a href="msg00438.html">20060423192231.2cf6db54.jep200404@example.com</a>&gt;	&lt;<a href="msg00439.html">20060424.112453.11157873.dave@?om</a>&gt;	&lt;<a href="msg00441.html">444C96A6.9040200@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>More generally, Dave needs to master the whole concept of UNIX permissions. 
+What tutorials and in-depth tomes can y'all point Dave to? 
+
+The concept of least privilege is an important one. 
+
+Dave M G wrote:
+
+&gt; It was suggested that 750 might be better just in case I was concerned 
+&gt; about others using my computer.
+
+That depends on who's in the group. 
+Even so, I'm wary of it. 
+
+&gt; But 755 was also suggested. I just now set my /home/dave directory to 
+&gt; 755, and now I can see the web_sites directory at localhost from within 
+&gt; FireFox.
+
+755 allows everyone to roam your home directory, 
+which is lousy from a security standpoint. 
+Even choking ~dave down to 750 where the group includes 
+only apache and dave is poor. Apache only has business 
+reading your web pages, not your home directory (that 
+has many little configuration files). 
+
+It would be better for dave to have a directory somewhere off of 
+/var that (only) dave had permission to fiddle and that apache 
+could only read. 
+
+   [jim@example.com jim]$ ll -d /var/wwwdave
+   drwxr-xr-x    5 dave     apache         4096 Aug 16  2002 /var/wwwdave
+   [jim@example.com jim]$
+
+or
+
+   [jim@example.com jim]$ ll -d /var/wwwdave
+   drwxr-x---    5 dave     apache         4096 Aug 16  2002 /var/wwwdave
+   [jim@example.com jim]$
+
+Yes, that assumes there is an apache group. 
+It might be called something else on your box, 
+or you might even have to make a group. 
+
+I would consider having a subdirectory of /var/www/. I.e., 
+
+   [jim@example.com jim]$ ll -d /var/wwwdave/web_sites
+   drwxr-x---    5 dave     apache         4096 Aug 16  2002 /var/wwwdave/web_sites
+   [jim@example.com jim]$
+
+On Sun, 23 Apr 2006 23:57:50 +0900 Dave M G &lt;martin@example.com&gt; wrote:
+
+&gt; I checked the permissions on /home/dave/web_sites:
+&gt; drwxrwxrwx 13 dave dave 4096 2006-04-03 18:35 web_sites
+
+777 permissions are just plain wreckless. Understandable when you are 
+troubleshooting while isolated from the Internet, but far too dangerous 
+otherwise. 
+
+On Mon, 24 Apr 2006 18:13:10 +0900 Dave M G &lt;martin@example.com&gt; wrote:
+
+&gt; If I'm accessing the 
+&gt; /home/dave/web_sites directory from within the &quot;dave&quot; account, which 
+&gt; owns the directory, why was I denied access? Why did I have to grant 
+&gt; permissions to &quot;others&quot; in order to get access myself?
+
+It might depend how you tell Firefox to access it. 
+
+Accessing /home/dave/web_sites as <a  rel="nofollow" href="http://localhost/web_sites/">http://localhost/web_sites/</a> 
+is done only indirectly by Firefox. Apache is doing the actual 
+accessing as Godwin pointed out. 
+
+Accessing /home/dave/web_sites as file:///home/dave/web_sites, 
+is done directly by Firefox as you (dave). 
+
+Try both ways. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00449" href="msg00449.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00436" href="msg00436.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00437" href="msg00437.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00438" href="msg00438.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00439" href="msg00439.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> David E</li></ul></li>
+<li><strong><a name="00441" href="msg00441.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00444.html">Re: [tlug] Printer Not Responding</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00446.html">Re: [tlug] Printer Not Responding</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00443.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00449.html">Re: [tlug] Not seeing linked directory in localhost</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00445"><strong>Date</strong></a></li>
+<li><a href="threads.html#00445"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

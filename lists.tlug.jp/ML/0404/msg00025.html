@@ -1,0 +1,258 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Windows 2000 and CIFS -->
+<!--X-From-R13: =?GFT&#45;8?C?Oyrffnaqeb_[nagryyv=S3=80=90VAPWPAJ=S3=80=91?= <nyrkNubovobk.pb.wc> -->
+<!--X-Date: Wed, 7 Apr 2004 10:55:24 +0900 -->
+<!--X-Message-Id: 006501c41c43$644de6b0$6e00a8c0@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 004c01c41888$eed03d60$3000a8c0@example.com -->
+<!--X-Reference: 1080893678.2481.32.camel@example.com -->
+<!--X-Reference: 005601c41892$ea2f3270$3000a8c0@example.com -->
+<!--X-Reference: 1081296180.14976.26.camel@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00024.html">Date Prev</a>][<a href="msg00026.html">Date Next</a>][<a href="msg00023.html">Thread Prev</a>][<a href="msg00054.html">Thread Next</a>][<a href="maillist.html#00025">Date Index</a>][<a href="threads.html#00025">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Windows 2000 and CIFS</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 7 Apr 2004 10:55:24 +0900</li>
+<li><strong>From</strong>: <strong>=?UTF-8?Q?Alessandro_Mantelli=E3=80=90HOBIBOX=E3=80=91?= &lt;<A HREF="mailto:alex@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Windows%202000%20and%20CIFS">alex@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Windows 2000 and CIFS</strong></li>
+<li>References: &lt;<a href="msg00010.html">004c01c41888$eed03d60$3000a8c0@example.com</a>&gt; &lt;<a href="msg00011.html">1080893678.2481.32.camel@example.com</a>&gt; &lt;<a href="msg00012.html">005601c41892$ea2f3270$3000a8c0@example.com</a>&gt; &lt;<a href="msg00023.html">1081296180.14976.26.camel@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hello, thanks for the reply.
+
+Actually I haven't been able to solve the problem yet.
+I've configured samba and kerberos and winbind and
+1) I can kinit sucessfully
+2) Net ads join work only if I use the windows 2000 Administrator user name
+and password
+3) If i do su DOMAINNAME#username it works
+
+But I can see no windows 2000 share folders. I mean, I don't know how to
+continue.
+Ps. I tried to change the etc/pam.d/login setting to join the domain but it
+doesn't work,
+but more then using winbind I would like to have a replacement of
+smbmount^^;
+thus, I was looking for some solution like mount -t cifs etc.etc... (the
+idea is to join the
+linux server through a vpn with pptp)
+
+Thanks in Advance
+Alex
+
+
+My Smb.conf file
+
+global]
+realm = HB.LOCAL
+netbios name=hobibackup
+workgroup = myworkgroup
+server string = %h server (Samba %v)
+dns proxy = no
+log file = /var/log/samba/log.%m
+max log size = 1000
+syslog only = no
+syslog = 0
+security = ads
+encrypt passwords = true
+obey pam restrictions = yes
+invalid users = root
+passwd program = /usr/bin/passwd %u
+passwd chat = *Enter\snew\sUNIX\spassword:* %n\n
+*Retype\snew\sUNIX\spassword:* %n\n .
+hosts deny=ALL
+hosts allow=192.168.0.
+
+socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+
+wins server=192.168.0.2
+local master=no
+domain master=no
+
+winbind separator=#
+winbind uid = 10000-20000
+winbind gid= 10000-20000
+winbind enum users = yes
+winbind enum groups = yes
+template homedir=/home/%D/%U
+template shell=/bin/bash
+
+
+[homes]
+comment = Home Directories
+browseable = no
+writable = yes
+valid users= %D#%S
+create mode=0064
+directory mode =0775
+
+
+[groupfl]
+path = /home/group-files
+read only = no
+writable=yes
+valid user = @example.com#%S
+
+
+
+My krb5.conf file
+
+
+[libdefaults]
+ default_realm = HB.LOCAL
+ krb4_config = /etc/krb.conf
+ krb4_realms = /etc/krb.realms
+ kdc_timesync = 1
+ ccache_type = 4
+ forwardable = true
+ proxiable = true
+
+ v4_instance_resolve = false
+ v4_name_convert = {
+  host = {
+   rcmd = host
+   ftp = ftp
+  }
+  plain = {
+   something = something-else
+  }
+ }
+
+[realms]
+HB.LOCAL = {
+  kdc = 192.168.0.2
+  admin_server = mydomain
+}
+
+[domain_realm]
+.hb.local=HB.LOCAL
+hb.local=HB.LOCAL
+
+[login]
+ krb4_convert = true
+ krb4_get_tickets = true
+
+[pam]
+ debug= false
+ ticket_lifetime=36000
+ renew_lifetime=36000
+ forwardable=true
+ krb4_convert=false
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00054" href="msg00054.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+<ul><li><em>From:</em> Blomberg David</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00010" href="msg00010.html">[tlug] Windows 2000 and CIFS</a></strong>
+<ul><li><em>From:</em> Alessandro Mantelli</li></ul></li>
+<li><strong><a name="00011" href="msg00011.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+<ul><li><em>From:</em> Blomberg David</li></ul></li>
+<li><strong><a name="00012" href="msg00012.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+<ul><li><em>From:</em> Alessandro Mantelli</li></ul></li>
+<li><strong><a name="00023" href="msg00023.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+<ul><li><em>From:</em> Blomberg David</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00024.html">Re: [tlug] using a cisco 2514 router to connect to the net</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00026.html">[tlug] wusage</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00023.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00054.html">Re: [tlug] Windows 2000 and CIFS</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00025"><strong>Date</strong></a></li>
+<li><a href="threads.html#00025"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

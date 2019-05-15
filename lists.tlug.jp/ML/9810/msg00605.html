@@ -1,0 +1,219 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Mailer preference -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Thu, 15 Oct 1998 12:05:57 +0900 -->
+<!--X-Message-Id: 13861.26233.858642.451881@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13860.18507.778282.564240@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96.981015100334.31515A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00604.html">Date Prev</A>][<A HREF="msg00606.html">Date Next</A>][<A HREF="msg00589.html">Thread Prev</A>][<A HREF="msg00500.html">Thread Next</A>][<A HREF="maillist.html#00605">Date Index</A>][<A HREF="threads.html#00605">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Mailer preference</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Mailer preference</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 15 Oct 1998 12:05:29 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00589.html">Pine.LNX.3.96.981015100334.31515A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00555.html">13860.18507.778282.564240@example.com</A>&gt;&lt;<A HREF="msg00589.html">Pine.LNX.3.96.981015100334.31515A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "mc" == Michael Casinghino &lt;michael@example.com&gt; writes:
+
+    mc&gt; these nice justified paragraphs like this:
+
+    Sensei&gt; It's really nice to have the included text in a formatted
+    Sensei&gt; paragraph like this.  It is very clear who wrote the text
+    Sensei&gt; *and* which part of the message is included.
+
+    mc&gt; Which MUA is Mr. Turnbull using to do this, or is it some
+    mc&gt; do-it-yo-sef elisp code?
+ 
+Oh, this is _much_ better than an MUA, this is Supercite.  Why is it
+better?  Because Supercite works with most Emacs MUAs.  For XEmacs
+20.4 and above:  get
+
+     <A TARGET="_top" HREF="ftp://ftp.xemacs.org/pub/xemacs/packages/sc-">ftp://ftp.xemacs.org/pub/xemacs/packages/sc-</A>&lt;ver&gt;-pkg.tar.gz
+
+and unzip it somewhere appropriate (~/.xemacs/ will do).  If you have
+xemacs 20.3, that will work but you may need some extra configuration
+(most likely just adding `(load "~/.xemacs/lisp/sc/auto-autoloads.elc")'
+will be sufficient).  Other versions of Emacs and XEmacs, you'll have
+to read the stuff.  You need to add some hooks to .emacs:
+
+(load-file (expand-file-name "~/.sc"))	; initialize Supercite
+
+and here's my ~/.sc:
+
+;;; -*-mode: Emacs-Lisp; fill-column: 75; comment-column: 40; -*-
+(message "Loading ~/.sc...")
+;(sit-for 2) ; if you really want to know where the init process is ...
+
+;;; Supercite preferences
+(setq sc-cite-region-limit nil)
+(setq sc-electric-references-p t)
+;; These probably don't work right under XEmacs in that \\cj is a
+;; regexp matching a Japanese character, but is not implemented in
+;; XEmacs Mule.  Doesn't hurt, though.
+(setq sc-citation-root-regexp "\\([-._a-zA-Z0-9]\\|\\cj\\)*")
+(setq sc-citation-nonnested-root-regexp "\\([-._a-zA-Z0-9]\\|\\cj\\)+")
+
+;;; For BBDB
+; As recommended by BBDB
+(setq sc-preferred-attribution-list
+      '("sc-lastchoice" "x-attribution" "sc-consult"
+	"initials" "firstname" "lastname"))
+
+; SC default is nil
+(setq sc-attrib-selection-list 
+      '(("sc-from-address"
+	 ((".*" . (bbdb/sc-consult-attr
+		   (sc-mail-field "sc-from-address")))))))
+
+; Same as SC default except for the empty-line entry
+(setq sc-mail-glom-frame
+      '((begin (setq sc-mail-headers-start (point)))
+	("^x-attribution:[ ]+.*$" (sc-mail-fetch-field t) nil t)
+	("^\\S +:.*$" (sc-mail-fetch-field) nil t)
+	("^$" (progn (bbdb/sc-default)
+		     (list 'abort '(step . 0))))
+	("^[ \t]+" (sc-mail-append-field))
+	(sc-mail-warn-if-non-rfc822-p (sc-mail-error-in-mail-field))
+	(end (setq sc-mail-headers-end (point)))))
+
+;;; Supercite initialization
+(autoload 'sc-cite-original     "supercite" "Supercite 3.1" t)
+(autoload 'sc-submit-bug-report "supercite" "Supercite 3.1" t)
+(add-hook 'mail-citation-hook 'sc-cite-original)
+
+;; John Little kludge
+(setq sc-citation-delimiter-regexp "[&gt;%|]+")
+(setq news-reply-header-hook nil)
+
+(message "Loading ~/.sc...done.")
+;(sit-for 2) ; if you really want to know where the init process is ...
+; End of ~/.sc
+
+Two other suggested packages are `fill-adapt' and `bbdb'.  fill-adapt
+is quite smart about recognizing quotations and reformatting
+paragraphs appropriately ... makes properly eliding them almost
+painless.  I'm not sure where that lives, probably in
+textutils-&lt;ver&gt;-pkg.tar.gz at the above URL.  BBDB is Jamie Zawinski's 
+Big Brother DataBase, which automagically scarfs information from
+message headers (both email and netnews) such as email address.
+
+Supercite and filladapt are standard packages, available at any ELisp
+archive, they may even already be included in your distribution.  BBDB 
+is separately maintained and becoming more popular, but the package
+at ftp.xemacs.org was updated "ototoi" (really), so should be the
+latest and greatest.
+
+By the way, my MUA is VM, by Kyle Jones.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences        Tel/fax: +1 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "XEmacs rules."
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00555" HREF="msg00555.html">tlug: Locale mess</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00589" HREF="msg00589.html">tlug: Mailer preference</A></STRONG>
+<UL><LI><EM>From:</EM> Michael Casinghino &lt;michael@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00604.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00606.html">Re: tlug: More SOHO</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00589.html">tlug: Mailer preference</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00500.html">tlug: Another TL Install problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00605"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00605"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

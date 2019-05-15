@@ -1,0 +1,183 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] "How to" -->
+<!--X-From-R13: Ynyva YALVGVODAH <zr.xnyvaNtznvy.pbz> -->
+<!--X-Date: Mon, 12 May 2014 11:56:33 +0900 -->
+<!--X-Message-Id: CAKXLc7fOK94iWsRP7QkfjaqotYRXfgRSQRtbMeRCT80M4_&#45;b1w@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CAJA1Y2bTWLWhb0tcuZyeJQDXtAXsGRdyUw_T_Ft7sZ_W6nXhLQ@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00056.html">Date Prev</a>][<a href="msg00058.html">Date Next</a>][<a href="msg00054.html">Thread Prev</a>][<a href="msg00059.html">Thread Next</a>][<a href="maillist.html#00057">Date Index</a>][<a href="threads.html#00057">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] &quot;How to&quot;</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 12 May 2014 11:56:10 +0900</li>
+<li><strong>From</strong>: <strong>Kalin KOZHUHAROV &lt;<a href="mailto:me.kalin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%22How%20to%22">me.kalin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] &quot;How to&quot;</strong></li>
+<li>References: &lt;<a href="msg00054.html">CAJA1Y2bTWLWhb0tcuZyeJQDXtAXsGRdyUw_T_Ft7sZ_W6nXhLQ@mail.gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Mon, May 12, 2014 at 1:02 AM, Bruno Raoult &lt;braoult@example.com&gt; wrote:
+&gt; Following our discussions, and different solutions to one problem.
+&gt;
+&gt; 1- You have 10,000 files, and you want to find duplicates. Sometimes, 1 file
+&gt; changes, or you add/remove one, so you want to find the changes quickly (let
+&gt; say daily). How?
+&gt;
+rsync -HavPS src/ dst/ --dry-run
+
+If you don't trust timestamps, add -c
+If you want more robust and faster solution, go the FIM-way, use MD5
+hashlist that you check against.
+
+
+&gt; 2- These files have &quot;meta-information&quot; inside (let say date/time), that you
+&gt; can extract. how would you do?
+&gt;
+depends on the file format; use the command below followed bu
+grep/perl with regex matching your dateformat:
+* generic - strings
+* multimedia - exiftool or exiv2
+* most any executable - objdump
+* many (incl. office) - file
+
+&gt; 3- How would you *copy* your mp3 (real files) playlists from an m3u file to
+&gt; another place, with no subtree in destination? Example: src/a/b/c/d.mp3 =&gt;
+&gt; dst/a-b-c-d.mp3. m3u is a common file format for music playing lists.
+&gt; 4- If you consider the final target being /a/b/c/d, how would you create the
+&gt; new m3u file from the original one? Example: you answered question 3, but
+&gt; the target is for another device/machine, therefore different path.
+&gt;
+I'll leave those for somebody else.
+
+And add another one:
+5. You have two filesystems (say ext4) with large number of files
+(&gt;10K), some of them are big (&gt;100G), some of them are big and sparse
+(&gt;100MB disk size, &gt;1TB real size) (think two 4TB SATA drives).
+At one point they are synced (rsync -HavPS /mnt/t1/ /mnt/t2/). Later
+you move files around on the fisrt drive (using mv or rename) and
+change/add/delete some small files (e.g. notes).
+What is an efficient way to sync back first drive to the second
+(assume second has not changed since last sync)?
+
+rsync will transfer a lot of extra files (e.g. if `mv /mnt/t1/dir1/A
+/mnt/t1/dir2/B` is issued, it will transfer the B and then delete A).
+using MD5 to track all changes is futile, it means calculating MD5
+over many TB each time.
+Keeping a journal of some kind may be possible, but how?
+
+(This is real work in forensics; my solution is to keep work log (of
+mv and rename commands), then manually execute it on the second fs,
+then rsync -HavPS as a check, but that is teduous)..
+
+Kalin.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00059" href="msg00059.html">Re: [tlug] &quot;How to&quot;</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00062" href="msg00062.html">Re: [tlug] &quot;How to&quot;</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+<li><strong><a name="00085" href="msg00085.html">Re: [tlug] &quot;How to&quot;</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00054" href="msg00054.html">[tlug] &quot;How to&quot;</a></strong>
+<ul><li><em>From:</em> Bruno Raoult</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00056.html">Re: [tlug] 2014-05-10 Linux Quiz</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00058.html">[tlug] What's with this anti-Apple tirade? [was: 2014-05-10 Linux	Quiz]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00054.html">[tlug] &quot;How to&quot;</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00059.html">Re: [tlug] &quot;How to&quot;</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00057"><strong>Date</strong></a></li>
+<li><a href="threads.html#00057"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug]  Code Readability (was: perl?) -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyy.fgrcura.sjNh.gfhxhon.np.wc> -->
+<!--X-Date: Sun, 21 Aug 2016 05:15:33 +0900 -->
+<!--X-Message-Id: 22456.47716.782317.718908@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 22451.6786.829094.726@turnbull.sk.tsukuba.ac.jp -->
+<!--X-Reference: 20160819132402.GC30780@quadratic.cynic.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00048.html">Date Prev</a>][<a href="msg00050.html">Date Next</a>][<a href="msg00050.html">Thread Prev</a>][<a href="msg00024.html">Thread Next</a>][<a href="maillist.html#00049">Date Index</a>][<a href="threads.html#00049">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  Code Readability (was: perl?)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 21 Aug 2016 05:15:32 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull.stephen.fw@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Code%20Readability%20%28was:%20perl%3F%29">turnbull.stephen.fw@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  Code Readability (was: perl?)</strong></li>
+<li>References: &lt;<a href="msg00030.html">22451.6786.829094.726@turnbull.sk.tsukuba.ac.jp</a>&gt;	&lt;<a href="msg00042.html">20160819132402.GC30780@quadratic.cynic.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Curt Sampson writes:
+ &gt; On 2016-08-15 17:14 +0900 (Mon), Stephen J. Turnbull wrote:
+
+ &gt; &gt; Or all of them!  (Hi, Curt!)  But that hurts readability, too, not all
+ &gt; &gt; developers can be that multilingual, and sometimes you do need to read
+ &gt; &gt; code that others maintain.
+ &gt; 
+ &gt; Oh, hi!
+ &gt; 
+ &gt; A lot of people think about readability as a property of a language,
+ &gt; but that's not right.
+
+Anaphoric argumentum ad hominem?  (== I may believe that Python is
+relatively readable, but that ain't what you quoted!)
+
+My point was entirely in line with yours:  If your audience is not
+multilingual, using many languages in your code base (or even across
+code bases in your organization) is going to harm readability.
+
+On to discussion of *your* points.
+
+ &gt; In code that might have to be maintained by random people of varying
+ &gt; talents and skill levels who don't program much, and certainly rarely
+ &gt; touch your project, you might well be advised to write:
+ &gt; 
+ &gt;     def double_each_number_in_array(array_of_numbers)
+ &gt; 	array_of_doubles = []
+ &gt; 	for number in array_of_numbers
+ &gt; 	    array_of_doubles.append(number * 2)
+ &gt; 	end
+ &gt; 	return array_of_doubles
+ &gt;     end
+
+Which in Python you would write
+
+    def double_each_number_in_array(array_of_numbers):
+         array_of_doubles = []
+         for number in array_of_numbers:
+             array_of_doubles.append(number * 2)
+         return array_of_doubles
+
+saving two lines at the expense of two characters, and equally
+(un)readable.  If you're allowed to mutate (as suggested by the
+name!), you could save more lines:
+
+    def double_each_number_in_array(array_of_numbers):
+         for position in range(len(array_of_numbers):
+             array_of_numbers[position] *= 2
+
+but most likely you'd write (inline, no function definition at all):
+
+    [2 * number for number in array_of_numbers]
+
+which produces a copy as your model did.  Anybody who knows that [] is
+a list constructor in Python can probably guess what that means.
+Furthermore, once you've learned that, essentially the same syntax
+serves for dictionaries:
+
+    {number : 2 * number for number in array_of_numbers}
+
+I'll grant that there's a gotcha:
+
+    (2 * number for number in array_of_numbers)
+
+does *not* produce a tuple, but rather an iterator (a lazy list whose
+elements are accessed in order using iteration syntax such as &quot;while&quot;
+and &quot;for&quot;).  Producing a tuple is easy enough, just apply the tuple
+function to the iterator:
+
+    tuple(2 * number for number in array_of_numbers)
+
+This is *not* an inconsistency in Python's design, BTW.  The *comma*,
+not the parentheses, is the tuple constructor.  However, because the
+comma &quot;looks like grit on Tim's screen&quot;, and the parenthesis is always
+part of the printed representation of a tuple (there is exactly one
+exception for the comma!), this *is* a readability issue until you've
+*learned* to read that as a &quot;generator expression&quot; whose value is an
+iterator, not a &quot;tuple comprehension&quot; (which doesn't exist in Python).
+That took a few seconds for me (&quot;lazy&quot; lists are important to me), but
+I can't claim that &quot;typical&quot; students would catch on that fast (even
+though I'm willing to claim that &quot;list comprehensions&quot; as above *are*
+generally intuitive).
+
+I'm sure you can do the same thing in Ruby.  Guessing from your
+&quot;mathematical conventions&quot; example, I tried this:
+
+    array_of_numbers.map { |x| x*2 }
+
+which did the trick.  But I know Lisp and use map{,c,car,cdr,list} all
+the time in that language.  I doubt you would claim that the required
+level of Ruby knowledge to guess what that does is as minimal as
+Python's.  More controversially, I would maintain that it will be less
+easy to remember for the Ruby novice than the Python equivalent is for
+the Python novice.  Granted, .map is more powerful.  But how often do
+novice programmers use that power?
+
+Note that in Python, it's (almost) obvious how to generalize a list
+comprehension to a dictionary comprehension.  (I first found out it
+worked just by trying it, in fact.)  And I think once you understand
+list comprehension, *reading* a dictionary comprehension would be
+trivial.
+
+There are a number of other places where I prefer Python idiom to
+Ruby.  For example, where Ruby objects implement &quot;standard methods&quot;
+such as .size, Python has standard builtin functions, where len()
+corresponds to Ruby's .size.  That may be purely a personal preference
+(shared with a genius named Guido, of course, so there *may* be
+something to it&lt;wink/&gt;).
+
+So I would argue that yes, one great language can be more readable
+than another for a very broad audience.
+
+I don't know Ruby (or Perl&lt;wink/&gt;) well enough to come up with
+examples where they would be &quot;more readable&quot; than Python, but in the
+case of Ruby I would guess it would be easy for an experienced,
+tasteful developer to find examples using blocks.
+
+ &gt; But only if you're not touching it a lot. If you're working with
+ &gt; &quot;regular&quot; Ruby programmers, you'll certainly find this much better:
+ &gt; 
+ &gt;     def double_array(numbers)
+ &gt; 	numbers.map do |n|
+ &gt; 	    n * 2
+ &gt; 	end
+ &gt;     end
+
+A bit OT: The bars always give me a double-take.  Is there any
+precedent for that notation?  (I see Rust uses them too, but I suppose
+Ruby was earlier.)
+
+ &gt; Personally, I find even that very tedious, with then (admittedly rather
+ &gt; mathematical) conventions within which I work, and would write:
+ &gt; 
+ &gt;     def double(xs); xs.map { |x| x*2 }; end
+
+Ugh.  I think it would take me quite some time to get used to the fact
+that you can elide one but not both of the &quot;end&quot; statements.  BTW,
+which one is left?  I'm guessing it terminates the def, because of the
+keyword and the semicolon before the function body.  The semicolon
+also gives me a double-take, coming from way too much C, and the fact
+that it serves no semantic purpose AFAICS (the def statement should be
+over at the close parenthesis).  This is also true of the colon in
+Python def and class statements, but the colon is more readable to a
+native English speaker since it's used to indicate &quot;I've got more to
+say about that!&quot;  (N.B. This may genuinely depend on &quot;native English&quot;.
+It doesn't seem to be true of Japanese and Chinese college and grad
+students, and at least some Indian GSoC interns, who frequently use
+semicolons where colons would be appropriate.)
+
+ &gt; I read this third example easily two or three times as fast as the
+ &gt; second example,
+
+I'm sure you do; I do, too, even though I can barely keep up with that
+much Ruby syntax.&lt;wink/&gt;  But to me it's a poor example since it I'm
+sure it can be inlined (both for immediate execution and as a lambda),
+and most likely it would be.  I think a longer or more complex example
+(eg, Josh's examples using partial as well as map, but I can't
+actually parse them!) would be more persuasive.
+
+ &gt; 1. If you have just a generic number in a small context, call it `x`.
+ &gt; 2. A list of things is the name of the thing with an `s` on the end.
+ &gt; 3. Put short stuff on a single line.
+ &gt; 4. Don't use extra characters and extra lines for do/end when you
+ &gt;    can use the shorter braces {} that also let you do paren matching
+ &gt; 
+ &gt; Points 1 and 2 are conventions you learn, get used to, and they become
+ &gt; nice concise ways of saying something that everybody understands.
+
+Borrowed from Haskell conventions?  I use those too, but I don't
+believe that everybody will understand your example without shared
+convention.  For example, try typing this into your friendly
+neighborhood Python interpreter:
+
+&gt;&gt;&gt; def double(xs): return [ 2*x for x in xs ]
+... # just type Enter here
+&gt;&gt;&gt; double([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])
+
+Had too much beer, guys?&lt;wink/&gt;
+
+For point 3, in the case of higher-order programming (including use of
+map and partial), I agree, defining functions with mnemonic names that
+short is often more readable than inlining, and to the extent they're
+really just a single (higher-order) expression a single line is more
+readable.  On the other hand, for me personally I typically find that
+if the name is mnemonic enough, the definition can be far away from
+the point of use, saving one screen line (more likely two: I'd
+probably leave an empty line after even a one-line function
+definition) compared to your practice.
+
+Especially with modern IDEs, which will typically post the docstring
+(or even the code) for an identifier in a tooltip.
+
+ &gt; Point 3 lets you see more code on the screen, and live with mere
+ &gt; 80 and 90 line terminals.
+
+I don't program for a living, but even writing mathematical proofs
+(which in TeX typically take several lines for something I'd write in
+half a line on foolscap) I find mere 80-line terminals a luxury.
+Luxurious, of course! but hardly something I can't live without.  I
+think 45 lines is about the point where I start to think about buying
+a larger screen with more pixels.
+
+ &gt; Point 4 is usually where I get the strongest pushback amongst Ruby
+ &gt; programmers (especially Rails ones), and I have no idea why.
+
+I wonder if it doesn't have something (indirect) to do with my feeling
+about the bars on the block argument.  People have strong feelings
+about which parts of syntax should be punctuation and which should be
+keywords, and which parts should be whitespace.&lt;wink/&gt;
+
+ &gt; Another example of something you never want to retreat from once
+ &gt; you get used to it is dropping syntactic &quot;if&quot; for more concise
+ &gt; boolean expressions.
+
+Speak for yourself.  In Python it would never occur to me to write:
+
+    author == &quot;Guido&quot; or print(&quot;You are so full of bad advice!&quot;)
+
+instead of
+
+    if author != &quot;Guido&quot;:
+        print(&quot;You are so full of bad advice!&quot;)
+
+although I do use
+
+    test &quot;$os&quot; = &quot;darwin&quot; &amp;&amp; echo &quot;Mac OS X ($version)&quot;
+
+and similar in preference to &quot;if&quot; in shell and autoconf scripts.
+
+ &gt; First, write for your audience. Programmers spend most of their time
+ &gt; reading code, and so you need to optimize your style for the people
+ &gt; who read it most. This style will change over time as you work
+ &gt; together.
+
+Sure.  The Python[2] developers recognize this even though they pride
+themselves on creating a readable language.  That's why (a) PEP 8
+exists and (b) PEP 8 is explicitly advocated *only* for core Python
+code (the standard library).  Of course you're welcome to adopt it for
+your own project, and it's very common practice to do so -- but it's
+almost equally common for project founders who adopt PEP 8 to insist
+on additions, subtractions, and variations.  Furthermore, (c) the
+encouragement of PEP 8 conformance is tempered by a recognition that
+readability of old code and especially changes to code are enhanced by
+*not* changing it just to conform to some style guide.  (This is a
+*separate* concern from backward compatibility, such as renaming
+exported variables and classes to conform with a style guide, which
+constitutes an API break, of course.)
+
+But it's also possible to design a language for better readability.  I
+can't speak to many of the languages that have been mentioned, such as
+Rust and even Perl, but I would advocate the position that there's a
+large class of users, including the novices of both languages, for
+whom Python is &quot;more readable&quot; than Ruby, and that this is due to
+attention to design for readability.  OK, so I went and skimmed large
+portions of the Rust book &lt;<a  rel="nofollow" href="https://doc.rust-lang.org/book/">https://doc.rust-lang.org/book/</a>&gt;.  I'm not
+impressed with its overall readability (too much type crap, too many
+primitive types, too low-level), but compared to C++ (which is what it
+seems to want to kill, and more power to it!) it's way readable.[3]
+
+Footnotes: 
+[1]  This isn't useful, but you could use a similar construct to
+memoize a fibonacci function implemented recursively.
+
+[2]  I mention Python here because I'm familiar with it and because it
+is an example that fits your principles.
+
+[3]  I am totally ignoring the primary benefit of using Rust, of
+course, in favor of focusing on readability of the language.  That's
+not fair to the language, which may be as readable as it can be given
+the applications it targets.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00030" href="msg00030.html">Re: [tlug] perl? (was: Employment for &quot;oldies&quot;)</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00042" href="msg00042.html">[tlug] Code Readability (was: perl?)</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00048.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00050.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00050.html">Re: [tlug] Code Readability (was: perl?)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00024.html">Re: [tlug] strong correlation between lines of code and defects (was mojibake? emoji? (was: perl?))</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00049"><strong>Date</strong></a></li>
+<li><a href="threads.html#00049"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

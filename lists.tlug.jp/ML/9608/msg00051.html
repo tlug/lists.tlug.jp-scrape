@@ -1,0 +1,165 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: QMAIL and a WARNING on Smail -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Thu, 15 Aug 1996 07:17:48 GMT -->
+<!--X-Message-Id: m0uqweZ&#45;00000SC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: W4U/xUr0BI6J088yn@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00050.html">Date Prev</A>][<A HREF="msg00052.html">Date Next</A>][<A HREF="msg00050.html">Thread Prev</A>][<A HREF="msg00052.html">Thread Next</A>][<A HREF="maillist.html#00051">Date Index</A>][<A HREF="threads.html#00051">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: QMAIL and a WARNING on Smail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: QMAIL and a WARNING on Smail</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Thu, 15 Aug 96 16:15 JST</LI>
+<LI>In-Reply-To: &lt;W4U/xUr0BI6J088yn@example.com&gt; (jwt@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A> id m0uqweZ-00000SC;Thu,       15 Aug 96 16:15 <A HREF="mailto:JST@example.com">JST@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Tittsler &lt;jwt@example.com&gt; writes:
+
+    Jim&gt; I installed QMAIL on one of the machines in the office last
+    Jim&gt; week.  It is a smallish replacement for Sendmail that has
+    Jim&gt; some interesting features.
+[snip]
+    Jim&gt; I found a copy in the ftp.redhat.com:/pub/contrib collection.
+
+Well, I didn't, and I went through all the reasonable places.  There
+was, however, no /pub/contrib/by-group/Mail directory, so that might
+explain it.
+
+I just had to rebuild Smail 1.3.29.1.  It seems that the Smail
+binaries distributed in various places have broken locking as far as
+kernel v2.0.0 (for shame, Steve, using such an ancient kernel!) is
+concerned.  This doesn't cause problems most of the time.  However, if
+for some reason Smail fails to deliver a message, it puts the message
+along with a history file in a couple of subdirectories of the spool
+directory (typically /var/spool/smail/{input,msglog,retry} or
+similar).  It is these files where the locking was having conniptions, 
+and a later queue run to retry delivery of failed messages would fail
+again.
+
+I will take a look around and see if there is a more recent version.
+
+One bonus is that doing it right is *much* faster; it used to take
+quite a while to redeliver fifteen or twenty messages, but now it
+happens while you wait---oops, it's done already!  That could also be
+due to the fact that I've mucked with a couple of other configuration
+parameters, in particular I now deliver direct to most hosts rather
+than through a local mail host.
+
+If anyone else is out there using Smail with a kernel ver &gt; 1.99,
+check your /var/spool/smail/input directory to see if there are any
+undelivered messages.  If so, use 'runq' (aka 'smail -q') to see if it
+redelivers correctly.  If it doesn't I will make my binary available
+to you (I'd like to clean some stuff up first).
+
+If you want to build it yourself, I had some problems with 'make' and 'libdbm.
+a', and screwed with EDITME as well, so you might want to ask for some
+advice before going at it.
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00052" HREF="msg00052.html">Re: QMAIL and a WARNING on Smail</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00050.html">Re: Neat Bug ....</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00052.html">Re: QMAIL and a WARNING on Smail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00050.html">Re: Neat Bug ....</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00052.html">Re: QMAIL and a WARNING on Smail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00051"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00051"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

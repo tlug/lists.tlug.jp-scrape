@@ -1,0 +1,207 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Re: tlug] Security question with grep/e... -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Tue, 23 Mar 2004 16:28:31 +0900 -->
+<!--X-Message-Id: 87lllsnhsw.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200403230503.i2N53juu011858@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00346.html">Date Prev</a>][<a href="msg00348.html">Date Next</a>][<a href="msg00346.html">Thread Prev</a>][<a href="msg00348.html">Thread Next</a>][<a href="maillist.html#00347">Date Index</a>][<a href="threads.html#00347">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: tlug] Security question with grep/e...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 23 Mar 2004 16:28:31 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Re%3A%20tlug%5D%20Security%20question%20with%20grep%2Fe...">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: tlug] Security question with grep/e...</strong></li>
+<li>References: &lt;<a href="msg00345.html">200403230503.i2N53juu011858@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.4 (Portable Code, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Jim&quot; == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+
+    Jim&gt; Can you be more specific about the risks? As I understand it,
+    Jim&gt; doing a system(&quot;foobar par1 par2&quot;); just stokes up /bin/sh
+    Jim&gt; under my account (it's usually cgiwrap or equivalent) and
+    Jim&gt; runs foobar.
+
+ISTR that the main direct system risks come from the environment
+(especially things like LD_PRELOAD).  The indirect risks come from the
+fact that most command line apps are written assuming that the user is
+right there and authorized.  They are large with many complex options
+(especially the GNU versions), with lots of legacy code.  You really
+can't depend on all buffer and array accesses being bounds-checked,
+etc.
+
+You also have to be sure that you get the protection against quote
+characters right.  Note that if you're using &quot;&quot; for the regexp
+argument in your system() call, you probably need to strip out $ and
+`, since they're interpreted and the results interpolated.  Of course,
+` can do anything that you can, and at least some shells accept $
+extensions that call programs (although I don't know if they do if
+called as /bin/sh, but see next para).
+
+Also, /bin/sh is not terribly portable; ash, bash, and zsh all flunk
+as POSIX shells in different ways.  (Maybe recent versions of ash are
+OK.)  The problems with bash and zsh are not of interest to POSIX-
+conforming scripts, they're impermissible extensions, but they are
+extensions that conceivably could be used by hackers.  (No, I don't
+know specifically; the point is that since I don't know, I have to
+assume they are a risk.)
+
+    Jim&gt; I'm not doing it with anything suid, etc. I don't have su
+    Jim&gt; rights on the host.
+
+Do you have a shell account?  Does the host have a working C compiler
+on it?  If the answer to both questions is &quot;yes&quot;, then the possibility
+of a hostile agent using a web exploit to achieve shell access via
+your account, and from there trampolining to root cannot be
+discounted.  Again, I don't know the details, but AFAICT at the time
+it's been done to me, so I know it's possible.  :-/
+
+It's harder achieve a root exploit these days than when I was
+root-kitted, but once it's been done and scripted even a Windows virus
+can use it.
+
+    &gt;&gt;&gt; What's wrong with using the native regexp facility of whatever
+    &gt;&gt;&gt; you're using to write the CGI?  Even if it's in C or C++, the
+    &gt;&gt;&gt; POSIX regcomp/ regexec facility is not rocket science to use.
+    &gt;&gt;&gt; That's what you'd be using with grep, anyway, AFAIK.
+
+    Jim&gt; Two reasons:
+
+    Jim&gt; (a) laziness. It's easier to stoke up a system call than open
+    Jim&gt; the file and do it line-by-line. Actually it's *MUCH* easier
+    Jim&gt; than regexec()'s horrible call;
+
+Oh, c'mon.  I don't see any real saving once you get to (a) trapping
+the unsafe constructs on the way in and (b) implementing sane error-
+handling on the way out.
+
+    Jim&gt; (b) portability. I have actually found some of those
+    Jim&gt; libraries not so smoothly implemented. Since I have mirrors
+    Jim&gt; on Solaris, AIX, FreeBSD and almost all Linices,
+    Jim&gt; system(&quot;egrep ...&quot;); seemed more likely to work on them all.
+
+If they can't implement the libraries to spec, that means that they've
+hacked the utilities to work around, but aren't necessarily competent
+to vouch for the security, either.  Who knows what evil lurks?  The
+Hacker Knows....
+
+I don't think the risks are all that high, but then I don't personally
+have the visibility that some of the Monash mirrors do.
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00348" href="msg00348.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Alain Hoang</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00345" href="msg00345.html">[tlug] Re: tlug] Security question with grep/e...</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00346.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00348.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00346.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00348.html">Re: [tlug] Re: tlug] Security question with grep/e...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00347"><strong>Date</strong></a></li>
+<li><a href="threads.html#00347"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

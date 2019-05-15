@@ -1,0 +1,187 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Japanese encoding problem -->
+<!--X-From-R13: Xnxr [beevfba <wnxr_zbeevfbaNlnubb.pbz> -->
+<!--X-Date: Sat, 10 Aug 2002 12:18:09 +0900 (JST) -->
+<!--X-Message-Id: 20020810031945.42847.qmail@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F263vsOAsqscxTwYCpY00011627@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00151.html">Date Prev</a>][<a href="msg00153.html">Date Next</a>][<a href="msg00148.html">Thread Prev</a>][<a href="msg00151.html">Thread Next</a>][<a href="maillist.html#00152">Date Index</a>][<a href="threads.html#00152">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Japanese encoding problem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 9 Aug 2002 20:19:45 -0700 (PDT)</li>
+<li><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Japanese%20encoding%20problem">jake_morrison@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Japanese encoding problem</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jc,
+
+--- Jean-Christian Imbeault &lt;jean_christian@example.com&gt; wrote:
+&gt; &gt;From: BOTi &lt;9915104t@example.com&gt;
+&gt; &gt;
+&gt; &gt;Though it displays as a ^K, it's actually not that in the file.
+&gt; &gt;Use an editor that can display it (Japanese). Or use some simple
+&gt; unix tool,
+&gt; &gt;like sed.
+&gt; 
+&gt; Thanks for the tip but why would sed work if vim doesn't? Doesn't vim
+&gt; use sed?
+
+In the old days of Unix (and perhaps even today in xBSD), vi, ed, ex
+and sed were all based on the same code. But vim and sed are 
+different codebases. 
+
+&gt; 
+&gt; And more importantly, eve if I do use sed, how do I input that
+&gt; character(^K) 
+&gt; into any sed command I might try?
+&gt; I tried:
+&gt; 
+&gt; sed -e &quot;s/?/ /g&quot; file.dat but that didn't do anything to the
+&gt; &quot;japanese&quot; dots 
+&gt; I wanted to replace.
+&gt; 
+&gt; Also please note that I am only surmising that the ^K is the japanese
+&gt; dot because that's what it looks like when I open the file 
+&gt; in a Windows editor.
+&gt; 
+&gt; If I do a /?/ I do get a few matches but none on the places where I
+&gt; &quot;see&quot; 
+&gt; japanese dots in the original file. So I'm begining to think that ^K
+&gt; not 
+&gt; really the japanese dot but something else, maybe even a &quot;corrupted&quot; 
+&gt; character?
+
+Could be. What you need to do is find out what the underlying character
+codes are and work with them. 
+
+You can use a hex editor for this, or in the Unix way.....
+
+Pipe a line of the file containingthe code to od:
+
+cat foo.txt | od -c 
+
+You should see the code for the separator in octal. 
+
+You can then replace it with something else like this:
+perl -wp -e 's/\244/\n/g' &lt; foo.txt &gt; foo.converted
+
+Replace \244 with the code (or codes) you got from od -c. 
+
+&gt; 
+&gt; Jc
+&gt; 
+&gt;
+
+Regards,
+Jake 
+
+__________________________________________________
+Do You Yahoo!?
+HotJobs - Search Thousands of New Jobs
+<A  HREF="http://www.hotjobs.com">http://www.hotjobs.com</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00148" href="msg00148.html">Re: [tlug] Japanese encoding problem</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00151.html">Re: [tlug] Japanese encoding problem</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00153.html">[tlug] Japanese in Slack</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00148.html">Re: [tlug] Japanese encoding problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00151.html">Re: [tlug] Japanese encoding problem</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00152"><strong>Date</strong></a></li>
+<li><a href="threads.html#00152"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

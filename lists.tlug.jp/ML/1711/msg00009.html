@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Configuring encrypted Linux disk on a system with Windows -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Thu, 09 Nov 2017 08:49:17 +0900 -->
+<!--X-Message-Id: 20171108234916.7dzh2gucx4x2e56q@iambic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CA+su7OUyGrTYWmZkdtOfyi7AEqy_QQxYKP2eYp&#45;W=nkFyDjRnA@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00008.html">Date Prev</a>][<a href="msg00010.html">Date Next</a>][<a href="msg00013.html">Thread Prev</a>][<a href="msg00014.html">Thread Next</a>][<a href="maillist.html#00009">Date Index</a>][<a href="threads.html#00009">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Configuring encrypted Linux disk on a system with Windows</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 9 Nov 2017 08:49:16 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Configuring%20encrypted%20Linux%20disk%20on%20a%20system%20with%20Windows">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Configuring encrypted Linux disk on a system with Windows</strong></li>
+<li>References: &lt;CA+su7OUyGrTYWmZkdtOfyi7AEqy_QQxYKP2eYp-W=nkFyDjRnA@mail.gmail.com&gt;</li>
+<li>User-agent: NeoMutt/20170113 (1.7.2)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2017-10-27 16:25 +0900 (Fri), Edmund Edgar wrote:
+
+&gt; But I wiped [Windows] because Ubuntu makes it a PITA doing full-disk
+&gt; encryption if you want to dual-boot.
+
+Not really, so long as you understand the disk partitioning. What you
+want to do is the following. (The same procedure also works for Debian
+(of course), CentOS 7, and probably lots of other distros.)
+
+Shrink your Windows partition to leave an appropriate amount of space
+for the Linux system. There are various ways to do this, including
+GParted, but I don't recall the exact details so you'll need to look
+it up on the net. You can also just wipe and re-install later if your
+laptop came with Windows 10 and you know your laptop's product key; MS
+now offers installers you can just download on to a USB stick.
+
+Choose custom partitioning during the install.
+
+Start by creating two DOS partitions , a 250 MB (or so) one for
+`/boot` and the rest for the encrypted partition. I always just create
+two primary partitions (leaving two other primary partitions for
+Windows and possibly its recovery partition), but you can give up one
+of the primary partitions in order to create extended partitions if
+necessary. I think that `/boot` needs to be on a primary partition,
+though. 
+
+`/boot` should be formatted as ext4, and the other designated as space
+for an encrypted partition. After writing this, create the encrypted
+partition (you'll assign it a passphrase at this point).
+
+Once the encrypted partition is mounted as a new device, assign it as
+&quot;for use by LVM.&quot; Then create an LVM volume group and a single
+physical volume on the encrypted device assigned to it. In the volume
+group create two logical volumes: swap (which should be larger than
+your physical RAM if you want your laptop to be able to hibernate) and
+root (as all remaining space). Write this out so that the two new
+logical volumes appear as new block devices.
+
+Assign the new devices as swap and as ext4 mounted on `/`. Go on with
+the rest of the install. If you've made a mistake somewhere with the
+partition you will probably be warned about it; if not the installer
+will notice that you're set up for an encrypted disk and do the right
+thing. It should even recognize that you have a bootable Windows
+partition and add that to the Grub menu.
+
+There's nothing particularly tricky or special about this process;
+I've been doing it this way for a decade or more. Though why they don't
+just add an option to the basic install to do this on unallocated space
+on the physical disk rather than wiping the whole disk, I don't know.
+
+cjs
+-- 
+Curt J. Sampson      &lt;cjs@example.com&gt;      +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00014" href="msg00014.html">Re: [tlug] Configuring encrypted Linux disk on a system with Windows</a></strong>
+<ul><li><em>From:</em> Schwartz, Fernando G.</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00008.html">Re: [tlug] Akihabara, used/refurbished Mac laptops?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00010.html">Re: [tlug] Akihabara, used/refurbished Mac laptops?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00013.html">Re: [tlug] Akihabara, used/refurbished Mac laptops?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00014.html">Re: [tlug] Configuring encrypted Linux disk on a system with Windows</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00009"><strong>Date</strong></a></li>
+<li><a href="threads.html#00009"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

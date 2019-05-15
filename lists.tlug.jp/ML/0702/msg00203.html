@@ -1,0 +1,190 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] /dev/random is truly random? -->
+<!--X-From-R13: "@example.com Hh Vhat" <ihuhat16cyhfNtznvy.pbz> -->
+<!--X-Date: Sat, 24 Feb 2007 11:13:26 +0900 -->
+<!--X-Message-Id: 78d7dd350702231714p617fcae7hc5a0acf5ab0a6593@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com -->
+<!--X-Reference: 87r6sikx2f.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00202.html">Date Prev</a>][<a href="msg00204.html">Date Next</a>][<a href="msg00189.html">Thread Prev</a>][<a href="msg00204.html">Thread Next</a>][<a href="maillist.html#00203">Date Index</a>][<a href="threads.html#00203">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] /dev/random is truly random?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 24 Feb 2007 10:14:47 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Nguyen Vu Hung&quot; &lt;<a href="mailto:vuhung16plus@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%2Fdev%2Frandom%20is%20truly%20random%3F">vuhung16plus@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] /dev/random is truly random?</strong></li>
+<li>References: &lt;<a href="msg00187.html">78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com</a>&gt;	&lt;<a href="msg00189.html">87r6sikx2f.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<tt>On 2/23/07, Stephen J. Turnbull &lt;stephen@??&gt; wrote:
+</tt><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">Nguyen Vu Hung writes:</pre><br>
+<pre style="margin: 0em;"> &gt; The term hard is confusing and doesn't have any metrics.</pre><br>
+<pre style="margin: 0em;"> &gt; * How &quot;hard&quot; it is to predict the randomness of /dev/random ?</pre><br>
+<tt>Essentially impossible for non-realtime applications.
+</tt></blockquote><pre style="margin: 0em;">This is an important point. My question is &quot;how &quot;hard&quot;  is is&quot;. I did
+mean I want quantative explanations like: The complexity of the
+algorithm is, the time it takes to do X is Y seconds etc.... I think
+the term &quot;hard&quot; or &quot;high quality&quot; should be avoid ( see the comment at
+the header of ./drivers/char/random.c ) &gt; Theodore Ts'o</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;"> &gt; * Is there any way to choose a seed other than the system timer ?</pre><br>
+<pre style="margin: 0em;">Read the code.  Probably not, and it probably doesn't matter, because
+the seed is something like nanoseconds % 1000, I would bet.</pre><br>
+</blockquote><pre style="margin: 0em;">Deterministic seed is timer, all other &quot;noise&quot; is non-deterministic.
+The author ensure the security by system startup time. He assumes that
+the attacker can't know the system startup time if he don't have root
+( in the case, we are already doomed ). For a non-realtime system like
+Linux, by adding non-deterministic noise to the seed, we make the seed
+harder  to predict.</pre><br>
+<pre style="margin: 0em;"># What if the attacker gets root, he reboots the system and try to do
+something more sophiciated with the RNG?</pre><br>
+<pre style="margin: 0em;">The background of random.c is this paper.</pre><br>
+<pre style="margin: 0em;"><a  href="http://www.ietf.org/rfc/rfc4086.txt">http://www.ietf.org/rfc/rfc4086.txt</a>
+Randomness Requirements for Security</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;"> &gt; * Any example run ( or papers ) out there on how to predict the
+ &gt; randomnese of /dev/random ( or the randomese of ( computer
+ &gt; generated ) random number ?</pre><br>
+<pre style="margin: 0em;">/dev/random may or may not be random (cf. the Improbability Drive from
+The Hitchhiker's Guide to the Galaxy).  However, it is essentially
+unpredictable (it's a true one-time pad), with the important exception
+of the DoS attack I described.</pre><br>
+</blockquote><pre style="margin: 0em;"><br>I still don't agree with you that it is unpredictable, though I don't
+have enough clues :D.</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">For pseudo-random numbers, start with Donald Knuth, _The Art of
+Computer Programming_, vol. 1 (Fundamental Algorithms).  That was
+written about 30 years ago, but it will keep you busy for a while. ;-)
+I can do the math for Knuth, it's elementary (but not easy).</pre><br>
+</blockquote><pre style="margin: 0em;">It is 170 pages on Chaper 3, Volumes 2, Seninumerical Algorithms. I
+read the books 2 or 3 years ago when I was in university. Thank you. I
+read it again and found that I lack some very fundametal background.</pre><br>
+<pre style="margin: 0em;">Btw, this is quoted from the book:</pre><br>
+<pre style="margin: 0em;">-------------------------------------------
+Any one who considers arithmetical
+methods of producing random digits
+is, of course, in a state of sin.
+&#xE2; JOHN VON NEUMANN A951)
+--------------------------------------------</pre><br>
+<pre style="margin: 0em;">The algorithms Knuth introdues in his book are all deterministic. The
+sequence of random number generated by such algorithms depend on the
+seed. That's why we have to add (non-deterministic ) noisy to the
+seed.</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">A shorter, but very hard, path to enlightenment would be to start at
+the Rc4 article on Wikipedia.  ARC4 is a very well-known, high-quality
+stream cipher, although it seems that it is not currently considered
+sufficiently secure for wireless networks (thus the deprecation of
+WEP).  I can't hack the math in most of the papers cited here.</pre><br>
+</blockquote><pre style="margin: 0em;"><br>I will read them.</pre><br>
+<pre style="margin: 0em;">--
+Best Regards,
+Nguyen Hung Vu
+vuhung16plus{remove}@??
+VIQR Standard: <a  href="http://vi.i18n.kde.org/viqr">http://vi.i18n.kde.org/viqr</a>
+<a  href="http://www.flickr.com/photos/vuhung/tags/fav/">http://www.flickr.com/photos/vuhung/tags/fav/</a>
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00204" href="msg00204.html">Re: [tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00187" href="msg00187.html">[tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00189" href="msg00189.html">[tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00202.html">Re: [tlug] C++ compile probblem</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00204.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00189.html">[tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00204.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00203"><strong>Date</strong></a></li>
+<li><a href="threads.html#00203"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

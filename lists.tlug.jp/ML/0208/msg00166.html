@@ -1,0 +1,194 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] The meaning of B in Kb/secs? -->
+<!--X-From-R13: "Xbanguna Plear" <ogrnzNtby.pbz> -->
+<!--X-Date: Tue, 13 Aug 2002 10:42:10 +0900 (JST) -->
+<!--X-Message-Id: E17eQij&#45;0006oL&#45;00@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F190HWU3InSj8NMkswC0000d606@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00165.html">Date Prev</a>][<a href="msg00167.html">Date Next</a>][<a href="msg00165.html">Thread Prev</a>][<a href="msg00167.html">Thread Next</a>][<a href="maillist.html#00166">Date Index</a>][<a href="threads.html#00166">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] The meaning of B in Kb/secs?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 13 Aug 2002 10:43:41 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Jonathan Q&quot; &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20The%20meaning%20of%20B%20in%20Kb%2Fsecs%3F">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] The meaning of B in Kb/secs?</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+
+On 8/13/2002, &quot;Jean-Christian Imbeault&quot; &lt;jean_christian@example.com&gt;
+wrote:
+
+&gt;Ok, silly question but I've always been confused when it comes to data
+&gt;transfer rates (be in hard drives or ethernet connections) wether the B
+mean
+&gt;bits or bytes?
+
+That depends on whether it's a hard drive or a network connection.
+Networks speeds are measured in bits/second, disk (and other mass
+storage device) transfer rates are measured in bytes/second.
+
+&gt;&gt;From my apache server config-status I get:
+&gt;
+&gt;48.9 requests/sec - 413.7 kB/second - 8.5 kB/request
+&gt;
+&gt;Is that kilobits or kilobytes?
+
+That ought to be documented somewhere, and it would be a good idea to look
+at it to be sure, unless someone else pops up with a citation here. 
+However, if they follow the convention (many people don't, and many others
+don't even know about it, such that these days the convention is honored as
+much in the breech as in the observance) they are talking about bytes.  The
+convention is lower-case b = bits, upper-case B = Bytes.
+
+&gt;The reason I ask is that the pipe to my server at a data center is a
+&gt;100MB/sec pipe (which I assumes means 100 Megabytes/sec)
+
+bits/sec
+
+&gt;If I really am using only 0.417% then I'll think to switching to a 10MB
+line
+&gt;instead.
+
+You're under-utilizing your line, but not as much as you think.
+
+Let's assume theoretical maximums here (something you will never touch
+in real life):
+
+100,000,000 b/sec is the speed of your line.
+
+Your transfer rate from Apache is 413,700 B/sec, or 3,309,600 b/sec,
+or about 3.3% of your line capacity.
+
+However, is this your average transfer rate?  If so, you're looking  at the
+wrong numbers.  When assessing your bandwidth needs, you need to look at
+your peak transfer rates.  If your peak is, for example, 8,000,000
+bits/sec, you're still with in the capacity of a 10 megabit line with
+capacity to spare.
+
+If your peak is 12,000,000 bits/second, you're over the capacity of a 10
+megabit line, however, if the cost savings is significant, you might be
+willing to accept a touch of /. effect once in a while.  Another option in
+that situation is to ask your colo provider if they can provide bandwidth
+in 10 megabit increments.  If so, you could get 20 megabits if 10 megabits
+isn't enough.
+
+Other considerations are that what Apache is telling you is not your total
+traffic, it's only your total Apache traffic.  If you're running an FTP
+server or have a lot of interactive sessions, IRC, etc., this also needs to
+be considered.  The numbers you need to look at for determining how big of
+a pipe you need are your interface statistics, not your Apache
+statistics.
+
+Your provider may well already be tracking this info with MRTG or Cricket
+and could tell you where to view it.  If not, you could run one of them on
+your server for that purpose yourself.  Your provider tracks it at their
+router interface, whereas you would, of course, track it at your Ethernet
+interface.
+
+Jonathan
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00163" href="msg00163.html">[tlug] The meaning of B in Kb/secs?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00165.html">Re: [tlug] The meaning of B in Kb/secs?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00167.html">Re: [tlug] The meaning of B in Kb/secs?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00165.html">Re: [tlug] The meaning of B in Kb/secs?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00167.html">Re: [tlug] The meaning of B in Kb/secs?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00166"><strong>Date</strong></a></li>
+<li><a href="threads.html#00166"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

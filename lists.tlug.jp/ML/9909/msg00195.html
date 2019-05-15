@@ -1,0 +1,162 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Re: BTW, what is a "BMPstring"? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 21 Sep 1999 16:41:30 +0900 -->
+<!--X-Message-Id: 14311.13961.490946.46904@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 37E72925.9BF18AC7@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00194.html">Date Prev</A>][<A HREF="msg00196.html">Date Next</A>][<A HREF="msg00191.html">Thread Prev</A>][<A HREF="msg00199.html">Thread Next</A>][<A HREF="maillist.html#00195">Date Index</A>][<A HREF="threads.html#00195">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Re: BTW, what is a "BMPstring"?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Re: BTW, what is a "BMPstring"?</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 21 Sep 1999 16:40:57 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00191.html">37E72925.9BF18AC7@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00191.html">37E72925.9BF18AC7@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Sanjay" == Sanjay Agnani &lt;s.agnani@example.com&gt; writes:
+
+    Sanjay&gt; I think BMP (Basic Multilingual Plane) string is basically
+    Sanjay&gt; a Unicode (Universal Coded Character Set-2 -&gt; UCS-2)
+    Sanjay&gt; string in 16-bit encoding in native processor endianness.
+
+Well, in that case you need to translate to JIS (either EUC or
+ISO-2022-7 compatible, depending on your console's capabilities)
+first.  This will have to be table-driven, although on Sloaris you may
+get lucky and have a system utility call for that.  No such luck on
+Linux, not until glibc 2.2 and possibly later IIRC.  The tables are
+available for download at ftp.unicode.org.
+
+You'll probably want to be defensive about people using UTF-16
+surrogates (non-Unihan Japanese kanji will be up there; people will
+want to use their proper name and address characters).  You may want
+to strip out private space characters.  One alternative in both cases
+is to use the geta mark (looks like a fat equals sign; the JIS X 0208
+equivalent of U+FFFD) as a substitute.  You may also want to strip
+out/substitute everything that doesn't code directly to JIS.  I'm not
+sure what happens with JIS Greek, Cyrillic, etc, be careful there.  (I 
+think that since these don't violate the source separation rule, they
+get unified.  But you will want to reverse translate them to JIS, and
+I don't know if the Unicode tables do that by default.)
+
+Oh, and forget about "printf".  \0 is a valid (and extremely common)
+byte in Unicode (every ISO-8859-1 character has that in the upper
+byte, right?)  You'll need wprintf() and friends, which I don't know
+if they work in glibc 2.1, and are implemented idiosyncratically in
+glibc 2.2.  (Ie, you'll probably need to have several levels of
+#ifdefs, one for each libc---several flavors of glibc, as glibc
+developers don't care if they break your programs, plus at least one
+for Sloaris.)  Be very careful to keep the use of widechar output
+functions extremely localized; use inline functions or macros if
+efficiency is important.
+
+- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+-------------------------------------------------------------------
+Next Nomikai: September 17 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+*** Linux 8th Birthday Anniversary! ***
+Next Technical Meeting: October 9 (Sat), 13:00     place: Temple Univ.
+*** Topics: 1) Linux i18n   2) Japanese TrueType fonts
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00191" HREF="msg00191.html">tlug: Re: BTW, what is a "BMPstring"?</A></STRONG>
+<UL><LI><EM>From:</EM> Sanjay Agnani &lt;s.agnani@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00194.html">Re: tlug: ISDN Access</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00196.html">Re: tlug: ISDN Access</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00191.html">tlug: Re: BTW, what is a "BMPstring"?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00199.html">tlug: Re: Li18nux</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00195"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00195"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

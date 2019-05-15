@@ -1,0 +1,240 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] /dev/random is truly random? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 24 Feb 2007 15:57:16 +0900 -->
+<!--X-Message-Id: 874ppckpb4.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com -->
+<!--X-Reference: 87r6sikx2f.fsf@example.com -->
+<!--X-Reference: 78d7dd350702231714p617fcae7hc5a0acf5ab0a6593@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00203.html">Date Prev</a>][<a href="msg00205.html">Date Next</a>][<a href="msg00203.html">Thread Prev</a>][<a href="msg00193.html">Thread Next</a>][<a href="maillist.html#00204">Date Index</a>][<a href="threads.html#00204">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] /dev/random is truly random?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 24 Feb 2007 16:06:07 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%2Fdev%2Frandom%20is%20truly%20random%3F">stephen@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] /dev/random is truly random?</strong></li>
+<li>References: &lt;<a href="msg00187.html">78d7dd350702220452q64b3a060j9c4fe347c23e478c@example.com</a>&gt;	&lt;<a href="msg00189.html">87r6sikx2f.fsf@example.com</a>&gt;	&lt;<a href="msg00203.html">78d7dd350702231714p617fcae7hc5a0acf5ab0a6593@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Nguyen Vu Hung writes:
+
+ &gt; &gt; Essentially impossible for non-realtime applications.
+
+ &gt; This is an important point. My question is &quot;how &quot;hard&quot;  is is&quot;.
+
+The relevant papers are presumably the ones referenced in the
+comment.  You don't prove theorems in comments; the medium is not
+adequate to express the math.
+
+ &gt; I did mean I want quantative explanations like: The complexity of
+ &gt; the algorithm is, the time it takes to do X is Y seconds etc.... I
+ &gt; think the term &quot;hard&quot;
+
+?? There is no known algorithm, except to search the whole space, one
+key per probe, which is O(2^N) for a key with N bits.  So with a
+2048-bit key, it will take 0.5*(X*2^2048/(1000000*60*60*24*365.25))
+years on average, where X is the number of microseconds per probe.  If
+my back of the envelope estimate is correct, for X = 0.001, that's
+just about 2^1990 years for one machine, which is a pretty long
+time---and that's assuming that the probe takes about 4 instructions
+at current clock speeds.  If you have a billion such machines, you can
+reduce that period to only 2^1962 years.  That is the Wholly Grail[sic]
+of cryptography, to reduce the attacker to a brute-force search that
+on average will take longer than the expected life of the universe.
+In cryptography, there is no other definition of &quot;hard&quot;.
+
+Thus the practical definition of &quot;hard&quot; is &quot;do you believe that not
+only no efficient algorithm is known, but that none exists?&quot;  That
+belief can only be supported by understanding the proofs of the
+theorems, or by faith in the claims of experts who purport to
+understand the proofs of the theorems.  I choose to trust that Linus
+knows enough to pick smart people to review contributions to Linux in
+this area.
+
+ &gt; Deterministic seed is timer, all other &quot;noise&quot; is non-deterministic.
+
+That turns out not to be the case.  There are three deterministic
+components of the seed: saved state of the RNG, uname, and system
+time.  All of these are potentially accessible to the attacker even if
+he doesn't have access to the system at boot up.  Suppose he was the
+(former) admin who shutdown the machine and he stole the RNG state, he
+knows the uname, and he can get the startup time with uptime.
+
+So we *do* assume that the attacker can get that initial seed.  The
+difficulty of getting that seed is *not* the source of security.
+
+ &gt; The author ensure the security by system startup time. He assumes that
+ &gt; the attacker can't know the system startup time if he don't have root
+ &gt; ( in the case, we are already doomed ).
+
+That's simply false.  Security is not ensured by the quality of the
+seed, it's ensured by adding noise (truly random to the best of my
+knowledge) to the RNG state, and then using a cryptographic quality
+hash to ensure that if the state is off by 1 bit, any of the other
+2^256-1 hash values is equally likely to be the output of the RNG.
+
+ &gt; # What if the attacker gets root, he reboots the system and try to do
+ &gt; something more sophiciated with the RNG?
+
+What about it?  Attacker has root.  Game over, no free resurrections.
+An attacker with root can substitute a software RNG of his choice even
+for /dev/hardware-rng, right?
+
+ &gt; I still don't agree with you that it is unpredictable, though I don't
+ &gt; have enough clues :D.
+
+Well, here's the one you need.  The seed changes with every interrupt.
+To predict future output of such a RNG, you need to measure the system
+jitter to the precision that the system uses it, and with 100.00000000
+0000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000% accuracy.[1]
+
+The question here reduces to &quot;can the attacker drain the entropy pool
+so that the same seed is used for a sufficiently long sequence of
+output, and the possible successor seeds are restricted to a 2^N set
+for N small (say, &lt; 64)?&quot;  Ie, it's not about the quality of the
+generator, not very much; it's about the quality of key management.
+
+ &gt; The algorithms Knuth introdues in his book are all deterministic. The
+ &gt; sequence of random number generated by such algorithms depend on the
+ &gt; seed. That's why we have to add (non-deterministic ) noisy to the
+ &gt; seed.
+
+If you're looking at the algorithms, you're missing a clue.  The point
+about reading Knuth is to understand how such algorithms are analyzed,
+at a very basic level.  The algorithms themselves are way weak by
+modern standards.
+
+Adding noise is not sufficient, either.  It needs to be done
+correctly.  The point is to introduce (mathematical) chaos, so that
+even if the attacker manages to sync with the generator at some point,
+he will very quickly fall hopelessly out of sync if he misses one or
+two bits.
+
+Finally, remember the key distribution problem.  You have a bootstrap
+issue here; even if you are using the quantum randomness device that
+Mauro mentioned to generate a one-time pad (which is provably secure),
+how do you securely communicate the key, which is of the same length
+as the text?  So real cryptography becomes a question of using a
+chaotic generator based on a &quot;small&quot; (eg, 2048 bits) but truly random
+key, and changing keys sufficiently frequently.
+
+For example, WEP uses ARC4, but it is insufficiently secure.  Thus,
+WPA was developed, which (surprise!) also uses ARC4 (AIUI, I haven't
+actually read either standard---this is from Wikipedia).  The alleged
+difference?  Proper management of keys.
+
+So proper use of /dev/random is to generate keys, not for actual use
+in encryption or whatever.
+
+Footnotes: 
+[1]  To all BOFHs and ASR denizens.  Sorry about the brick ... not. :-)
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00187" href="msg00187.html">[tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+<li><strong><a name="00189" href="msg00189.html">[tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] /dev/random is truly random?</a></strong>
+<ul><li><em>From:</em> Nguyen Vu Hung</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00203.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00205.html">[tlug] A Ruby question</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00203.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00193.html">Re: [tlug] /dev/random is truly random?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00204"><strong>Date</strong></a></li>
+<li><a href="threads.html#00204"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

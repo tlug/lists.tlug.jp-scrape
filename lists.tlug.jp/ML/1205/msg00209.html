@@ -1,0 +1,209 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage -->
+<!--X-From-R13: Oggvyn Yvanyv <nggvynNxvanyv.pu> -->
+<!--X-Date: Mon, 28 May 2012 18:25:27 +0900 -->
+<!--X-Message-Id: 20120528112522.4984e3ef597eac336e346a92@kinali.ch -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CAAhy3dvn+qbsmNqEpDFo_HSaJsVete79XF3niyy7EcEFpJ8ajw@mail.gmail.com -->
+<!--X-Reference: 20120527223939.1f4ab43a.jep200404@columbus.rr.com -->
+<!--X-Reference: 4FC3361C.4070302@simon&#45;cozens.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00208.html">Date Prev</a>][<a href="msg00210.html">Date Next</a>][<a href="msg00204.html">Thread Prev</a>][<a href="msg00211.html">Thread Next</a>][<a href="maillist.html#00209">Date Index</a>][<a href="threads.html#00209">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 28 May 2012 11:25:22 +0200</li>
+<li><strong>From</strong>: <strong>Attila Kinali &lt;<a href="mailto:attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Making%20better%20use%20of%20SSDs%3F:%20Beware%20of%20Heavy%20Write%20Usage">attila@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</strong></li>
+<li>References: &lt;<a href="msg00183.html">CAAhy3dvn+qbsmNqEpDFo_HSaJsVete79XF3niyy7EcEFpJ8ajw@mail.gmail.com</a>&gt;	&lt;<a href="msg00185.html">20120527223939.1f4ab43a.jep200404@columbus.rr.com</a>&gt;	&lt;<a href="msg00199.html">4FC3361C.4070302@simon-cozens.org</a>&gt;</li>
+<li>Organization: NERV</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Mon, 28 May 2012 17:23:56 +0900
+Simon Cozens &lt;simon@example.com&gt; wrote:
+
+&gt; On 28/05/2012 11:39, jep200404@example.com wrote:
+&gt; &gt; Writes wear out SSDs.
+&gt; 
+&gt; I think this is one of those bits of conventional wisdom which used to be true 
+&gt; when the technology was first being introduced, but now isn't so much.
+
+Not really. It is now more true than ever... depending on what you look at :-)
+
+The standard multi-level-cell NAND Flash chips used in SSDs have about
+10'000 write cycles endurance. That means, after having written and erased
+a block for 10'000 times, you have a good chance that the cell will be not
+be correctly writable the next time. Please note that this not a hard limit
+as in &quot;it will fail on the 10'001st write&quot; but an increasing probability.
+Ie read the spec as &quot;don't expect your flash working correctly after
+_about_ 10'000 erase-write cylces to the same block&quot;
+
+Now, because nobody wants to have his diskdrive fail there are several
+techniques applied:
+
+* wear leveling (some addresses are written more often than others
+  -&gt; exploit this to get a more uniform wear accross the drive)
+* backup memory (unused blocks that come into play when a used block fails)
+* write combining (cache blocks and write them at all at once instead of
+  writing individual bytes)
+
+Although this techniques get you pretty far in terms of lifetime, they are
+not magic. They cannot prolong the life of a drive beyond what is physically
+possible. And the physical limit is writing the whole drive 10'000 times.
+For a 64GB drive that means that if you have written more than 640TB, you
+will have visible dead blocks. Now how much is that? If you assume a 10y life
+time of the disk, that means approximately 2MB/s average write speed. 
+
+Now, how much that is depends on your use of the disk. If it's a heavily
+used database server, then you probably have more writes than that.
+If it's just a desktop... Well, i doubt you get more than that unless
+you use something stupid as gnome (where the config system is known to
+rewrite the config files every few seconds).
+
+Generally it's safe to assume you will not reach that limit within the
+usefull lifetime of the computer, unless you have an I/O heavy system.
+
+But: keep in mind that the above back of the envelope calculation is for the
+case of an optimal wear leveling algorithm. No disk will reach that level.
+For once, the wear level algorithm is not perfect, ie it cannot balance
+write over all blocks equally. For another you will have to reallocate blocks
+that have not been written for a long time in order to balance them, and
+thus generating unnecessary writes. And last but not least, you will have
+write in smaller chunks than the erase block size because the OS filesystem
+handling is based on 4k chunks and not on 128k chunks.
+If you really want to do reliability calculations like this and depend on them,
+add at least a factor of 2, if not 5 or 10. And then it starts looking quite
+differently....
+
+Also keep in mind that SSDs have been previously marketed for the server
+busines, where reliability was more important than price (at least to
+some extend). But nowadays, nearly all SSDs are consumer products, where
+quality counts very little, especially if not visible within the first
+month, but price is everything.
+
+If you really need SSDs with high life time, there are manufacturers
+who build SSDs with single level NAND Flash, that have a 100k cycle life time.
+But they are factor of &gt;10 more expensive (factor 2-4 because of the more
+expensive flash chips, and another factor 2-10 because of the lower volumes).
+
+			Attila Kinali
+
+
+-- 
+Why does it take years to find the answers to
+the questions one should have asked long ago?
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00211" href="msg00211.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+<ul><li><em>From:</em> Simon Cozens</li></ul></li>
+<li><strong><a name="00253" href="msg00253.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00275" href="msg00275.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+<ul><li><em>From:</em> Francois Cartegnie</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00183" href="msg00183.html">[tlug] Making better use of SSDs?</a></strong>
+<ul><li><em>From:</em> Raymond Wan</li></ul></li>
+<li><strong><a name="00185" href="msg00185.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+<ul><li><em>From:</em> jep200404</li></ul></li>
+<li><strong><a name="00199" href="msg00199.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+<ul><li><em>From:</em> Simon Cozens</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00208.html">Re: [tlug] [OT] plonk [Re: Classes]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00210.html">Re: [tlug] [OT] plonk [Re: Classes]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00204.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00211.html">Re: [tlug] Making better use of SSDs?: Beware of Heavy Write Usage</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00209"><strong>Date</strong></a></li>
+<li><a href="threads.html#00209"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

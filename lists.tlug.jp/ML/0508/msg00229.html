@@ -1,0 +1,184 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Japanese regex question -->
+<!--X-From-R13: "Pra Y. Phyybpx" <oraxnfzvaohyybpxNlnubb.pb.hx> -->
+<!--X-Date: Mon, 29 Aug 2005 16:46:03 +0900 -->
+<!--X-Message-Id: 003a01c5ac6d$b6a53420$0b01a8c0@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200508241701.55144.jq@example.com -->
+<!--X-Reference: 20050825183913.O88704@example.com&#45;pun.prv -->
+<!--X-Reference: 200508251253.47083.jq@example.com -->
+<!--X-Reference: 20050826113217.J88704@example.com&#45;pun.prv -->
+<!--X-Reference: 87zmr2me23.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00228.html">Date Prev</a>][<a href="msg00230.html">Date Next</a>][<a href="msg00243.html">Thread Prev</a>][<a href="msg00238.html">Thread Next</a>][<a href="maillist.html#00229">Date Index</a>][<a href="threads.html#00229">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Japanese regex question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 29 Aug 2005 16:46:03 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Ben K. Bullock&quot; &lt;<A HREF="mailto:benkasminbullock@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Japanese%20regex%20question">benkasminbullock@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Japanese regex question</strong></li>
+<li>References: &lt;<a href="msg00167.html">200508241701.55144.jq@example.com</a>&gt;&lt;<a href="msg00182.html">20050825183913.O88704@example.com</a>&gt;&lt;<a href="msg00184.html">200508251253.47083.jq@example.com</a>&gt;&lt;<a href="msg00187.html">20050826113217.J88704@example.com</a>&gt; &lt;<a href="msg00203.html">87zmr2me23.fsf@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt; We had a post on this kind of issue (ambiguous matches in UTF-8) a
+&gt; couple months back, too.   It's worth trying to remember this one.
+
+I don't understand how it's possible to have an ambiguous UTF-8 match. It's
+always clear which byte of a UTF-8 string is the first of each character.
+It's a stateless encoding. The original poster was using iso-2022-jp where
+you have to keep track of the states - what was the most recent escape
+sequence? He could just convert to a stateless encoding like UTF-8 or even
+EUC-JP using iconv (in C) or Text::Iconv module in Perl, and he wouldn't
+have the problem any more.
+
+<A  HREF="http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8">http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8</A>
+
+should explain why it's virtually impossible to miss where a Unicode
+character starts.
+
+&gt; This is all so stupid.  XEmacs has been doing this (badly) for almost
+&gt; a decade, Mule for another 3 or 4 years longer than that.  Why Perl
+&gt; and Python failed to seize the opportunity to do it right when they
+&gt; added Unicode support I'll never know.
+
+Mule didn't do Unicode for a long time, certainly ten years ago there was
+absolutely no support for it. I was corresponding with the author of Mule,
+Mr Handa, about eight years ago, and he had no support at all for Unicode
+then. He was using his own internal coding called &quot;emacs-mule&quot; to get all
+the different Chinese, Japanese and Korean character sets working. It still
+is not working perfectly, unfortunately. On the other hand, Perl 5.8's
+Unicode support is done exactly right as far as I can see. Switch it on with
+&quot;use utf8&quot; and regular expressions, strings, etc. all work as if one Unicode
+character was exactly equivalent to one byte. The developers are going to
+make even &quot;use utf8&quot; unnecessary, it's said. I've no idea about Python. The
+only tricky thing with Perl is input and output: it's necessary to specify
+that an input or output file is utf-8 using binmode, otherwise it gets
+treated as bytes. However, if you think about it, that is necessary, since
+there is no guarantee that every file input or output must be in utf-8
+format, and forcing everything to be read as utf-8 would cause errors on
+non-utf-8 binary files.
+
+B. Bullock.
+
+
+		
+___________________________________________________________ 
+How much free photo storage do you get? Store your holiday 
+snaps for FREE with Yahoo! Photos <A  HREF="http://uk.photos.yahoo.com">http://uk.photos.yahoo.com</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00238" href="msg00238.html">Re: [tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00167" href="msg00167.html">[tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+<li><strong><a name="00182" href="msg00182.html">Re: [tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Tod McQuillin</li></ul></li>
+<li><strong><a name="00184" href="msg00184.html">Re: [tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+<li><strong><a name="00187" href="msg00187.html">Re: [tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Tod McQuillin</li></ul></li>
+<li><strong><a name="00203" href="msg00203.html">Re: [tlug] Japanese regex question</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00228.html">Re: [tlug] Japanese regex question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00230.html">Re: [tlug] GUI font tools</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00243.html">Re: [tlug] Japanese regex question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00238.html">Re: [tlug] Japanese regex question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00229"><strong>Date</strong></a></li>
+<li><a href="threads.html#00229"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

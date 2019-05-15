@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: libwcsmbs thing -->
+<!--X-From: YAMAGATA Hiroo <hiyori13@example.com> -->
+<!--X-Date:  Sat, 9 Oct 1999 12:17:07 +0900 -->
+<!--X-Message-Id: 199910090316.MAA17361@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199910090034.JAA16123@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00054.html">Date Prev</A>][<A HREF="msg00056.html">Date Next</A>][<A HREF="msg00073.html">Thread Prev</A>][<A HREF="msg00056.html">Thread Next</A>][<A HREF="maillist.html#00055">Date Index</A>][<A HREF="threads.html#00055">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: libwcsmbs thing</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: libwcsmbs thing</strong></LI>
+<LI><strong>From</strong>: <strong>YAMAGATA Hiroo &lt;<A HREF="mailto:hiyori13@example.com">hiyori13@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 09 Oct 1999 12:16:26 +0900</LI>
+<LI>Content-Type: text/plain; charset="us-ascii"</LI>
+<LI>In-Reply-To: &lt;199910090034.JAA16123@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+I guess Stephen would be writing a 2 MB post on this topic by now, but
+here's my 2 yen.
+
+Overview:
+libwcsmbs is a hack for glibc2.0 to handle locales for Japanese and other
+langs. It cannot coexist with glibc2.1 that RH6.0 relies on.
+
+
+Historical Background:
+This was required because glibc2 was supposed to handle it but didn't as of
+glibc2, and X_locales that handled locales as an emergency method, has been
+dropped because they figured glibc would do it.
+
+The Japanese were really fxxcked because there was practically no locale
+handling in the system. The Debian-Jp guys were issuing dirty patches to
+glibc2, but you had to reapply the patch for each new version of
+glibc2.0.x. This was a pain, so they developed this libwcsmbs so that it
+will do the locale and wide char-multi-byte char stuff without actually
+patching the glibc2 itself.  
+
+Now, as of glibc2.1.1 (I guess), glibc started to handle locales and wide
+char-multibyte char conversion stuff. The implementation is rather
+controversial (or so I hear), but it does what it was supposed to do.
+
+At this point, the role of libwcsmbs is over.  However it does not know
+that, so it continues to mess with glibc2, which is causing you all the
+trouble and pain.
+
+So, you cannot, and should not, must not install libcwcsmbs under RH6.0 and
+after.  It screws the core part of the system, and it will not even boot.
+Not many people know this, and it is causing a lot of confusion.
+
+
+Solution:
+This part, I don't know. but you have to do rpm -e libwcsmbs or something
+to remove the libwcsmbs BEFORE using RH6.0. If other software and rpms
+demand it, I guess you might just override it. It should work in theory,
+but I don't know.
+
+Conclusion and Outlook:
+Oh boy, I guess this transition to libc2.1 and above would really cause
+trouble for the Japanese Linux world in the next 6 months or so. "Remove
+libwcsmbs" would be easy enough, but meddling with existing rpms that
+depend on it? That's beyond any everyday user.  Does rpm have a system
+probing/conditional installation function? Like "Check system and keep
+quiet if glibc&gt;=2.1" or something like that? I thought not.
+
+Poeple from Vine or Debian-Jp may not choose to move to glibc2 for a while,
+but not for long. I wonder what's going to happen....
+
+
+
+At 09:34 99/10/09 +0900, you wrote:
+&gt; Date: Fri, 8 Oct 1999 05:02:28 +0900 (JST)
+&gt; From: "Eric S. Standlee" &lt;fwiw3980@example.com&gt;
+&gt; Subject: tlug: Re: libwcsmbs
+&gt; 
+&gt; I installed a libwcsmbs package off the linux.or.jp ftp server and it
+&gt; killed my system.  On boot it (init?) would lock up saying something
+&gt; about an undefined variable related to libwcsmbs.  This may portray my
+&gt; lack of experience in the shared library portion of linux, but as many
+&gt; times as I tried to use the rescue disk to go in and remove the libwcsmbs
+&gt; files from /lib, /usr/lib, and some X11R6/lib directory, it popped up
+&gt; again and I ended up reinstalling RH6.0
+&gt; 
+&gt; I am baffoozled.  Any help?
+
+-------------------------------------------------------------------
+Next Technical Meeting: October 9 (Sat), 13:30   place: Temple Univ.
+* Linux Internationalisation Initiative (Li18nux) speaker: Akio Kido
+* Japanese TrueType Fonts                     speaker: Adrian Havill
+Next Technical Meeting: November 13 (Sat), 13:30 place: Temple Univ.
+* Network Security                               speaker: Steve Baur
+Next Nomikai:  December 17 (Fri), 19:00 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00056" HREF="msg00056.html">tlug: libwcsmbs thing</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;mgushee@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00054.html">tlug: Re: libwcsmbs</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00056.html">tlug: libwcsmbs thing</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00073.html">tlug: Re: libwcsmbs</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00056.html">tlug: libwcsmbs thing</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00055"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00055"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

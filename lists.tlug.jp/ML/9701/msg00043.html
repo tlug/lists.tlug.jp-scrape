@@ -1,0 +1,194 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Mule delta and FEPs -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 20 Jan 1997 06:37:09 GMT -->
+<!--X-Message-Id: m0vmDDd&#45;00003nC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00042.html">Date Prev</A>][<A HREF="msg00044.html">Date Next</A>][<A HREF="msg00052.html">Thread Prev</A>][<A HREF="msg00044.html">Thread Next</A>][<A HREF="maillist.html#00043">Date Index</A>][<A HREF="threads.html#00043">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Mule delta and FEPs</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Linux Abusers Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Mule delta and FEPs</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 20 Jan 1997 15:28:33 +0900</LI>
+<LI>CC: David Walter &lt;<A HREF="mailto:djw18@example.com">djw18@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+[David -- If you've subscribed to TLUG, let me know, so I won't send
+ duplicates in the future.]
+
+I've got Mule-19.33-delta mostly working (I can't be 100% sure because 
+my /usr partition can't absorb yet another version of emacs, so I'm
+working out of the source tree and not loading site-lisp/ etc).
+
+The advantages are that this is the same Emacs that everybody else
+will be using (or it will after a couple of versions when it gets
+integrated into the regular Emacs source tree at the FSF), and that
+there are some nice things in the 19.3x versions that 19.28 (the
+version of Emacs that the most recent public release is based on)
+doesn't have.  One that I like in particular is the ability to send
+frames to other X displays.  This allows one to use Emacs like a
+server over several machines, or to 'talk' to another user.  But
+there's a lot more, including much improved menuing (they've
+apparently borrowed the Lucid Emacs menuing facilities).  It's still
+not XEmacs, but XEmacs isn't Mule, either.  Check out NEWS in an Emacs
+19.34 installation somewhere.
+
+The disadvantage (as you've probably guessed) is the FEP.  I have not
+been able to get Wnn to work under the XIM protocol (see previous
+post), and Canna apparently doesn't support XIM at all.  What you can
+use is a somewhat improved version of the old SKK, now renamed to
+Quail.  If you are seriously multi-lingual (just English, Japanese and
+Chinese doesn't count---Wnn does that----add Arabic, Devangari, and
+Vietnamese, etc), Quail allows input of all of them through a single
+fairly consistent user interface.  Unfortunately, it doesn't do
+bunsetsu very well.  If you can handle typing "koreha" RET "nihongo"
+SPC C-f SPC RET "desu."  to get 「これは日本語です。」 you'll do fine.
+It will take a bit of practiceto convert from the convenience of Wnn
+or Canna though.
+
+Some hints:
+- The Mule version of Emacs 19.34 is available (as of yesterday) in
+  <A TARGET="_top" HREF="ftp://etlport.etl.go.jp/pub/mule/.notready/mule-19.34-alpha.tar.gz">ftp://etlport.etl.go.jp/pub/mule/.notready/mule-19.34-alpha.tar.gz</A>
+  I haven't tried it yet.  Why it's "notready", or when it will be
+  ready, I don't know, YMMV.
+  mule-19.33-delta has disappeared.
+- To input Japanese, you must also get leim.tar.gz.  (manual.ps.gz is
+  for Devengari TeX, SF is a list of sci-fi books, and I don't know
+  what gd.tar.gz is.  elisp-jp.kit.gz might be useful, I don't know.)
+- In Mule delta, you do not get Japanese by default.  I'm not sure
+  what exactly is the reason, but Shift-Mouse-1 gets a Font menu, and
+  if you then choose "Fontsets" and from there "..default" you get
+  Japanese.  Choosing a font does not get the whole fontset as
+  previously in Mule.
+- To use other Japanese fonts, add something like
+
+    (create-fontset-from-fontset-spec
+     "-*-fixed-medium-r-normal--24-*-*-*-*-*-fontset-twentyfour")
+
+  to your .emacs.  This will add a font at 24 points to the menu, by
+  the name of "..twentyfour".  I suspect that this may not give the
+  best results, eg, removing the 'medium' term might allow bold faces.
+  But at least you can edit Japanese.
+- I suspect that Mule can do a pretty good job of auto-recognizing
+  Chinese and/or Korean if you can use those, but I don't know.  This
+  is of course configurable, but I couldn't find any documentation
+  directly.
+- For most functions, if you know what the function is in current
+  Mule, you should be able to guess names for 'apropos'.  A lot of
+  "commands" seem to have become "functions", so using M-X apropos is
+  better than C-H a.
+
+I'm going to continue working off-and-on on trying to get Wnn (and
+possibly Canna) to function with the merged Emacs/Mule, but I don't
+think it's going to happen soon.  Any advice or related information
+would be greatly appreciated.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00044" HREF="msg00044.html">Re: Mule delta and FEPs</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00092" HREF="msg00092.html">tlug: Re: Mule-19.34</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00042.html">Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00044.html">Re: Mule delta and FEPs</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00052.html">Re: Wnn / Xwnmo / mule-19.33-delta woes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00044.html">Re: Mule delta and FEPs</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00043"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00043"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

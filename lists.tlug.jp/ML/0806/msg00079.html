@@ -1,0 +1,134 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] iptables -->
+<!--X-From-R13: "Pehab Dnbhyg" <oenbhygNtznvy.pbz> -->
+<!--X-Date: Sun, 08 Jun 2008 02:02:01 +0900 -->
+<!--X-Message-Id: c0f4e2b00806071001q5d5eb76em2078c066a8f45aac@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00078.html">Date Prev</a>][<a href="msg00080.html">Date Next</a>][<a href="msg00081.html">Thread Prev</a>][<a href="msg00084.html">Thread Next</a>][<a href="maillist.html#00079">Date Index</a>][<a href="threads.html#00079">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] iptables</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 8 Jun 2008 02:01:59 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Bruno Raoult&quot; &lt;<a href="mailto:braoult@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20iptables">braoult@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] iptables</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+Hi,<br><br>I want my linux box to make port forwarding (some ports) to a LAN raid-5 box<br>connected to its ethernet port.<br>The &quot;world&quot; is a wifi network (having the internet router too).<br><br>I made some iptable rules (simple masquerade for packets coming from the<br>
+
+raid-5 box), and port forwarding for the ports I want to send to the raid-5.<br><br>It seems to work well (the rules are below, please feel free to comment).<br><br>What I would do is to have these rules enabled by default at boot.<br>
+
+I tried to add &quot;pre-up iptables-restore &lt; /etc/iptables.rules&quot; in /etc/network/interfaces,<br>but it does not work at all (I tried on both interfaces, eth &amp; wifi)<br><br>But when I start the script by hand, everything is fine... Magic, isn&#39;it?<br>
+Nothing special in /var/log/messages or syslog...<br>&nbsp;<br>iptables have always been a mystery for me :-)<br>
+<br>Any clue?<br><br>########################## *THE* local config<br>LAN_NET=&quot;<a href="http://10.0.0.0/8" target="_blank">10.0.0.0/8</a>&quot;&nbsp; # my wifi network<br>LAN_IP=&quot;<a href="http://10.0.1.207" target="_blank">10.0.1.207</a>&quot;&nbsp;&nbsp;&nbsp; # my wifi IP<br>
+
+LAN_PORT=&quot;rausb0&quot;<br><br>DSK_NET=&quot;<a href="http://192.168.0.0/16" target="_blank">192.168.0.0/16</a>&quot;&nbsp; # my ethernet network<br>DSK_IP=&quot;<a href="http://192.168.1.1" target="_blank">192.168.1.1</a>&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # my ethernet IP<br>
+
+DSK_PORT=&quot;eth0&quot;<br>TERA_IP=&quot;<a href="http://192.168.1.2" target="_blank">192.168.1.2</a>&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # raid-5 box IP<br><br>[...]<br><br>########################## nat<br>echo &quot;starting NAT...&quot;<br>
+iptables -A POSTROUTING -t nat -o ${LAN_PORT} -s ${DSK_NET} -j MASQUERADE<br>
+<br>########################## forward/input my ports<br># port 80 139 from LAN to DSK<br>echo &quot;routing ports ${TERA_PORTS} to TERA...&quot;<br>for port in 80 139<br>do<br>&nbsp; iptables -t nat -I PREROUTING -p tcp -d ${LAN_IP} --dport ${port} -j DNAT --to-destination ${TERA_IP}<br>
+
+&nbsp; iptables -A FORWARD -p tcp -i ${LAN_PORT} -d ${TERA_IP} --dport ${port} -j ACCEPT<br>done<br><br>[ ...]<br><br clear="all"><br>-- <br>2 + 2 = 5, for very large values of 2.<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00084" href="msg00084.html">[tlug] iptables</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00090" href="msg00090.html">Re: [tlug] iptables</a></strong>
+<ul><li><em>From:</em> Jedidiah Israel</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00078.html">Re: [tlug] Good compression image format</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00080.html">Re: [tlug] State of &quot;Linux&quot; documentation [was: Books]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00081.html">Re: [tlug] [Intro] Books for Newbie using Ubuntu</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00084.html">[tlug] iptables</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00079"><strong>Date</strong></a></li>
+<li><a href="threads.html#00079"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

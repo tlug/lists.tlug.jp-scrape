@@ -1,0 +1,246 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] unicode and Perl&#45; how to pass command line unicodearguments -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 16 Feb 2006 19:14:35 +0900 -->
+<!--X-Message-Id: 87u0azwqye.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 43F12D6F.1020706@example.com -->
+<!--X-Reference: 30ce84360602141624p348b3cacm@example.com -->
+<!--X-Reference: 873bilfl15.fsf@example.com -->
+<!--X-Reference: 30ce84360602152252q1aea193ci@example.com -->
+<!--X-Reference: 30ce84360602152253sb631144j@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00315.html">Date Prev</a>][<a href="msg00317.html">Date Next</a>][<a href="msg00314.html">Thread Prev</a>][<a href="msg00317.html">Thread Next</a>][<a href="maillist.html#00316">Date Index</a>][<a href="threads.html#00316">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 16 Feb 2006 19:14:33 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20unicode%20and%20Perl-%20how%20to%20pass%20command%20line%20unicodearguments">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</strong></li>
+<li>References: &lt;<a href="msg00254.html">43F12D6F.1020706@example.com</a>&gt;&lt;<a href="msg00271.html">30ce84360602141624p348b3cacm@example.com</a>&gt;&lt;<a href="msg00274.html">873bilfl15.fsf@example.com</a>&gt;&lt;30ce84360602152252q1aea193ci@example.com&gt;&lt;<a href="msg00314.html">30ce84360602152253sb631144j@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1007 (Gnus v5.10.7) XEmacs/21.5-b23 (daikon, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>&gt;&gt;&gt;&gt;&gt; "Ian" == Ian Wells &lt;ijw@example.com&gt; writes:
+
+    Ian&gt; So, the distinction being between an object that is a string
+    Ian&gt; of values representing text, and an object which is a string
+    Ian&gt; of values representing a string of values.
+
+That's right.
+
+    Ian&gt; Both of which, I presume, work in most functions (otherwise
+    Ian&gt; the misuse you discuss wouldn't happen)
+
+If you are programming for ASCII input, that will be true as long as
+you're restricted to ASCII input.  The problem is that once you leave
+that world, even for the upward compatible world of UTF-8, you are
+going to have problems.
+
+    Ian&gt; And the one you're most likely to use (u"", representing
+    Ian&gt; readable text) is the one that's harder to type.
+
+That's right.  For backward compatibility reasons. :-(
+
+    Ian&gt; So Perl doesn't make the distinction and Python doesn't
+    Ian&gt; enforce it properly.
+
+That's right.  Again, for backward compatibility, Python only enforces
+it partly.
+
+    Ian&gt; Personally speaking,
+
+Well, whatever floats your boat, of course.  If the programmer is
+comfortable with a given discipline, why bother making a rule that
+says you have to do it right when he already does?  The problem is
+when you deal with many programmers who prefer different disciplines,
+or may be undisciplined but it doesn't hurt in the original
+environment, you're going to have portability problems, and POLA
+violations when the software gets into users' hands.
+
+    Ian&gt; I'd argue that since binary data is actually fairly uncommon,
+
+"Actually", it's all over the place.  The first couple dozen bytes of
+most XML input should be considered binary, then reread.  RFC 2822
+headers are binary (EBCDIC and UTF-16 not allowed! and "AW:" is not
+the German translation of "Re:", "Re:" is the German translation of
+"Re:").  SMTP, of course, NNTP, HTTP, the list goes on and on.
+Basically, anything that is a wire protocol is binary in the relevant
+sense.
+
+So you can't simply say "we will represent strings of 8-bit values as
+an array of 16-bit values" (well, you can, but it would be horribly
+inefficient to map from memory buffers to WC string buffers all the
+time).
+
+    Ian&gt; Um.  I'm just saying that (in my head and in Perl) a string
+    Ian&gt; is a string is a string.  If you consider it mentally to be a
+    Ian&gt; list of numbers then it can contain either a language string
+    Ian&gt; or a binary data chunk without violating that assumption.
+
+But you see, you *can't* think of a string as a list of numbers.  Eg,
+consider case-insensitive matching.  *This is nonsense in the binary
+context.*  In the case of Unicode, a program *must* identify (for
+collation purposes) U+00C5 LATIN CAPITAL LETTER A WITH RING ABOVE and
+U+212B ANGSTROM SIGN, and both of those with the composition of U+0041
+LATIN CAPITAL LETTER A plus U+030A COMBINING RING ABOVE.
+
+I really don't see how to go from "a list of numbers is a list of
+numbers" to DWIMming the case above.  This is a *real* case, reported
+within the last couple of weeks here on TLUG (Kevin Hoang's post about
+getting his Vietnamese accents decomposed).  My guess is that the Perl
+community will spend the next few years fumbling about with "cut and
+try".
+
+    Ian&gt; in my experience the result is that you read a utf8 file by
+    Ian&gt; setting the utf8 flag, write it similarly and what you do
+    Ian&gt; inbetween Just Works because you're dealing with strings that
+    Ian&gt; can contain all unicode characters, not bytearrays.
+
+That's not surprising.  Perl has had twenty years to work its way
+through the pain of making byte arrays DWYM in string contexts.  But
+they didn't DWDM because David didn't think like a Perl program.  My
+suggestion was that Python might match his expectations better, and he
+replied he's comfortable learning the Perl Way (or at least one of the
+Perl万道 ;-).
+
+    Ian&gt; I suppose it depends on your expectations.  I like the 'my
+    Ian&gt; file's in unicode and my language understands that' approach;
+    Ian&gt; I don't see why you'd want a file you edit in unicode only
+    Ian&gt; for your language to consider it to be something else.
+
+You wouldn't.  The problem is that there are binary protocols that
+look like text, and there are binary protocols that represent text,
+and DWIM is always a guess.  As David discovered.
+
+    Ian&gt; And that still seems to suggest that pretty much every string
+    Ian&gt; you're ever going to type into Python would need
+    Ian&gt; u"".toUnicode() (or whatever) when Perl would DWIM.
+
+Of course not.  It's simply that Python gives you the option to do it
+at the site (which I guess Perl does too, although the Python notation
+allows you to use a string method, thus emphasizing the string literal
+and not the coding method), and it doesn't allow you to do stuff like
+
+    use utf8;
+    $var = $_ + "ユニコードリテラル";
+
+More precisely, it coerces $_ to Unicode according to the default
+codec which is normally ASCII-only.  What would Perl do if $_ happened
+to contain KOI8-R-encoded Cyrillic?  Just glom them together and cause
+a utf8 error eventually?
+
+
+-- 
+School of Systems and Information Engineering <A HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can "do" free software business;
+              ask what your business can "do for" free software.
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00254" href="msg00254.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+<li><strong><a name="00271" href="msg00271.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00274" href="msg00274.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00314" href="msg00314.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00315.html">Re: [tlug] OT: Digital SLR camera shopping</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00317.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00314.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00317.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00316"><strong>Date</strong></a></li>
+<li><a href="threads.html#00316"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

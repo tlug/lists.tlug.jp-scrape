@@ -1,0 +1,199 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: gcc question -->
+<!--X-From: "Scott M. Stone" <sstone@example.com> -->
+<!--X-Date:  Thu, 13 Jan 2000 08:09:13 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.10.10001121505510.26141&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.1000112114004.523B&#45;100000@example.com&#45;link.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00040.html">Date Prev</A>][<A HREF="msg00042.html">Date Next</A>][<A HREF="msg00054.html">Thread Prev</A>][<A HREF="msg00044.html">Thread Next</A>][<A HREF="maillist.html#00041">Date Index</A>][<A HREF="threads.html#00041">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: gcc question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: gcc question</strong></LI>
+<LI><strong>From</strong>: <strong>"Scott M. Stone" &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 12 Jan 2000 15:08:37 -0800 (PST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00037.html">Pine.LNX.3.96.1000112114004.523B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, 12 Jan 2000, Drew C. Poulin wrote:
+
+&gt; Pardon me if this question is inappropriate for this list, but after
+&gt; following it for several months, I thought someone might have a ready
+&gt; answer.
+&gt; 
+&gt; I'd like to continue to use gcc and xxgdb for some C classes I've
+&gt; been taking, but I seem to have encountered a difference in how gcc
+&gt; handles * char compared with how the MSVC++ compiler handles it.  An
+&gt; example is the code fragment below. gcc gives me a segmentation error when
+&gt; it runs, while MSVC++ doesn't.   Apparently the problem occurs when gets()
+&gt; tries to access *lname at 0x0.  I suppose there must be  a good reason for
+&gt; this.  Can anyone tell me what it is and tell me how I should be handling
+&gt; it?
+&gt; 
+&gt; Thank you for any insight.
+
+ack!  they let you hand in code like this in your school??
+
+1.  your pointers are uninitialized.  should be:
+	char *fname=NULL;
+	char *lname=NULL;
+
+2.  you're doing a gets() call into an unknown region of memory - doing
+the above should produce a segfault on any compiler, though, since it's
+known to be null -- unless you've initialized them as null, you have no
+idea where those things are pointing.
+
+3.  You need to allocate memory for the pointers:
+	fname=(char *)malloc(80);
+	lname=(char *)malloc(80);
+	memset(fname,0,80);
+	memset(lname,0,80);
+
+4.  You're using gets() at all.  egcs will bitch about it and tell you not
+to use it, actually.  what you really want in this case would be:
+	fgets(fname,80,stdin);
+
+
+anyway, people (Chris) correct me if I'm wrong, but I think that the above
+is correct...
+
+&gt; 
+&gt; Drew Poulin
+&gt; 
+&gt; 
+&gt; #include&lt;stdio.h&gt;
+&gt; 
+&gt; 
+&gt; main(){
+&gt;   
+&gt;   char *fname, *lname;
+&gt;  
+&gt;   puts("Enter fname:\n");
+&gt;   gets(fname);
+&gt;   puts("Enter lname:\n");
+&gt;   gets(lname);
+&gt;  printf("First name: %s\tLast name: %s\n", fname, lname);
+&gt; 
+&gt; }
+&gt; 
+&gt; 
+&gt; -------------------------------------------------------------------
+&gt; Next Technical Meeting: January 14 (Fri) 19:00
+&gt; * Topic: "glibc - current status and future developments"
+&gt; * Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+&gt; * Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+&gt; -------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+&gt; 
+
+--------------------------
+Scott M. Stone, CCNA &lt;sstone@example.com&gt;
+UNIX Systems and Network Engineer
+Taos - The SysAdmin Company 
+
+-------------------------------------------------------------------
+Next Technical Meeting: January 14 (Fri) 19:00
+* Topic: "glibc - current status and future developments"
+* Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+* Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00044" HREF="msg00044.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Sekiya &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00037" HREF="msg00037.html">tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Drew C. Poulin" &lt;poulin@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00040.html">Re: tlug:</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00042.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00054.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00044.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00041"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00041"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Re: Absurd DNS failures -->
+<!--X-From-R13: "@example.com Rvnzbaq" <aqvnzbaqNjgn.ngg.ar.wc> -->
+<!--X-Date: Thu, 3 Jul 2003 20:35:45 +0900 -->
+<!--X-Message-Id: 000001c34158$399d1830$41ee4ca5@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3e5101c340a2$946df6a0$a6ee4ca5@example.com -->
+<!--X-Reference: 20030702231123.8F9E.SL@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00016.html">Date Prev</a>][<a href="msg00017.html">Date Next</a>][<a href="msg00010.html">Thread Prev</a>][<a href="msg00042.html">Thread Next</a>][<a href="maillist.html#00018">Date Index</a>][<a href="threads.html#00018">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: Absurd DNS failures</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 3 Jul 2003 20:35:45 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Norman Diamond&quot; &lt;<A HREF="mailto:ndiamond@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Re%3A%20Absurd%20DNS%20failures">ndiamond@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: Absurd DNS failures</strong></li>
+<li>References: &lt;<a href="msg00009.html">3e5101c340a2$946df6a0$a6ee4ca5@example.com</a>&gt; &lt;<a href="msg00010.html">20030702231123.8F9E.SL@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&quot;Stephen Lee&quot; &lt;sl@example.com&gt; tried to help me:
+
+&gt; &gt; When dialled up from Linux, the nslookup command automatically contacts my
+&gt; &gt; ISP's DNS servers and resolves names like www.yahoo.co.uk, www.yahoo.co.jp,
+&gt; &gt; and www.att.com.  But it fails with names like www.yahoo.com -- it says that
+&gt; &gt; it cannot reach any name servers.  This has been reproduced a dozen times
+&gt; &gt; one day and a dozen times the next day.
+&gt;
+&gt; Are you using any firewall in Linux?  Maybe you've blocked TCP queries?
+
+At first I was using the default SuSE 8.1 configuration, which blocks most
+incoming connections, but which allows incoming UDP from port 53 of my ISP's
+DNS servers.  After the absurd behavior (especially after getting results
+for www.asia.microsoft.com but not for plain microsoft.com), I opened it up
+a bit, using the command line:
+  # iptables -I INPUT -p udp --sport 53 -j ACCEPT
+  # iptables -I OUTPUT -p udp --dport 53 -j ACCEPT
+  # iptables -I INPUT -p tcp --sport 53 -j ACCEPT
+  # iptables -I OUTPUT -p tcp --dport 53 -j ACCEPT
+There was no difference in the result.
+
+&gt; Maybe it is something like wrong MTU, or you're using ECN?
+
+How could this get success for www.asia.microsoft.com but timeouts for plain
+microsoft.com?
+
+I could even open Microsoft's main page in Konqueror by typing
+<A  HREF="http://207.46.whatever.was">http://207.46.whatever.was</A> from the result of nslookup
+www.asia.microsoft.com.
+
+By the way, in my office today I ran nslookup on a different Linux system
+connected via a LAN and a router (not broadband but similar).  Again
+www.asia.microsoft.com came out as CNAME records for plain microsoft.com.
+But then plain microsoft.com didn't fail, it came out as CNAME records for
+some Akamai servers (something.akadns.com).  Same with Yahoo, www.yahoo.com
+came out as CNAME records for something.akadns.com.
+
+So now it seems that the DNS queries from my home Linux system through
+dialup are failing only when the authority comes from Akamai.  This is still
+incredibly strange.
+
+
+&quot;David Oftedal&quot; &lt;david@example.com&gt; suggested:
+
+&gt; Just try defining some DNSes manually.
+
+I did.  I manually defined my ISP's DNS servers (165.76.60.2 and
+165.76.56.2) and got the absurd results already stated.
+
+
+&quot;Mike FABIAN&quot; &lt;mfabian@example.com&gt; wrote:
+
+&gt; Don't know, but both &quot;nslookup www.yahoo.com&quot; and &quot;nslookup
+&gt; microsoft.com&quot; work for me on SuSE 8.2.
+
+Did you try it though dialup, through a modem on your own machine?  Or only
+in a more normal corporate setting?
+
+&gt; I guess it's some configuration issue.
+
+Yeah no doubt, but what could it be, how could the results be this
+combination of success and failure?
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00042" href="msg00042.html">[tlug] Re: Absurd DNS failures</a></strong>
+<ul><li><em>From:</em> Mike FABIAN</li></ul></li>
+<li><strong><a name="00061" href="msg00061.html">Re: [tlug] Re: Absurd DNS failures</a></strong>
+<ul><li><em>From:</em> J. David Beutel</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00009" href="msg00009.html">[tlug] Absurd DNS failures</a></strong>
+<ul><li><em>From:</em> Norman Diamond</li></ul></li>
+<li><strong><a name="00010" href="msg00010.html">[tlug] Re: Absurd DNS failures</a></strong>
+<ul><li><em>From:</em> Stephen Lee</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00016.html">Re: [tlug] Keystrokes to open a Terminal?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00017.html">Re: [tlug] challenge-response spam filtering</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00010.html">[tlug] Re: Absurd DNS failures</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00042.html">[tlug] Re: Absurd DNS failures</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00018"><strong>Date</strong></a></li>
+<li><a href="threads.html#00018"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] cups and networking -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 18 May 2007 16:20:01 +0900 -->
+<!--X-Message-Id: 87mz028u74.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 464D04E2.1060903@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00368.html">Date Prev</a>][<a href="msg00370.html">Date Next</a>][<a href="msg00366.html">Thread Prev</a>][<a href="msg00363.html">Thread Next</a>][<a href="maillist.html#00369">Date Index</a>][<a href="threads.html#00369">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] cups and networking</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 May 2007 16:30:39 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20cups%20and%20networking">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] cups and networking</strong></li>
+<li>References: &lt;<a href="msg00362.html">464D04E2.1060903@dcook.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Darren Cook writes:
+
+ &gt; So, I got the Brother HL-2040, awfully exciting. It didn't quite
+ &gt; auto-detect, but I got the test page printing locally from my server by
+ &gt; installing the Brother RPMs, and following their instructions. I also
+ &gt; added it to Samba but haven't tested if that works yet.
+
+Call this the &quot;print server&quot;.  The print server is a Linux box, right?
+You're running CUPS on the print server, right?  The first question
+doesn't really matter, but the second is important.  If so you are
+serving on the ipp service, which uses port 631.
+
+ &gt; Now I'm trying to use it from my linux workstation.
+
+This is the &quot;client&quot;.
+
+ &gt; I installed the RPMs
+ &gt; again on this machine, and followed these instructions:
+ &gt;  <a  href="http://solutions.brother.com/linux/sol/printer/linux/cups_network.html">http://solutions.brother.com/linux/sol/printer/linux/cups_network.html</a>
+
+AFAICS, that page is wrong.  It seems to assume that the print server
+is running the traditional lpd service on port 515.  You (probably)
+want the URL to say <a  href="ipp://ip.of.print.server/printers/HL-2040">ipp://ip.of.print.server/printers/HL-2040</a>.  You
+could also try <a  href="http://ip.of.print.server:631/printers/HL-2040">http://ip.of.print.server:631/printers/HL-2040</a>.  It
+might not actually print, but you should get past the TCP barrier.
+
+ &gt; It didn't complain, but when I try to print a test page I get:
+ &gt;  [Job 479] Network host 'myserver' is busy, down, or unreachable; will
+ &gt; retry in 30 seconds...
+
+This looks like a TCP issue.  That is consistent with client CUPS
+trying to talk to print server lpd, which isn't running and thus isn't
+listening on port 515.
+
+ &gt; I checked the logs locally and just see the above error message.
+
+Consistent with TCP issue.
+
+ &gt; I cannot see anything related in the server logs, though I may not be
+ &gt; looking in the correct places.
+
+Look for a localnet host knocking on port 515, maybe in your firewall
+logs.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00362" href="msg00362.html">[tlug] cups and networking</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00368.html">Re: [tlug] Nice reply by Torvalds</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00370.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00366.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00363.html">[tlug] Tip of the Day: Printing Keymap Table with xmodmap</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00369"><strong>Date</strong></a></li>
+<li><a href="threads.html#00369"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

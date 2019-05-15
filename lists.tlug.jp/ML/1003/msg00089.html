@@ -1,0 +1,278 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] state of the art filtering -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNgqvrqevpu.qr> -->
+<!--X-Date: Tue, 16 Mar 2010 19:59:46 +0900 -->
+<!--X-Message-Id: 20100316105943.GH24804@yumi.tdiedrich.de -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20100316092524.c153a4a9.attila@kinali.ch -->
+<!--X-Reference: 4B9F4C11.90806@run.sh -->
+<!--X-Reference: 20100316103455.GG24804@yumi.tdiedrich.de -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00108.html">Date Prev</a>][<a href="msg00090.html">Date Next</a>][<a href="msg00088.html">Thread Prev</a>][<a href="msg00087.html">Thread Next</a>][<a href="maillist.html#00089">Date Index</a>][<a href="threads.html#00089">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] state of the art filtering</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 16 Mar 2010 11:59:43 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<a href="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">ranma@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] state of the art filtering</strong></li>
+<li>References: &lt;<a href="mailto:20100316092524.c153a4a9.attila@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">20100316092524.c153a4a9.attila@example.com</a>&gt; &lt;<a href="mailto:4B9F4C11.90806@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">4B9F4C11.90806@example.com</a>&gt;	&lt;<a href="mailto:20100316103455.GG24804@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20state%20of%20the%20art%20filtering">20100316103455.GG24804@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Tobias Diedrich wrote:
+&gt; Would be interesting to check the logs and see how big the
+&gt; percentage of mail servers that didn't come back after being denied
+&gt; by greylisting really is...
+
+Using a slightyly modified
+<a  rel="nofollow" href="http://ftp.linux.cz/pub/linux/people/jan_kasprzak/postgreystats.pl">http://ftp.linux.cz/pub/linux/people/jan_kasprzak/postgreystats.pl</a>
+
+|Greylisting stats from Mar 15 07:06:18
+|                  till Mar 16 07:21:24
+|
+|Messages
+|total:                       240
+|accepted immediately:        104 ( 43.3%)
+|greylisted:                  136 ( 56.7%)
+|
+|SMTP servers:
+|                                   hosts   messages
+|No message accepted:                  60        113
+|No message greylisted:                68         90
+|All accepted (maybe delayed):          6          1 = 8-7
+|More blocked than accepted:            6         10 = 16-6
+|
+|Greylisting performance:
+|
+|Greylisted:            136
+|Never accepted:        113 ( 83.1%)
+
+So it looks like postgrey reduced the number of spam messages by 83%
+in this case.
+
+#!/usr/bin/perl -w
+#
+# Postgreystats - a simple and incorrect statistics package for Postgrey.
+# Use at your own risk.
+# Distributable under the terms of GNU General Public License, version 2.
+# Written by Jan &quot;Yenya&quot; Kasprzak, <a  rel="nofollow" href="http://www.fi.muni.cz/~kas/">http://www.fi.muni.cz/~kas/</a>, 2006-11-10
+#
+# Usage: postgreystats.pl /var/log/maillog
+#
+my %clients;
+
+my ($delay_total, $delay_msgs);
+my ($msgs_gray, $msgs_in);
+
+my ($fromtime, $totime);
+
+my $prev;
+
+$delay_msgs = 0;
+$delay_total = 0;
+
+while(&lt;&gt;) {
+	$prev = $_;
+	if (!defined $fromtime) {
+		($fromtime) = m{^(... .. ..:..:..)};
+	}
+	if (my ($client) = m{postfix/smtpd\S+: [0-9A-F]{10,12}: client=\S+\[(\d+\.\d+\.\d+\.\d+)\]}) {
+		$clients{$client}-&gt;{in}++;
+
+		$msgs_in++;
+		next;
+	}
+
+	if (my ($client) = m{postfix/smtpd\S+: NOQUEUE: reject: RCPT from \S+\[(\d+\.\d+\.\d+\.\d+)\]:.* 450 .*Greylisted}i) {
+		$clients{$client}-&gt;{grey}++;
+		$msgs_gray++;
+	}
+
+	if (my ($delay) = m{postgrey\S+: delayed (\d+) seconds: }) {
+		$delay_total += $delay;
+		$delay_msgs++;
+	}
+}
+
+($totime) = ($prev =~ m{^(... .. ..:..:..)});
+
+print &quot;\nGreylisting stats from $fromtime\n&quot;,
+	&quot;                  till $totime\n\n&quot;;
+
+$msgs_in   -= $delay_msgs;
+$msgs_gray -= $delay_msgs;
+my $msgs_total = $msgs_gray + $msgs_in + $delay_msgs;
+
+printf   &quot;Messages\n&quot;
+	.&quot;total:                %10d\n&quot;
+	.&quot;accepted immediately: %10d (%5.1f%%)\n&quot;
+	.&quot;greylisted:           %10d (%5.1f%%)\n\n&quot;,
+	$msgs_total,
+	$msgs_in,    100*$msgs_in    / $msgs_total,
+	$msgs_gray,  100*$msgs_gray  / $msgs_total;
+
+#printf   &quot;Greylisting delay (avg): %10ds delayed\n&quot;
+#	.&quot;                         %10ds all\n\n&quot;,
+#	int($delay_total/$delay_msgs),
+#	int($delay_total/$msgs_in);
+
+my ($zero_in, $zero_grey, $grey_pos, $grey_neg);
+my ($zero_in_msgs, $zero_grey_msgs, $grey_pos_msgs_in, $grey_pos_msgs_gr,
+	$grey_neg_msgs_in, $grey_neg_msgs_gr);
+
+for my $client (keys %clients) {
+	my $in = $clients{$client}-&gt;{in}   || 0;
+	my $gr = $clients{$client}-&gt;{grey} || 0;
+
+	if ($in == 0) {
+		$zero_in++;
+		$zero_in_msgs+=$gr;
+	} elsif ($gr == 0) {
+		$zero_gr++;
+		$zero_gr_msgs += $in;
+	} elsif ($gr &lt;= $in) {
+		$grey_pos++;
+		$grey_pos_msgs_in += $in;
+		$grey_pos_msgs_gr += $gr;
+	} else {
+		$grey_neg++;
+		$grey_neg_msgs_in += $in;
+		$grey_neg_msgs_gr += $gr;
+	}
+}
+
+my ($grey_pos_msgs, $grey_neg_msgs) = (
+	$grey_pos_msgs_in - $grey_pos_msgs_gr,
+	$grey_neg_msgs_gr - $grey_neg_msgs_in
+);
+
+printf   &quot;SMTP servers:\n&quot;
+	.&quot;                                   hosts   messages\n&quot;
+	.&quot;No message accepted:          %10d %10d\n&quot;
+	.&quot;No message graylisted:        %10d %10d\n&quot;
+	.&quot;All accepted (maybe delayed): %10d %10d = %d-%d\n&quot;
+	.&quot;More blocked than accepted:   %10d %10d = %d-%d\n\n&quot;,
+
+	$zero_in, $zero_in_msgs,
+	$zero_gr, $zero_gr_msgs,
+	$grey_pos, $grey_pos_msgs_in-$grey_pos_msgs_gr, $grey_pos_msgs_in,
+		$grey_pos_msgs_gr,
+	$grey_neg, $grey_neg_msgs_gr-$grey_neg_msgs_in, $grey_neg_msgs_gr,
+		$grey_neg_msgs_in;
+
+printf  &quot;Graylisting performance:\n&quot;
+	.&quot;\n&quot;
+	.&quot;Graylisted:     %10d\n&quot;
+	.&quot;Never accepted: %10d (%5.1f%%)\n&quot;,
+
+	$msgs_gray,
+	$zero_in_msgs,  100*$zero_in_msgs/$msgs_gray;
+
+-- 
+Tobias						PGP: <a  rel="nofollow" href="http://8ef7ddba.uguu.de">http://8ef7ddba.uguu.de</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00085" href="msg00085.html">[tlug] state of the art spam filtering</a></strong>
+<ul><li><em>From:</em> Attila Kinali</li></ul></li>
+<li><strong><a name="00086" href="msg00086.html">Re: [tlug] state of the art spam filtering</a></strong>
+<ul><li><em>From:</em> Lewske Wada</li></ul></li>
+<li><strong><a name="00088" href="msg00088.html">Re: [tlug] state of the art filtering</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00108.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00090.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00088.html">Re: [tlug] state of the art filtering</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00087.html">Re: [tlug] state of the art spam filtering</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00089"><strong>Date</strong></a></li>
+<li><a href="threads.html#00089"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

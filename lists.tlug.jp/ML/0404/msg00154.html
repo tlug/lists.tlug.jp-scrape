@@ -1,0 +1,195 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] libusb and plustek sane&#45;backend (1.0.13) -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNobavirg.arg> -->
+<!--X-Date: Tue, 20 Apr 2004 22:42:25 +0200 -->
+<!--X-Message-Id: 20040420224225.79929f88.gstewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00036.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00153.html">Date Prev</a>][<a href="msg00155.html">Date Next</a>][<a href="msg00151.html">Thread Prev</a>][<a href="msg00157.html">Thread Next</a>][<a href="maillist.html#00154">Date Index</a>][<a href="threads.html#00154">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] libusb and plustek sane-backend (1.0.13)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 20 Apr 2004 22:42:25 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20libusb%20and%20plustek%20sane-backend%20%281.0.13%29">gstewart@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] libusb and plustek sane-backend (1.0.13)</strong></li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hi,
+
+Now that I've got the drivers for my DXR3 MPEG2 decoder board working with
+the 2.6.5 kernel it's time to switch over and leave 2.4.x behind. After a
+few teething problems - like finding out the hard way that usb-uhci is now
+uhci-hcd and wasting a couple of hours trying to figure out why there was
+nothing under /proc/bus/usb - it's up and running smoothly. I still have to
+see if sound works but that's low priority.
+
+High priority is getting the fscking scanner working. Googling revealed that
+the usb-scanner kernel module was dropped as of 2.6.3 and the user-space
+libusb libraries should be used instead. So I removed the older packages
+which were installed OOTB with the distro and grabbed latest from source,
+compiled and installed.
+
+$ sane-find-scanner
+
+  # No SCSI scanners found. If you expected something different, make sure that
+  # you have loaded a SCSI driver for your SCSI adapter.
+
+found USB scanner (vendor=0x04b8, product=0x011d, chip=LM983x?) at libusb:001:002
+  # Your USB scanner was (probably) detected. It may or may not be supported by
+  # SANE. Try scanimage -L and read the backend's manpage.
+
+  # Scanners connected to the parallel port or other proprietary ports can't be
+  # detected by this program.
+
+  # You may want to run this program as root to find all devices. Once you
+  # found the scanner devices, be sure to adjust access permissions as
+  # necessary.
+
+Okey dokey - sane knows to use libusb if present and it sees the scanner.
+
+`lsusb` lists out the USB devices connected perfectly well too.
+
+Having got this far I'm now up against a brick wall trying to get the
+plustek sane-backend to use libusb instead of the old /dev/usb/scanner0.
+
+Googling for sane-plustek and libusb returns about 10 results, all of which
+obviously mention both criteria but most of them not in the same context.
+Others say things like &quot;if you're using libusb then don't bother reading
+this&quot; etc. None of them say that the plustek backend doesn't work with
+libusb, but man sane-plustek says:
+
+&quot;Alternatively, the backend is able to access your scanner via libusb.&quot;
+
+But doesn't say how. Grrrrrr.... Don't you love it how people think you
+know this shit intuitively?
+
+Normal syntax for pointing the backend to the scanner when using the
+usb-scanner kernel module was:
+
+device /dev/usb/scanner0
+
+I tried:
+
+device libusb:001:002
+
+No dice.
+
+What next?
+
+-- 
+G. Stewart   --   gstewart@example.com -- gstewart@example.com
+Registered Linux user #284683 (Slackware 9.0, Linux 2.6.5)
+--------------------------------------------------------------
+&quot;Mothers all want their sons to grow up to be President, but they
+ don't want them to become politicians in the process.&quot;
+            -- John F. Kennedy
+</pre>
+<p><strong>Attachment:
+<a href="pgp00036.pgp" ><tt>pgp00036.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00157" href="msg00157.html">Re: [tlug] libusb and plustek sane-backend (1.0.13)</a></strong>
+<ul><li><em>From:</em> ben konrath</li></ul></li>
+<li><strong><a name="00162" href="msg00162.html">Re: [tlug] libusb and plustek sane-backend (1.0.13)</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00153.html">Re: [tlug] Auto-detect</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00155.html">[tlug] followup on my .muttrc and fcc-hook problem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00151.html">[tlug] .muttrc and fcc-hook problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00157.html">Re: [tlug] libusb and plustek sane-backend (1.0.13)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00154"><strong>Date</strong></a></li>
+<li><a href="threads.html#00154"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Can I make a subdirectory of localhost behave like a root	directory for a site? -->
+<!--X-From-R13: <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 21 Oct 2006 15:25:43 +0900 -->
+<!--X-Message-Id: 17721.48833.820331.644734@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4539A93C.6000606@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00177.html">Date Prev</a>][<a href="msg00179.html">Date Next</a>][<a href="msg00177.html">Thread Prev</a>][<a href="msg00195.html">Thread Next</a>][<a href="maillist.html#00178">Date Index</a>][<a href="threads.html#00178">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Can I make a subdirectory of localhost behave like a root	directory for a site?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 21 Oct 2006 15:31:29 +0900</li>
+<li><strong>From</strong>: <strong>&lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Can%20I%20make%20a%20subdirectory%20of%20localhost%20behave%20like%20a%20root%9directory%20for%20a%20site%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Can I make a subdirectory of localhost behave like a root	directory for a site?</strong></li>
+<li>References: &lt;<a href="msg00176.html">4539A93C.6000606@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+ &gt; What I'd like to be able to do is make it so that on my local machine, 
+ &gt; when accessing each web site's directory, the server behaves as if the 
+ &gt; web site's own directory is it's root directory. Then I can test at home 
+ &gt; and upload to my hosting service without having relative links break on me.
+ &gt; 
+ &gt; Is this possible in any way?
+
+Yes.  This is *precisely* what is meant by a virtual host, you just
+don't want it to be out there on the Internet (until you say so, of
+course!)  What you need to do is create aliases for localhost (on the
+loopback interface, eg, with
+
+127.0.0.1   website_one
+127.0.0.1   website_two
+
+in /etc/hosts; you may need to tell /etc/nssswitch.conf to pay
+attention to &quot;files&quot; for DNS services; if you're running a local
+nameserver it may be preferable to do it that way, with an address
+on the LAN---this is beyond the scope of your question, though).
+
+Then in your apache configuration, something like
+
+# The restriction to an unroutable interface will keep these sites
+# from leaking out to the Internet.
+NameVirtualHost 127.0.0.1
+&lt;VirtualHost 127.0.0.1&gt;
+        ServerName website_one
+        DocumentRoot /var/www/website_one/
+
+        # all your usual paraphernalia goes here
+
+&lt;/VirtualHost&gt;
+
+and from your browser, visit <a  href="http://website_one/">http://website_one/</a> (not
+<a  href="http://localhost/website_one/">http://localhost/website_one/</a>!!)
+
+Doing this with the loopback interface is something I've never
+actually tried, but it should work.
+
+HTH
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00195" href="msg00195.html">Re: [tlug] Can I make a subdirectory of localhost behave like a root	directory for a site?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00176" href="msg00176.html">[tlug] Can I make a subdirectory of localhost behave like a root directory for a site?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00177.html">Re: [tlug] Can I make a subdirectory of localhost behave like a	root directory for a site?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00179.html">Re: [tlug] Linux and Windows {2k|Xp|Vista} Comparison</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00177.html">Re: [tlug] Can I make a subdirectory of localhost behave like a	root directory for a site?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00195.html">Re: [tlug] Can I make a subdirectory of localhost behave like a root	directory for a site?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00178"><strong>Date</strong></a></li>
+<li><a href="threads.html#00178"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

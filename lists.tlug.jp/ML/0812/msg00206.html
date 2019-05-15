@@ -1,0 +1,200 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Local network routing problem -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Thu, 25 Dec 2008 11:56:44 +0900 -->
+<!--X-Message-Id: 87wsdpufg7.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4952DC89.1030302@uchicago.edu -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00205.html">Date Prev</a>][<a href="msg00207.html">Date Next</a>][<a href="msg00205.html">Thread Prev</a>][<a href="msg00208.html">Thread Next</a>][<a href="maillist.html#00206">Date Index</a>][<a href="threads.html#00206">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Local network routing problem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 25 Dec 2008 12:00:24 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Local%20network%20routing%20problem">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Local network routing problem</strong></li>
+<li>References: &lt;<a href="msg00204.html">4952DC89.1030302@uchicago.edu</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Stuart Luppescu writes:
+
+ &gt; So, I thought I'd put them all on the same subnet. I made the upstairs
+ &gt; router the same 192.168.1.0 network, made its IP address 192.168.1.151
+ &gt; (beyond the range of DHCP addresses of the basement router), and had
+ &gt; it assign addresses 192.168.1.152 to 192.168.1.200 by DHCP. For some
+ &gt; reason, I still can't see the Windows shares like this. But worse
+ &gt; still, I can't ssh into my Linux box in the basement (192.168.1.2)
+ &gt; from my laptop on the upstairs wireless network (with IP address
+ &gt; 192.168.1.152). It tells me no route to host.
+
+You can't do that.  If two hosts do not each have a physical
+connection to a common router, they can't be on the same subnet (more
+precisely, they can't be routed by subnet; you could assign a
+host-specific route at each router along the way, sort of like a uucp
+bang-path).
+
+ &gt; Then I got the bright idea of making the netmask on the two networks
+ &gt; 255.255.0.0. But when I did that, I couldn't log into any remote
+ &gt; machine. I kept getting ``No route to host'' errors.
+ &gt; 
+ &gt; Perhaps someone can explain to me a couple of things:
+ &gt; 1) How come when my laptop is on the same subnet, it can't find a
+ &gt; route to my desktop machine in the basement?
+
+For this level of discussion, consider that automatic routing
+protocols are done by *physical* broadcasts on the *physical* subnet
+(ie, the set of hosts all connected to a given interface on a given
+router).  To automatically find a route from L(aptop) to D(esktop) via
+the logical subnet, both would have to be reachable by a common
+physical broadcast.  They aren't.
+
+ &gt; 2) How do I access Windows shares from the upstairs wireless network?
+ &gt; This is important because the printer is served by samba on my Linux
+ &gt; box downstairs.
+
+Set up a route and everything should work.  I would suggest that each
+physical net be given a logical subnet.  I gather you have three,
+something like this:
+
++--------+     +-----------+     +-------------+     +---------+
+| laptop |&lt;-W-&gt;| up router |&lt;-E-&gt;| down router |&lt;-W-&gt;| desktop |
++--------+     +-----------+     +-------------+     +---------+
+
+where W means a wireless link and E means wired Ethernet.
+
+Then do the following (or the equivalent DHCP config)
+
+# this is your &quot;backbone&quot;
+# modern ifconfig will automatically configure a route for
+# directly connected hosts on this ethernet
+# at up
+ifconfig eth   192.168.0.1 netmask 255.255.255.0
+# at down
+ifconfig eth   192.168.0.2 netmask 255.255.255.0
+
+# configure the &quot;up&quot; subnet
+# at up
+ifconfig wless 192.168.1.1 netmask 255.255.255.0
+# tell &quot;up&quot; how to go down
+# note that the gateway is on the 192.168.0 &quot;backbone&quot;
+route add -net 192.168.2.0 gateway 192.168.0.2
+
+# configure the &quot;down&quot; subnet
+# at down
+ifconfig wless 192.168.2.1 netmask 255.255.255.0
+# tell &quot;down&quot; how to go up
+# note that the gateway is on the 192.168.0 &quot;backbone&quot;
+route add -net 192.168.1.0 gateway 192.168.0.1
+
+An alternative would be to set up the &quot;up&quot; and &quot;down&quot; routers as
+transparent bridges.  This probably means that they would simply echo
+*all* packets (except those they receive themselves) over the wired
+link to the other wireless link.  (Maybe bridges are supposed to be
+smart enough to know from ARPs that they don't need to bridge packets
+that are destined for machines they recognize on their local physical
+network, I forget.  Again, it won't hurt you to think in terms of a
+simple echo.)
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00204" href="msg00204.html">[tlug] Local network routing problem</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00205.html">Re: [tlug] Local network routing problem</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00207.html">Re: [tlug] Quoting...yet again</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00205.html">Re: [tlug] Local network routing problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00208.html">[tlug] GPL Quote</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00206"><strong>Date</strong></a></li>
+<li><a href="threads.html#00206"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

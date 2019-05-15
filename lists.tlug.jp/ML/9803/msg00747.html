@@ -1,0 +1,195 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Kinput2, canna, kterm and locales -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date: Sat, 28 Mar 1998 05:06:34 &#45;0500 (EST) -->
+<!--X-Message-Id: 19980328190603P.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.980328124756.15152R&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00746.html">Date Prev</A>][<A HREF="msg00748.html">Date Next</A>][<A HREF="msg00787.html">Thread Prev</A>][<A HREF="msg00749.html">Thread Next</A>][<A HREF="maillist.html#00747">Date Index</A>][<A HREF="threads.html#00747">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Kinput2, canna, kterm and locales</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:sstone@example.com">sstone@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Kinput2, canna, kterm and locales</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 28 Mar 1998 19:06:03 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Sat, 28 Mar 1998 12:48:53 +0900 (JST)"&lt;<A HREF="msg00740.html">Pine.LNX.3.96.980328124756.15152R-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00740.html">Pine.LNX.3.96.980328124756.15152R-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Scott" == Scott Stone &lt;sstone@example.com&gt; writes:
+
+    Scott&gt; interesting, maybe your glibc wasn't compiled with the intl support... I
+    Scott&gt; don't recall having to do anything special to libc5, though, and I don't
+    Scott&gt; get any locale errors with it.  Something to watch out for with TurboLinux
+    Scott&gt; 1.9beta, I suppose.
+
+Well, I just ran kterm with strace and found that its looking at:
+
+/usr/X11R6/lib/X11/locale/locale.alias
+/usr/X11R6/lib/X11/locale/locale.dir
+/usr/X11R6/lib/X11/locale/C/XLC_LOCALE
+/usr/share/locale/locale.alias
+
+Then it warns:
+
+Warning: locale not supported by...
+
+Then continues on looking for various ja locales under
+/usr/share/locale/, such as:
+
+/usr/share/locale/ja_JP.eucJP/LC_CTYPE
+
+and finally ends with a message:
+
+Couldn\'t set locale: ja_JP.eucJP
+
+Do you have under and ja* under /usr/share/locale or
+/usr/share/i18n/locales ? I have many non-japanese ones, but nothing
+with ja...
+
+In my searches, I came accross this at: 
+	<A TARGET="_top" HREF="http://www-jlc.kek.jp/~fujiik/mklinux/memo/diary.html">http://www-jlc.kek.jp/~fujiik/mklinux/memo/diary.html</A>
+
+LD_PRELOAD="$JAVA_HOME/lib/${ARCH}/$THREADS_TYPE/liblocale.so" 
+
+"The essential point of this japanization is to force HotJava to use
+the setlocale function (which is actually _Xsetlocale) in liblocale.so
+instead of that in /lib/libc.so.6 which is incapable of handling
+two-byte character locales: The above LD_PRELOAD setting in
+.java_wrapper forces java to load setlocale in liblocale.so first
+thing in the loading."
+
+So, it would appear that 1) I should not care what is under
+/usr/share/locale, since I think this is where glibc searched, and 2)
+I need to get kterm to use X's locale functions. However, when I tried
+
+	nm -o *|grep -i XsetLocale 
+
+in /usr/X11/lib, it only turned up XSetLocaleModifiers, which is
+defined in libX11.a &amp; .so.
+
+Now I'm wondering if the problem isn't that the version of X11 I'm
+using. Its XFree86 3.3.1, straight off the RH CD. I tried to install
+the 3.3.2, but had all sorts of unresolved symbols, so I restored the
+tar of /usr/X11R6 that I'd taken before the install. Both versions
+though, seem to rely on glibc's setlocal, as it is undefined in all
+the libs under X11/lib
+
+Short of building X11, I'm not sure what to do next. There has to be a
+better way. One last item, there is a lib called:
+
+/lib/libBrokenLocale.so.1:00000440 T __ctype_get_mb_cur_max
+
+I don't know what it does, so I'm grabbing the source for glibc...
+
+Thanks,
+
+	Andy
+---------------------------------------------------------------
+Next TLUG Meeting: 11 April Sat, Tokyo Station Yaesu gate 12:30
+Featuring Tague Griffith of Netscape i18n talking on source code
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00749" HREF="msg00749.html">Re: tlug: Kinput2, canna, kterm and locales</A></STRONG>
+<UL><LI><EM>From:</EM> "Andrew S. Howell" &lt;andy@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00740" HREF="msg00740.html">Re: tlug: Kinput2, canna, kterm and locales</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00746.html">Re: tlug: Kinput2, canna, kterm and locales</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00748.html">tlug: ML archives 0n-line?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00787.html">Re: tlug: Kinput2, canna, kterm and locales</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00749.html">Re: tlug: Kinput2, canna, kterm and locales</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00747"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00747"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

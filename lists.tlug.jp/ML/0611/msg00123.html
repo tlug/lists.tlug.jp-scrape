@@ -1,0 +1,274 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] linking gsl with atlas&#45;sse2 -->
+<!--X-From-R13: [vpuny Vnwrx <unwrx1Nxneybi.zss.phav.pm> -->
+<!--X-Date: Mon, 06 Nov 2006 23:58:05 +0900 -->
+<!--X-Message-Id: 20061106145731.GD4560@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00122.html">Date Prev</a>][<a href="msg00124.html">Date Next</a>][<a href="msg00122.html">Thread Prev</a>][<a href="msg00128.html">Thread Next</a>][<a href="maillist.html#00123">Date Index</a>][<a href="threads.html#00123">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] linking gsl with atlas-sse2</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 6 Nov 2006 15:57:31 +0100</li>
+<li><strong>From</strong>: <strong>Michal Hajek &lt;<a href="mailto:hajek1@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20linking%20gsl%20with%20atlas-sse2">hajek1@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] linking gsl with atlas-sse2</strong></li>
+<li>User-agent: Mutt/1.5.13 (2006-08-11)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hello list, 
+
+I am trying to compile a simple program based on gsl (Gnu Scientific
+Library) example, look below for source. I also have atlas-sse2 libraries
+installed on my system [1] and I want to link it with the program. 
+
+But here is the result:
+
+# gcc -Wall -c test.c
+#
+
+-- so far everything seem to go well
+
+# gcc test.o -lgsl -lcblas -latlas -lm
+/usr/bin/ld: cannot find -lcblas
+collect2: ld returned 1 exit status
+#
+
+-- this is my problem. 
+
+First I thougt the /etc/ld.so.conf is my friend, but:
+
+# cat /etc/ld.so.conf
+/usr/X11R6/lib
+/usr/lib/atlas/sse2
+/usr/lib/sse2
+
+include /etc/ld.so.conf.d/*.conf
+# 
+
+And after that I looked if actually I have the required lib's
+
+# ls -la /usr/lib/sse2
+total 25464
+drwxr-xr-x   2 root root    4096 Nov  6 15:33 .
+drwxr-xr-x 103 root root   24576 Nov  6 15:39 ..
+-rw-r--r--   1 root root 8572678 May 23 03:40 libatlas.a
+lrwxrwxrwx   1 root root      13 Nov  6 15:33 libatlas.so -&gt; libatlas.so.3
+lrwxrwxrwx   1 root root      15 Nov  3 14:00 libatlas.so.3 -&gt; libatlas.so.3.0
+-rw-r--r--   1 root root 5805888 May 23 03:40 libatlas.so.3.0
+-rw-r--r--   1 root root  302296 May 23 03:41 libcblas.a
+lrwxrwxrwx   1 root root      13 Nov  6 15:33 libcblas.so -&gt; libcblas.so.3
+lrwxrwxrwx   1 root root      15 Nov  3 14:00 libcblas.so.3 -&gt; libcblas.so.3.0
+-rw-r--r--   1 root root 5208384 May 23 03:40 libcblas.so.3.0
+-rw-r--r--   1 root root  352754 May 23 03:41 libf77blas.a
+lrwxrwxrwx   1 root root      15 Nov  6 15:33 libf77blas.so -&gt; libf77blas.so.3
+lrwxrwxrwx   1 root root      17 Nov  3 14:00 libf77blas.so.3 -&gt; libf77blas.so.3.0
+-rw-r--r--   1 root root 5196064 May 23 03:40 libf77blas.so.3.0
+-rw-r--r--   1 root root  357864 May 23 03:41 liblapack_atlas.a
+lrwxrwxrwx   1 root root      20 Nov  6 15:33 liblapack_atlas.so -&gt; liblapack_atlas.so.3
+lrwxrwxrwx   1 root root      22 Nov  3 14:00 liblapack_atlas.so.3 -&gt; liblapack_atlas.so.3.0
+-rw-r--r--   1 root root  166688 May 23 03:40 liblapack_atlas.so.3.0
+
+
+This I do not understand. Why the linker cannot find libcblas.so.3.0
+library? 
+If I compile and link the program with only gsl libraries, eg. 
+# gcc -Wall -t test.c
+# gcc test.o -lgsl -lgslcblas -lm
+
+everything works well. I get a.out binary and the program runs (presumably) as
+expected. 
+The gslcblas library is located in /usr/lib/ 
+
+I have tried to run ldconfig, but it did not change anything. 
+ld still cannot find cblas or atlas.  
+
+Obviously, I am missing something, but I cannot see what. 
+Is there someone with better eyes? :)
+
+[1] debian testing on IBM X40 
+installed libgsl0-dev 1.8-1
+          libgsl0     1.8-1
+          gsl-bin     1.8-1 
+          atlas3-headers  3.6.0-20.2
+          atlas3-sse2-dev 3.6.0-20.2
+          atlas3-sse2     3.6.0-20.2
+
+Best regards
+Michal
+
+ ----- source test.c -----
+#include &lt;stdio.h&gt;
+#include &lt;gsl/gsl_multifit.h&gt;
+
+int
+main (int argc, char **argv)
+{
+  int i, n;
+  double xi, yi, chisq;
+  gsl_matrix *X, *cov;
+  gsl_vector *y, *c;
+
+  if (argc != 2)
+    {
+      fprintf (stderr,&quot;usage: fit n &lt; data\n&quot;);
+      exit (-1);
+    }
+
+  n = atoi (argv[1]);
+
+  X = gsl_matrix_alloc (n, 3);
+  y = gsl_vector_alloc (n);
+
+  c = gsl_vector_alloc (3);
+  cov = gsl_matrix_alloc (3, 3);
+
+  for (i = 0; i &lt; n; i++)
+    {
+      int count = fscanf (stdin, &quot;%lg %lg&quot;,
+                          &amp;xi, &amp;yi);
+
+      if (count != 2)
+        {
+          fprintf (stderr, &quot;error reading file\n&quot;);
+          exit (-1);
+        }
+
+      printf (&quot;%g %g\n&quot;, xi, yi);
+
+      gsl_matrix_set (X, i, 0, 1.0);
+      gsl_matrix_set (X, i, 1, xi);
+      gsl_matrix_set (X, i, 2, xi*xi);
+
+      gsl_vector_set (y, i, yi);
+    }
+
+  {
+    gsl_multifit_linear_workspace * work
+      = gsl_multifit_linear_alloc (n, 3);
+    gsl_multifit_linear (X, y, c, cov,
+                          &amp;chisq, work);
+    gsl_multifit_linear_free (work);
+  }
+
+#define C(i) (gsl_vector_get(c,(i)))
+#define COV(i,j) (gsl_matrix_get(cov,(i),(j)))
+
+  {
+    printf (&quot;# best fit: Y = %g + %g X + %g X^2\n&quot;,
+            C(0), C(1), C(2));
+
+    printf (&quot;# covariance matrix:\n&quot;);
+    printf (&quot;[ %+.5e, %+.5e, %+.5e  \n&quot;,
+               COV(0,0), COV(0,1), COV(0,2));
+    printf (&quot;  %+.5e, %+.5e, %+.5e  \n&quot;,
+               COV(1,0), COV(1,1), COV(1,2));
+    printf (&quot;  %+.5e, %+.5e, %+.5e ]\n&quot;,
+               COV(2,0), COV(2,1), COV(2,2));
+    printf (&quot;# chisq = %g\n&quot;, chisq);
+  }
+  return 0;
+}
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00128" href="msg00128.html">Re: [tlug] linking gsl with atlas-sse2</a></strong>
+<ul><li><em>From:</em> Edward Middleton</li></ul></li>
+<li><strong><a name="00130" href="msg00130.html">[tlug] linking gsl with atlas-sse2</a></strong>
+<ul><li><em>From:</em> stephen</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00122.html">[tlug] [Announcement] TLUG Technical Meeting 11-11-2006</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00124.html">Re: [tlug] CJK Printing from Web Browsers in Debian 3.3.2</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00122.html">[tlug] [Announcement] TLUG Technical Meeting 11-11-2006</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00128.html">Re: [tlug] linking gsl with atlas-sse2</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00123"><strong>Date</strong></a></li>
+<li><a href="threads.html#00123"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

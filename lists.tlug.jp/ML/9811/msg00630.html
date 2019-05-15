@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Floppy mounts -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Tue, 24 Nov 1998 17:37:14 +0900 -->
+<!--X-Message-Id: m3ww4lebar.fsf@example.com&#45;352.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981124163129.24851K&#45;100000@example.com -->
+<!--X-Reference-Id: m3g1b935gv.fsf@example.com&#45;352.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00629.html">Date Prev</A>][<A HREF="msg00631.html">Date Next</A>][<A HREF="msg00628.html">Thread Prev</A>][<A HREF="msg00631.html">Thread Next</A>][<A HREF="maillist.html#00630">Date Index</A>][<A HREF="threads.html#00630">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Floppy mounts</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Floppy mounts</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 24 Nov 1998 17:37:32 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: Frank Bennett's message of "24 Nov 1998 16:38:56 +0900"</LI>
+<LI>References: &lt;<A HREF="msg00624.html">Pine.LNX.3.96LJ1.1b7.981124163129.24851K-100000@example.com</A>&gt;&lt;<A HREF="msg00628.html">m3g1b935gv.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Frank Bennett &lt;bennett@example.com&gt; writes:
+
+&gt; For the mo, tho, looks like mtools is what I'm after.
+
+Fear not, I've not started talking to myself again.  I've quoted
+the above so I can point out that I'm wavering on the approach to
+take to this problem.
+
+When Rex pointed out mtools and I ran a couple of the utilities,
+I thought that that clinched it.  It looked really easy and
+straightforward to me, but then I thought again.  The users I'm
+faced with are Windows children, not DOS children.  They will not
+know what to do with a command line; they will expect the
+filemanager to offer all the options.
+
+So mtools handles hardware the way I want it handled, but it
+doesn't offer the right user interface, and there's no way to
+strap that interface onto it that I can think of; the DOS floppy
+has got to look like an extension of the Unix filesystem, so that
+any Unix filemanager can get ahold of it.  And the only way to
+accomplish that is by mounting it.
+
+So I played around with mount -o sync for a couple of minutes,
+and discovered that mount and the floppy driver are more robust
+than I expected them to be.  I ran the following sequence:
+
+  mount -t msdos -o sync /dev/fd0 /mnt/floppy
+  ls -l /mnt/floppy
+  [remove disk A, insert disk B]
+  ls -l /mnt/floppy
+  mount -t msdos -o sync /dev/fd0 /mnt/floppy
+  ls -l /mnt/floppy
+
+The results are interesting, and likely useful.  The second ls -l
+showed a cached listing of the removed disk -- not good, because
+things are then out of step.  The second mount command returns a
+couple of nasty looking error messages (fstab shows filesystem
+already mounted, that sort of thing).  But despite this, the
+third ls -l actually shows the new filesystem.
+
+Apparently because the disk is known by the OS to be synced, it
+will whingingly allow you to overlay a new mount onto its mount
+point without unmounting the disk that's been taken out.
+
+Next, I tried this:
+
+  mount -t msdos -o sync /dev/fd0 /mnt/floppy
+  ls -l /mnt/floppy
+  [remove disk A, insert disk B]
+  echo WOW &gt; /mnt/floppy/test
+  ls -l /mnt/floppy
+  [replace disk A]
+  ls -l /mnt/floppy
+  [remove disk A, insert disk B]
+  mount -t msdos -o sync /dev/fd0 /mnt/floppy
+  ls -l /mnt/floppy
+
+(Sorry I can't show the actual progress: cut and paste are broken
+in my X display right now.)
+
+Here, the second ls -l shows the new file /mnt/floppy/test in the
+filesystem.  No lights come on, so I thought "wow, sync doesn't
+work".  So I replaced the original disk, and did the third ls -l.
+The disk ground a little bit, and then I got a listing WITHOUT
+THE NEW FILE.  This is the right behavior; the write failed, so
+no file exists.
+
+The rest of the test ran as in the previous trial; the overlaid
+mount took effect after the OS got done whinging about the ugly
+way the hardware was being abused.  Just to be sure, I tried this
+same sequence again, but without the reinsertion of Disk A.  All
+worked as it ought; "test" just vanished into the ether.
+
+So it looks like automounting will probably be reliable enough
+for our needs, once I get it working.  If the timeout for mounts
+is just a bit less than the time it takes to switch disks, users
+will have to work pretty hard to get everything in place in time
+for a file write to disappear on them.
+
+Many thanks to Howard, Rex and Scott for helping me thrash
+through this.
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00631" HREF="msg00631.html">Re: tlug: Floppy mounts</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00624" HREF="msg00624.html">Re: tlug: Floppy mounts</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00628" HREF="msg00628.html">Re: tlug: Floppy mounts</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00629.html">Re: tlug: kon probs.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00631.html">Re: tlug: Floppy mounts</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00628.html">Re: tlug: Floppy mounts</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00631.html">Re: tlug: Floppy mounts</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00630"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00630"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

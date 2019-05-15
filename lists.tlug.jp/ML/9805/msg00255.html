@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: help! intallation of Wnn4 -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 18 May 1998 12:43:39 +0900 -->
+<!--X-Message-Id: 13663.44499.274060.848968@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 003301bd8145$8bfd4600$306ea7cc@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980517161121.25857n&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00254.html">Date Prev</A>][<A HREF="msg00256.html">Date Next</A>][<A HREF="msg00242.html">Thread Prev</A>][<A HREF="msg00322.html">Thread Next</A>][<A HREF="maillist.html#00255">Date Index</A>][<A HREF="threads.html#00255">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: help! intallation of Wnn4</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: help! intallation of Wnn4</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 18 May 1998 12:41:07 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00242.html">Pine.LNX.3.96LJ1.1b7.980517161121.25857n-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00239.html">003301bd8145$8bfd4600$306ea7cc@example.com</A>&gt;&lt;<A HREF="msg00242.html">Pine.LNX.3.96LJ1.1b7.980517161121.25857n-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Scott" == Scott Stone &lt;sstone@example.com&gt; writes:
+
+    Scott&gt; On Sat, 16 May 1998, Takeshi Masuda wrote:
+
+    &gt;&gt; Please, anyone who has successfully installed the RPM package
+    &gt;&gt; of Wnn4 help me.
+
+Wnn is a bear to work with (or worse, a comparison with Boris Yeltsin
+comes immediately to mind, probably favoring Boris's kind and amiable
+personality).  Canna is much more user-friendly.
+
+    &gt;&gt; site, and made an user "wnn", and then installed it. Next, I
+    &gt;&gt; got the source of xemacs and tried to compile it with mule and
+
+What version of XEmacs?  Currently supported versions include 19.15,
+19.16 (but they don't support Mule), 20.3 and 20.4.  21.0 is in beta,
+and there is some noise about a 20.5 (the 21.0 package system will
+make transition annoying for some people).
+
+    &gt;&gt; Wnn support, but I couldn't. Jeff Miller, who read my article
+    &gt;&gt; at comp.emacs.xemacs, told me that I couldn't compile xemacs
+    &gt;&gt; because I didn't install Wnn4 correctly.
+
+This is probably true.[1]  As already discussed, you need both the Wnn
+development libraries and the Wnn header files.  XEmacs sometimes gets
+a little confused about the location of X-related libraries,
+especially ones like Wnn that don't bother to try to be compatible;
+you may be able get those libs found by using
+`--site-prefixes=/usr/local' on the configure command line.  If that
+doesn't work, you may need to use `--site-includes' and
+`--site-libraries'.  Do not use --site-runtime-libraries; you will be
+sorry if you try that.
+
+    &gt;&gt; in /etc/ld.so.conf, and typed "ldconfig", but I still can't
+    &gt;&gt; compile xemacs.
+
+This doesn't help much; you need to tell XEmacs configure, and thereby
+ld, where the libraries are; ldconfig tells ld.so where they are.
+
+    Scott&gt; Did the wnn4 rpm put anything into /usr/local/include?  You
+    Scott&gt; might need to make those available to the compiler for
+    Scott&gt; xemacs as well.  I've also heard that xemacs doesn't build
+    Scott&gt; right on glibc systems at all.
+
+This is a lie.  Every XEmacs beta and release since 19.15 and 20.1, 18
+months at least, has built on several glibc systems.  Probably about
+half of the beta testers, maybe more, who build on Linux build with
+glibc (and egcs, but that's another story) as of 21.0.  In particular
+the head maintainer builds with Mule, Wnn, Canna, and SJ3 for every
+beta on a glibc system.
+
+It is true that it is almost impossible to build anything non-trivial
+on many "stock" glibc systems.  But this is the fault[2] of the
+incompatibility of libc5 with libc6, and the incompatibility of
+glibc with everything, not at all a problem with the application
+software.
+
+I haven't tried very hard, but I have yet to see a glibc
+incompatibility that did not manifest itself with both XEmacs and the
+FSF's release of Emacs---of course no incompatibilities with Wnn will
+manifest with current FSF-designed Emacsen, since the FSF has
+abandoned support for all backend servers.[3]
+
+HTH
+
+Footnotes: 
+[1]  It's not just you.  Gotta love RedHat.
+
+[2]  Strictly speaking, the fault is of the distributors who release
+beta systems and charge full price for them, not of the libraries
+whose developers are busting butt to make them work, and work right
+for the right reasons for a change.  You will note that Debian still
+has not released a glibc-based system as its default configuration---
+they evidently think "free" is too much to charge.
+
+[3]  Well, "fgrep -i wnn *" gives some hits on the word "knownness"
+[sic], but none on Wnn, in emacs-20.2 and emacs-20.2/src.
+
+
+
+--------------------------------------------------------------
+Next Nomikai: 15 May Fri, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00239" HREF="msg00239.html">tlug: help! intallation of Wnn4</A></STRONG>
+<UL><LI><EM>From:</EM> "Takeshi Masuda" &lt;tmasuda@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00242" HREF="msg00242.html">Re: tlug: help! intallation of Wnn4</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00254.html">Re: tlug: "laplink cable"</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00256.html">Re: tlug: "laplink cable"</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00242.html">Re: tlug: help! intallation of Wnn4</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00322.html">Re: tlug: help! intallation of Wnn4</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00255"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00255"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

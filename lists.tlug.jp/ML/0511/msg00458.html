@@ -1,0 +1,231 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] Network with Windows and Linux -->
+<!--X-From-R13: Bngevpx @example.com <gyht.avrffraNtznvy.pbz> -->
+<!--X-Date: Tue, 29 Nov 2005 17:11:50 +0900 -->
+<!--X-Message-Id: 2d4c9c600511282221o3edd12d5hb8bc0f2c4eb8948@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 877jasw5zp.fsf@example.com -->
+<!--X-Reference: 20051129043820.31690.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00457.html">Date Prev</a>][<a href="msg00459.html">Date Next</a>][<a href="msg00453.html">Thread Prev</a>][<a href="msg00445.html">Thread Next</a>][<a href="maillist.html#00458">Date Index</a>][<a href="threads.html#00458">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Network with Windows and Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 29 Nov 2005 15:21:51 +0900</li>
+<li><strong>From</strong>: <strong>Patrick Niessen &lt;<a href="mailto:tlug.niessen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Network%20with%20Windows%20and%20Linux">tlug.niessen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Network with Windows and Linux</strong></li>
+<li>References: &lt;<a href="msg00448.html">877jasw5zp.fsf@example.com</a>&gt;	&lt;<a href="msg00451.html">20051129043820.31690.qmail@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 11/29/05, Gerald Naughton &lt;naughton123@example.com&gt; wrote:
+
+&gt; how to sync passwords between Samba Server/User
+&gt; A/Cs/Mail Server
+&gt; /Web Server etc
+&gt;
+&gt;
+&gt; Maybe the only way is LDAP with Samba
+&gt;
+&gt; My ultimate goal is get rid of my Windows 2000 Domain
+&gt; Server ;-&gt;
+&gt;
+
+We have been using Samba on old compaq proliant's with linux as a file
+server for 4 or 5 years at our company now.  We also have NT4
+controller (currently required by the Exchange setup) as well as an AD
+controller to which we will migrate next year.
+
+The thing you want to think about first is which is your
+authentication server, as syncronising passwords is pretty messy:
+
+1.In our case the accounts are defined on Windows and other services
+use it to check passwords.  If you have windows servers already and a
+part of an international organisation's network this may be the best
+way.
+
+2. On the other hand, you may decide that Samba should keep your user
+data, so it will act as your PDC. Or you keep account data on another
+unix system (this seems less straightforward as a lot of tweaking
+needs to be done by you).
+
+Linux systems can authenticate to a Windows NT4 domain by using the
+pam_smb module.  This will allow you to setup ssh, ftp and other
+services to be available to windows accounts.  You can then also
+configure other linux services to use pam for authentication (I think
+there may be a mod_pam for apache).
+
+We have a simple smb authentication using smbclient -&gt; you pass
+trhough username and password and if the return value is TRUE the user
+is authorised.
+
+For Active Directory, it seems that with enough work you can use
+pam_krb5 (not sure the name but its kerberos anyway) in the same way. 
+Web applications are easier to authenticate: just use an LDAP call
+with the users credentials to the AD server - if accepted user is
+authenticated.  LDAP can then also be used to check for group
+membership.
+
+For simple File Serving tasks inside an existing NT domain you can use
+winbindd. This will check with the domain controller at login time and
+then keep authentication cached.  It also maintains user/group id
+mapping to Windows accounts.  So passwords are always kept only on the
+windows server and no syncronisation takes place.  It is however
+critical that you backup this mapping - if it is lost you still have
+all the files but don't know who owns them!  since Samba 3 there are
+various storage options for winbind.  The only useful one really is
+ldap backend, as it allows easy and consistent backup / replication an
+it also guarantees that all samba servers use the SAME unix ids.  I
+also heard that if you have rights to the AD root you could also
+install a special LDAP schema into active directory, that would save
+you from maintaining a seperate LDAP server.
+
+You can also set up LDAP authentication seperate from samba and
+windows.  For this to work Linux can use pam_ldap and windows needs to
+be hacked with a new &quot;gina&quot; module (the one that handles the
+authentication).  If you google &quot;windows gina authentication&quot; you will
+probably find the project site.
+
+Real password sync is also an option either using samba, or the free
+Unix Services for Windows as released by Microsoft.
+
+One important thing to consider is for file serving.  So called
+&quot;opportunistic locking&quot; while said to increase access speed
+dramatically, often causes problems such as locked files after they
+were closed,  or even sometimes data loss when working with office
+apps.  You have to confirm this and if it causes problems switch it
+off.  Samba says its a design flaw of CIFS protocol and that samba
+behaves according to protocol.  However real windows doesn't seem to
+have this problem so maybe they don't care because its not happening
+to them.  Also you have to think about / and experiment with the file
+and folder permissions.  Do you use only basic unix perms or ACLs? 
+Permissions and ACLs on a samba share look strange from windows and
+can be very difficult to understand.  ACLS are also not backed up by
+most linux apps like tar and rsync... If you spend some time on
+designing the layout of your shares you will be able to live with
+simple unix permissions.  Samba 3 finally permits Unicode encoding,
+but you must set it up before hand. Otherwise you must set up client
+encoding options which leads english windows to display boxes unless
+the appropriate locale is selected.
+
+One thing that seems to be mentioned is that nfs and samba do not play
+well with each other, so you better use nfs for readonly access if
+really required, or separate nfs and windows directories.
+
+Thing I like about samba is the option to only show files and
+directories that the user has permission to - so if no permission he
+cannot see it.  Netware had it already over 10 years ago, but windows
+still displays everything and then gives an error - permission denied.
+
+The samba as a project is one of the best linux applications, however
+documentation is not perfect and some of the system design decisions
+were not too good.  In Samba 4 they talk about including ldap inside
+samba, but have to see how this works out.
+
+Hope this gave you a few hints for searching further.
+
+--
+Patrick Niessen
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00448" href="msg00448.html">Re: [tlug] Network with Windows and Linux</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00451" href="msg00451.html">Re: [tlug] Network with Windows and Linux</a></strong>
+<ul><li><em>From:</em> Gerald Naughton</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00457.html">Re: [tlug] SVN: Your Environment, BerkleyDB/Web or FSFS?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00459.html">Re: [tlug] Subversion (was: More Tech Meeting Torrents)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00453.html">Re: [tlug] Network with Windows and Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00445.html">[tlug] Aki Day???</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00458"><strong>Date</strong></a></li>
+<li><a href="threads.html#00458"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

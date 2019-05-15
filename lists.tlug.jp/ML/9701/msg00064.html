@@ -1,0 +1,226 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: uphill battle -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 27 Jan 1997 02:36:48 GMT -->
+<!--X-Message-Id: m0vogng&#45;00001YC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970126144912.29837A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00063.html">Date Prev</A>][<A HREF="msg00065.html">Date Next</A>][<A HREF="msg00062.html">Thread Prev</A>][<A HREF="msg00063.html">Thread Next</A>][<A HREF="maillist.html#00064">Date Index</A>][<A HREF="threads.html#00064">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: uphill battle</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: uphill battle </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 27 Jan 1997 11:28:00 +0900</LI>
+<LI>cc: <A HREF="mailto:jyon@example.com">jyon@example.com</A></LI>
+<LI>In-reply-to: Your message of "Sun, 26 Jan 1997 14:51:23 +0900."            &lt;<A HREF="msg00062.html">Pine.HPP.3.95.970126144912.29837A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Craig" == C Oda &lt;craig@example.com&gt; writes:
+
+    Craig&gt; On Sat, 25 Jan 1997 jyon@example.com wrote:
+
+    jyon&gt; I read your webpage on Linux + Nihongo (it should have an =
+    jyon&gt; mendokusai ) :) .. but I was wondering if you know anyway to
+    jyon&gt; enter Japanese (of course with WNN/canna and kinput/2
+    jyon&gt; running) into applications in X?  I had it working at one
+    jyon&gt; time in Xedit and I'm sure it can be done in others..  I'm
+    jyon&gt; just not sure how-to... Do you have any ideas?
+
+Even in the best of circumstances, with Oriental languages, the
+program needs to be written for internationalized input and output;
+even the text drawing functions are different (it's not enough to
+specify a kanji font...).  In general you'll have to look at the man
+page and see what support it provides for internationalized text input
+and output.
+
+    Craig&gt; John, I'm forwarding this to the TLUG list as well.
+    Craig&gt; Stephen Turnbull was talking about using Xim.
+
+Executive summary:
+
+:-P Yada.  I don't think it will happen anytime soon.  Emacs 19.3x
+does not implement XIM after all, XFree86 3.1.2 Xlib may not implement
+XIM properly, and kinput2, kterm, and xwmno disagree widely on what
+XIM is.
+
+As far as I know, all working internationalized programs either (1)
+directly access a FEP (such as Wnn) through the program's library
+functions (libwnn.a) or (2) use the kinput[2] protocol to talk to
+kinput.  This may or may not be due to Linux's lack of proper locale
+support, I'm not sure to what degree X11 I18N functions depend on
+Posix locale support.
+
+The advantage to using XIM over supporting the Kinput2 protocol is
+that the latter requires completely rewriting your input handling
+code, while after the initial negotiation (which is the same for every
+program; write it once with a little care and you can #include it
+after that) about style (on the spot, etc) programs can be (roughly)
+ported to XIM with
+
+#include &lt;Xlib.h&gt;  /* Xmb... and Xwc... functions are in Xlib! */
+#if X_I18N == 0
+    XLookupString()
+#elif X_I18N == X_I18N_MULTIBYTE
+    XmbLookupString()
+#elif X_I18N == X_I18N_WIDECHAR
+    XwcLookupString()
+#endif /* X_I18N */
+
+(obviously you also need to internationalize output but under X that
+is a separate issue).  Unfortunately, at the moment XIM is broken.
+
+Details for the interested hacker:
+
+I dug around in src/xfns.c and src/xterm.[ch] under
+canna-mule-19.34alpha (same old Mule), emacs-19.34b (no Mule), and
+gnumule-19.34.91 (integrated Mule/Emacs), and basically XIM is *not*
+implemented in any of them.  What is present is code to open an X
+Input Method if one is present.  However, as far as I can tell Emacs
+has no way to use the input method at the Lisp level where the editor
+is implemented.
+
+I recompiled kinput2 with debugging enabled, and ran an instance as
+"kinput2 -xim +kinput +ximp -trace" (that is, XIM protocol enabled,
+kinput[2] and Ximp protocols disabled).  All versions of Emacs-19.34
+satisfactorily executed XOpenIM() and XOpenIC(), and focus in/out
+events were transmitted to kinput2's Input Context attached to the
+Emacs window using X[Un]SetICFocus().  Nothing else happened.
+
+"kterm -xim" succeeds in opening the input method but then bombs.
+kinput complains of bad protocol.  When the kterm process is killed,
+it takes kinput2 with it.  I haven't looked at kterm's code to see
+what's going on though.
+
+I built the i18n_input.c example app from OReilly's X11R5 Programmer's
+Update, and it bombed in __setfpu().  This looks like an Xlib bug (the
+app accesses the input method only through Xlib functions), although I
+don't understand the app's code so it could be bad arguments in the
+app's calls.
+
+Despite XIM being an official X Consortium standard, I don't think
+anybody is implementing it through the debugging phase, in particular
+not XFree86.  I couldn't find any header files for it (although I have
+installed my system piece by piece so they might somehow be missing
+through no fault of the package maintainers).  kterm, xwnmo, and
+kinput2 all have their own (non-system) header files for XIM.
+
+Craig Oda reported some success with Netscape, so it's possible that
+some X11 I18N is implemented in Motif.  But I haven't verified this
+myself, and I seem to recall that input was still not possible.
+
+Oh well, it looks like we're going to have to live in canna-mule or
+wnn-mule for a while longer, although the SKK-based Quail in gnumule
+is livable (the 1.5MB skk-dic.elc file gives one pause though).
+
+Steve
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00062" HREF="msg00062.html">tlug: Re: uphill battle</A></STRONG>
+<UL><LI><EM>From:</EM> "C. Oda" &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00063.html">tlug: Looking for Meeting place for Saturday Meeting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00065.html">Re: tlug: Looking for Meeting place for Saturday Meeting</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00062.html">tlug: Re: uphill battle</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00063.html">tlug: Looking for Meeting place for Saturday Meeting</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00064"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00064"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

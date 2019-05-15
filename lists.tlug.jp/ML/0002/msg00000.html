@@ -1,0 +1,173 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: libwcsmbs -->
+<!--X-From: Tapio Peltonen <tappel@example.com> -->
+<!--X-Date:  Tue, 1 Feb 2000 00:46:12 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.21.0001311741470.5541&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3800853D.17C8759@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[Date Prev][<A HREF="msg00001.html">Date Next</A>][Thread Prev][<A HREF="msg00001.html">Thread Next</A>][<A HREF="maillist.html#00000">Date Index</A>][<A HREF="threads.html#00000">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: libwcsmbs</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: libwcsmbs</strong></LI>
+<LI><strong>From</strong>: <strong>Tapio Peltonen &lt;<A HREF="mailto:tappel@example.com">tappel@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 31 Jan 2000 17:56:12 +0200 (EET)</LI>
+<LI>Content-Transfer-Encoding: 8BIT</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=ISO-8859-1</LI>
+<LI>In-Reply-To: &lt;3800853D.17C8759@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Well, it might be a bit late, but I found a _wonderful_ solution to this
+problem... I think this should be in some FAQ or something...
+
+I messed with the libwcsmbs on a RedHat 6.1 and was then was unable to do
+anything with any dynamically linked programs. So, as I have no statically
+linked utils on my system, all I could do was either
+
+ - run rpm (it's statically linked)
+ - run ldconfig (likewise)
+ - use shell commands
+
+Solution (I was lucky enough to have a shell running with root perms):
+
+~# echo &gt;/lib/libwcsmbs.so.0
+~# echo &gt;/etc/ld.so.preload
+~# echo &gt;/etc/ld.so.cache
+~# ldconfig
+
+And voilà, no boot. Then, obviously, rm -f /lib/libwcsmbs.so.0, rpm -e
+whatever and so on. (I couldn't do rpm -e before the problem was solved,
+because it seems to trigger shells etc.)
+
+On Sun, 10 Oct 1999, Jerome Limozin wrote:
+
+&gt; "Eric S. Standlee" wrote:
+&gt; 
+&gt; &gt; I installed a libwcsmbs package off the linux.or.jp ftp server and it
+&gt; &gt; killed my system.  On boot it (init?) would lock up saying something
+&gt; &gt; about an undefined variable related to libwcsmbs.  This may portray my
+&gt; &gt; lack of experience in the shared library portion of linux, but as many
+&gt; &gt; times as I tried to use the rescue disk to go in and remove the libwcsmbs
+&gt; &gt; files from /lib, /usr/lib, and some X11R6/lib directory, it popped up
+&gt; &gt; again and I ended up reinstalling RH6.0
+&gt; &gt;
+&gt; &gt; I am baffoozled.  Any help?
+&gt; &gt;
+&gt; &gt; Eric
+&gt; &gt;
+&gt; 
+&gt; Hi Eric,
+&gt; 
+&gt; Seems too late, but I've got same problem as you some time ago, trying to
+&gt; 'japanize' my redhat 6.0 installation, and I could recover without reinstalling
+&gt; everything.
+&gt; 
+&gt; I installed libwcsmbs package, and -guess what- my system would boot any more.
+&gt; Hopefully, I had a rescue disk, so I could go around my system, and I finally
+&gt; found that the file /etc/ld.so.conf mentioned the library libwcsmbs.so.0 (I
+&gt; don't remember path), among others.
+&gt; As far as I understand, the system tried to load this library before running any
+&gt; command. Since it is incompatible with new glibc, I couldn't run anything.
+&gt; So, the cure was :
+&gt;     - boot with rescue disk
+&gt;     - in /etc/ld.so.conf, remove the line with libwcsmbs
+&gt;     - sync, reboot normally
+&gt;     - remove the package.... rpm -e libwcsmbs
+&gt; 
+&gt; 
+&gt; Jerome
+
+-- 
+            Tapio Peltonen &lt;tappel@example.com&gt;
+         [<A TARGET="_top" HREF="http://www.jyu.fi/cgi-bin/finger?macky@example.com">http://www.jyu.fi/cgi-bin/finger?macky@example.com</A>]
+      This novel is not to be tossed lightly aside, but to be hurled with
+   great force.            -- Dorothy Parker
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Next by Date:
+<STRONG><A HREF="msg00001.html">Re: tlug: OpenSSL and Crypto patents</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00001.html">Re: tlug: OpenSSL and Crypto patents</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00000"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00000"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

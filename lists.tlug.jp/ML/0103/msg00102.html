@@ -1,0 +1,162 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: How to automate email retrieval -->
+<!--X-From: SL Baur <steve@example.com> -->
+<!--X-Date: 08 Mar 2001 15:24:55 +0900 -->
+<!--X-Message-Id: m2pufs4w20.fsf@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F192xqLAUtMumY2MIa6000028c9@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00103.html">Date Prev</A>][<A HREF="msg00104.html">Date Next</A>][<A HREF="msg00101.html">Thread Prev</A>][<A HREF="msg00109.html">Thread Next</A>][<A HREF="maillist.html#00102">Date Index</A>][<A HREF="threads.html#00102">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: How to automate email retrieval</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: How to automate email retrieval</strong></LI>
+<LI><strong>From</strong>: <strong>SL Baur &lt;<A HREF="mailto:steve@example.com">steve@example.com</A>&gt;</strong></LI>
+<LI>Date: 08 Mar 2001 15:24:55 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: "Jean-Christian Imbeault"'s message of "Thu, 08 Mar 2001 05:43:57 -0000"</LI>
+<LI>Mail-Copies-To: never</LI>
+<LI>References: &lt;<A HREF="msg00098.html">F192xqLAUtMumY2MIa6000028c9@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;euPM4D.A.ioH.7Wyp6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Jean-Christian Imbeault &lt;jean_christian@example.com&gt; writes in tlug@example.com:
+
+&gt;&gt; Yup.  Do something like `fetchmail -d 120'.
+&gt; I've gotten fetchmail to work as a daemon, but I don't think this means it 
+&gt; gets restarted when the machine reboots or keep going when you logout or 
+&gt; even that it restarts itself it it dies for some reason.
+
+It needs to be restarted after machine reboot, but it will continue to
+run after logging out.  Since I reboot the workstation I read email on
+so infrequently, I start it by hand.
+
+Note that if fetchmail gets wedged for any reason, the easiest way to
+kill it and restart is by using the sequence `fetchmail -q; fetchmail
+-d 120'
+
+&gt; I'm new to linux sysadmin and I'm just wondering what is the "proper"
+&gt; way of getting fetchmail to always be up and running as a deamon. If
+&gt; it to ask each user to make a cron job or is there some way I can do
+&gt; this as root and have fetchmail run system wide for each user?
+
+This is Unix.  There is no single best way to do it.  Since I use
+fetchmail in combination with ssh and want it to run completely
+unattended, I have to make sure I've started ssh-agent first.  I do
+this by saving the output of ssh-agent, running ssh-add to enter my
+passphrase and then I start fetchmail.
+
+$ Host=$(hostname | cut -d. -f1)
+$ ssh-agent &gt; ssh-agent.$Host
+$ source ssh-agent.$Host
+$ ssh-add
+ [manually type passphrase]
+$ fetchmail -d 120
+$ exit
+
+Then in my .zshrc I do:
+Host=$(hostname | cut -d. -f1)
+if [ -z "$SSH_AGENT_PID" -a -f "$HOME/ssh-agent.$Host" ]; then
+        source $HOME/ssh-agent.$Host
+fi
+
+
+Admittedly, that's a bit of typing, but it doesn't bother me when I
+only have to do it once every five or six months.
+
+If you want to do this for every user, your email is being spooled on
+the wrong machine and perhaps you should revisit your MTA setup there.
+Using .forward files may be more convenient.
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00098" HREF="msg00098.html">Re: How to automate email retrieval</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00103.html">Re: DNS woes</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00104.html">Re: How to create kanji TIFFs?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00101.html">Re: How to automate email retrieval</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00109.html">Re: How to automate email retrieval</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00102"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00102"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

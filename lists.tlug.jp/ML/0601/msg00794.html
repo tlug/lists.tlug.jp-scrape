@@ -1,0 +1,217 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] First impressions of Gentoo -->
+<!--X-From-R13: Xbfu Uybire <wztybiNtznvy.pbz> -->
+<!--X-Date: Fri, 27 Jan 2006 14:32:23 +0900 -->
+<!--X-Message-Id: d8fcc0800601262132w37893ae2o@example.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Reference: 87r76w9sw9.fsf@example.com -->
+<!--X-Reference: d8fcc0800601252103n3cbc9b9co@example.com -->
+<!--X-Reference: 87irs78h7o.fsf@example.com -->
+<!--X-Reference: d8fcc0800601260606n4eb54806o@example.com -->
+<!--X-Reference: 87zmli6z6j.fsf@example.com -->
+<!--X-Derived: bin00005.bin -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00793.html">Date Prev</a>][<a href="msg00795.html">Date Next</a>][<a href="msg00789.html">Thread Prev</a>][<a href="msg00798.html">Thread Next</a>][<a href="maillist.html#00794">Date Index</a>][<a href="threads.html#00794">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] First impressions of Gentoo</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 27 Jan 2006 14:32:20 +0900</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20First%20impressions%20of%20Gentoo">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] First impressions of Gentoo</strong></li>
+<li>References: &lt;<a href="msg00761.html">87r76w9sw9.fsf@example.com</a>&gt;&lt;<a href="msg00774.html">d8fcc0800601252103n3cbc9b9co@example.com</a>&gt;&lt;<a href="msg00788.html">87irs78h7o.fsf@example.com</a>&gt;&lt;d8fcc0800601260606n4eb54806o@example.com&gt;&lt;87zmli6z6j.fsf@example.com&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On 27/01/06, Stephen J. Turnbull &lt;stephen@example.com&gt; wrote:
+
+&gt;     Josh&gt; That is exactly how USE flags work. The only problem is that
+&gt;     Josh&gt; the default profile turns the X USE flag on, and you want it
+&gt;     Josh&gt; off.
+&gt;
+&gt; I guess what I'm looking for is a &quot;I've got a Gentoo bootstrap system
+&gt; but not yet a fully loaded host, so turn stuff not needed to install
+&gt; the system off until further notice&quot; profile.
+
+That is a tough one, and is best accomplished--as noted by Edward and
+Stoyan--by adding the -av flags to your emerge command, and then
+verifying the dependencies and USE flags by hand. I almost always end
+up saying &quot;no&quot; the first time and adjusting the flags a bit, e.g.:
+
+: jglover@example.com; emerge -av sylpheed
+
+These are the packages that I would merge, in order:
+
+Calculating dependencies ...done!
+[ebuild  N    ] dev-libs/pth-1.4.0  434 kB
+[ebuild  N    ] app-crypt/gpgme-1.0.2  814 kB
+[ebuild  N    ] mail-client/sylpheed-2.0.4  +crypt -gnome -ipv6 -ldap
++nls -pda +ssl -xface 2,281 kB
+
+Total size of downloads: 3,529 kB
+
+Do you want me to merge these packages? [Yes/No] no
+
+Quitting.
+
+: jglover@example.com; USE='-crypt' sudo emerge -av sylpheed
+
+These are the packages that I would merge, in order:
+
+Calculating dependencies ...done!
+[ebuild  N    ] mail-client/sylpheed-2.0.4  -crypt -gnome -ipv6 +ldap
++nls -pda +ssl -xface 2,281 kB
+
+Total size of downloads: 2,281 kB
+
+Do you want me to merge these packages? [Yes/No] yes
+
+
+I have attached a little script I wrote to help with some of the more
+obscure USE flags. You use it like so:
+
+
+: jglover@example.com; use-desc X
+X - Adds support for X11
+
+: jglover@example.com; use-desc noflagstrip noaudio nas
+media-libs/libsdl:noflagstrip - Allow users to use any CFLAGS they
+like completely (at their own risk)
+media-libs/libsdl:noaudio - Allow users to disable audio support
+completely (at their own risk)
+net-libs/openh323:noaudio - Disable audio codecs
+nas - Adds support for network audio sound
+
+
+And it strips '-'s off the flags, so you can just paste in a whole
+line of output from emerge -v; to use my Sylpheed example:
+
+
+: jglover@example.com; use-desc -crypt -gnome -ipv6 +ldap +nls -pda +ssl -xface
+crypt - Add support for encryption -- using mcrypt or gpg where applicable
+gnome - Adds GNOME support
+ipv6 - Adds support for IP version 6
+pda - Adds support for portable devices.
+xface - Adds xface support used to allow a small image of xface format
+to be included in an email via the header 'X-Face'.
+
+
+&gt; Profiles don't seem to be explained very well in the manual, either.
+
+No, they don't. Another thing that should be filed as a bug. :)
+
+Cheers,
+Josh
+</pre>
+<p><strong>Attachment:
+<a href="bin00005.bin" ><tt>use-desc</tt></a></strong><br>
+<em>Description:</em> Binary data</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00798" href="msg00798.html">Re: [tlug] First impressions of Gentoo</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00761" href="msg00761.html">[tlug] First impressions of Gentoo</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00774" href="msg00774.html">Re: [tlug] First impressions of Gentoo</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00788" href="msg00788.html">Re: [tlug] First impressions of Gentoo</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00793.html">Re: [tlug] Mic Problems</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00795.html">Re: [tlug] First impressions of Gentoo</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00789.html">Re: [tlug] First impressions of Gentoo</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00798.html">Re: [tlug] First impressions of Gentoo</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00794"><strong>Date</strong></a></li>
+<li><a href="threads.html#00794"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Troubleshooting SELinux enforcement on httpd daemon	(solved) -->
+<!--X-From-R13: fpbgg <fpbggNfynpxvfynaq.bet> -->
+<!--X-Date: Sat, 05 Jan 2008 11:16:14 +0900 -->
+<!--X-Message-Id: 1199499372.32556.85.camel@slackisland.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1199413052.32556.48.camel@slackisland.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00038.html">Date Prev</a>][<a href="msg00040.html">Date Next</a>][<a href="msg00033.html">Thread Prev</a>][<a href="msg00040.html">Thread Next</a>][<a href="maillist.html#00039">Date Index</a>][<a href="threads.html#00039">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Troubleshooting SELinux enforcement on httpd daemon	(solved)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 05 Jan 2008 11:16:12 +0900</li>
+<li><strong>From</strong>: <strong>scott &lt;<a href="mailto:scott@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Troubleshooting%20SELinux%20enforcement%20on%20httpd%20daemon%9%28solved%29">scott@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Troubleshooting SELinux enforcement on httpd daemon	(solved)</strong></li>
+<li>References: &lt;<a href="msg00033.html">1199413052.32556.48.camel@slackisland.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi again TLUG,
+
+Well, hacking around a bit I've found the solution. For those playing
+around with SElinux, if you need to make a minor change in your security
+policy this is a good place to start:
+
+<a  href="http://www.linuxtopia.org/online_books/redhat_selinux_guide/selg-">http://www.linuxtopia.org/online_books/redhat_selinux_guide/selg-</a>
+section-0120.html
+
+I've done the following to fix the problem I was having:
+
+1) installed selinux-policy-targeted-sources.noarch
+2) installed setools-gui.x86_64
+
+The programs that come with setools apol and seAudit are very useful in
+this situation to check the logs IRT whatever is being blocked via your
+Selinux policy. You can make minor changes with relative ease using the
+following:
+
+[root@example.com policy]# audit2allow -d -l -o domains/misc/local.te
+
+basically this just scans /var/log/messages for the most recent context
+denials since the last policy reload, then creates a allow rule (or
+rules~) in that local.te file. For example, previously I was getting
+this kind of error:
+
+Jan 05 08:53:19 slackisland kernel: avc:  denied  { } for  pid=7084
+comm=httpd name=&quot;Foo_Bar&quot; dev=dm-4 ino=4884727
+scontext=root:system_r:httpd_t tcontext=system_u:object_r:var_t
+tclass=lnk_file
+
+after running audit2allow it created this in the local.te file:
+
+allow httpd_t var_t:lnk_file { getattr read };
+
+moving back to the /etc/selinux/targeted/src/policy directory and
+running: 
+
+[root@example.com policy]# make load
+
+created a new Selinux policy. After restarting the httpd daemon,
+symlinks to non /var/www filesystems is working fine again. 
+
+Maybe this will be useful someone, as there isn't much chatter on TLUG
+IRT Selinux. 
+
+Cheers,
+Scott VanDusen
+Tokyo
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00040" href="msg00040.html">Re: [tlug] Troubleshooting SELinux enforcement on httpd	daemon	(solved)</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00033" href="msg00033.html">[tlug] Troubleshooting SELinux enforcement on httpd daemon</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00038.html">[tlug] Need Linux PDA recommendations</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00040.html">Re: [tlug] Troubleshooting SELinux enforcement on httpd	daemon	(solved)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00033.html">[tlug] Troubleshooting SELinux enforcement on httpd daemon</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00040.html">Re: [tlug] Troubleshooting SELinux enforcement on httpd	daemon	(solved)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00039"><strong>Date</strong></a></li>
+<li><a href="threads.html#00039"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

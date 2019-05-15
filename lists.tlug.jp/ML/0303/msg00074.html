@@ -1,0 +1,171 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] cat /dev/zero > /dev/null -->
+<!--X-From-R13: Fvz Vhezna <xnab&#45;gyhtNxnab.bet.hx> -->
+<!--X-Date: Sat, 15 Mar 2003 14:09:25 +0000 -->
+<!--X-Message-Id: 20030315140925.GA11287@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 200303151140.h2FBex217655@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00073.html">Date Prev</a>][<a href="msg00075.html">Date Next</a>][<a href="msg00073.html">Thread Prev</a>][<a href="msg00076.html">Thread Next</a>][<a href="maillist.html#00074">Date Index</a>][<a href="threads.html#00074">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] cat /dev/zero &gt; /dev/null</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 15 Mar 2003 14:09:25 +0000</li>
+<li><strong>From</strong>: <strong>Tim Hurman &lt;<A HREF="mailto:kano-tlug@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20cat%20%2Fdev%2Fzero%20%3E%20%2Fdev%2Fnull">kano-tlug@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] cat /dev/zero &gt; /dev/null</strong></li>
+<li>References: &lt;<a href="msg00073.html">200303151140.h2FBex217655@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Sat, Mar 15, 2003 at 03:40:59AM -0800, Pietro Zuco wrote:
+&gt; Hello.
+&gt; 
+&gt; I proved this and find with top that the proccess takes the 98% of my cpu.
+&gt; I googling a bit and find that a lot of people talk about this but I
+&gt; coundn't find a way to solve the problem.
+
+there isnt really, /dev/zero will generate 0s as fast as it can, /dev/null
+will swallow as fast as it can, whats taking most of the CPU is cat doing
+it's read/write loop. 
+
+&gt; Any user can do it and the system got slow until I stop the proccess.
+&gt; 
+
+This is where a computer mis-use policy comes in.
+
+&gt; If I change the permissions there are software that need to use /dev/zero
+&gt; and /dev/null
+&gt; 
+
+You cant do these, here is why. malloc allocates memory by mmaping against
+/dev/zero, so any user process that needs dynamic memory will need
+permission here. Also a lot processes open /dev/null, for various things
+(output redirects...), you can see it by &quot;strace &lt;progname&gt;&quot;.
+
+&gt; Some idea to avoid this? Maybe some &quot; cpu quota &quot; for limit the cpu usage of
+&gt; users?
+
+&quot;ulimit -t&quot; can place cpu limits, although a user can change them. There
+is a way to set a hard limit, but I have forgotten it. The corresponding C
+functions are: getrlimit and setrlimit, you could re-compile cat with
+these in.
+
+tbh though there are much worse things a local user can do, chewing up all
+the cpu with one process is not that bad, you can kill it. Fork bombs on
+the other had will often kill a Linux box completly as the scheduler
+cannot handle all the processes (the Linux scheduler is not very good in
+this respect, Solaris and others can withstand a fork bomb and return
+happily). There is even a 10 char string which will cause bash for
+fork bomb. Then of course there are the other things, malloc bombs and all
+manner of nasties that you can do with a shell account. ulimit will
+protect against accidents though.
+
+Tim.
+
+-- 
+&quot;ergo it is easier to drag sheep downhill&quot; - Applied Ergonomics Magasine
+Tim Hurman - Email: kano at kano.org.uk - Phone: Yeah right.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00073" href="msg00073.html">[tlug] cat /dev/zero &gt; /dev/null</a></strong>
+<ul><li><em>From:</em> Pietro Zuco</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00073.html">[tlug] cat /dev/zero &gt; /dev/null</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00075.html">Re: [tlug] VPN appliance and network connection suggestions?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00073.html">[tlug] cat /dev/zero &gt; /dev/null</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00076.html">[tlug] Lessig, Free Culture</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00074"><strong>Date</strong></a></li>
+<li><a href="threads.html#00074"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

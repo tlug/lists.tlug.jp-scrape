@@ -1,0 +1,200 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Lost in unresolved module symbol hell... -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date: Tue, 17 Oct 2000 08:09:32 +0900 (KST) -->
+<!--X-Message-Id: Pine.LNX.4.21.0010170726210.1203&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00203.html">Date Prev</A>][<A HREF="msg00205.html">Date Next</A>][<A HREF="msg00202.html">Thread Prev</A>][<A HREF="msg00208.html">Thread Next</A>][<A HREF="maillist.html#00204">Date Index</A>][<A HREF="threads.html#00204">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Lost in unresolved module symbol hell...</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Lignux Users' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Lost in unresolved module symbol hell...</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 17 Oct 2000 08:09:32 +0900 (KST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;LD87nC.A.zkH.55465@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+  I'm certainly no hacker, but I've been rolling my own kernels for
+over four years now and did manage to roll a few 2.5.5 kernels under my
+former RH6.0 setup, but I'm stumped right now.   The new 2.2.14 kernel
+that I'm trying to roll right now works OK, but all the modules are
+broken.
+
+  I "upgraded" to RH6.2 finally on Sunday.  Of course, this broke at least
+a dozen things in my setup, but sound was working fine (a nice surprise)
+and running the 'vmware-config.pl' script happily recompiled all the 
+necessary modules so that vmware was working again.
+
+  Anyhow, I wanted to roll my own kernel with ATAPI-&gt;SCSI masquerade -
+and, besides, the boot floppy that I was using to start RH6.2 crapped
+out, meaning that I had to fall back on my old kernel 2.5.5 boot disk - so
+I did all the usual stuff (from /usr/src/linux, which is a link to 
+/usr/src/linux-2.2.14, where the latest source tree resides): make xconfig
+and then
+make clean; make dep; make bzImage; make modules; make modules_install
+and then
+dd if=/usr/src/linux-2.2.14/arch/i386/boot/bzImage  of=/dev/fd0 bs=32k
+
+  When I boot the kernel, however, I get a whole slew of error messages
+about unresolved symbols in modules (although everything but modules works):
+
+Oct 17 07:20:52 tangrending depmod: depmod:
+Oct 17 07:20:52 tangrending depmod: *** Unresolved symbols in /lib/modules/2.2.14-5.0/fs/autofs.o
+Oct 17 07:20:52 tangrending depmod: depmod: *** Unresolved symbols in /lib/modules/2.2.14-5.0/fs/coda.o
+Oct 17 07:20:52 tangrending depmod: depmod: *** Unresolved symbols in /lib/modules/2.2.14-5.0/fs/fat.o
+
+  This goes on for about 24 screens' worth!
+
+  I did notice a message right at the beginning of the boot saying that
+no module symbols were loaded:
+
+Oct 17 07:21:09 tangrending syslogd 1.3-3: restart.
+Oct 17 07:21:09 tangrending syslog: syslogd startup succeeded
+Oct 17 07:21:09 tangrending kernel: klogd 1.3-3, log source = /proc/kmsg started.
+Oct 17 07:21:09 tangrending kernel: Inspecting /boot/System.map-2.2.14-5.0
+Oct 17 07:21:09 tangrending syslog: klogd startup succeeded
+Oct 17 07:21:09 tangrending kernel: Loaded 7364 symbols from /boot/System.map-2.2.14-5.0.
+Oct 17 07:21:09 tangrending kernel: Symbols match kernel version 2.2.14.
+Oct 17 07:21:09 tangrending kernel: No module symbols loaded.
+
+  There's also a single error message during the startup, which may or may
+not be relevant:
+
+Oct 17 07:20:50 tangrending sysctl: error: 'kernel.sysrq' is an unknown key
+
+  I'm afraid I'm stumped, though the answer is probably staring me in the
+face.  Why are no module symbols being loaded?  This _must_ be relevant,
+but I don't understand what's going on.
+
+  When I try to recompile the vmware modules, the script complains that my
+running kernel must have had different C header files (even though I'm
+running a freshly-rolled kernel that definitely was compiled from the 
+source tree under the default /usr/src/linux):
+
+None of VMware's pre-built vmmon modules is suitable for your running kernel. Doyou want this script to try to build the vmmon module for your system (you need to have a C compiler installed on your system)? [yes] 
+
+What is the location of the directory of C header files that match your running kernel? [/usr/src/linux/include] 
+
+Extracting the sources of the vmmon module.
+
+Building the vmmon module.
+
+make: Entering directory `/tmp/vmware/vmware-config/979/vmmon-only'
+make[1]: Entering directory `/tmp/vmware/vmware-config/979/vmmon-only'
+make[2]: Entering directory `/tmp/vmware/vmware-config/979/vmmon-only/driver-2.2.14-5.0'
+make[2]: Leaving directory `/tmp/vmware/vmware-config/979/vmmon-only/driver-2.2.14-5.0'
+make[2]: Entering directory `/tmp/vmware/vmware-config/979/vmmon-only/driver-2.2.14-5.0'
+make[1]: Leaving directory `/tmp/vmware/vmware-config/979/vmmon-only'
+make: Leaving directory `/tmp/vmware/vmware-config/979/vmmon-only'
+Unable to build a correct vmmon module. There is probably a light difference of kernel configuration between the set of C header files you specified and your 
+running kernel. You may want to rebuild a kernel based on that directory, or 
+specify another directory.
+
+Execution aborted.
+
+  This vmware module recompile ran perfectly smoothly under the initial 
+system I had booted from the floppy that was produced during the "upgrade".
+When that floppy failed and until I could roll my own 2.2.14 kernel, I
+was booting the system from the old 2.5.5  kernel floppy that I had
+been using for months.   
+
+  Sorry for the long, boring cry for help, but I sure hope that this 
+all makes sense to someone out there.
+
+  Cheers, Dennis
+
+-- 
+Dennis McMurchy, 
+Sointula, B.C. / Tojinmachi, Fukuoka
+Canada           Japan
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00203.html">Re: Ordering Books from Amazon</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00205.html">Re: TLUG October nomikai meeting this Friday (10/20)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00202.html">[announcement] 10/20 TLUG nomikai meeting</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00208.html">In the news</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00204"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00204"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

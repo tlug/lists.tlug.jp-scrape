@@ -1,0 +1,176 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Kubuntu 8.04&#45;>8.10 Upgrade: Two for Two -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 03 Jan 2009 15:11:09 +0900 -->
+<!--X-Message-Id: 8763kwapd6.fsf@xemacs.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 495EC6DF.2050201@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00019.html">Date Prev</a>][<a href="msg00021.html">Date Next</a>][<a href="msg00070.html">Thread Prev</a>][<a href="msg00036.html">Thread Next</a>][<a href="maillist.html#00020">Date Index</a>][<a href="threads.html#00020">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Kubuntu 8.04-&gt;8.10 Upgrade: Two for Two</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 03 Jan 2009 15:13:41 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Kubuntu%208.04-%3E8.10%20Upgrade:%20Two%20for%20Two">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Kubuntu 8.04-&gt;8.10 Upgrade: Two for Two</strong></li>
+<li>References: &lt;<a href="msg00017.html">495EC6DF.2050201@gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>CL writes:
+ &gt; Regular readers may recall my adventures trying to upgrade a basic 
+ &gt; Kubuntu v.8.04 (Horny Hamster) installation on my ThinkPad to v.8.10 
+ &gt; (Irritating Idiot).  At that time, the first reboot produced no login 
+ &gt; combobox and all attempts to correct the problem failed.  Well, idiot 
+ &gt; that I am, I decided to upgrade my desktop to 8.10 after stabilizing my 
+ &gt; laptop.  There are enough useful changes to make it desirable.
+
+Heh.  I'm discovering a drop of sympathy for our other K?Ubuntu victim.
+
+ &gt; -  Tried to access and edit files using both a v.8.10 installation disk 
+ &gt; and Knoppix 5.3.1 but nothing saved to disk permanently.
+
+Hm.  Check the mtab (or just output of 'mount').  ISTR something about
+&quot;unionfs&quot; from David Bernat's posts.  For the not yet clued in to that
+concept, a *union file system* is a file system with multiple media
+being mounted in the same place.  So for example you mount both a
+CD-ROM and a ramdisk on /etc.  The unionfs is configured to look in
+the ramdisk first, then the CD-ROM.  Look how this works.  You execute
+&quot;mount -a&quot;, which looks in the ramdisk for /etc/fstab.  Nothing there,
+so it goes on to look on the CD, where it finds /etc/fstab.  It mounts
+the disks, and now it wants to write /etc/mtab.  It opens the file on
+the ramdisk with O_CREAT, which works.
+
+Now if you want to look at /etc/mtab, the kernel finds it on the
+ramdisk, and never looks at the CD.  But if you try to edit
+/etc/fstab, it's not on the ramdisk, so the virtual file system code
+falls back to the CD, and finds it there.  Now, you save.  *The
+unionfs will try to save to the ramdisk first*, and it will succeed.
+But guess what?  Reboot, and the ramdisk goes where all virtual
+particles go, taking your edits with it.
+
+I wonder if that could be related to the phenomenon you describe.
+OTOH, if you do
+
+    mount -t ext3 /dev/sda1 /mnt
+
+that should *not* be a unionfs, and it *should* work (in the sense of
+actually writing to the HDD).  Are you telling me that it didn't?
+
+ &gt; All-in-all this upgrade seems to be about as big a PITA as the upgrade 
+ &gt; from WIN3.1 to W2K was ... but that was a long time ago, now ...
+
+Heh.  I run `sid' on my Debian boxes and &quot;emerge -u world&quot; on Gentoo
+practically every day, and the only really annoying issues I've had
+since about 1997 (when I swore off Red Hat for life) were the Debian
+&quot;$65536 question&quot; bug so that all my accesses to everywhere got
+denied, and a total failure of SSH to work on Gentoo.
+
+And of course there was the WinNT 3.2beta to 3.2final upgrade that
+wiped my hard drive clean....
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00036" href="msg00036.html">Re: [tlug] Kubuntu 8.04-&gt;8.10 Upgrade: Two for Two</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00017" href="msg00017.html">[tlug] Kubuntu 8.04-&gt;8.10 Upgrade: Two for Two</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00019.html">[tlug] Ubtuntu 8.04 -&gt; 8.10 Upgrade Pain</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00021.html">Re: [tlug] [OT] Interesting info for foreigners living in JP</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00070.html">Re: [tlug] Ubtuntu 8.04 -&gt; 8.10 Upgrade Pain</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00036.html">Re: [tlug] Kubuntu 8.04-&gt;8.10 Upgrade: Two for Two</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00020"><strong>Date</strong></a></li>
+<li><a href="threads.html#00020"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Replacing software&#45;raided disks with dd,	underlying&#45;partitions&#45;and&#45;all: Will this work? -->
+<!--X-From-R13: Bvre Thzntnyyv <cvreNorgnirefvba.bet> -->
+<!--X-Date: Sat, 27 Mar 2010 00:39:08 +0900 -->
+<!--X-Message-Id: b4004d5f1003260838k10ad3758lab500bfbbd5f6c2a@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: n2tb4d277191003252301g10938cb0x8f98cc581289269b@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00178.html">Date Prev</a>][<a href="msg00180.html">Date Next</a>][<a href="msg00171.html">Thread Prev</a>][<a href="msg00184.html">Thread Next</a>][<a href="maillist.html#00179">Date Index</a>][<a href="threads.html#00179">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Replacing software-raided disks with dd,	underlying-partitions-and-all: Will this work?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 26 Mar 2010 08:38:36 -0700</li>
+<li><strong>From</strong>: <strong>Pier Fumagalli &lt;<a href="mailto:pier@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Replacing%20software-raided%20disks%20with%20dd%2C%09underlying-partitions-and-all:%20Will%20this%20work%3F">pier@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Replacing software-raided disks with dd,	underlying-partitions-and-all: Will this work?</strong></li>
+<li>References: &lt;<a href="mailto:n2tb4d277191003252301g10938cb0x8f98cc581289269b@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Replacing%20software-raided%20disks%20with%20dd%2C%09underlying-partitions-and-all:%20Will%20this%20work%3F">n2tb4d277191003252301g10938cb0x8f98cc581289269b@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div class="gmail_quote">On Thu, Mar 25, 2010 at 23:01, Edmund Edgar <span dir="ltr">&lt;<a rel="nofollow" href="mailto:lists@example.com">lists@example.com</a>&gt;</span> wrote:<br><blockquote class="gmail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex;">
+[...]<br>
+2) Replace the dead disk (sda) in server 1 with a new, bigger disk,<br>
+boot from a LiveCD and do:<br>
+<br>
+dd if=/dev/sdb of=/dev/sda<br></blockquote><div><br></div><div>I would personally suggest to simply copy the boot sector and partition table, and let the MD driver take care of replicating the data. It *should* be as easy as:</div>
+<div><br></div><div>Copy the boot record and partition table</div><div># dd if=/dev/sdb of=/dev/sda bs=512 count=1</div><div><br></div><div>Make sure the OS sees the new partitions on SDA by re-copying the partition tables (but this won&#39;t touch the boot sector, so, you should do both)</div>
+<div># sfdisk --dump /dev/sdb | sfdisk /dev/sda</div><div><br></div><div>Attach all the devices and wait for MD to do its job</div><div># mdadm --manage /dev/md0 --add /dev/sda1</div><div><div># mdadm --manage /dev/md1 --add /dev/sda7</div>
+</div><div>...</div><div><br></div><div>Rather than DDing the whole disk. I don&#39;t know whether DDing the whole disk without doing the proper &quot;mdadm&quot; stuff works or not!</div><div><br></div><div>Good luck!</div>
+<div><br></div><div>    Pier</div><div><br></div></div>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00170" href="msg00170.html">[tlug] Replacing software-raided disks with dd,	underlying-partitions-and-all: 	Will this work?</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00178.html">[tlug] [OT] 京SEC meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00180.html">Re: [tlug] can anyone help ..I need to repair my grub ...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00171.html">Re: [tlug] Replacing software-raided disks with dd,	underlying-partitions-and-all:  Will this work?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00184.html">Re: [tlug] Replacing software-raided disks with dd, underlying-partitions-and-all: 	Will this work?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00179"><strong>Date</strong></a></li>
+<li><a href="threads.html#00179"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

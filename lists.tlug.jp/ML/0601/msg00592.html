@@ -1,0 +1,196 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Code Query&#45;Bittorrent Scripts -->
+<!--X-From-R13: [nex Enetrag <cbjqrexrtNfabj.rznvy.ar.wc> -->
+<!--X-Date: Sat, 21 Jan 2006 01:14:05 +0900 -->
+<!--X-Message-Id: 43D10C4D.40407@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00591.html">Date Prev</a>][<a href="msg00593.html">Date Next</a>][<a href="msg00741.html">Thread Prev</a>][<a href="msg00594.html">Thread Next</a>][<a href="maillist.html#00592">Date Index</a>][<a href="threads.html#00592">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Code Query-Bittorrent Scripts</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 21 Jan 2006 01:14:05 +0900</li>
+<li><strong>From</strong>: <strong>Mark Sargent &lt;<A HREF="mailto:powderkeg@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Code%20Query-Bittorrent%20Scripts">powderkeg@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Code Query-Bittorrent Scripts</strong></li>
+<li>User-agent: Mozilla Thunderbird 1.0.6-1.4.1.centos4 (X11/20050721)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi All,
+
+I'm not a programmer and wish to query some of the below code, which is
+the only part I don't understand. Cheers
+
+Mark Sargent.
+
+Code Being Queried:
+
+BEGIN { srand() }
+	{ names[NR]=$0 }
+	END {
+	    j=int(NR*rand());	   
+
+
+found here,
+
+<A HREF="http://lue.dyn.dhs.org/2005/20050708135201.html">http://lue.dyn.dhs.org/2005/20050708135201.html</A>
+
+Full Code:
+
+#!/bin/sh
+#bt.offer: circulate offered torrents
+
+howmany=0
+offerall=0
+loopctrl=0
+
+case $1 in
+    all) offerall=1 ;;
+    [0-9]*) howmany=$1 ;;
+    "") howmany=7 ;;
+esac
+
+# first, remove what's already being offered 
+cd /usr/local/bt || exit 1
+if [ -f $HOME/.bt/offer/offered ]; then
+    rm $(cat $HOME/.bt/offer/offered)
+    rm $HOME/.bt/offer/offered
+fi
+
+# two special cases
+#1): remove all offered torrents
+if [ $howmany -eq 0 ]; then
+    exit 3
+fi
+#2): offer all the torrents that I have
+if [ $offerall -eq 1 ]; then
+    cd $HOME/.bt/offer || exit 2
+    ls *.torrent &gt; offered
+    cp *.torrent /usr/local/bt/
+    exit 0
+fi
+
+# offer another batch 
+cd $HOME/.bt/offer || exit 2
+i=0
+while [ $loopctrl -eq 0 ]  
+do
+    torrent=$(ls *.torrent |
+    awk '
+	BEGIN { srand() }
+	{ names[NR]=$0 }
+	END {
+	    j=int(NR*rand());
+	    if (j&lt;1) j=j+10;
+	    if (j&gt;NR) j=NR;
+	    print names[j]
+	}
+    ' )
+    echo "$torrent" &gt;&gt; offered
+    i=$(expr "$i" + 1)
+    if [ $i -ge $howmany ]; then
+	loopctrl=1
+    fi
+    sleep 1s
+done
+sort offered | uniq &gt; /tmp/$$
+mv /tmp/$$ offered
+for torrent in `cat offered`
+do
+    cp "$torrent" /usr/local/bt/"$torrent"
+done
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00591.html">Re: [tlug] Docbook XML for documenting database tables</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00593.html">Re: [tlug] Aki Day Part 2</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00741.html">Re: [tlug] Aki Day Part 2</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00594.html">[tlug] Skype performance</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00592"><strong>Date</strong></a></li>
+<li><a href="threads.html#00592"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!-- MHonArc v2.4.9 -->
+<!--X-Subject: xemacs question -->
+<!--X-From-R13: "[nephf A.Q. [rgmyre" <zbpzNpbairetrapr.qr> -->
+<!--X-Date: Wed, 22 Aug 2001 22:28:28 +0200 (MEST) -->
+<!--X-Message-Id: 15236.5612.296480.752595@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 21DEAE09F017D111969700A0C9840752059DAB5C@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00238.html">Date Prev</a>][<a href="msg00240.html">Date Next</a>][<a href="msg00238.html">Thread Prev</a>][<a href="msg00240.html">Thread Next</a>][<a href="maillist.html#00239">Date Index</a>][<a href="threads.html#00239">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>xemacs question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>xemacs question</strong></li>
+<li><strong>From</strong>: <strong>&quot;Marcus O.C. Metzler&quot; &lt;<A HREF="mailto:mocm@example.com">mocm@example.com</A>&gt;</strong></li>
+<li>Date: Wed, 22 Aug 2001 22:28:28 +0200 (MEST)</li>
+<li>Content-Type: text/plain; charset=US-ASCII</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00238.html">21DEAE09F017D111969700A0C9840752059DAB5C@example.com</a>&gt;</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;mocm@example.com&gt;</li>
+<li>References: &lt;<a href="msg00238.html">21DEAE09F017D111969700A0C9840752059DAB5C@example.com</a>&gt;</li>
+<li>Reply-To: &lt;<A HREF="mailto:mocm@example.com">mocm@example.com</A>&gt;</li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;af7h5D.A.zz.KYBh7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Scott Stone writes:
+ &gt; 
+ &gt; ok.. so how do I get my silly mouse wheel to work in xemacs?  I'm assuming
+ &gt; it's an Xresource setting, but the Xemacs PDF docs on the website are like 7
+ &gt; years out of date.  I dont think they HAD wheel mice back then.  &quot;info
+ &gt; xemacs&quot; just gives me the manpage which says that the current documentation
+ &gt; can be had via &quot;info&quot;, so I'm in a circular pattern here.  This is 21.4.4,
+ &gt; straight vanilla source build.
+ &gt; 
+
+I use the following in my .emacs file. There's nothing in my
+.Xresources, so that must be it :).
+
+
+;;=============================================================================
+;;                    scroll on  mouse wheel
+;;=============================================================================
+
+
+;; scroll on wheel of mouses
+(define-key global-map 'button4
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-down 5)
+      (select-window curwin)
+)))
+(define-key global-map [(shift button4)]
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-down 1)
+      (select-window curwin)
+)))
+(define-key global-map [(control button4)]
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-down)
+      (select-window curwin)
+)))
+
+(define-key global-map 'button5
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-up 5)
+      (select-window curwin)
+)))
+(define-key global-map [(shift button5)]
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-up 1)
+      (select-window curwin)
+)))
+(define-key global-map [(control button5)]
+  '(lambda (&amp;rest args)
+    (interactive) 
+    (let ((curwin (selected-window)))
+      (select-window (car (mouse-pixel-position)))
+      (scroll-up)
+      (select-window curwin)
+)))
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00238" href="msg00238.html">xemacs question</a></strong>
+<ul><li><em>From:</em> Scott Stone &lt;SStone@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00238.html">xemacs question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00240.html">Re: xemacs question</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00238.html">xemacs question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00240.html">Re: xemacs question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00239"><strong>Date</strong></a></li>
+<li><a href="threads.html#00239"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

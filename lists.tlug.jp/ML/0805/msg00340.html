@@ -1,0 +1,188 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Raid5 box &#38; backup -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Mon, 26 May 2008 10:31:04 +0900 -->
+<!--X-Message-Id: 20080526013103.GC6172@lucky.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20080525040521.GK4030@lucky.cynic.net -->
+<!--X-Reference: 48389DF4.4050200@raoult.com -->
+<!--X-Reference: 48393595.5090202@raoult.com -->
+<!--X-Reference: b4d277190805242150u778a7e9x336055ccf64e9843@mail.gmail.com -->
+<!--X-Reference: 20080525133122.GT4030@lucky.cynic.net -->
+<!--X-Reference: b4d277190805251739y18bc1a0btf86d89e5a8a27b1f@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00339.html">Date Prev</a>][<a href="msg00341.html">Date Next</a>][<a href="msg00338.html">Thread Prev</a>][<a href="msg00330.html">Thread Next</a>][<a href="maillist.html#00340">Date Index</a>][<a href="threads.html#00340">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Raid5 box &amp; backup</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 26 May 2008 10:31:04 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Raid5%20box%20%26%20backup">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Raid5 box &amp; backup</strong></li>
+<li>References: &lt;<a href="msg00322.html">20080525040521.GK4030@lucky.cynic.net</a>&gt;	&lt;<a href="msg00321.html">48389DF4.4050200@raoult.com</a>&gt; &lt;<a href="msg00324.html">48393595.5090202@raoult.com</a>&gt;	&lt;<a href="msg00323.html">b4d277190805242150u778a7e9x336055ccf64e9843@mail.gmail.com</a>&gt;	&lt;<a href="msg00332.html">20080525133122.GT4030@lucky.cynic.net</a>&gt;	&lt;<a href="msg00338.html">b4d277190805251739y18bc1a0btf86d89e5a8a27b1f@mail.gmail.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.17 (2007-11-01)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2008-05-26 09:39 +0900 (Mon), Edmund Edgar wrote:
+
+&gt; &gt; So a TrueCrypt volume is just layered over top of a
+&gt; &gt; standard filesystem,
+&gt; 
+&gt; Yes - it looks like a file until you mount it with TrueCrypt.
+&gt; ...
+&gt; No - it looks like a file full of junk to someone not using TrueCrypt.
+&gt; Loop-mounting the file full of junk....
+
+Ok, this is just the usual Linux semantic confusion, probably caused by
+the usual &quot;I don't understand operating systems&quot; approach to designing
+Linux userland tools.
+
+What appears to be the case (correct me if I'm wrong) is this: A
+TrueCrypt volume is *not* layered over a standard filesystem; it's just
+another filesystem, like ext2fs or whatever, that's layered over a
+*block device*. The so-called &quot;loopback mount&quot; is actually a standard
+mount operation preceeded by a completely orthogonal creation of a block
+device backed by a file. (These are separate operations in NetBSD, for
+obvious reasons. E.g., what if the file is the image of a hard disk
+containing several partitions?)
+
+This has direct implications for how one would build the kind of thing
+we were talking about, by the way. At the very least, it might have
+you creating an unnecessary filesystem and block device between your
+base block device and the encrypted FS, with at least some effect on
+performance.
+
+&gt; 'Cos if I've understood you right, conceptually it's what you're
+&gt; describing here: <a  href="http://www.tlug.jp/ML/0805/msg00336.html">http://www.tlug.jp/ML/0805/msg00336.html</a>
+
+Yes, it appears to be, though note that in my proposal you do not use
+a loopback mount for the encrypted FS. (That's why I was asking if it
+was a standard filesystem (i.e., runs over a block device) or something
+odd.)
+
+The layering of what I proposed is the following:
+
+    encrypted FS	(filesystem created on/mounted from block device below)
+    Client iSCSI device	(virtual block device backed by iSCSI mount)
+
+    iSCSI server	(servers blocks from device below over network)
+    virtual disk	(block device backed by file below)
+    file		(in filesystem below)
+    ext2fs		(filesytsem, mounted on server's disk below)
+    Server's disk	(block device)
+
+cjs
+-- 
+Curt Sampson       &lt;cjs@example.com&gt;        +81 90 7737 2974   
+Mobile sites and software consulting: <a  href="http://www.starling-software.com">http://www.starling-software.com</a>
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00322" href="msg00322.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00321" href="msg00321.html">[tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00324" href="msg00324.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00323" href="msg00323.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+<li><strong><a name="00332" href="msg00332.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00338" href="msg00338.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+<ul><li><em>From:</em> Edmund Edgar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00339.html">Re: [tlug] OT: interesting NY times article:High-Tech Japanese,	Running Out of Engineers</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00341.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00338.html">Re: [tlug] Raid5 box &amp; backup</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00330.html">[tlug] wireless router suggestions</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00340"><strong>Date</strong></a></li>
+<li><a href="threads.html#00340"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

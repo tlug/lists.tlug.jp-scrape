@@ -1,0 +1,562 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Mutt and domain lookup when sending mail &#45; help! -->
+<!--X-From: Jonathan Q <jq@example.com> -->
+<!--X-Date:  Sat, 4 Sep 1999 01:15:04 +0900 -->
+<!--X-Message-Id: Pine.LNX.4.10.9909040021240.3860&#45;100000@example.com&#45;kws.gol.ne.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00037.html">Date Prev</A>][<A HREF="msg00039.html">Date Next</A>][<A HREF="msg00030.html">Thread Prev</A>][<A HREF="msg00039.html">Thread Next</A>][<A HREF="maillist.html#00038">Date Index</A>][<A HREF="threads.html#00038">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Mutt and domain lookup when sending mail - help!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG mailing list &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Mutt and domain lookup when sending mail - help!</strong></LI>
+<LI><strong>From</strong>: <strong>Jonathan Q &lt;<A HREF="mailto:jq@example.com">jq@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 4 Sep 1999 01:10:49 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+OK, y'all, here's one of my biggest Mutt challenges yet.  When I compose
+mail in Pine, I send it through our SMTP frontend (mail.gol.com, smart 
+hosts) with no problems (the mail is spooled first by my localhost
+sendmail, which accepts it for deferred delivery).  When I compose with
+Mutt, our SMTPs reject it with this:
+
+450 &lt;jq@example.com&gt;: Sender address rejected: Domain not 
+found
+
+Samples of the headers being stuck onto Mutt-produce mail and
+Pine-produced mail follow, and they are certainly different.
+My challenge is to find out what's different about the mail is being
+sent by Mutt that causes the SMTP relay to attempt to do a lookup on the
+host-name of this machine (which doesn't really exist), whereas the Pine
+mail is accepted for relay and passed along.
+
+I'll throw in my .muttrc as well, for the reference of those
+well-steeped in this arcana.
+
+TIA,
+
+Jonathan
+
+Pine headers (when the mail is in my local mqueue)
+==================================================
+V2
+T936371863
+K0
+N0
+P30315
+I3/8/10047
+Fb
+$rESMTP
+$slocalhost
+$_IDENT:jq@example.com [127.0.0.1]
+S&lt;jq@example.com&gt;
+RPFD:&lt;jq@example.com&gt;
+H?P?Return-Path: &lt;jq@example.com&gt;
+HReceived: from localhost (IDENT:jq@example.com [127.0.0.1])
+        by iwana-kws.gol.ne.jp (8.9.3/8.9.3) with ESMTP id AAA03819
+        for &lt;jq@example.com&gt;; Sat, 4 Sep 1999 00:17:43 +0900
+H?x?Full-Name: Jonathan Q
+HDate: Sat, 4 Sep 1999 00:17:43 +0900 (JST)
+HFrom: Jonathan Q &lt;jq@example.com&gt;
+HX-Sender: jq@example.com
+HTo: Jonathan Q &lt;jq@example.com&gt;
+HSubject: test 10 pine
+HMessage-ID:
+&lt;Pine.LNX.4.10.9909040017310.3816-100000@example.com&gt;
+HMIME-Version: 1.0
+HContent-Type: TEXT/PLAIN; charset=US-ASCII
+
+
+Mutt headers (when the mail is in my local mqueue)
+==================================================
+V2
+T936371848
+K0
+N0
+P30298
+I3/8/10045
+Fb
+$_jq@example.com
+Sjq
+RPFD:jq@example.com
+H?P?Return-Path: &lt;jq&gt;
+HReceived: (from jq@example.com)
+        by iwana-kws.gol.ne.jp (8.9.3/8.9.3) id AAA03815
+        for jq@example.com; Sat, 4 Sep 1999 00:17:28 +0900
+H?x?Full-Name: Jonathan Q
+HDate: Sat, 4 Sep 1999 00:17:28 +0900
+HFrom: Jonathan Q &lt;jq@example.com&gt;
+HTo: jq@example.com
+HSubject: test 9 - mutt
+HMessage-ID: &lt;19990904001728.A3809@example.com&gt;
+HMime-Version: 1.0
+HContent-Type: text/plain; charset=iso-2022-jp
+HContent-Transfer-Encoding: 7bit
+HX-Mailer: Mutt 0.95.4i-jp2
+
+
+My .muttrc
+==========
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# The format of this file is one command per line.  Everything after a pound
+# sign (#) is a comment, unless a backward slash (\) precedes it
+#
+
+#set numbered_ml
+#set jmsg
+set nosmart_wrap
+
+
+# Note: $folder should be set _before_ any other path vars where `+' or `='
+# is used because paths are expanded when parsed
+#
+set folder=~/mail		# where i keep my mailboxes
+
+set abort_unmodified=yes	# automatically abort replies if I don't
+				# change the message
+set alias_file=~/.mail_aliases	# where I keep my aliases
+set allow_8bit			# never do Q-P encoding on legal 8-bit chars
+#set arrow_cursor		# use -&gt; instead of hiliting the whole line
+set ascii_chars		# use ASCII instead of ACS chars for threads
+#set askbcc
+#set askcc
+#set attribution="On %d, %n wrote:"	# how to attribute replies
+#set attribution="On %M %N, %f wrote:\n"
+set attribution="%n (%a) wrote:\n"
+
+set autoedit			# go to the editor right away when composing
+#set auto_tag			# always operate on tagged messages
+#set charset="iso-8859-1"	# character set for your terminal
+set charset="iso-2022-jp"
+set noconfirmappend		# don't ask me if i want to append to mailboxes
+set noconfirmcreate		# prompt when creating new files
+set copy=yes			# always save a copy of outgoing messages
+set delete=yes			# purge deleted messages without asking
+set edit_hdrs			# let me edit the message header when composing
+#set editor="emacs -nw"		# editor to use when composing messages
+#set fast_reply			# skip initial prompts when replying
+set fcc_attach			# keep attachments in copies of sent messages?
+#set force_name			# fcc by recipient, create if mailbox doesn't exist
+set noforward_decode		# weed and MIME decode forwaded messages
+set forward_format="[%a: %s]"	# subject to use when forwarding messages
+set forward_quote		# quote the header and body of forward msgs
+
+#set hdr_format="%4C %Z %{%m/%d} %-15.15F (%4c) %s" # format of the index
+#set hdr_format="%4C %Z %{%b/%d} %-15.15L (%4l) %-40.40s" # format of the index
+set hdr_format="%4C %Z %{%b/%d/%R} %-14.14L (%4l) %-35.35s" # format of the index
+
+#set hdrs			# include `my_hdr' lines in outgoing messages
+set header			# include message header when replying
+set help			# show the help lines
+set history=20			# number of lines of history to remember
+set hostname=			# my DNS domain - was "gol.com"
+set include			# always include messages when replying
+#set indent_str="&gt; "		# how to quote replied text
+#set locale="C"			# locale to use for printing time
+#set mailcap_path="~/.mailcap:/usr/local/share/mailcap"
+#set nomark_old			# i don't care about whether a message is old
+set mail_check=1		# how often to poll for new mail
+#set mbox=+mbox			# where to store read messages
+#set menu_scroll		# no implicit next-page/prev-page
+set metoo			# remove my address when replying
+#set mime_forward		# use message/rfc822 type to forward messages
+set move=no			# don't ask about moving messages, just do it
+#set pager=less			# some people prefer an external pager
+#set pager_context=3		# no. of lines of context to give when scrolling
+
+#set pager_format="-%S- %-20.20f %s"	# format of the pager status bar
+set pager_format="%S %C/%T: %-20.20n   %-38.38s"
+
+set pager_index_lines=5		# how many index lines to show in the pager
+#set pager_stop			# don't move to the next message on next-page
+#set pgp_strict_enc		# use Q-P encoding when needed for PGP
+set postpone=ask-no		# postpone message?
+set postponed=+postponed	# mailbox to store postponed messages in
+set print=ask-yes		# ask me if I really want to print messages
+set print_cmd=/bin/lp	# how to print things (I like to save trees)
+set noprompt_after	# ask me for a command after the external pager exits
+#set quote_regexp="^ *[a-zA-Z]*[&gt;:#}]"	# how to catch quoted text
+set quote_regexp="^ *[a-zA-Z]*[]&gt;|}()%:=-][]&gt;|}():=-]*"  # YESS!!
+set read_inc=10			# show progress when reading a mailbox
+set recall=ask-no		# prompt to recall postponed messages
+set record=+sent-mail		# default location to save outgoing mail
+#set references=5		# trim references list.
+set reply_to=ask-yes		# always use reply-to if present
+set reply_regexp="^(re:[ \t]*)+"# how to identify replies in the subject:
+set resolve			# move to the next message when an action is performed 
+set reverse_alias		# attempt to look up my names for people
+set reverse_name		# reply as the user to whome the mail was sent
+set nosave_empty		# remove files when no messages are left
+#set save_name			# save outgoing messages by recipient, if the
+
+set sendmail="/usr/sbin/sendmail"	# Removed the switches seen below
+#set sendmail="/usr/sbin/sendmail -oi -oem "     # original sendmail call 
+
+#set sendmail_bounce="/usr/lib/sendmail -oi -oem"	# how to bounce mail
+
+#set shell="/bin/zsh"		# program to use for shell escapes
+set sig_dashes			# standar "-- "
+#set signature="~/.signature"	# file which contains my signature
+
+# I subscribe to a lot of mailing lists, so this is _very_ useful.  This
+# groups messages on the same subject to make it easier to follow a
+# discussion.  Mutt will draw a nice tree showing how the discussion flows.
+set sort=threads		# primary sorting method
+
+#set sort_aux=reverse-date-received	# how to sort subthreads
+set sort_aux=date-received	# how to sort subthreads
+#set sort_aux=last-date		# date of the last message in thread
+set sort_browser=reverse-date	# how to sort files in the dir browser
+set spoolfile='~/.mail'	# where my new mail is located
+set status_format="-%r-Mutt: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b? %l]---(%s)%|-"
+#set status_on_top		# some people prefer the status bar on top
+set strict_threads		# don't thread by subject
+set tilde			# virtual lines to pad blank lines in the pager
+set timeout=30			# timeout for prompt in the index menu
+set tmpdir=~/tmp		# where to store temp files
+#set to_chars=" +TCF"
+set use_8bitmime		# enable the -B8BITMIME sendmail flag
+#set nouse_domain		# don't qualify local addresses with $domain
+set use_from			# always generate the `From:' header field
+#set use_mailcap=yes		# always use a mailcap entry when found
+#set verify_sig=no		# don't automatically verify message signatures
+#set visual=vim			# editor invoked by ~v in the builtin editor
+#set nowait_key			# prompt when a pipe returns normal status
+set write_inc=10		# show progress while writing mailboxes
+
+# only enable the following IFF you have sendmail 8.8.x or you will not
+# be able to send mail!!!
+#set dsn_notify='success,failure,delay'	# when to return an error message
+#set dsn_return=hdrs		# what to return in the error message
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Header fields I don't normally want to see
+#
+ignore *		# this means "ignore all lines by default"
+
+# I do want to see these fields, though!
+unignore	from: subject to cc mail-followup-to \
+		date x-mailer x-url # this shows how nicely wrap long lines
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Color definitions
+#
+
+color normal white black
+color hdrdefault red black
+color quoted brightyellow black
+color signature red black
+color indicator brightwhite blue
+color error brightred yellow
+color status green black
+color tree magenta black	# the thread tree in the index menu
+color tilde magenta black
+color message brightcyan black
+color markers brightcyan black
+color attachment brightgreen black
+color search white green	# how to hilite search patterns in the pager
+
+color header brightred black ^(From|Subject|To):
+color body magenta black "(ftp|http)://[^ ]+"	# point out URLs
+color body magenta black [-a-z_0-9.]+@[-a-z_0-9.]+	# e-mail addresses
+color underline brightgreen default
+
+# attributes when using a mono terminal
+#mono header underline ^(From|Subject):
+mono quoted bold
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# pgp stuff
+#
+#set pgp_default_version=pgp5
+#set pgp_language="mutt"
+#set pgp_sign_micalg=pgp-sha1
+#set pgp_strict_enc
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Key bindings
+#
+#	maps:
+#		alias		alias menu
+#		attach		attachment menu
+#		browser		directory browser
+#		compose		compose menu
+#		index		message index
+#		pgp		pgp menu
+#		postpone	postponed message recall menu
+#		generic		generic keymap for all of the above
+#		editor		line editor
+#		pager		text viewer
+#		
+
+bind generic "\e&lt;" first-entry	# emacs-like bindings for moving to top/bottom
+bind generic \e&gt; last-entry
+bind generic { top-page
+bind generic } bottom-page
+bind generic \177 last-entry
+
+#macro index \cb |urlview\n	# simulate the old browse-url function
+
+macro index S s+spam\n
+macro pager S s+spam\n
+
+#macro index \# /bug^M	# search for bugs
+#macro index "\""        ":set realname=\"real hairy macro\"^M:set ?realname^M" # and a comment to boot!
+#macro index f1 :woohoo!
+
+bind pager G bottom	# just like vi and less
+#macro pager \Ck	"|pgp -kaf^M"   # a comment is valid here
+#macro pager X	"|morepgp^M"	# pipe PGP message to a script
+
+#bind editor \cy eol	# make ^Y jump to the end of the line
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# User Defined Headers
+#
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Specify default filename when saving messages
+#
+#	save-hook [!]&lt;pattern&gt; &lt;mailbox&gt;
+#
+# &lt;mailbox&gt; is provided as default when saving messages from &lt;pattern&gt;
+
+save-hook mutt- =mutt-mail
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Multiple spool mailboxes
+#
+#	mbox-hook [!]&lt;pattern&gt; &lt;mbox-mailbox&gt;
+#
+# Read mail in &lt;pattern&gt; is moved to &lt;mbox-mailbox&gt; when &lt;pattern&gt; is
+# closed.
+
+#mbox-hook =mutt-users.in =mutt-users
+#mbox-hook +TEST +inbox
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Change settings based upon message recipient
+#
+#	send-hook [!]&lt;pattern&gt; &lt;command&gt;
+#
+# &lt;command&gt; is executed when sending mail to an address matching &lt;pattern&gt;
+
+#send-hook mutt- 'my_hdr From: Michael Elkins &lt;me@example.com&gt;'
+#send-hook mutt- 'set signature=~/.sigmutt'
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Specify where to save composed messages
+#
+#	fcc-hook [!]&lt;pattern&gt; &lt;mailbox&gt;
+#
+# &lt;pattern&gt; is recipient(s), &lt;mailbox&gt; is where to save a copy
+
+#fcc-hook joe +joe
+#fcc-hook bob +bob
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Change settings based on mailbox
+#
+#	folder-hook [!]&lt;pattern&gt; &lt;command&gt;
+#
+# &lt;command&gt; is executed when opening a mailbox matching &lt;pattern&gt;
+
+#folder-hook . 'set sort=date-sent'
+#folder-hook mutt 'set hdr_format="%4C %Z %02m/%02N %-20.20F (%4l) %s"'
+#folder-hook =mutt my_hdr Revolution: \#9 # real comment
+
+#folder-hook apnic my_hdr From: DNS Role Account &lt;dnsadmin@example.com&gt;
+folder-hook abuse my_hdr From: Abuse Dept &lt;abuse@example.com&gt;
+folder-hook webmaster my_hdr From: WWW Role Account &lt;webmaster@example.com&gt;
+folder-hook postmaster my_hdr From: Postmaster &lt;postmaster@example.com&gt;
+folder-hook cocacola my_hdr From: Postmaster in Absentia. &lt;postmaster@example.com&gt;
+folder-hook dnsadmin my_hdr From: DNS Role Account &lt;dnsadmin@example.com&gt;
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Aliases
+#
+#	alias &lt;name&gt; &lt;address&gt; [ , &lt;address&gt; ... ]
+
+#alias exam "\# to annoy michael" &lt;user@example.com&gt;
+#alias me Michael Elkins &lt;michael&gt; # me!
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Mailboxes to watch for new mail
+#
+#	mailboxes &lt;path1&gt; [ &lt;path2&gt; ... ]
+#
+
+#mailboxes +mutt-dev +mutt-users +open-pgp +wmaker
+#mailboxes `echo ~/Mail/Lists/*`
+mailboxes `echo $HOME/mbox`
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Specify the order of the headers to appear when displaying a message
+#
+#	hdr_order &lt;hdr1&gt; [ &lt;hdr2&gt; ... ]
+#
+
+hdr_order date from subject to cc
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Identify mailing lists I subscribe to
+#
+#	lists &lt;list-name&gt; [ &lt;list-name&gt; ... ]
+
+#lists mutt-dev mutt-users wmaker redhat-list open-pgp vim
+lists procmail janog usr-tc radius portmaster ssh flexfax IAP
+lists kevin-ml
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Automatically use entries from ~/.mailcap to view these MIME types
+#
+#       auto_view &lt;type&gt; [ &lt;type&gt; ... ]
+
+auto_view application/x-gunzip
+auto_view application/x-gzip
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# Scoring
+#
+#       score &lt;pattern&gt; &lt;value&gt;
+#
+# 9999 and -9999 are special values which cause processing of hooks to stop
+# at that entry.  If you prefix the score with an equal sign (=), the score
+# is assigned to the message and processing stops.
+
+#score '~f ^me@example.com$' 1000
+#score '~t mutt | ~c mutt' =500
+#score '~f aol\.com$' -9999
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# I use Mutt on several different machines, so I put local config commands
+# in a separate file so I can have the rest of the settings the same on all
+# machines.
+#
+
+#source ~/.muttrc-local	# config commands local to this site
+#source ~/.mail_aliases
+
+# EOF
+
+
+
+
+
+-------------------------------------------------------------------
+Next Nomikai: September 17 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: October 9 (Sat), 13:00     place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">tlug: Mutt and domain lookup when sending mail - help!</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00037.html">Re: tlug: Netscape/Java</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00039.html">tlug: Mutt and domain lookup when sending mail - help!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00030.html">tlug: pop-3/tcp server failing HELP</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00039.html">tlug: Mutt and domain lookup when sending mail - help!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00038"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00038"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

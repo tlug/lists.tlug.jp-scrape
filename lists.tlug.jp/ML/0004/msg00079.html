@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Date: Fri, 14 Apr 2000 16:56:15 +0900 -->
+<!--X-From: ulrike@example.com -->
+<!--X-Date:  Fri, 14 Apr 2000 16:56:40 +0900 -->
+<!--X-Message-Id: 20000414075615.396A515752@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00078.html">Date Prev</A>][<A HREF="msg00080.html">Date Next</A>][<A HREF="msg00072.html">Thread Prev</A>][<A HREF="msg00082.html">Thread Next</A>][<A HREF="maillist.html#00079">Date Index</A>][<A HREF="threads.html#00079">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Date: Fri, 14 Apr 2000 16:56:15 +0900</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Date: Fri, 14 Apr 2000 16:56:15 +0900</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:ulrike@example.com">ulrike@example.com</A></strong></LI>
+<LI>Date: Fri, 14 Apr 2000 16:56:40 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Seems when I tried to post this before it did not make it to the list, since 
+the post I sent afterwards has already made it  ... this is roughly what I 
+wrote:
+
+&lt;selva&gt; 
+   I guess that /dev/cdrom is linked to /dev/sdc (by the way it is sdc, not
+   scd, isn't it?). 
+&lt;/selva&gt;
+
+In the installation instructions I used, which seem to be are a German 
+translation of a previous version of 
+
+<A TARGET="_top" HREF="http://www.debian.de/releases/slink/i386/install.en.txt">http://www.debian.de/releases/slink/i386/install.en.txt</A>
+
+it was written that the first SCSI CD-ROM is named ``/dev/scd0''. In the 
+current version above it says: 
+
+* The first SCSI CD-ROM is named ``/dev/scd0'', also known as
+  ``/dev/sr0''.
+
+About /dev/sr0 the machine claims "special device /dev/sr0 does not exist".
+BTW, I found out that /dev/cdrom does not exist either ...
+
+&lt;selva&gt; 
+   It seems either the device name is wrong or the scsi driver is not loaded. 
+
+   First check the boot message to see whether the card is recognised at
+   boot time. 
+&lt;/selva&gt; 
+
+It seems to recognize the card, it prints (scsi0) in front of the warning 
+messages I tried to cite in my previous post (BTW, is there any way to capture 
+this? The interesting part flies by to quickly to copy everything by hand ...). 
+Then it prints: "Failed initialization of WD-7000 scsi card!" Then a line 
+starting with scsi0 and the name of the card. Then something like "scsi one 
+host" and then something about scsi again which I could not copy in time (see 
+request for capture above ...)
+
+&lt;selva&gt; 
+   Check /proc/modules to see whether aic7xxx is listed or not. 
+&lt;/selva&gt; 
+
+No:
+
+nls_iso8859_1      1		1 (autoclean)
+nls_cp437          1		1 (autoclean)
+vfat               4		1 (autoclean)
+sg                 1		0
+cdrom              1		0
+
+But sg was the module I selected among the scsi stuff ... and cdrom ... ???
+(Austin, before you pick on me again ... what was that you quoted on the admin-
+list about stupid questions being allowed? Pity that the archive is not 
+alive ..)
+
+&lt;selva&gt; 
+   If not /sbin/modprobe aic7xxx. 
+&lt;/selva&gt; 
+
+It says that it can't locate the module.
+
+&lt;selva&gt; 
+   Check /proc/scsi/scsi to see whether the cd drive is detected. 
+&lt;/selva&gt; 
+
+scsi: "Attached devices: none"
+
+But there is also a file aic7xxx in the same directory.
+
+Other question: "more" and "less" don't work since I have only installed the 
+base system yet. Is there another way to look at the files? I helped myself 
+with copying them to a floppy and reading them on another computer ...
+
+&lt;selva&gt; 
+   If it still doesn't work, I would think that /dev/cdrom is not linked to
+   the correct device. The first scsi device is named /dev/sda, the second
+   is /dev/sdb etc.. and partitions within are named /dev/sda1 to
+   /dev/sda15 etc. (Has this changed in recent distributions?) If you dont
+   have any other devices on the scsi bus, the cdrom may be on /dev/sda.
+   Try mounting that instead of /dev/cdrom. Once you identify the correct
+   device make /dev/cdrom a link to that. (ls -l /dev/sd* will show you all
+   the sd device files you have -- whatever be the names, the first device
+   has major,minor = 8,0, the second is 8,32 etc...) 
+&lt;/selva&gt; 
+
+There are quite a lot of  files that match /dev/sd* ... /dev/sda did not work. 
+
+Thanks for all the help, 
+
+Uli
+
+
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00078.html">Re: tlug: Debian installation - scsi problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00080.html">tlug: test</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00072.html">tlug: Tokyo Network Access FAQ</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00082.html">Maling List Archives (tlug: Date: Fri, 14 Apr 2000 16:56:15 +0900)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00079"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00079"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

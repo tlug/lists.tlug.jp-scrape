@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Network time protocol -->
+<!--X-From: Frank BENNETT <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date: Tue, 19 Sep 2000 14:52:47 +0900 -->
+<!--X-Message-Id: 20000919145247.A2687@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 39C5DA3D.DDBF68EC@example.com -->
+<!--X-Reference-Id: Pine.GSO.4.05.10009180930440.3933&#45;100000@example.com -->
+<!--X-Reference-Id: 14790.20187.38858.478747@example.com -->
+<!--X-Reference-Id: 20000919111115.A592@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 14790.58946.121381.26337@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00240.html">Date Prev</A>][<A HREF="msg00242.html">Date Next</A>][<A HREF="msg00240.html">Thread Prev</A>][<A HREF="msg00242.html">Thread Next</A>][<A HREF="maillist.html#00241">Date Index</A>][<A HREF="threads.html#00241">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Network time protocol</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Network time protocol</strong></LI>
+<LI><strong>From</strong>: <strong>Frank BENNETT &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 19 Sep 2000 14:52:47 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00240.html">14790.58946.121381.26337@example.com</A>&gt;; from Stephen J. Turnbull on Tue, Sep 19, 2000 at 01:06:26PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00221.html">39C5DA3D.DDBF68EC@example.com</A>&gt; &lt;<A HREF="msg00235.html">Pine.GSO.4.05.10009180930440.3933-100000@example.com</A>&gt; &lt;<A HREF="msg00236.html">14790.20187.38858.478747@example.com</A>&gt; &lt;<A HREF="msg00239.html">20000919111115.A592@example.com</A>&gt; &lt;<A HREF="msg00240.html">14790.58946.121381.26337@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;Tsw_dB.A.JsH.WGwx5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, Sep 19, 2000 at 01:06:26PM +0900, Stephen J. Turnbull wrote:
+&gt; &gt;&gt;&gt;&gt;&gt; "FB" == Frank BENNETT &lt;bennett@example.com&gt; writes:
+
+&gt; The latter.  The safest configuration for a firewall is a bastion host
+&gt; that communicates only with routers.  The only software that the
+&gt; bastion host should run is proxies for passing permissible data from
+&gt; inside to outside and vice versa, logging software, and sshd for
+&gt; administrators.  All traffic from outside should be routed via the
+&gt; bastion host, which passes it back to the inside router.  And vice
+&gt; versa.  No routes inside to outside or vice versa that don't pass
+&gt; through the bastion host.  The routers shouldn't know about one
+&gt; anothers' existence.
+
+I think we have a glimmer of understanding at this end.  This means that in
+best practice, a firewall should not do routing itself?  I understand
+roughly why doing filtering inside the kernel is risky (because the kernel
+controls the world).  What is the problem with permitting the firewall to
+serve as gateway on each of two interfaces?  Is it simply that the routers
+themselves provide a second line of defense -- an attacker must first breach
+the router in order to gain access to the firewall?  I am assuming that the
+physical setup looks something like this:
+
+&lt;---Evil Insiders---&gt;Router1&lt;---&gt;Firewall&lt;---&gt;Router2&lt;---Evil Outsiders---&gt;
+
+Router2 is registered on outside hosts as the access point for the Evil
+Insiders' domain, but it simply delivers any inbound packets it receives to
+Firewall, via a separate interface.  Firewall reads the packet headers for
+the type of data, filters, and delivers everything it finds OK to the
+interface connected to Router1.  Router1 reads the packet headers and
+decides how to route packets to hosts within the Evil Insiders' domain,
+again via a separate network interface.  Traffic running the other way
+operates similarly.
+
+So an attempt to telnet from EO to EI will succeed transparently, if telnet
+packets are passed by Firewall.  But if telnet packets are denied, the
+would-be telnet user would have to crack Router2, then crack Firewall,
+convince it to pass this type of data (or to run telnet, which presumably is
+not installed on the machine), and then request the outside connection to a
+host within EI.  She does not need to doctor Router1 in any way, but
+cracking Router2 and Firewall is likely to require some time, during which
+alarm bells should start ringing somewhere.
+
+Is that right?
+
+Feel free to eject from this discussion by recommending that I
+RTFM (with a suggestion of which FM I should R).
+
+Frank "Descript-kiddie" Bennett
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00242" HREF="msg00242.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00221" HREF="msg00221.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> Sajjad Zaidi &lt;sajjad@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00235" HREF="msg00235.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00236" HREF="msg00236.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00239" HREF="msg00239.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00240" HREF="msg00240.html">Re: Network time protocol</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00240.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00242.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00240.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00242.html">Re: Network time protocol</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00241"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00241"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

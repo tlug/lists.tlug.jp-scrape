@@ -1,0 +1,234 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Um, so... systemd? -->
+<!--X-From-R13: Qheg Enzcfba <pwfNplavp.arg> -->
+<!--X-Date: Mon, 16 Jan 2017 19:22:25 +0900 -->
+<!--X-Message-Id: 20170116102221.GA18464@quadratic.cynic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1484466028.1128194.848109712.20A4C328@webmail.messagingengine.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00016.html">Date Prev</a>][<a href="msg00018.html">Date Next</a>][<a href="msg00016.html">Thread Prev</a>][<a href="msg00018.html">Thread Next</a>][<a href="maillist.html#00017">Date Index</a>][<a href="threads.html#00017">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Um, so... systemd?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Jan 2017 19:22:22 +0900</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Um%2C%20so...%20systemd%3F">cjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Um, so... systemd?</strong></li>
+<li>User-agent: Mutt/1.5.21 (2010-09-15)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 2017-01-15 23:17 +0900 (Sun), Edward Middleton wrote:
+
+&gt; Systemd has some more complexity then sysvinit based setups but it
+&gt; does more.
+
+In some ways, such as in the internal code, yes it has more
+complexity. But in other ways the complexity is much less, actually.
+
+In particular, getting rid of much of the nasty mess of shell scripts
+that's been in the traditional Linux startup system is very good, and
+moving a lot of the configuration out of shell scripts is even better.
+You want some real fun, start tracing thorough those scripts and
+figure out the interactions in them when you're trying to debug
+something. It's good neither for reliability nor security when all
+your &quot;configuration files&quot; are executable code and, even when you
+don't directly excecute them, the variables you set go through a
+random number of evaluations and substitutions depending on what's
+using them and how. Just try putting a character special to the shell
+in some of those variables that are eval'd multiple times and watch
+things get really interesting. (Systemd doesn't fix all of this, but
+it fixes a good chunk.)
+
+On 2017-01-14 21:40 -1000 (Sat), David J Iannucci wrote:
+
+&gt;   <a  rel="nofollow" href="https://igurublog.wordpress.com/2014/04/03/tso-and-linus-and-the-impotent-rage-against-systemd/">https://igurublog.wordpress.com/2014/04/03/tso-and-linus-and-the-impotent-rage-against-systemd/</a>
+
+This makes some good points, but also has a fair amount of
+misinformation in it. Some of that is addressed in an [interview] with
+Lennart Poettering. (I can't speak to whether Lennart, who claims he
+makes it very easy to put in patches, or T'so, who claims it's hard to
+get patches in, is correct.) Other things are more due to the
+complaints going through a game of chinese whispers. For example,
+IgnorantGuru says that T'so &quot;warns of the complexity of the system and
+its XML (even javascript-based?) configuration files,&quot; yet systemd has
+neither of these; it uses a quite simple INI file format.
+
+My understanding about the kdbus thing is that it's rather orthogonal;
+you should be able to continue using the userland dbus if you prefer,
+or even no dbus at all if that's the route you really want to go and
+you can manage to configure the tools you use to handle that.
+
+I'm not sure why T'so had such an issue debugging startup; systemd has
+*much* better logging than any other startup system I've seen, and is
+also better at letting you shut down and restart various modules
+safely, so it should be easier, not harder, to debug problems.
+
+&gt; And it sounds like Red Hat and its &quot;fascist&quot; developers, the ones who
+&gt; are forcing this change through, are the Trumps of the Linux world? Am I
+&gt; understanding this correctly?
+
+Doesn't really look like that to me. I don't know as much about the
+relationships and interactions between the various Linuxes as I do
+about the BSDs, but Debian does not seem like the kind of distro that
+would switch to something just because Red Hat is using it; they
+certainly haven't moved to yum or anything like that even after all
+these years.
+
+&gt; ...what are y'all's general viewpoints (briefly? :=) on systemd and
+&gt; how it is taking over the Linux distro world.
+
+Personally, I'm a big fan. Systemd is faster, simpler to config and
+debug (once you learn it), and journald in particular is considerably
+better and more secure than syslog.
+
+There is a bit of a learning curve to it, as there is with anything
+new that is significantly different from the old thing, but my guess
+would be that if you're a casual Linux user it's going to be an hour
+or so of reading and initial playing and then another 8-10 hours,
+spread over however many months, of having to stop and look up
+something rather than just do what you're used to.
+
+For me, as a sysadmin, I spent about a day reading through the score
+of blog entries under &quot;The systemd for Administrators Blog Series&quot;
+linked from the [systemd home page], reading the manual pages, playing
+about, and creating some basic units myself.
+
+In the next few days, actually, it looks as if I'll be having a stab
+at building systemd units for a server I wrote and I'm hoping to use
+those (with user systemd) in my test framework for it, as well as for
+the production servers, so that my test framework is actually using
+systemd to control the server in almost the exact same way the
+production systems would be. If that works it will be really cool, and
+maybe even worth a TLUG presentation.
+
+&gt; Will we reach a point where the major application software that we
+&gt; depend on depends on systemd, and we'll no longer have a choice?
+
+That doesn't actually seem so likely. While systemd itself does a
+great job of starting and stopping stuff, there's little it does that
+couldn't be done (albeit in a much more half-assed way) with some
+shell scripts. There could be software at some point that won't log to
+anything but journald, but that doesn't seem all that likely and even
+in that case you could still use journald without systemd. Systemd has
+a lot of complexity going on inside it to make things run smoothly,
+but the external interfaces are broken up into relatively small parts
+that are actually pretty simple interfaces overall.
+
+&gt; ...also I'm not a GNOME user, but thinking that it might be time to
+&gt; start learning about BSD....
+
+I'm not sure what GNOME has to do with it; I don't use GNOME either,
+or much of any desktop system really (just fvwm2 as my window manager,
+the XFCE button bar, and dbus), and one of the reasons I ended up like
+this is to lessen my dependency on any particular distribution.
+
+[interview]: <a  rel="nofollow" href="https://www.linuxvoice.com/interview-lennart-poettering/">https://www.linuxvoice.com/interview-lennart-poettering/</a>
+[systemd home page]: <a  rel="nofollow" href="https://www.freedesktop.org/wiki/Software/systemd/">https://www.freedesktop.org/wiki/Software/systemd/</a>
+
+cjs
+-- 
+Curt Sampson         &lt;cjs@example.com&gt;         +81 90 7737 2974
+
+To iterate is human, to recurse divine.
+    - L Peter Deutsch
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00013" href="msg00013.html">[tlug] Um, so... systemd?</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00016.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00018.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00016.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00018.html">Re: [tlug] Um, so... systemd?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00017"><strong>Date</strong></a></li>
+<li><a href="threads.html#00017"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

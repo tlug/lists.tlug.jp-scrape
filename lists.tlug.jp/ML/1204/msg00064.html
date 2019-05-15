@@ -1,0 +1,225 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Current practices for Linux partioning? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Wed, 11 Apr 2012 11:39:41 +0900 -->
+<!--X-Message-Id: CAL_0O1&#45;27pB3nSQEviJ+n&#45;s6=UH3Ni06mHQHqse8MbO6gyPUsA@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4F84A345.1060200@yamame.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00063.html">Date Prev</a>][<a href="msg00065.html">Date Next</a>][<a href="msg00059.html">Thread Prev</a>][<a href="msg00071.html">Thread Next</a>][<a href="maillist.html#00064">Date Index</a>][<a href="threads.html#00064">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Current practices for Linux partioning?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 11 Apr 2012 11:39:39 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Current%20practices%20for%20Linux%20partioning%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Current practices for Linux partioning?</strong></li>
+<li>References: &lt;<a href="msg00048.html">4F84A345.1060200@yamame.org</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Wed, Apr 11, 2012 at 6:16 AM, Jonathan Byrne &lt;jonathan@example.com&gt; wrote:
+&gt; A few weeks ago, I stumbled across this article:
+&gt;
+&gt; <a  rel="nofollow" href="http://freedesktop.org/wiki/Software/systemd/separate-usr-is-broken">http://freedesktop.org/wiki/Software/systemd/separate-usr-is-broken</a>
+
+Yeah I just started a different thread on the same topic (with
+Subject: Am I the last to know? or similar).
+
+&gt; Now, that just seems wrong to me; it's not the Unix Way to be unable to
+&gt; boot without /usr mounted.
+
+As Simon says, that's a relic of partition limitations and disk size.
+In practice, distros and app writers have been rather incautious about
+the division between /s?bin and /usr/s?bin.  You must mount /usr on
+modern systems very early unless you have a very carefully set up
+server; workstations need /usr for all the fluff that all the distros
+seem to think should be required.
+
+There's nothing wrong with tradition for tradition's sake, either --
+while the old ways may not be &quot;strictly best&quot; any more, they're
+certainly good enough and have the important virtue of simplicity
+(which can be analyzed into high coherence, loose coupling, and so on
+-- but I digress).  But I think you should acknowledge that this is,
+indeed, tradition for tradition's sake.
+
+Personally, the things that I don't like about this are (1) backward
+compatibility to my traditionally partitioned systems (on Gentoo udev
+is currently in package.mask because the new update requires /usr to
+be mounted and I don't know exactly what my boot sequence is so I'm
+not going to chance it until I have a full day for disaster recovery
+if necessary), (2) some trivial stuff like &quot;du -x /var&quot; as an
+abbreviation for &quot;how much is in /var except for /var/www&quot; (and a
+related issue with /var/backups, since a couple of my scripts don't
+actually rotate the backups, I do that by hand when the partition
+fills ;-).  Obviously, installing appropriate resource accounting
+software is probably a better idea now, especially since a lot of my
+resource limitation partitions are on lvm anyway!
+
+I do like having /home and /var (and some other hierarchies with
+similar usage patterns, see below) as separate partitions, as on
+several occasions I've migrated to new hardware just by moving that
+disk.  Of course that doesn't apply to laptops, but if it doesn't cost
+anything to do it the Way You've Always Done and allows you to reduce
+thinking, why not?
+
+&gt; As I prepare to upgrade my Envy 15 from Win 7 to Linux, what your
+&gt; thoughts around partitioning? Should I hold my nose and make a / big
+&gt; enough to contain /usr,
+
+Yes.
+
+&gt; or should I Do Things The Way I've Always Done
+&gt; Them, which is this partitioning scheme:
+&gt;
+&gt; /
+&gt; /boot
+
++1 - you need this
+
+&gt; swap
+
++1 - no file system mounted, so strictly speaking off topic
+
+&gt; /tmp
+
+If this is not a ramdisk, no.  AFAICT /tmp is used on my systems at
+boot time and for my personal scratch; programs (except for my MUA,
+which needs fixing in its use of temporary storage anyway) seem to use
+TMPDIR=/var/tmp.  I've never seen huge files in /tmp.
+
+&gt; /usr
+
+-1 - more pain than you want unless you maintain your own distro anyway
+
+&gt; /usr/local
+&gt; /opt
+
+Depends on how you use them.  In my usage, /usr/local contains
+personal mods, and lives with /var and /home (q.v.).  /opt is external
+packages I use verbatim (including some where I follow the bleeding
+edge via a VCS, but don't do any local development at all), and may as
+well live with / (unless packages are badly behaved and write data,
+including configuration, to the /opt hierarchy).
+
+&gt; /srv
+
+Dunno.  What's this for?
+
+&gt; /var
+
+Yes.  As with /home, if it's not a notebook, I prefer to have this on
+a separate disk.  /var and /home can cohabit for my purposes.
+
+&gt; /var/spool (if it's a system that will be running an SMTP daemon; in
+&gt; this case, not)
+
+Not obvious any more.  There are too many ways to fill /var (logs, web
+site uploads, databases, etc, etc); probably it's a better idea
+(assuming robust resource management software, which we presumably
+have by now?) to use something more configurable than partitioning.
+
+&gt; /home
+
+Yes.  In fact, I prefer /home to be on a separate disk on my
+non-notebook systems.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00048" href="msg00048.html">[tlug] Current practices for Linux partioning?</a></strong>
+<ul><li><em>From:</em> Jonathan Byrne</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00063.html">Re: [tlug] Am I the last to know?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00065.html">Re: [tlug] Current practices for Linux partioning?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00059.html">Re: [tlug] Current practices for Linux partioning?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00071.html">Re: [tlug] Current practices for Linux partioning?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00064"><strong>Date</strong></a></li>
+<li><a href="threads.html#00064"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

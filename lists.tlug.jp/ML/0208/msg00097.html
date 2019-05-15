@@ -1,0 +1,187 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] line filtering (was Re: Unidentified subject!) -->
+<!--X-From-R13: "Euvzcrv Knznfuvgn" <fuvzcrvNtby.pbz> -->
+<!--X-Date: Wed, 7 Aug 2002 18:36:26 +0900 (JST) -->
+<!--X-Message-Id: E17cNGT&#45;00024b&#45;00@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020807082705.25985.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00096.html">Date Prev</a>][<a href="msg00098.html">Date Next</a>][<a href="msg00095.html">Thread Prev</a>][<a href="msg00104.html">Thread Next</a>][<a href="maillist.html#00097">Date Index</a>][<a href="threads.html#00097">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] line filtering (was Re: Unidentified subject!)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 07 Aug 2002 09:38:01 +0000</li>
+<li><strong>From</strong>: <strong>&quot;Shimpei Yamashita&quot; &lt;<A HREF="mailto:shimpei@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20line%20filtering%20%28was%20Re%3A%20Unidentified%20subject%21%29">shimpei@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] line filtering (was Re: Unidentified subject!)</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+On 8/7/2002, &quot;big0&quot; &lt;big0@example.com&gt; wrote:
+&gt;&gt;I have a file that contains lines like this:
+&gt;
+&gt;&gt;1 some
+&gt;&gt;text with
+&gt;&gt;C/R's
+&gt;&gt;in annoying places
+&gt;&gt;2 more text
+&gt;&gt;with CRs
+&gt;&gt;3 text text text
+&gt;&gt;4 text text
+&gt;
+&gt;&gt;I'd like to concat the lines that don't have leading numbers in to one
+long line
+&gt;
+&gt;Use gawk or mawk, because awk have some limitations:
+&gt;
+&gt; -------------&gt;8-----------------
+&gt;
+&gt;gawk -F&quot; &quot; 'BEGIN { numexp = &quot;[[:digit:]]+&quot;; tmp=&quot;&quot; }
+&gt;NR &gt; 0 {
+&gt; if ($1 ~ numexp &amp;&amp; tmp != &quot;&quot;) { print tmp; tmp=&quot;&quot; }
+&gt;}
+&gt;{ tmp = tmp&quot; &quot;$0; }'
+&gt;
+&gt; -------------&gt;8-----------------
+
+Oh, that's gross. And it's also wrong. (Try it! It doesn't work.)
+
+Here's a better one.
+
+-------------&gt;8-----------------
+perl -ne 'chomp; print unless /^\d/;'
+-------------&gt;8-----------------
+
+If you want a separator between each line, do this instead:
+
+-------------&gt;8-----------------
+perl -ne 'chomp; print $_, &quot; &quot; unless /^\d/;'
+-------------&gt;8-----------------
+
+If that extra space at the end really bothers you, you can try this: 
+
+-------------&gt;8-----------------
+perl -e 'print join(&quot; &quot;, map {chomp;$_} grep(!/^\d/,&lt;&gt;));'
+-------------&gt;8-----------------
+
+That one keeps the whole file in memory, though. If you have a really
+big file and you still want that separator, try this instead:
+
+-------------&gt;8-----------------
+perl -e 'while(&lt;&gt;) {
+    unless (/^\d/) {
+        if ($needspace &gt; 0) { print &quot; &quot; } else { $needspace = 1 }
+        chomp; print $_;
+    }
+}'
+-------------&gt;8-----------------
+
+Shimpei.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00104" href="msg00104.html">[tlug] Re: line filtering (was Re: Unidentified subject!)</a></strong>
+<ul><li><em>From:</em> big0</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00095" href="msg00095.html">[no subject]</a></strong>
+<ul><li><em>From:</em> big0</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00096.html">Re: [tlug] Parallel port driving me nuts</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00098.html">[tlug] Duplicating a MySQL database</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00095.html">[no subject]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00104.html">[tlug] Re: line filtering (was Re: Unidentified subject!)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00097"><strong>Date</strong></a></li>
+<li><a href="threads.html#00097"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

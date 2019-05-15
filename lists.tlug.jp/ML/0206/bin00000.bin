@@ -1,0 +1,83 @@
+;; /usr/share/emacs/site-lisp/suse-start-Mule-UCS.el
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/Mule-UCS")
+
+(require 'un-define)
+(require 'unicode)
+
+;; Fri May 17 15:19:10 2002  Mike Fabian  <mfabian@example.com>
+;; 
+;; the following code creates some additional fontsets using mainly
+;; Unicode fonts.
+;;
+;; If you want to use one of these font sets as your default fontset,
+;; add a line like the following to your ~/.emacs:
+;; 
+;; (setq default-frame-alist `((font . "fontset-16_efont_unicode")))
+
+(defun mule-ucs-create-fontset-unicode (name narrow-font wide-font)
+  (interactive)
+  (let ((narrow-charsets (list
+			  'latin-iso8859-1 
+			  'latin-iso8859-2 
+			  'latin-iso8859-3 
+			  'latin-iso8859-4 
+			  'cyrillic-iso8859-5 
+			  'greek-iso8859-7 
+			  'hebrew-iso8859-8 
+			  'latin-iso8859-9 
+			  'latin-iso8859-15 
+			  'katakana-jisx0201))
+	(wide-charsets (list 
+			'japanese-jisx0208 
+			'japanese-jisx0212 
+			'korean-ksc5601 
+			'chinese-big5-1 
+			'chinese-gb2312 
+			'chinese-cns11643-1 
+			'chinese-cns11643-2 
+			'chinese-cns11643-3 
+			'chinese-cns11643-4 
+			'chinese-cns11643-5 
+			'chinese-cns11643-6 
+			'chinese-cns11643-7))
+	(new-fontset     (create-fontset-from-ascii-font
+			  narrow-font wide-font name))
+	)
+    (mapcar (lambda (x) (set-fontset-font (concat "fontset-" name) x narrow-font))
+	    narrow-charsets)
+    (mapcar (lambda (x) (set-fontset-font (concat "fontset-" name) x wide-font))
+	    wide-charsets)
+    new-fontset))
+
+(when (eq window-system 'x)
+  (mule-ucs-create-fontset-unicode
+   "12_efont_unicode"
+   "-efont-fixed-medium-r-normal-*-12-120-75-75-c-60-iso10646-1"
+   "-efont-fixed-medium-r-normal-*-12-120-75-75-c-120-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "13_misc_unicode"
+   "-misc-fixed-medium-r-semicondensed-*-13-120-75-75-c-60-iso10646-1"
+   "-misc-fixed-medium-r-normal-*-13-120-75-75-c-120-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "14_efont_unicode"
+   "-efont-fixed-medium-r-normal-*-14-140-75-75-c-70-iso10646-1"
+   "-efont-fixed-medium-r-normal-*-14-140-75-75-c-140-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "16_efont_unicode"
+   "-efont-fixed-medium-r-normal--16-160-75-75-c-80-iso10646-1"
+   "-efont-fixed-medium-r-normal--16-160-75-75-c-160-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "16_gnu_unicode"
+   "-gnu-unifont-medium-r-normal--16-160-75-75-c-80-iso10646-1"
+   "-gnu-unifont-medium-r-normal--16-160-75-75-c-80-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "18_misc_unicode"
+   "-misc-fixed-medium-r-normal-*-18-120-100-100-c-90-iso10646-1"
+   "-misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1")
+  (mule-ucs-create-fontset-unicode
+   "24_efont_unicode"
+   "-efont-fixed-medium-r-normal-*-24-240-75-75-c-120-iso10646-1"
+   "-efont-fixed-medium-r-normal-*-24-240-75-75-c-240-iso10646-1"))
+
+;; /usr/share/emacs/site-lisp/suse-start-Mule-UCS.el ends here

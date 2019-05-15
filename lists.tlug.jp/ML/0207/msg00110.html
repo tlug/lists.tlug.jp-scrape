@@ -1,0 +1,184 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advicedocs sought -->
+<!--X-From-R13: Yrvgu Ingnanor <xrvgu.l.jngnanorNaffzo.pbz> -->
+<!--X-Date: Fri, 5 Jul 2002 12:12:18 +0900 (JST) -->
+<!--X-Message-Id: 3D250ED1.9070501@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F208rZhMddY7V4DtonS00007b7c@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00109.html">Date Prev</a>][<a href="msg00111.html">Date Next</a>][<a href="msg00106.html">Thread Prev</a>][<a href="msg00114.html">Thread Next</a>][<a href="maillist.html#00110">Date Index</a>][<a href="threads.html#00110">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advicedocs sought</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 05 Jul 2002 12:13:21 +0900</li>
+<li><strong>From</strong>: <strong>Keith Watanabe &lt;<A HREF="mailto:keith.y.watanabe@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20%5BOT%5D%3A%20PHP%2FMySQL%3A%20Japanese%20input%2Fouput%20prgramming%20advicedocs%20sought">keith.y.watanabe@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advicedocs sought</strong></li>
+<li>References: &lt;<a href="msg00106.html">F208rZhMddY7V4DtonS00007b7c@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.0.0+) Gecko/20020429</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt; Can anyone point me to any references, tutorials, links, that I can 
+&gt; read in order to best plan ahead? Even basic things like how to 
+&gt; receive japanese data into PHP or inputting/retrieving/sorting 
+&gt; japanese into MySQL are a mystery to me. 
+
+I'm not sure about how MySQL handles Japanese text (although I've heard 
+it supposedly can do it; never tried), but for PHP, you might have to 
+recompile it and/or Apache (depending on how you build PHP and Apache). 
+ There's something called an mbstring functions that allow you to 
+convert between character sets and I believe you have to turn it on when 
+you build PHP (I might be wrong here, but I do this whenever I build PHP 
+with this feature).  I'm not sure of the exact option during the 
+configuration process, but that should get you started.  The page that 
+describes this information is located at:
+
+<A  HREF="http://www.php.net/manual/en/ref.mbstring.php">http://www.php.net/manual/en/ref.mbstring.php</A>
+
+It'll describe what is and isn't supported and how to handle basic 
+input/output functions.
+
+I don't want to start up a religious war here on postgres vs mysql, but 
+have you considered using Postgres for this?  I know that postgres has 
+some pretty good support for multibyte character encodings including 
+UTF-8 and EUC-JP, both of which are supported in php.  Again, i'm not 
+100% sure about collation issues (e.g. sorting) but I'm going to assume 
+that because of it's support, you probably can get away with this 
+feature in Postgres.  Just in case, usually, the way I build this into 
+postgres is:
+
+./configure --prefix=/usr/local/pgsql --enable-locale 
+--enable-multibyte=UNICODE
+make
+make install
+
+multibyte can be changed to other encodings that start as default like 
+EUC-JP.
+
+additionally, I do the following to finish the setup/installation of 
+postgres:
+
+adduser pgsql
+mkdir /usr/local/pgsql/data
+chown pgsql /usr/local/pgsql/data
+su - pgsql
+/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/postmaster -D /usr/local/pgsql/data -S&amp;
+
+then if i need to create a database with the unicode/UTF-8 encoding I 
+just do this:
+
+createdb -U someuser -W -E UNICODE -e somedb
+
+Next, entering the data is the same in terms of going between php and 
+the database, EXCEPT, that you need to do the string conversions prior 
+to interacting with the data.  I think that should be enough to get you 
+started.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00114" href="msg00114.html">Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00106" href="msg00106.html">[tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00109.html">Re: [tlug] Boot options (RH7.2) (Grub?)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00111.html">Re: [tlug] Boot options (RH7.2) (Grub?)</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00106.html">[tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00114.html">Re: [tlug] [OT]: PHP/MySQL: Japanese input/ouput prgramming advice docs sought</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00110"><strong>Date</strong></a></li>
+<li><a href="threads.html#00110"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

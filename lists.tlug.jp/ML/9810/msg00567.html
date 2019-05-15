@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS question -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 14 Oct 1998 19:13:34 +0900 -->
+<!--X-Message-Id: 19981014191328.B19261@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810140858.RAA03506@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981014181410.2090c&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00566.html">Date Prev</A>][<A HREF="msg00568.html">Date Next</A>][<A HREF="msg00565.html">Thread Prev</A>][<A HREF="msg00570.html">Thread Next</A>][<A HREF="maillist.html#00567">Date Index</A>][<A HREF="threads.html#00567">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS question</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 14 Oct 1998 19:13:28 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00565.html">Pine.LNX.3.96LJ1.1b7.981014181410.2090c-100000@example.com</A>&gt;; from Scott Stone on Wed, Oct 14, 1998 at 06:16:37PM +0900</LI>
+<LI>Mail-Followup-To: tlug@example.com</LI>
+<LI>References: &lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt; &lt;<A HREF="msg00565.html">Pine.LNX.3.96LJ1.1b7.981014181410.2090c-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; Scott Stone writes:  (on 14 Oct 98)
+
+&gt; you do need to have identical UID/GIDs on all the machines.  Perhaps put
+&gt; passwd in /home and have /etc/passwd on each machine be a symlink to it?
+&gt; Same for /etc/shadow, /etc/group, /etc/gshadow if used, etc etc.
+
+You should be REALLY careful when mucking with /etc/passwd and friends.
+If you are moving things around the network you must consider a crash on
+the server or a crash on the client at any point.  Pretty easy to end up
+with an unbootable system if you mess up.  For dataless clients this is
+usually no big deal (just boot from floppy, fix the problem and be on
+your way) but it pays to be clean.
+
+I would do something like the following:
+
+1) Maintain master copies of passwd, group, shadow, and gshadow on a
+   designated server.  These should NOT be /etc/passwd, /etc/group, etc.
+   but should be stored separately (/etc/MASTER or somesuch).  Create
+   perl scripts to act as substitutes for useradd, etc., that manipulate
+   these files rather than /etc/passwd.  They should be owned by root
+   with 600 permisions.  RCS can be your friend.
+
+2) Either using rdist or NFS, copy these files onto the client.  Let me
+   know if you can't figure out how to do this.  Store the files as
+   /etc/passwd.new on each client (/etc must be locally mounted).
+   Ensure that any previous file is deleted and check for errors at
+   every point.
+
+3) Once you are sure that /etc/passwd.new is safely written to each
+   client's disk (trickier than it sounds) farm out a job using rsh or
+   ssh that does the equivalent of the following on each client:
+
+	# cd /etc
+	# mv passwd passwd.old &amp;&amp; ln passwd.new passwd &amp;&amp; rm passwd.new
+
+	# #repeat for group, shadow, gshadow
+
+    (I'd actually use a perl script for this for easier bullet
+    proofing).
+
+&gt; OR do an NFS-root type thing, which linux does support.  You could even
+&gt; use diskless workstations.  I'd suggest a 100MBit network for this,
+&gt; though, since that's not even very expensive anymore.
+
+Avoid diskless workstations if at all possible.  Simply too much network
+traffic.  Better is to define a "standard" client configuration and
+install the OS on all clients identically.  The idea is to be able to
+clone a client from scratch in just a few minutes.  This is easiest if all
+of your clients have identical hardware configurations, but isn't too
+hard even with minor variations.  Use standard scripts to do the
+post-install configuration (hostname, ip address, etc.).  DHCP can be
+your friend.
+
+NFS-roots are useful during an install from scratch, but otherwise I'd
+try to avoid them.
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00570" HREF="msg00570.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00572" HREF="msg00572.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00564" HREF="msg00564.html">tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00565" HREF="msg00565.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00566.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00568.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00565.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00570.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00567"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00567"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!-- MHonArc v2.4.9 -->
+<!--X-Subject: IDE problems with an Athlon motherboard -->
+<!--X-From-R13: Euvzcrv Knznfuvgn <fuvzcrvNfba&#45;bs&#45;obsu.obsu.te.wc> -->
+<!--X-Date: Sat, 25 Aug 2001 23:30:27 +0900 -->
+<!--X-Message-Id: 20010825233027.A1333@example.com&#45;of&#45;bofh.bofh.gr.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00247.html">Date Prev</a>][<a href="msg00249.html">Date Next</a>][<a href="msg00264.html">Thread Prev</a>][<a href="msg00249.html">Thread Next</a>][<a href="maillist.html#00248">Date Index</a>][<a href="threads.html#00248">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>IDE problems with an Athlon motherboard</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>IDE problems with an Athlon motherboard</strong></li>
+<li><strong>From</strong>: <strong>Shimpei Yamashita &lt;<A HREF="mailto:shimpei@example.com">shimpei@example.com</A>&gt;</strong></li>
+<li>Date: Sat, 25 Aug 2001 23:30:27 +0900</li>
+<li>Content-Disposition: inline</li>
+<li>Content-Type: text/plain; charset=us-ascii</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;shimpei@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;4FkUfC.A.ctE.Ok7h7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+<li>User-Agent: Mutt/1.3.18i-ja0</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I'm trying to put together a box from scratch here, and am having a hard
+time getting Linux to read from the CD-ROM.
+
+Setup:
+	Gigabyte GA-7DXR (AMD 761 chipset)
+	  this board has 2 IDE controllers. I haven't put anything on
+	  the second controller yet, though.
+	Athlon 1GHz
+	blank, unformatted 30GB UltraATA hard disk as master on ide0 channel
+	Matsushita SR-85 DVD-ROM as master on ide1 channel
+
+Symptom:
+ The computer boots, and the BIOS screens show up properly.
+ Both IDE devices got recognized once I remember to flip the
+ master/slave jumper properly on the devices. I set &quot;cdrom&quot; to
+ be in the boot device list, and stick in my Kondara 2.0 boot CD.
+
+ The LILO prompt takes rather long to come up after the computer starts
+ to read the CD-ROM--longer than it takes my piddling old laptop to do it.
+ It eventually does--most of the time. Sometimes it requires opening the
+ tray and putting it back in to get the drive to recognize the CD; sometimes
+ I need to reset the computer and try again.
+
+ Once I get it past the LILO prompt, the kernel loads, gets as far as
+ putting up a blue screen [0] for the installer, tries to mount the
+ CD-ROM, and fails with a series of kernel messages like the following:
+
+&lt;4&gt;hdc: cdrom_decode_status: status=0x51 {DriveReady SeekComplete Error}
+&lt;4&gt;hdc: cdrom_decode_status: error=0x34
+   ... above two lines repeated several times
+&lt;4&gt;hdc: ATAPI reset complete
+&lt;4&gt;end_request: I/O error, dev 16:00 (hdc), sector 1182428
+&lt;4&gt;hdc: irq timeout: status=0xd0 {Busy}
+&lt;4&gt;hdc: ATAPI reset complete
+&lt;4&gt;hdc: irq timeout: status=0xd0 {Busy}
+&lt;4&gt;hdc: ATAPI reset complete
+&lt;4&gt;end_request: I/O error, dev 16:00 (hdc), sector 1182352
+&lt;4&gt;hdc: irq timeout: status=0xd0 {Busy}
+&lt;4&gt;hdc: ATAPI reset complete
+ ....
+and finally
+&lt;4&gt;EXT2-fs: unable to read superblock
+
+I can think of several possible causes--
+  IRQ conflict--likely, but I can't even begin to try to solve one
+  bad drive--also likely, since I just got it today, but I want to be sure
+		  first
+  Linux doesn't quite support this board--unlikely, especially the IDE
+		chip, since some people on the net do seem to be using this
+		board with Linux
+but I can't pinpoint the cause. Can anyone help me?
+
+The kernel version on the Kondara CD is 2.4.4 plus some patches. The
+exact same problem shows up when I try booting with Linuxcare's bootable
+recovery disk, though, so I don't think the kernel version is the main
+problem here.
+
+-- 
+Shimpei Yamashita                               <A  HREF="http://www.shimpei.org/">http://www.shimpei.org/</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00249" href="msg00249.html">Re: IDE problems with an Athlon motherboard</a></strong>
+<ul><li><em>From:</em> Simon Cozens &lt;simon@example.com&gt;</li></ul></li>
+<li><strong><a name="00250" href="msg00250.html">Re: IDE problems with an Athlon motherboard</a></strong>
+<ul><li><em>From:</em> Jonathan Q &lt;jq@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00247.html">Re: Gnome and Sawfish</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00249.html">Re: IDE problems with an Athlon motherboard</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00264.html">Re: Gnome and Sawfish</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00249.html">Re: IDE problems with an Athlon motherboard</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00248"><strong>Date</strong></a></li>
+<li><a href="threads.html#00248"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

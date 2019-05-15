@@ -1,0 +1,174 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Lilo success -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date: Sun, 11 Jan 1998 20:53:22 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.980112103336.2970C&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00090.html">Date Prev</A>][<A HREF="msg00092.html">Date Next</A>][<A HREF="msg00128.html">Thread Prev</A>][<A HREF="msg00092.html">Thread Next</A>][<A HREF="maillist.html#00091">Date Index</A>][<A HREF="threads.html#00091">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Lilo success</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Lilo success</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 12 Jan 1998 10:50:32 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi, I've had some success with lilo 0.20 configuration
+on Red Hat 5.0 with boot options for Debian and Windows.
+
+The solution was relatively simple and it is one of those
+things that I should have figured out immediately.  
+
+In summary:
+  1) Linux kernel can be on a different physical disk
+     than the root file system.  (Of course ne!)
+  2) lilo 0.20 that comes with Red Hat 5.0 has a different
+     configuration for the chain loader than the lilo 0.18 
+     that comes with Debian Hamm.
+
+With all the linux kernels on hda, I can mount different Linux
+root filesystems, giving me a Debian system, a Red Hat
+system or a test system at boot time.  I can also place
+each of the root filesystems on a seperate physical disk to
+reduce the risk of trashing a stable "work" filesystem.
+
+The trick to boot the Windows on hdb was that in lilo 0.20 they
+seem to have done away with the any_d.b loader that specifies
+swapping hard disk 1 and hard disk 2.  The way to do it now
+seems to be to use
+  loader=/boot/chain.b
+
+and then to remap the drives with
+
+        map-drive = 0x80
+                to = 0x81
+        map-drive = 0x81
+                to = 0x80
+        label=windows95
+
+
+Note: 0x80 refers to your first hard disk.  0x81 refers
+to your second hard disk.
+
+The option to boot Debian is 
+
+image=/boot/linux2.0.33
+        label=debian2.0.33
+        root=/dev/sda7
+        read-only
+
+
+
+The lilo.conf is on hda.  The filesystem it mounts as root
+is /dev/sda7.  The kernel for sda7 is on hda.  That is the
+trick, you boot all the kernels from the first hard disk, but
+mount whatever filesystems you want.
+
+Regards,
+Craig
+
+
+---
+craig@example.com   
+PGP public key: <A TARGET="_top" HREF="http://www.twics.com/~craig/personal/pgp/">http://www.twics.com/~craig/personal/pgp/</A> 
+
+---------------------------------------------------------------
+Next TLUG Nomikai: 14 January 1998 19:15  Tokyo station
+Yaesu Chuo ticket gate.  Or go directly to Tengu TokyoEkiMae 19:30
+Chuo-ku, Kyobashi 1-1-6, EchiZenYa Bld. B1/B2 03-3275-3691
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00090.html">Re: tlug: various stuff -&gt; Nomikai Administrator</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00092.html">tlug: Linux Japanese RPM Project (fwd)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00128.html">Re[2]: tlug: about Osaka</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00092.html">tlug: Linux Japanese RPM Project (fwd)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00091"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00091"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

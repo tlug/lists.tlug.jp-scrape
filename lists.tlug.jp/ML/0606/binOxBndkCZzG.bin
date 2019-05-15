@@ -1,0 +1,218 @@
+# =========================================================================
+# Copyright 2004 Josh Glover <unix@example.com>
+#
+# LICENCE:
+#
+#   This work is licensed under the Creative Commons Attribution-ShareAlike
+#   License. To view a copy of this license, visit:
+#
+#   http://creativecommons.org/licenses/by-sa/2.0/
+#
+#   or send a letter to:
+#
+#   Creative Commons
+#   559 Nathan Abbott Way
+#   Stanford, California 94305, USA.
+#
+# ~/.fluxbox/keys
+#
+# DESCRIPTION:
+#
+#   FluxBox Keygrabber configuration file for FluxBox 0.9.9.
+#
+# USAGE:
+#
+#   cp ~/.fluxbox/keys ~/.fluxbox/keys.old
+#   cp keys ~/.fluxbox/keys
+#   # Reload FluxBox configuration
+#
+# MODIFICATIONS:
+#
+#   Josh Glover <unix@example.com> (2004/07/02): Initial revision
+# =========================================================================
+
+# Command bindings
+# ----------------------------------------------------------------------------
+
+# Lock the screen. Comment out the next line and uncomment the one after if
+# you would prefer to simply turn on your screensaver.
+Mod1 Control Escape :ExecCommand xscreensaver-command -lock
+#Mod1 Control Escape :ExecCommand xscreensaver-command -activate
+
+# If you have a laptop that uses an ATI Radeon Mobility graphics card,
+# uncomment the next line if you want to be able to activate and deactivate
+# the lightwatch script (Gentoo users, "emerge app-laptop/radeontool", Debian
+# users "apt-get install radeontool", everyone else: 
+# http://fdd.com/software/radeon/). You will also need to grab my sentry script:
+# http://www.jmglov.net/unix/scripts/lightwatch-sentry.sh
+#
+# Turn on / off lightwatch (to blank screen when xscreensaver kicks in)
+#Mod1 Control Tab :ExecCommand lightwatch-sentry.sh
+
+# Launch terminal. I use Eterm (Gentoo ebuild: x11-terms/eterm), with
+# transparency turned on. The .Eterm/shade contains an integer between 0 and
+# 100, which is used as the percentage for the Eterm shade effect--see
+# Eterm(1). I have two keybindings: one for a normal-sized Eterm that I can
+# fit four of on my 1280x1024 desktop (with window decorations tyurned off--see
+# the .Eterm/themes/Eterm/user.cfg that should have been distributed with this
+# file); and one that is fills a whole desktop (for TLUG presentations and
+# such).
+Control  F2 :ExecCommand gnome-terminal --geometry=90x31 --tab --tab
+Control  F3 :ExecCommand gnome-terminal --geometry=86x31 --tab-with-profile=code --tab-with-profile=code
+#None    F2 :ExecCommand LC_CTYPE=ja_JP.UTF-8 XMODIFIERS=@example.com=scim mlterm
+#None    F2 :ExecCommand Eterm --shade `cat .Eterm/shade` --term-name xterm 
+#Control F2 :ExecCommand Eterm --shade 80 --term-name xterm -F 9x18 -g 113x41
+
+# Screen captures (M-Print is fullscreen, C-M-Print is interactive). The
+# import(1) command is provided by ImageMagick (Gentoo ebuild:
+# media-gfx/imagemagick).
+Mod1 Print :ExecCommand import -window root screenshot_`date +%Y-%m-%d_%H-%M-%S`.png
+Mod1 Control Print :ExecCommand import screenshot_`date +%Y-%m-%d_%H-%M-%S`.png
+
+# ----------------------------------------------------------------------------
+
+# Audio levels.
+#
+# The alsa-master-headphone-set.sh and alsa-mute-toggle.sh
+# scripts can be obtained from: http://www.jmglov.net/unix/scripts/
+# In order for the multimedia keys (e.g. XF86AudioLowerVolume, etc.) to work,
+# you will probably need to do some xmodmap magic, as described here:
+# http://gentoo-wiki.com/HOWTO_Use_Multimedia_Keys
+# If your keyboard does not have multimedia keys, just pick a key or key chord
+# of your choosing (I used to use "Control Shift [" to lower the volume,
+# "Control Shift ]" to raise it, and ""Control Shift ^" to toggle muting).
+# Note that this will only work with ALSA (Gentoo users will need to
+# "emerge media-sound/alsa-utils" to get amixer(1))--if you use OSS, you will
+# need to use some sort of OSS command-line mixer program instead of amixer(1).
+# ----------------------------------------------------------------------------
+
+# Set master / headphone volume.
+None XF86AudioLowerVolume :ExecCommand alsa-master-headphone-set.sh 5%- unmute
+None XF86AudioRaiseVolume :ExecCommand alsa-master-headphone-set.sh 5%+ unmute
+None XF86AudioMute        :ExecCommand alsa-mute-toggle.sh 50% Master Headphone
+
+# Mic volume
+Control XF86AudioLowerVolume :ExecCommand amixer set Mic 5%- unmute
+Control XF86AudioRaiseVolume :ExecCommand amixer set Mic 5%+ unmute
+Control XF86AudioMute        :ExecCommand alsa-mute-toggle.sh 50% Mic
+
+# Set PCM volume
+Mod1 Control XF86AudioLowerVolume :ExecCommand amixer set PCM 5%- unmute
+Mod1 Control XF86AudioRaiseVolume :ExecCommand amixer set PCM 5%+ unmute
+Mod1 Control XF86AudioMute        :ExecCommand alsa-mute-toggle.sh 50% PCM
+
+# ----------------------------------------------------------------------------
+
+# XMMS control
+#
+# You will need my start-xmms.sh script, available from:
+# http://www.jmglov.net/unix/scripts/
+# You will also need ctrlxmms (Gentoo users: "emerge media-sound/ctrlxmms",
+# others grab: http://files.smidsrod.no/ctrlxmms-1.1.tar.gz).
+# ----------------------------------------------------------------------------
+
+# Start XMMS
+Control Shift x :ExecCommand start-xmms.sh
+
+# Toggle main and playlist windows
+Control Shift m :ExecCommand ctrlxmms wintoggle
+Control Shift p :ExecCommand ctrlxmms wintoggle pl
+
+# Play / pause and stop
+Control Shift space :ExecCommand ctrlxmms playpause
+Control Shift s     :ExecCommand ctrlxmms stop
+
+# Back and forward in playlist
+Control Shift b :ExecCommand ctrlxmms prev
+Control Shift f :ExecCommand ctrlxmms next
+
+# Toggle repeat and shuffle (on a US keyboard, "Shift 2" is @, which reminds
+# me of a looping sign, and "Shift 5" is %, which makes me think of random
+# numbers, probably from rolling too many "d%"s over the years in various
+# tabletop role-playing games)
+Control Shift 2 :ExecCommand ctrlxmms repeat
+Control Shift 5 :ExecCommand ctrlxmms shuffle
+
+# ----------------------------------------------------------------------------
+
+# Window manipulation
+# ----------------------------------------------------------------------------
+
+# Toggle shaded
+Mod1 Control r :ShadeWindow 
+
+# Toggle decorations
+Mod1 Control t :ToggleDecor 
+
+# Toggle sticky
+Mod1 Control x :StickWindow 
+
+# Toggle maximised and minimised
+Control F12 :MaximizeWindow 
+Mod1    F12 :MinimizeWindow 
+
+# Resize vertically
+Mod1 Control Shift plus  :ResizeVertical  5
+Mod1 Control       plus  :ResizeVertical  1
+Mod1 Control Shift minus :ResizeVertical -5
+Mod1 Control       minus :ResizeVertical -1
+
+# Resize hortizontally
+Mod1 Control Shift greater :ResizeHorizontal  5
+Mod1 Control       greater :ResizeHorizontal  1
+Mod1 Control Shift comma   :ResizeHorizontal -5
+Mod1 Control       comma   :ResizeHorizontal -1
+
+# Move vertically
+Mod1 Control Shift Up   :MoveUp   25
+Mod1 Control       Up   :MoveUp   5
+Mod1 Control Shift Down :MoveDown 25
+Mod1 Control       Down :MoveDown 5
+
+# Move horizontally
+Mod1 Control Shift Right :MoveRight 25
+Mod1 Control       Right :MoveRight 5
+Mod1 Control Shift Left  :MoveLeft  25
+Mod1 Control       Left  :MoveLeft  5
+
+# ----------------------------------------------------------------------------
+
+# Window navigation
+# ----------------------------------------------------------------------------
+
+Mod1 Tab       :NextWindow 
+Mod1 Control 1 :SendToWorkspace 1 
+Mod1 Control 2 :SendToWorkspace 2 
+Mod1 Control 3 :SendToWorkspace 3 
+Mod1 Control 4 :SendToWorkspace 4 
+Mod1 Control 5 :SendToWorkspace 5 
+Mod1 Control 6 :SendToWorkspace 6 
+Mod1 Control 7 :SendToWorkspace 7 
+Mod1 Control 8 :SendToWorkspace 8 
+Mod1 Control 9 :SendToWorkspace 9 
+Mod1 Control 0 :SendToWorkspace 10 
+
+# ----------------------------------------------------------------------------
+
+# Workspace navigation
+# ----------------------------------------------------------------------------
+
+Mod1 Right   :NextWorkspace
+Mod1 Left    :PrevWorkspace
+Mod1 1       :Workspace 1 
+Mod1 2       :Workspace 2 
+Mod1 3       :Workspace 3 
+Mod1 4       :Workspace 4 
+Mod1 5       :Workspace 5 
+Mod1 6       :Workspace 6 
+Mod1 7       :Workspace 7 
+Mod1 8       :Workspace 8 
+Mod1 9       :Workspace 9 
+Mod1 0       :Workspace 10 
+# To get "Super_L"--the Windows keyC--working, you may need to follow the xev /
+# xmodmap steps as detailed here:
+" http://gentoo-wiki.com/HOWTO_Use_Multimedia_Keys
+None Super_L :RootMenu
+None Super_R :RootMenu
+
+# ----------------------------------------------------------------------------

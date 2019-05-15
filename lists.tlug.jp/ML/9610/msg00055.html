@@ -1,0 +1,198 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: cWnn 4.2 little endian bug fixed! (fwd) -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date:  Sat, 12 Oct 1996 07:34:48 GMT -->
+<!--X-Message-Id: Pine.LNX.3.91.961012105103.226A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00056.html">Date Prev</A>][<A HREF="msg00057.html">Date Next</A>][<A HREF="msg00059.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00055">Date Index</A>][<A HREF="threads.html#00055">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>cWnn 4.2 little endian bug fixed! (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Tokyo Linux Group &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>cWnn 4.2 little endian bug fixed! (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 12 Oct 1996 10:53:04 +0900 (GMT+0900)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+  Hi,
+
+  Some of you who use Chinese as well as Japanese will be as 
+delighted as I was that cWnn 4.2 is now fixed.
+
+Dennis McMurchy, 
+Tojinmachi, Fukuoka
+
+
+---------- Forwarded message ----------
+Date: 11 Oct 1996 19:50:19 -0400
+From: David Fox &lt;fox@example.com&gt;
+To: mule@example.com
+Newgroups: mule
+Subject: cWnn 4.2 little endian bug fixed!
+
+After a hellish day I can finally report why cWnn was not working on
+my Linux box (and presumably all other i386 and mips machines.)  It
+turns out that there is still an endian related bug in the Chinese
+server.  I'll spare you all the gory details of my awful experience,
+(which included building debugging versions of both cserver and
+mule-23-1933 and running them simultaneously from different emacs
+processes) and just post the patch.  (I hope there isn't a more
+suitable mailing list for this.  If there is, I hope it finds its way
+there.)  I'm making an RPM of this for redhat systems and will upload
+it to ftp.redhat.com.
+
+diff -ru wnn-servers-4.2/cwnn-4.2/server/readfile.c~ wnn-servers-4.2/cwnn-4.2/server/readfile.c
+--- wnn-servers-4.2/cwnn-4.2/server/readfile.c~	Fri Oct 13 11:59:05 1995
++++ wnn-servers-4.2/cwnn-4.2/server/readfile.c	Fri Oct 11 15:10:59 1996
+@@ -124,9 +124,6 @@
+     case  WNN_FT_DICT_FILE:
+ 	wf-&gt;area = (char *)readdict(fp);
+ 	if(wf-&gt;area == NULL) goto ERROR_RET;
+-	if(little_endian()){
+-	    revdic((struct JT *)wf-&gt;area, 0);
+-	}
+ 	break;
+     case WNN_FT_HINDO_FILE:
+ 	wf-&gt;area = (char *)readhindo(fp);
+@@ -272,6 +269,11 @@
+     }
+     jt1-&gt;dirty = 0;
+     jt1-&gt;hdirty = 0;
++
++    if(little_endian()){
++	revdic(jt1, 0);
++    }
++
+ #ifdef	CONVERT_by_STROKE
+     if (jt1-&gt;syurui == BWNN_REV_DICT)  
+ 	if ((jt1-&gt;max_bnode = create_b_index(jt1)) == -1){
+
+The call to create_b_index was being made before the endian-ness was
+repaired by revdic, so it saw crazy serial numbers.  Here's another
+handy patch to Mark Leisher's wnn-server-4.2 package.  It builds a
+libwnn.a to link mule with:
+
+diff -ru wnn-servers-4.2/cwnn-4.2/programs/GNUmakefile~ wnn-servers-4.2/cwnn-4.2/programs/GNUmakefile
+--- wnn-servers-4.2/cwnn-4.2/programs/GNUmakefile~	Sun Oct 22 17:10:00 1995
++++ wnn-servers-4.2/cwnn-4.2/programs/GNUmakefile	Fri Oct 11 13:12:34 1996
+@@ -49,7 +49,13 @@
+              msg.o pwd.o revdic.o server_env.o strings.o sstrings.o \
+              yincoding.o py_table.o zy_table.o wnnerrmsg.o
+ 
+-all: $(PROGRAMS)
++LIBWNN.a = hindo.o jl.o js.o msg.o py_table.o strings.o wnnerrmsg.o \
++	   yincoding.o zy_table.o
++
++all: $(PROGRAMS) libwnn.a
++
++libwnn.a: $(LIBWNN.a)
++	ar ruv $@ $(LIBWNN.a)
+ 
+ catod: $(CATOD.o)
+ 	$(CC) $(CFLAGS) $(SDEFS) $(INCS) -o catod $(CATOD.o)
+
+Now I just need to figure out how to set wnn-server-type to cserver
+and not have it changed back to jserver by mule-init.el.
+-- 
+David Fox	   <A TARGET="_top" HREF="http://found.cs.nyu.edu/fox">http://found.cs.nyu.edu/fox</A>		xoF divaD
+NYU Media Research Lab   fox@example.com    baL hcraeseR aideM UYN
+
+
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00056.html">html frustrations</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00057.html">Re: Web server and html woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00059.html">Re: html frustrations</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">Re: Web server and html woes</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00055"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00055"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

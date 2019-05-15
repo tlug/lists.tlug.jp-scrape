@@ -1,0 +1,169 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: apache configurations -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 16 Jan 2001 13:36:35 +0900 -->
+<!--X-Message-Id: 14947.53203.740888.595874@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000001c07f62$fdb7d620$0101a8c0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00062.html">Date Prev</A>][<A HREF="msg00064.html">Date Next</A>][<A HREF="msg00062.html">Thread Prev</A>][<A HREF="msg00064.html">Thread Next</A>][<A HREF="maillist.html#00063">Date Index</A>][<A HREF="threads.html#00063">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>apache configurations</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Hatsuhiro, Inc." &lt;<A HREF="mailto:hatuhiro@example.com">hatuhiro@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>apache configurations</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 16 Jan 2001 13:36:35 +0900</LI>
+<LI>Cc: &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00060.html">000001c07f62$fdb7d620$0101a8c0@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00060.html">000001c07f62$fdb7d620$0101a8c0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;y8Gc0C.A.5vF.wC9Y6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "HH" == Hatsuhiro, Inc &lt;hatuhiro@example.com&gt; writes:
+
+    HH&gt; Now to see an html sample "/home/tom/abc",
+
+    HH&gt; --- abc -----------------------------------------
+    HH&gt; Content-type: text/html
+
+    HH&gt; &lt;html&gt;
+    HH&gt;     &lt;body&gt;
+    HH&gt;         Hello, World!
+    HH&gt;     &lt;/body&gt;
+    HH&gt; &lt;/html&gt;
+    HH&gt; ================================================
+
+    HH&gt; The browser returns this.  How come Content-type
+    HH&gt; appears explicitly?
+
+    HH&gt; --- a result --------------------------------------
+    HH&gt; Content-type: text/html Hello, World!
+
+    HH&gt; ================================================
+
+When the browser is reading a file, it doesn't expect any HTTP headers
+since it's not using HTTP.  That's just text, and the browser displays
+it literally.  (IMHO it should completely ignore it or maybe even
+complain about it, but hey, this is HTML.  Get your tag soup[1] here!
+Who knows what's in it, but it looks delicious!)
+
+When the browser is talking via HTTP to a server, it takes the first
+block of non-empty lines as the header (ie, the header stops the first
+time it encounters the string "\r\n\r\n" in the stream).  Servers
+operate in two modes.
+
+In "yakizakana" mode, the server generates HTTP headers itself and
+automatically inserts a blank line.  This means that the same result
+will occur if your file is served by Apache.  (That's why we have the
+HTTP-EQUIV attribute for the META tag.)
+
+In "sashimi" mode, the server may transmit some headers (eg, to
+identify itself), but there will not be a blank line.  Thus, all
+following text will be interpreted as headers until "\r\n\r\n" is
+output by the CGI program.  I think Apache calls this "send-asis", I
+haven't had the need so I don't know the details.
+
+
+Footnotes: 
+[1]  [tm] Lynx, AFAIK.
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00060" HREF="msg00060.html">apache configurations</A></STRONG>
+<UL><LI><EM>From:</EM> "Hatsuhiro, Inc." &lt;hatuhiro@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00062.html">Re: apache configurations</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00064.html">Utility to maintain /etc/rd.c scripts</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00062.html">Re: apache configurations</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00064.html">Utility to maintain /etc/rd.c scripts</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00063"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00063"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

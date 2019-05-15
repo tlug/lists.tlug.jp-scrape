@@ -1,0 +1,221 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: A Question on Creating Linux Partitions -->
+<!--X-From: Steve Dunham <dunham@example.com> -->
+<!--X-Date:  Sun, 11 May 1997 18:30:50 GMT -->
+<!--X-Message-Id: m2207dn9o1.fsf@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199705101900.MAA24450@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00068.html">Date Prev</A>][<A HREF="msg00070.html">Date Next</A>][<A HREF="msg00040.html">Thread Prev</A>][<A HREF="msg00072.html">Thread Next</A>][<A HREF="maillist.html#00069">Date Index</A>][<A HREF="threads.html#00069">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: A Question on Creating Linux Partitions</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: A Question on Creating Linux Partitions</strong></LI>
+<LI><strong>From</strong>: <strong>Steve Dunham &lt;<A HREF="mailto:dunham@example.com">dunham@example.com</A>&gt;</strong></LI>
+<LI>Date: 11 May 1997 14:30:38 -0400</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: aleatory's message of Sat, 10 May 1997 12:04:13 -0700 (PDT)</LI>
+<LI>References: &lt;<A HREF="msg00040.html">199705101900.MAA24450@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Steve Dunham &lt;dunham@example.com&gt;
+--------------------------------------------------------
+aleatory &lt;aleatory@example.com&gt; writes:
+
+&gt; I'm a new Linux user, and would like to ask a 
+&gt; question. I'm currently trying to install Linux
+&gt; on my PC. The problem I currently face is making 
+&gt; Linux partitions.
+
+&gt; The following describes the configuration:
+
+&gt;      CPU     : Pentium 100
+&gt;      RAM     : 16MB
+&gt;      HD      : Western Digital IDE 2.5 GB
+&gt;      CD-ROM  : NEC 4x 4 disk changer (IDE) 
+&gt;      OS      : Windows 95 (Eng) and NT 4.0 (Jpn)
+&gt;      OS Loader: OS Loader Version 4.0 (came with NT)
+&gt;      Linux   : Slackware Linux 3.0
+&gt;                Kernel 1.2.13 (trying to install)
+
+&gt; The followings are the steps I'm talking.
+      
+&gt;      1. Boot from a Linux Boot disk
+&gt;      2. Then change it to a Linux root disk
+&gt;      3. Login as "root"
+&gt;      4. Type "fdisk /dev/hda"  
+&gt;      5. Type "p"
+ 
+&gt;      Disk dev/hda: 128 heads, 63 sectors, 620 cylinders
+&gt;      Unit = cylinder of 8064 * 512 bytes
+
+&gt;      Device    Boot Begin Start End Blocks  Id System
+&gt;      /dev/hda1 *    1     1     51  215600+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda2      52    52    619 2290176 5  Extended
+&gt;      /dev/hda5      52    52    153 411232+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda6      154   154   179 104800+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda7      180   180   205 104800+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda8      206   206   231 104800+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda9      232   232   282 205600+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda10     283   283   409 512032+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda11     410   410   486 310432+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda12     487   487   563 310432+ 6  DOS 16-bit &gt;=32M
+&gt;      /dev/hda13     564   564   617 225760+ 6  DOS 16-bit &gt;=32M
+
+And you want Linux on /dev/hda10.
+
+You tried to delete /dev/hda10 and create a primary partition in it's
+place; you can't do this, because it would be in the middle of
+/dev/hda2. (Well, it might be possible, but fdisk won't let you.)
+
+Try to install Linux on /dev/hda10.  I know of no reason why you can't 
+install Linux on /dev/hda10.  Change it's type to Linux Ext2, or, if
+you want a swap partition, delete it and create two extended
+partitions in it's place.
+
+The big problem will be getting Linux to boot, without taking out Win
+NT or Win95.  I've used Win95 with Linux, it's fairly easy to handle,
+but you are booting NT off of an extended partition.  So I don't know
+if the NT boot loader is on /dev/hda2 or the master boot record.
+
+The easiest solution is to boot Linux off of a floppy.
+
+If the Windows NT boot code is on /dev/hda2, we can put Lilo on the
+MBR, using the following /etc/lilo.conf:
+
+boot=/dev/hda
+root=/dev/hda10
+compact
+prompt
+image=/vmlinuz
+ label=linux
+ read-only
+other=/dev/hda1
+ label=win95
+ table=/dev/hda
+other=/dev/hda2
+ label=winnt
+ table=/dev/hda
+
+If winnt doesn't use a boot loader on /dev/hda2, I don't know what to
+do.. I guess you could copy the MBR to a file and use it as a chain
+loader... 
+
+For now, I'd say the safest choice is put Linux on /dev/hda10 and use
+a boot floppy.
+
+(It would be a lot easier if you could start over from scratch and 
+make the Linux partition a primary partition at the end of the
+disk...)
+
+
+Steve
+dunham@example.com
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00072" HREF="msg00072.html">Re: tlug: A Question on Creating Linux Partitions</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00040" HREF="msg00040.html">tlug: A Question on Creating Linux Partitions</A></STRONG>
+<UL><LI><EM>From:</EM> aleatory &lt;aleatory@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00068.html">Re: tlug: XEmacs 20.0 Wnn Input</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00070.html">Re: tlug: [Q] creating mailing list archives</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00040.html">tlug: A Question on Creating Linux Partitions</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00072.html">Re: tlug: A Question on Creating Linux Partitions</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00069"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00069"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: re: Compatibility -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Tue, 12 Mar 1996 06:46:02 GMT -->
+<!--X-Message-Id: m0twNi4&#45;00mMNKC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: A8954531016B1673@&#45;SMF&#45; -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00046.html">Date Prev</A>][<A HREF="msg00048.html">Date Next</A>][<A HREF="msg00040.html">Thread Prev</A>][<A HREF="msg00048.html">Thread Next</A>][<A HREF="maillist.html#00047">Date Index</A>][<A HREF="threads.html#00047">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>re: Compatibility</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>re: Compatibility</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Tue, 12 Mar 96 15:37 JST</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00040.html">A8954531016B1673@example.com</A>&gt; (TMatsumu@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+In one epistle, Ted writes:
+
+   &gt; BTW, See my previous message to George.  I do not believe these are
+   &gt; problems related to Microsoft, or to SCSI, as you imply.
+
+SCSI?  I simply said it might be querying the SCSI interface for
+"what is this disk" rather than reading the partition table.
+
+Ah, Microsoft, now.  Microsoft is a problem only because they are
+so big that the whole market follows them whether what they do
+makes sense or not.  Microsoft is a problem because they can and
+do assume that you will bend to them, not vice versa.
+
+When I boot my Linux system, and type fdisk, it says "Hmmm... this
+disk is over the 1024 cylinder limit, you could have problems."
+When I asked Microsoft about NT trashing my hard drive, they said,
+"oh, yeah, we added some hardware optimizations for the BusLogic
+that the AMI FastDisk doesn't implement [because they're
+proprietary; BusLogic does *not* tell AMI, but MS has the
+spec...].  So sorry, but you should not use hardware that pretends
+to be something else.  Not our fault."  But you know what?  The
+AMI does *not* claim to be a BusLogic, it says "I am an AMI
+FastDisk" and if you ask about Buslogic it says "I respond to the
+published firmware protocols".  (This is the root of my current
+headache with the PCI ethernet card; that driver *does* check the
+vendor ID.  Disabling a vendor check is a risky business that the
+*user* should specify, not the OS.)  *Operating systems should not
+use undocumented interfaces they do not implement themselves.*
+
+But in Microsoft's case, *you* should not use hardware that attempts 
+to be compatible with other hardware if there's a possibility that 
+compatibility is not 100%, because MS drivers *do* use that
+proprietary information, and MS does not tell you so.  That
+wouldn't be "transparent"!  Linux has the same problem with the
+BusLogic driver---but *you* choose whether to configure it or not, 
+*you* can look at the source where it says that "this driver
+is known to be compatible with some revisions of the AMI FastDisk
+firmware, but I don't have access to the card myself," and if an
+old revision of the driver works, but a new one does not, *you*
+can substitute the old driver.  On the fly with /sbin/insmod, if
+you're lucky.
+
+Another case: all known Microsoft DPMI implementations, including
+NT, apparently allow any program access to the entire 4GB address
+space by requesting any legal address plus a 4GB size, which wraps
+around to give you everything.  This is apparently for the
+convenience of driver writers (otherwise they would be need to be
+loaded into ring 0 with the kernel).  The only known (as of March
+1995) implementation of DPMI by any vendor that didn't support
+that trick was ... ta da! ... Linux DOSemu (and maybe WinE, at
+that time WinE wasn't considered worth looking at by the people
+who figured out the trick).
+
+Microsoft has the power to prevent these abuses.  Instead, they
+connive at them.  Whether the efficiency gain (a lot, in the case
+of the DPMI security hole) is important enough or not depends on
+whether you just lost a few hundred MB of data to one of those
+holes....
+
+An abuse that MS can't prevent is Ted's line length.  82
+columns....  All those damn Windowze mailers do that.  I've seen
+96 character lines!  That's against the rules, I forget which RFC.
+(It's actually the one that relates to Usenet, but the point is to
+allow space for quoting without reformatting, which surely applies
+to mail.  Especially when the author's as provocative as Ted!)
+
+Here the point is that you can't expect the user who expects
+"transparency" to go looking up the RFCs (and the Netiquette FAQ),
+and then deciding whether it applies to their email before
+reconfiguring!  So MS should encourage the program writers to take
+that responsibility.  But they don't, and they don't respond
+kindly to criticism about that (at least they didn't ca. 1994
+according to news.admin.misc, I don't know about since).
+
+So, yes, I do think that these are MS-related problems.  I don't
+know if things would be better without MS, of course.  Without MS
+there might very well not be as much standardization as there is.
+
+And here's Ted again:
+
+   &gt;   I just wanted to clear up some errors in your posting:
+
+Kochira koso.  ;-)
+
+   &gt; 1. The DLL's used in printing from Windows are transparent to me.
+   &gt; I can use tools to see them in action, but by default they are not
+   &gt; visible.
+
+Where's my error?  Ghostscript doesn't have to be visible to you
+either.  I don't see that "by default" is relevant to "transparent".
+You didn't respond to my Mule + LaTeX + dvips + lpr example.  I
+see a line about dvips in Mule's echo area, it's true, but I find
+that a much less officious way of seeing what options are enabled
+than Windows' pop-up "OK" dialogs.  Liking it is a matter of
+preference, but I don't see one as more transparent than the
+other.  Do you?
+
+   &gt; 2. "transparent" and "plug-n-play" are not synonymous.
+
+That was *my* point.  As far as I can tell, you want to (at worst)
+select a model name from a menu dialog (pseudo-PNP), (at best)
+have the OS query the hardware and never ask you what's attached
+(true PNP).  A script that you write and debug once, add to the
+appropriate hooks in all your software (and this isn't that hard,
+since essentially all Unix software knows how to pipe to lpr, and
+you can configure lpr to prefilter the input), and never see the
+script unless you do a "ps x" *is* transparent.  Even if it took
+you 365 man-days to write the script.  :-)
+
+   &gt; 4. Microsoft - compatible hardware?  What's this?  Do you mean Plug
+   &gt; n' Play?  This was not just a Microsoft sponsored project.  Should
+   &gt; I also avoid Intel x86 compatible software?  Jee, then I'd have to
+   &gt; wait for the Mac version of Linux...
+
+No, I mean hardware that supplies a DOS or WindowsXX driver.  What
+was the last hardware you bought that supplied a Linux driver on a 
+floppy?  You got your driver from SunSite, didn't you?
+
+   &gt; 5. If you bought a printer that is not in Microsoft's list of
+   &gt; supported printers, nor has one available, you must have looked
+   &gt; hard and far.  This has nothing to do with "Plug n' Play' at least
+   &gt; as far as the PnP specs. go.  What printer is it?  Too embarrassed
+   &gt; to admit it?
+
+Epson Esper 1600 or something like that.  Microsoft doesn't
+"support" printers, last I heard.  In most cases, Microsoft writes
+a spec for drivers, the hardware vendor writes the driver.  Some
+do it well, some don't.  The printer flies under DOS, but the
+print | Windowze | Netware | Esper pipeline has a big problem
+somewhere.  None of the vendors will take responsibility for it.
+Since all of the relevant code is proprietary, *I* can't tell.
+That's not transparent, that's opaque.  (In an orthogonal
+dimension, of course.)
+
+   &gt; 6. Many long time (20+ year) unix veterans have transitioned to the
+   &gt; MS-office friendly environment.  You're typing to one of them now.
+
+So?  As I pointed out, I don't work in an office environment.  I
+(a) do mathematical research, producing reports whose formats are
+poorly supported by MS Office, and (b) supply system services
+(such as mailing lists, email account, and Web pages) to a small
+group of users.  My report and correspondence system is quite
+transparent to me.  My sysadmin activities are another story ... 
+but that's a hobby.  And I make them more transparent every day.
+
+If your interaction with a given system is primarily paper-
+shuffling, MS Office provides a nice set of tools for shuffling
+papers electronically.  (Although RCS doesn't like them much;
+version control is essentially "backup often".)  Once you get
+outside of what MS Office will do for you, things rapidly get
+complicated and expensive in my experience.  I try Windows every
+couple of years, and so far have always found that my needs aren't
+met as well as they are by Unix-like systems, and Windows is not
+as customizable.
+
+Prototyping and custom tool-building are not what WindowsXX is
+good at, at least not unless you can afford expensive program
+development packages.  Hell, are there any good scripting
+languages available for the *Windows* environment?  Tk/TCL?  (Does
+"Visual Basic" count?)  Perl works in a DOS box, except that you
+can't do any of the neat stuff like TCP/IP and IPC.
+
+The bottom line is that
+
+    If MS has already incorporated it in Windows or another of
+    its products, you can do it transparently with a minimum of
+    setup.  If it's not already on sale, doing it transparently
+    requires expensive tools and/or a high order of programming
+    sophistication.
+
+    Whatever it is you want to do in Linux, if you want it to be
+    transparent, it's going to take some effort on your part---
+    but the distinction between a "pain-in-the-ass that takes
+    ten minutes to edit a config file (most of that just
+    *finding* the damned config file ;-)" and "rewriting the X
+    windows system" is gradual, although the difference in
+    extremes is just as great as in Windows.
+
+It does require a fair amount of sophistication to customize your
+Linux tools to the point of transparency.  But it does get easier,
+and the experience is transferable to other tasks, including
+Windows: the standard MS ToolBar now looks like a 747 cockpit, and
+a lot of hardened Windows users ask *me* to help them customize
+their environments.  (Even though I haven't used Windows for
+anything except Minesweeper, FreeCell, and Netscape in a year.)
+
+   &gt; Grow up you little whippersnapper &lt;g&gt;
+
+Whatever that means.  "It's amazing how often what is called
+'maturity' so closely resembles simple fatigue." &lt;g&gt;  That's
+somewhere in *Time Enough for Love*, I think.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+
+Transparency of the day:
+If you occasionally mount a live file system from your CD-ROM to /cdrom, eg:
+$ PATH=$PATH:`echo $PATH | sed -e "s/\/usr/\/cdrom\/usr/g"`
+If you always do it, just follow that with 'echo "!!" &gt;&gt; .profile'.
+Try that in Windows!
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00048" HREF="msg00048.html">re: Compatibility</A></STRONG>
+<UL><LI><EM>From:</EM> TMatsumu@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00053" HREF="msg00053.html">Re: Compatibility</A></STRONG>
+<UL><LI><EM>From:</EM> jwt@example.com (Jim Tittsler)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00040" HREF="msg00040.html">re: Compatibility</A></STRONG>
+<UL><LI><EM>From:</EM> TMatsumu@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00046.html">Sound Card/1GB Dos</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00048.html">re: Compatibility</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00040.html">re: Compatibility</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00048.html">re: Compatibility</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00047"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00047"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

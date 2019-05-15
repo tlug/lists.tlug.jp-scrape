@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: NFS question -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Wed, 14 Oct 1998 20:34:51 +0900 -->
+<!--X-Message-Id: m3af2z74tz.fsf@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810140858.RAA03506@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981014181410.2090c&#45;100000@example.com -->
+<!--X-Reference-Id: 19981014191328.B19261@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00571.html">Date Prev</A>][<A HREF="msg00573.html">Date Next</A>][<A HREF="msg00602.html">Thread Prev</A>][<A HREF="msg00566.html">Thread Next</A>][<A HREF="maillist.html#00572">Date Index</A>][<A HREF="threads.html#00572">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: NFS question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: NFS question</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 14 Oct 1998 20:36:40 +0900</LI>
+<LI>Content-Type: text/plain; charset=ISO-2022-JP</LI>
+<LI>In-Reply-To: Rex Walters's message of "Wed, 14 Oct 1998 19:13:28 +0900"</LI>
+<LI>References: &lt;<A HREF="msg00564.html">199810140858.RAA03506@example.com</A>&gt;&lt;<A HREF="msg00565.html">Pine.LNX.3.96LJ1.1b7.981014181410.2090c-100000@example.com</A>&gt;&lt;<A HREF="msg00567.html">19981014191328.B19261@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Rex Walters &lt;rex@example.com&gt; writes:
+
+&gt; 1) Maintain master copies of passwd, group, shadow, and gshadow on a
+&gt;    designated server.  These should NOT be /etc/passwd, /etc/group, etc.
+&gt;    but should be stored separately (/etc/MASTER or somesuch).  Create
+&gt;    perl scripts to act as substitutes for useradd, etc., that manipulate
+&gt;    these files rather than /etc/passwd.  They should be owned by root
+&gt;    with 600 permisions.  RCS can be your friend.
+
+I like this, in part because it loosens up a puzzle that was
+starting to pester me.  The story of this is a little bit long-
+winded; read on only if you're interested and have time.
+
+Mail facilities here are different for undergrads and postgrads.
+PG's and staff accounts are maintained on the server that I
+control.  UG's have their accounts on central University servers,
+accessible only from the central University "Information Center".
+It's a long schlep over there from our Faculty, and you sometimes
+have to wait for a terminal.  As a result, email is used only
+sporadically by students, and that means we have a devil of a
+time communicating with them between classes.  University life
+shouldn't be like that.
+
+IMAP service from the Center would solve this problem by allowing
+transparent access from within the Faculty, but I've no guarantee
+that IMAP service will be offered by them.  I've spoken with them
+a bit, but I get the feeling that I'm up against 縦割; it's their
+turf and their building and, er, that's it.
+
+On the other hand, it seems a bit silly for me to get into the
+business of issuing accounts one by one to undergraduate students
+(for the obvious reason that there are lots of them).
+
+It struck me, though, that I can work around this problem by
+substituting an Expect/Tk widget for xlogin.  The widget will
+snatch the user's login name and password, and attempt to log
+into the workstation.  This fails.  The next step is to try the
+Information Center.  If this succeeds, the widget turns around
+and sets up a new mail account and home directory on our server,
+and appends the user to passwd.  It then sets up mail forwarding
+from the Information Center to the newly created account, and
+fetches any existing mail to the new account, leaving the Center
+account empty.
+
+The widget will thus piggyback on the Information Center's work
+in confirming the identity of each user issued an account, and
+gives our students IMAP access without any need for liaison at
+all.  We can track account expiration, too: if the login to the
+Center account fails on some future occasion, the local account
+gets archived and I'm notified by email.
+
+Order out of madness.
+
+Well, admittedly the idea for this Tk widget is a bit mad in
+itself.  There will have to be lots and lots of error handling in
+there, so at the very best it'll have to wait awhile to be
+written.  But the point that the server does not need to be in
+sync with the clients --- that the clients' master need not be
+/etc/passwd --- reduces the risk that a crash somewhere will
+bring the whole system down.  Very useful to know this.
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00564" HREF="msg00564.html">tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00565" HREF="msg00565.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00567" HREF="msg00567.html">Re: tlug: NFS question</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00571.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00573.html">Re: tlug: Internet connections from Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00602.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00566.html">Re: tlug: NFS question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00572"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00572"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: rplay bug? (was: Re: Thousands of erroneous syslogs about media changes) -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNtzk.ng> -->
+<!--X-Date: Tue, 17 Jul 2001 14:15:56 +0200 -->
+<!--X-Message-Id: 20010717141556.A7036@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 15178.49959.218814.711217@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00380.html">Date Prev</a>][<a href="msg00382.html">Date Next</a>][<a href="msg00115.html">Thread Prev</a>][<a href="msg00384.html">Thread Next</a>][<a href="maillist.html#00381">Date Index</a>][<a href="threads.html#00381">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>rplay bug? (was: Re: Thousands of erroneous syslogs about media changes)</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>rplay bug? (was: Re: Thousands of erroneous syslogs about media changes)</strong></li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</strong></li>
+<li>Date: Tue, 17 Jul 2001 14:15:56 +0200</li>
+<li>Content-Disposition: inline</li>
+<li>Content-Type: text/plain; charset=us-ascii</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>In-Reply-To: &lt;<a href="msg00115.html">15178.49959.218814.711217@example.com</a>&gt;</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Mail-Followup-To: Tobias Diedrich &lt;ranma@example.com&gt;, tlug@example.com</li>
+<li>Old-Return-Path: &lt;ranma@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;kNKcHB.A.x_B.rxCV7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+<li>Sender: Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</li>
+<li>User-Agent: Mutt/1.3.18i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull wrote:
+
+&gt; (0) Reinvent the wheel.  There were at least three adequate sound
+&gt; daemon architectures (rplay, Xaudio, and NAS) available, but the esd
+&gt; developers had to invent a (not very interesting) new one and then
+&gt; implement it badly.
+
+I just installed rplay and played a bit with it.
+Looks very nice, but I think I have found a bug.
+I cannot play audio files if the filename includes whitespace.
+This seems to be a problem with both the daemon itself and the client
+because when I telnet to the daemon port and issue commands directly
+it does not work (Filename gets cut off after the first whitespace,
+enclosing in &quot;&quot; doesn't work, escaping with \ doesn't work) and
+the client does not seem to try escaping whitescape either:
+
+|ranma@example.com:~$ telnet localhost 5556
+|Trying 127.0.0.1...
+|Connected to localhost.
+|Escape character is '^]'.
+|+host=melchior version=3.3.2 uptime=00:00:11 audio-bits=16 audio-byte-order=little-endian audio-channels=2 audio-device=/dev/dsp audio-format=linear-16 audio-fragsize=4096 audio-port= audio-rate=10 audio-sample-rate=44100 volume=0 curr-rate=10 priority-threshold=0 audio-close=5 audio-device-status=closed
+|play /home/ranma/download/mp3/track11.mp3
+|+id=#1 sound=&quot;/home/ranma/download/mp3/track11.mp3&quot; command=play client-data=&quot;&quot; list-name=&quot;&quot;
+|play /home/ranma/download/mp3/Star Ocean EX - TV Theme.mp3
+|-error=&quot;play failed&quot; command=play client-data=&quot;&quot;
+|play &quot;/home/ranma/download/mp3/Star Ocean EX - TV Theme.mp3&quot;
+|-error=&quot;play failed&quot; command=play client-data=&quot;&quot;
+|play /home/ranma/download/mp3/Star\ Ocean\ EX\ -\ TV\ Theme.mp3
+|-error=&quot;play failed&quot; command=play client-data=&quot;&quot;
+|quit
+
+|melchior:/home/ranma# rplayd -d
+|rplayd: running as group audio (29)
+|rplayd: running as user nobody (65534)
+|rplayd: adding helper for &quot;\.mp[1-3]$&quot;
+|rplayd: creating cache directory `/tmp/.rplay-cache'
+|rplayd: OSS info: fragments=32 totalfrags=32 fragsize=4096 DSP=131072
+|rplayd: rplay_audio_mixer_open: unable to open mixer device
+|rplayd: rplay_audio_mixer_open: unable to open mixer device
+|rplayd: rplay_audio_mixer_open: unable to open mixer device
+|rplayd: audio: bits=16 sample-rate=44100 channels=2 format=linear-16 volume=0 port-mask=0
+|rplayd: timer: rate=10, min bytes/sec=17640
+|rplayd: authentication enabled
+|rplayd: melchior rplayd 3.3.2 ready.
+|rplayd: entering idle mode
+|rplayd: 127.0.0.1 client connection established
+|rplayd: cleaning up sounds
+|rplayd: cleaning up buffers - 0 bytes
+|rplayd: 127.0.0.1 command=&quot;play /home/ranma/download/mp3/track11.mp3&quot;
+|rplayd: /home/ranma/download/mp3/track11.mp3 not in hash table
+|rplayd: loading local file /home/ranma/download/mp3/track11.mp3
+|rplayd: /home/ranma/download/mp3/track11.mp3 missing sound header; trying helper or extension
+|rplayd: track11.mp3 input=file bits=16 sample-rate=44100 channels=2 samples=0 format=linear-16 byte-order=little-endian
+|rplayd: forked helper process 10076
+|rplayd: opening /dev/dsp
+|rplayd: OSS info: fragments=32 totalfrags=32 fragsize=4096 DSP=131072
+|rplayd: rplay_audio_mixer_open: unable to open mixer device
+|rplayd: flushing /dev/dsp
+|rplayd: 127.0.0.1 command=&quot;play /home/ranma/download/mp3/Star Ocean EX - TV Theme.mp3&quot;
+|rplayd: /home/ranma/download/mp3/Star not in hash table
+|rplayd: not searching for /home/ranma/download/mp3/Star
+|rplayd: 127.0.0.1 command=&quot;play &quot;/home/ranma/download/mp3/Star Ocean EX - TV Theme.mp3&quot;&quot;
+|rplayd: &quot;/home/ranma/download/mp3/Star not in hash table
+|rplayd: 127.0.0.1 command=&quot;play /home/ranma/download/mp3/Star\ Ocean\ EX\ -\ TV\ Theme.mp3&quot;
+|rplayd: /home/ranma/download/mp3/Star\ not in hash table
+|rplayd: not searching for /home/ranma/download/mp3/Star\
+|rplayd: 127.0.0.1 command=&quot;quit&quot;
+|rplayd: 127.0.0.1 client connection closed
+
+Somehow I won't believe that this kind of bug would show up in a piece of
+software that has been around since 1993
+
+Another thing I just noticed: The latest news seems to be from 1999/03/10...
+Is rplay not being maintained anymore ?
+
+I will have a look at nas next...
+
+-- 
+Tobias							     PGP-Key: 0x9AC7E0BC
+echo ${SIGNATURE}
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00384" href="msg00384.html">rplay bug? (was: Re: Thousands of erroneous syslogs about media changes)</a></strong>
+<ul><li><em>From:</em> &quot;Stephen J. Turnbull&quot; &lt;turnbull@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00115" href="msg00115.html">Re: Thousands of erroneous syslogs about media changes</a></strong>
+<ul><li><em>From:</em> &quot;Stephen J. Turnbull&quot; &lt;turnbull@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00380.html">RE: round 2</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00382.html">Re: round 2</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00115.html">Re: Thousands of erroneous syslogs about media changes</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00384.html">rplay bug? (was: Re: Thousands of erroneous syslogs about media changes)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00381"><strong>Date</strong></a></li>
+<li><a href="threads.html#00381"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

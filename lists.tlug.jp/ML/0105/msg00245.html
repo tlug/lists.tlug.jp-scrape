@@ -1,0 +1,165 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: SCSI cdrom boot problem -->
+<!--X-From: Tobias Diedrich <ranma@example.com> -->
+<!--X-Date: Mon, 14 May 2001 10:11:25 +0200 -->
+<!--X-Message-Id: 20010514101125.A21936@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3AFE01EC.3080604@example.com -->
+<!--X-Reference-Id: 3AFE4AF2.3A84BAA6@example.com&#45;u.ac.jp -->
+<!--X-Reference-Id: 00c201c0dc13$0b3cfed0$0f01a8c0@example.com -->
+<!--X-Reference-Id: 20010514082957.C32097@example.com -->
+<!--X-Reference-Id: 018101c0dc42$54299f20$0f01a8c0@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00244.html">Date Prev</A>][<A HREF="msg00246.html">Date Next</A>][<A HREF="msg00244.html">Thread Prev</A>][<A HREF="msg00246.html">Thread Next</A>][<A HREF="maillist.html#00245">Date Index</A>][<A HREF="threads.html#00245">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: SCSI cdrom boot problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG mailing list &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: SCSI cdrom boot problem</strong></LI>
+<LI><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@example.com">ranma@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 14 May 2001 10:11:25 +0200</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00243.html">018101c0dc42$54299f20$0f01a8c0@example.com</A>&gt;; from Norman.Diamond@example.com on Mon, May 14, 2001 at 03:50:58PM +0900</LI>
+<LI>Mail-Followup-To: Tobias Diedrich &lt;ranma@example.com&gt;,TLUG mailing list &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00225.html">3AFE01EC.3080604@example.com</A>&gt; &lt;<A HREF="msg00228.html">3AFE4AF2.3A84BAA6@example.com</A>&gt; &lt;<A HREF="msg00232.html">00c201c0dc13$0b3cfed0$0f01a8c0@example.com</A>&gt; &lt;<A HREF="msg00242.html">20010514082957.C32097@example.com</A>&gt; &lt;<A HREF="msg00243.html">018101c0dc42$54299f20$0f01a8c0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;2Wa3jC.A.NhF.7M5_6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.3.12i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+SN_Diamond wrote:
+&gt; &gt; Booting first on SCSI usually means the integrated SCSI BIOS (Many BIOSes have
+&gt; &gt; an integrated SCSI BIOS for the sym53c8xx or some chip like that IIRC).
+&gt; &gt; I wouldn't expect that to change anything if it's an external SCSI card.
+&gt; 
+&gt; I thought booting first on SCSI meant handing boot control over to the SCSI
+&gt; BIOS that is found on the SCSI card (if such is installed).  After all, the
+&gt; motherboard's BIOS already handed control over to the SCSI BIOS on the SCSI
+&gt; card (if such is installed) for SCSI device enumeration.
+
+No and yes.
+On boot, the BIOS scans for adapter ROMS in the C000-FFFF address space.
+If it finds a ROM it will execute this ROMS initialization function.
+After that it continues the ROM-Scan until all ROMs are found and then
+boots the system.
+
+If you have an SCSI card with its own SCSI-BIOS, this will be detected and
+initialized by the BIOS. The initialization function of the SCSI-BIOS does
+the device scan, hooks some interrupt vectors (Int 0x13 and Int 0x19) and
+returns control to the BIOS.
+
+If the BIOS decides it is time to load the boot sector it will do an Int 0x19,
+which does the loading stuff. At that time the SCSI-BIOS will get control again
+(if it has hooked this interrupt) and can do things like booting from cd.
+
+This all is not dependend on the BIOS "Boot from SCSI/IDE" settings, which 
+control BIOS internal boot behaviour. BIOSes which have the SCSI setting available do have a built-in SCSI ROM for some SCSI-chipset, which will be loaded if this chipset is detected.
+
+-- 
+Tobias
+nya~ni ?
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00246" HREF="msg00246.html">Re: SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher SEKIYA &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00225" HREF="msg00225.html">SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> Bruno Raoult &lt;braoult@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00228" HREF="msg00228.html">Re: SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> B0Ti &lt;9915104t@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00232" HREF="msg00232.html">Re: SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> "SN_Diamond" &lt;Norman.Diamond@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00242" HREF="msg00242.html">Re: SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> Tobias Diedrich &lt;ranma@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00243" HREF="msg00243.html">Re: SCSI cdrom boot problem</A></STRONG>
+<UL><LI><EM>From:</EM> "SN_Diamond" &lt;Norman.Diamond@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00244.html">Re: SCSI cdrom boot problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00246.html">Re: SCSI cdrom boot problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00244.html">Re: SCSI cdrom boot problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00246.html">Re: SCSI cdrom boot problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00245"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00245"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

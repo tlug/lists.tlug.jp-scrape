@@ -1,0 +1,202 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: A response from Walnut Creek -->
+<!--X-From: turnbull@example.com (Stephen J. Turnbull) -->
+<!--X-Date:  Wed, 23 Oct 1996 04:48:32 GMT -->
+<!--X-Message-Id: m0vFvAh&#45;000027C@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 2.2.32.19961023005615.006a43f4@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00137.html">Date Prev</A>][<A HREF="msg00139.html">Date Next</A>][<A HREF="msg00135.html">Thread Prev</A>][<A HREF="msg00141.html">Thread Next</A>][<A HREF="maillist.html#00138">Date Index</A>][<A HREF="threads.html#00138">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: A response from Walnut Creek</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: A response from Walnut Creek</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:turnbull@example.com">turnbull@example.com</A> (Stephen J. Turnbull)</strong></LI>
+<LI>Date: Wed, 23 Oct 96 13:44 JST</LI>
+<LI>In-reply-to: &lt;<A HREF="msg00135.html">2.2.32.19961023005615.006a43f4@example.com</A>&gt; (scasmar@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Stephen" == Stephen P Casmar &lt;scasmar@example.com&gt; writes:
+
+    Stephen&gt; OK, here goes my newbie question...  I have an old
+    Stephen&gt; installation of Linux on my computer. I haven't tweaked
+    Stephen&gt; it all that much so I have decided to do a NEW install
+    Stephen&gt; using Redhat. However, I have got the printing, X-windows
+    Stephen&gt; etc. up and working very well with all my hardware --&gt;
+    Stephen&gt; Sooo, What do I need to save; i.e. which and where are
+    Stephen&gt; all the config files, so that I can refer back to them if
+    Stephen&gt; Redhat decides all I need is vga or something?
+
+This is the best reason to upgrade and the best reason not to
+upgrade.  To be a little more straightforward, *all* of your
+configuration files should reside in a small number of places.  Mostly 
+this is /etc, /usr/etc, /usr/local/etc, /etc/X11, users' HOME
+directories, and so on.  Unfortunately, it just ain't so, making
+preserving a configuration a royal pain, and a new install decidely
+ulcer-prone.  (Why *not* to upgrade ...)  New distributions are better 
+about this than old ones (kudos to the FSSTND crowd), and RedHat has
+amazing PMS, RPM, which helps a lot.  (... why *to* upgrade.)
+
+Most of the essentials are there, though, so ....  On my system,
+/usr/etc and /usr/local/etc have nothing interesting.
+
+The basic things from /etc:
+DIR_COLORS	aliases		csh.cshrc	csh.login
+dosemu.conf	fstab		ftpaccess	ftpconversions
+ftpusers	gateways	gettydefs	group
+host.conf	hosts		hosts.allow	hosts.deny
+hosts.equiv	hosts.lpd	inetd.conf	inittab
+lilo.conf	mail.rc		mailcap		motd
+networks	passwd		printcap	profile
+protocols	resolv.conf	services	shells
+syslog.conf	termcap
+
+Many of those you don't need; if you've never touched them, then
+probably you don't need to preserve them.  Absolutely essential are
+passwd and group; RedHat probably doesn't overwrite these, but if it
+does your user -&gt; name mapping will get screwed up.  Most of the rest
+probably will either get reasonable defaults from the installation,
+won't be touched, or are easy to figure out, but why not have them
+handy?  Personalizations like motd help you feel at home in the new
+system...
+
+** If you're using Slackware or similar, preserve /etc/rc.d entirely. **
+These startup scripts can be a real pain to recreate.
+
+/etc/[X11/]XF86config is absolutely essential, and it's best to keep
+everything in /etc/X11 if your installation is recent enough (X11R6)
+to use that directory.
+
+Don't forget /usr/src/linux/.config!
+
+For a start, preserve those /etc directories *offline*:  tar cz -&gt; MO, 
+tape, or floppy.  Back up all user homes, preferable offline, but
+RedHat can be relied upon not to trash user HOMEs.
+
+What more you need to worry about depends on what you mean by
+"install."  For example, if you decide to take advantage of RPM for
+TeX or GCC something like that, you need to figure out where their
+config files are....  Mostly they autoconfigure, but if you have local 
+mods, it can be tough.
+
+If you use sendmail, sendmail.cf ....  Dunno where it lives, probably
+/etc?  Smail, you need to preserve /etc/smail.
+
+Mostly, you probably don't need too much.  You probably won't go too
+far wrong with /etc/rc.d/* (but note that RedHat's system is quite
+different here, you'll need to translate if something screws up),
+/etc/X11/XF86config, /etc/passwd, /etc/group, /etc/printcap,
+/etc/fstab, /etc/lilo.conf, and /usr/src/linux.cfg.
+
+Steve
+
+-- 
+                           Stephen John Turnbull
+University of Tsukuba                                        Yaseppochi-Gumi
+Institute of Policy and Planning Sciences  <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tennodai 1-1-1, Tsukuba, 305 JAPAN                 turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00141" HREF="msg00141.html">Re: What do I need to save?</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00135" HREF="msg00135.html">Re: A response from Walnut Creek</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen P. Casmar" &lt;scasmar@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00137.html">Re: Japanese and Web pages</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00139.html">Re: Japanese and Web pages</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00135.html">Re: A response from Walnut Creek</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00141.html">Re: What do I need to save?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00138"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00138"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

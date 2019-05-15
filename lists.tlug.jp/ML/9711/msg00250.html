@@ -1,0 +1,219 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: tlug: PPP thanks -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 28 Nov 1997 02:57:17 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xbL67&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 01bcfbc2$0086e940$200a10ac@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00249.html">Date Prev</A>][<A HREF="msg00251.html">Date Next</A>][<A HREF="msg00247.html">Thread Prev</A>][<A HREF="msg00251.html">Thread Next</A>][<A HREF="maillist.html#00250">Date Index</A>][<A HREF="threads.html#00250">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: tlug: PPP thanks</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: tlug: PPP thanks</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 28 Nov 1997 16:44:23 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00246.html">01bcfbc2$0086e940$200a10ac@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00246.html">01bcfbc2$0086e940$200a10ac@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Michael" == Michael Chiu &lt;mchiu@example.com&gt; writes:
+
+    Michael&gt; I discovered a new error with my PPP last night.. when I
+    Michael&gt; connect, it says something about not routing to
+    Michael&gt; eth0[0.0.0.0]
+
+Do you have an ethernet card installed _and_ hooked to a net?  If not, 
+when you do 
+
+/sbin/ifconfig			# ifconfig probably lives in /sbin...
+
+there should be no line ending in "eth0" (which is the first ethernet
+interface (card) in the system).  If there is try
+
+/sbin/ifconfig eth0 down
+
+Even if you _do_ have a local ethernet set up already (you mentioned
+IP masquerading), it's worth an experiment to shut the interface down.
+To bring it back up, the simplest way is to reboot.  (It's not hard to
+do directly, you just need to know how the route command works and
+what data to feed it; I'd give you a recipe but I don't have the
+data.)  Unless you're using NFS you won't miss the ethernet for a few
+minutes.
+
+    Michael&gt; does anyone know what I should do?  do I need to set up
+    Michael&gt; something in my etc/hosts file so that I can force
+    Michael&gt; something into that address?
+
+No.  That's not a address in the usual sense, it's a network.  (In
+fact, it's the entire Internet.)  All manipulations of network
+addresses (that you care about at this stage) can be carried out with
+the `route' command.
+
+    Michael&gt; also, comparing my route -n with the other ones which
+    Michael&gt; were posted here yesterday, I realized that I don't have
+    Michael&gt; the 0.0.0.0 address listed in there...
+
+That's OK at the moment; it doesn't interfere with pinging the other
+end of your PPP link.
+
+1.  Try `ping 127.0.0.1'.  If that doesn't work, either `ping' or your
+whole networking subsystem (software, that address exists only in the
+kernel's imagination, not in hardware anywhere) is fried.
+
+2.  If that works, try `ping localhost'.  This is an alias in your
+/etc/hosts file.  If it doesn't work, either your /etc/hosts or your
+/etc/resolv.conf is hosed; post them both.  Either way, continue to
+step 3 (/etc/hosts is optional as is name service at this stage).
+
+3.  If that works, try `ping -c 3 165.76.23.253' (or whatever shows up
+this time in the P-t-P slot of the output from `ifconfig ppp0').  If
+it doesn't work, try `ping -r -c 3 165.76.23.253'.  The `-c 3' says
+send three packets which takes 3 seconds; the `-r' says "ignore the
+routing tables" (on my ping, anyway, there are different versions).
+You could also try adding the `-v' (verbose) option, but I don't think
+that should give you more than you're getting already.  If only the
+`-r' version works, you might be getting "network unreachable" from
+the no-`-r' version.
+
+I don't know if this works as I expect for point-to-point networks.
+
+4.  If either of those work, try `ping -c 3 165.76.21.201' (substitute
+the `inet addr' from `ifconfig ppp0'.  This should not work (if pings
+to IP addresses not yet mentioned don't work), and the `-r' version
+should definitely not work (that address needs to be routed via
+165.76.23.253, and `-r' does no routing by definition).
+
+5.  If you are at this point unable to ping any IP address (except
+perhaps your P-t-P partner) then do `route -n'.  For all routes
+on the ppp0 interface do
+
+route del &lt;IP-address&gt;
+
+where the argument is the first IP address on the line.  Then do
+
+route add -host 165.76.23.253 dev ppp0
+
+(substituting the appropriate address of the P-t-P partner).  Try
+pinging it again.  If you can't ping yet, yell "baka-yarou!", take a
+few alka-seltzer, and go to the store and buy Windows.  :-(
+Alternatively, lug your box to HBSC on Dec 13.  :-)
+
+6.  If that ping worked, do
+
+route add default gw 165.76.23.253
+
+(which is actually an abbreviation for
+
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 165.76.23.253 dev ppp0)
+
+and you should be able to ping any IP address in the world (that has
+an active host attached :-).
+
+After that you need to set up name service and the like.
+
+
+
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00246" HREF="msg00246.html">RE: tlug: PPP thanks</A></STRONG>
+<UL><LI><EM>From:</EM> "Michael Chiu" &lt;mchiu@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00249.html">tlug: Tcl/Tk and Icons</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00251.html">RE: tlug: PPP thanks</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00247.html">Re: tlug: PPP thanks</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00251.html">RE: tlug: PPP thanks</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00250"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00250"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

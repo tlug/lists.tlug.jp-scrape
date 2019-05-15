@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] wiki -->
+<!--X-From-R13: Inygre Vnafra <tnaqnysNfbavp.arg> -->
+<!--X-Date: Sun, 19 Nov 2006 15:03:55 +0900 -->
+<!--X-Message-Id: 455FF295.1090303@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: AA0639A1EB70AE409130258CE7BDC318323717@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00527.html">Date Prev</a>][<a href="msg00529.html">Date Next</a>][<a href="msg00524.html">Thread Prev</a>][<a href="msg00529.html">Thread Next</a>][<a href="maillist.html#00528">Date Index</a>][<a href="threads.html#00528">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] wiki</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 18 Nov 2006 21:58:45 -0800</li>
+<li><strong>From</strong>: <strong>Walter Hansen &lt;<a href="mailto:gandalf@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20wiki">gandalf@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] wiki</strong></li>
+<li>References: &lt;<a href="msg00524.html">AA0639A1EB70AE409130258CE7BDC318323717@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5.0.8 (Windows/20061025)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<tt>burlingk@example.com wrote:
+</tt><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">------------------------------</pre><br>
+<pre style="margin: 0em;">Message: 13
+Date: Sun, 19 Nov 2006 11:26:25 +0900
+From: &quot;Josh Glover&quot; &lt;jmglov@example.com&gt;
+Subject: Re: [tlug] wiki
+To: &quot;Tokyo Linux Users Group&quot; &lt;tlug@example.com&gt;
+Message-ID:
+	&lt;d8fcc0800611181826y107e8d9bh4413b2dd98244a94@example.com&gt;</pre><br>
+<tt>Locking is but one of the database-like features that wikis 
+need. How about building and maintaining of link tables? How 
+about indexing things for fast searching?</tt><br>
+<br>
+<tt>All of this could be done with flat files and grep, but why 
+reinvent the wheel when MySQL / sqlite / PostgreSQL / etc. 
+works just fine?
+</tt></blockquote><pre style="margin: 0em;"><br>I think that the biggest worry seems to be recoverability in case of a
+database crash.</pre><br>
+<pre style="margin: 0em;">If a person is really totally worried about that, it is probably
+possible to create a script that semi-regularly dumps the databases
+information out into a flat text file.  A second script of course would
+be needed to turn that data back into a database if the need were to
+arise.</pre><br>
+<pre style="margin: 0em;">The same interface that allows the wiki to interact with the database
+server to begin with should allow for such a script.</pre><br>
+<pre style="margin: 0em;">Another option however, is to simply back up a copy of the database
+itself, and if the server moves to another box, use the same version of
+the SQL  software.
+</pre></blockquote><pre style="margin: 0em;"><br></pre><br>
+<tt>I use this little script for mysql. Mysqldump takes a snapshot of 
+current data at that moment and saves it as a very large series of SQL 
+statemnts in a plain text file. The thing is if you backup the files of 
+a database you may inadvertently catch them mid update. This can mean 
+you're backing up corrupted data. Mysqldump works with Mysql so it 
+doesn't have this problem. The statement before this repairs the 
+database. Once this is done it's whisked off the computer by the user 
+backup.</tt><br>
+<br>
+<tt>#!/bin/sh<br>
+tdy=`date +%Y%m%d`<br>
+mysqlrepair --optimize --all-databases=1 --password=putpasswordhere 2&gt;&amp;1 
+| grep -v &quot;Table is already up to date&quot; | grep -v &quot;OK&quot;<br>
+mysqldump --all-databases --password=putpasswordhere &gt; 
+/home/backup/backup/mysql$tdy.sql<br>
+tar -czpf /home/backup/backup/mysql$tdy.gz 
+/home/backup/backup/mysql$tdy.sql 2&gt;&amp;1 | grep -v &quot;Removing leading&quot;<br>
+rm -f /home/backup/backup/mysql$tdy.sql<br>
+chown backup:backup /home/backup/backup/mysql$tdy.gz<br>
+chmod 600 /home/backup/backup/mysql$tdy.gz</tt><br>
+<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00529" href="msg00529.html">Re: [tlug] wiki</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00541" href="msg00541.html">Re: [tlug] wiki</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00524" href="msg00524.html">Re: [tlug] wiki</a></strong>
+<ul><li><em>From:</em> burlingk</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00527.html">Re: [tlug] wiki</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00529.html">Re: [tlug] wiki</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00524.html">Re: [tlug] wiki</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00529.html">Re: [tlug] wiki</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00528"><strong>Date</strong></a></li>
+<li><a href="threads.html#00528"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

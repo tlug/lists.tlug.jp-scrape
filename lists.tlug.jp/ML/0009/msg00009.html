@@ -1,0 +1,218 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: LAM/MPI Parallel processing -->
+<!--X-From: "Jonathan Shore" <jshore@example.com&#45;shuppan.com> -->
+<!--X-Date: Mon, 4 Sep 2000 20:31:28 +0900 -->
+<!--X-Message-Id: FOEBIKDLMFBGOKGGBGDEGEMGCEAA.jshore@example.com&#45;shuppan.com -->
+<!--X-ContentType: multipart/mixed -->
+<!--X-Reference-Id: 39B381CA.3DB536E2@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00008.html">Date Prev</A>][<A HREF="msg00010.html">Date Next</A>][<A HREF="msg00008.html">Thread Prev</A>][<A HREF="msg00022.html">Thread Next</A>][<A HREF="maillist.html#00009">Date Index</A>][<A HREF="threads.html#00009">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: LAM/MPI Parallel processing</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: LAM/MPI Parallel processing</strong></LI>
+<LI><strong>From</strong>: <strong>"Jonathan Shore" &lt;<A HREF="mailto:jshore@example.com">jshore@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 4 Sep 2000 20:31:28 +0900</LI>
+<LI>Content-Type: multipart/mixed;boundary="----=_NextPart_000_0031_01C016AF.1A69E7D0"</LI>
+<LI>Importance: Normal</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00008.html">39B381CA.3DB536E2@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;F3JFD.A.gWF.Uk4s5@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I did parallel processing research and used Linda and PVM (pre-MPI) in a
+former life.  Parallel distributed computing is probably one of the most
+interesting areas of computer science.  As for good books on parallel
+processing, I'll have to check my stash.  Do you want to know more on the
+theory side or on the practical implementation with MPI?
+
+Some quick advice: 
+
+*	localize computations
+try to localize your calculations as much as possible to individual PEs
+[processors] (ie do a minimum of message passing during calculations).
+Sometimes this involves rethinking the algorithm or restructuring the math
+so as to be able to compute partial products and recombine later.
+
+*	intelligent node selection
+If you are using machines which are being used by other people you'll want
+to make sure you select based on loading, raw performance, memory profile,
+etc.  Sometimes, in fact, it is faster to compute on N-1 fast boxes rather
+than using N boxes where one is exceptionally slow.
+
+*	fault tollerance
+Depending on the length of your runs you might consider adding benchmarking
+code which will freeze the state of your system periodically so that you can
+resume should a node go down or a program crash.  Another approach is to
+design your algorithm to alot tasks which can be made completely independent
+of others.  If the task fails run it elsewhere.
+
+
+BTW, I assume this is regarding the neuron simulation you were telling me
+about at the nomikai?  To what extend does each element need to communicate
+with the others?  Some problems are not appropriate for distributed
+parallelism because the communication latency / bandwidth is orders of
+magnitude slower than a parallel computer with an internal switching
+network. 
+
+cheers
+
+Jonathan
+E-Publishing Group K.K.
+
+-----Original Message-----
+From: simon@example.com [<A HREF="mailto:simon@example.com]On">mailto:simon@example.com]On</A>
+Behalf Of Simon Valiquette
+Sent: Monday, September 04, 2000 8:05 PM
+To: tlug@example.com
+Subject: LAM/MPI Parallel processing
+
+
+Hi everybody.
+
+  I'm building a simulator, which seems to work fine so far except that
+it is too slow.  Since the algorithms themself cannot be significantly
+more optimized, I decided with my boss to make a version that will work
+on a Beowulf.
+
+  I found out that LAM/MPI would probably be a very good mix of
+efficiency and portability (the Beowulf I am building is a mix of PC,
+DEC Alpha and Sun computers).
+
+  There is a lot of documentation about using or setting up LAM/MPI, and
+I find the library very easy to use.  But there is not so much good
+documentation about how to make a good and efficient design for parallel
+programs.  I already have some idea about how to make my simulator
+working efficiently in parallel, but I'm sure that a book would be able
+to give me many tips and making me saving time.
+
+  So, I would really appreciate if someone can suggest me some good
+books about designing efficient programs on a heterogeneous cluster of
+computer.  I don't mind if the book use Fortran, C or any other commonly
+used language (personnaly, I'm using C++), as long it help me making a
+more efficient simulator, considering the available hardware.
+
+    By the way, the structure using a master that just dispatch jobs to
+slave computers are not suitable for me, because each nodes have to
+communicate with some others nodes, and that the amount of data is too
+big (say, easilly over one GB for a single simulation).
+
+  Thank you in advance,
+
+Simon Valiquette
+
+
+PS:   My boss is really amazed that I can produce better quality
+software using only free GPL softwares, than in using for over 1000$ in
+softwares running under the other OS.
+
+---
+It took the computational power of three Commodore 64s to fly to the
+moon.
+It takes a 486 to run Windows 95.
+Something is wrong here.
+
+-----------------------------------------------------------------------
+Special TLUG/LSWG/Project BLUE/YLUG Event:
+Jon "Maddog" Hall in Japan: September 5 (Tue) 19:00        IBM Japan HQ
+Next Technical Meeting: September 9 (Sat) 13:30  Place: LinuxProbe Hall
+Next Nomikai Meeting: October (probably Oct 18 (Fri) 19:00)  Place: TBD
+-----------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+</PRE>
+<P><A HREF="bin00000.bin" > winmail.dat</A></P>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00022" HREF="msg00022.html">Re: LAM/MPI Parallel processing</A></STRONG>
+<UL><LI><EM>From:</EM> Simon Valiquette &lt;Simon.Valiquette@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00008" HREF="msg00008.html">LAM/MPI Parallel processing</A></STRONG>
+<UL><LI><EM>From:</EM> Simon Valiquette &lt;Simon.Valiquette@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00008.html">LAM/MPI Parallel processing</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00010.html">RedHat 6.1 and Japanese</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00008.html">LAM/MPI Parallel processing</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00022.html">Re: LAM/MPI Parallel processing</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00009"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00009"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

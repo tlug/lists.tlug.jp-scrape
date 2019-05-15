@@ -1,0 +1,185 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] utf form problems -->
+<!--X-From-R13: fgrira fzvgu <fwfNfbavp.arg> -->
+<!--X-Date: Tue, 26 Feb 2008 15:54:07 +0900 -->
+<!--X-Message-Id: 47C3B7E0.9020906@sonic.net -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00122.html">Date Prev</a>][<a href="msg00124.html">Date Next</a>][<a href="msg00138.html">Thread Prev</a>][<a href="msg00124.html">Thread Next</a>][<a href="maillist.html#00123">Date Index</a>][<a href="threads.html#00123">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] utf form problems</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 25 Feb 2008 22:55:28 -0800</li>
+<li><strong>From</strong>: <strong>steven smith &lt;<a href="mailto:sjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20utf%20form%20problems">sjs@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] utf form problems</strong></li>
+<li>User-agent: Thunderbird 1.5.0.14pre (X11/20071023)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Hi
+
+I'm trying to get my first form using UTF working and am
+having problems.
+
+my html header looks like:
+&lt;head&gt;
+&lt;title&gt;Heisig Info&lt;/title&gt;
+&lt;meta name=&quot;Generator&quot; content=&quot;Vim/7.0&quot;&gt;
+&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html;
+charset=UTF-8&quot;&gt;
+&lt;/head&gt;
+
+According to what I've found on the web, the content
+statement should be all I need to do to enable UTF-8 encoding.
+
+The input on the form looks like:
+&lt;input type=&quot;hidden&quot; name=&quot;rtk_kanji_1&quot; value=&quot;助&quot;&gt;
+
+I'm using perl 5.8.8 and have a script for debugging.  I'm
+trying to use HTML::Entities to decode the input.  I'm using
+a POST method form.
+
+I'm pretty sure the form is the problem.  It looks like the
+encoded string being sent to the server is wrong.
+
+I have a debug statement to test how utf-8 works on the
+server.  It does nothing but encode/decode a utf-8 string.
+That segment of code looks like:
+   my $x = &quot;rtk_kanji_1=助&quot;;
+   print &quot;\$x=\&quot;$x\&quot;\n&quot;;
+   my $y = encode_entities($x);
+   print &quot;\$y=\&quot;$y\&quot;\n&quot;;
+   my $z = decode_entities($y);
+   print &quot;\$z=\&quot;$z\&quot;\n&quot;;
+and output from this debug in the browser looks like:
+    $x=&quot;rtk_kanji_1=助&quot;
+    $y=&quot;rtk_kanji_1=&amp;#x52A9;&quot;
+    $z=&quot;rtk_kanji_1=助&quot;
+so I'm pretty sure things on the server side are ok.
+
+I have debug statements to look at what is arriving on stdin
+at the server that look like:
+if ($input) {
+    my $output = decode_entities($input);
+    print &quot;\$input = \&quot;$input\&quot;\n&quot;;
+    print &quot;\$output = \&quot;$output\&quot;\n&quot;;
+}
+and the debug output in the browser looks like:
+    $input = &quot;rtk_kanji_1=%E5%8A%A9&quot;
+    $output = &quot;rtk_kanji_1=%E5%8A%A9&quot;
+so decode_entities isn't doing anything with the string and
+to me the encoded string doesn't look like what I expected
+for an encoded utf-8 string.
+
+What am I missing.  From what I've been able to find on the
+web, this shouldn't be difficult, but I don't quite know
+where to go from here.
+
+Thanks
+Steve S.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00124" href="msg00124.html">Re: [tlug] utf form problems</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00125" href="msg00125.html">Re: [tlug] utf form problems</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+<li><strong><a name="00129" href="msg00129.html">Re: [tlug] utf form problems</a></strong>
+<ul><li><em>From:</em> Marty Pauley</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00122.html">Re: [tlug] Visio-to-PNG Batch Conversion - Possible?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00124.html">Re: [tlug] utf form problems</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00138.html">Re: [tlug] limitation on using md0 as /</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00124.html">Re: [tlug] utf form problems</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00123"><strong>Date</strong></a></li>
+<li><a href="threads.html#00123"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

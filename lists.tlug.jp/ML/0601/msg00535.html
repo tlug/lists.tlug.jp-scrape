@@ -1,0 +1,182 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] re: Searching for kanji strings -->
+<!--X-From-R13: Rnivq Dvttf <qnevttfNuhzarg.hpyn.rqh> -->
+<!--X-Date: Fri, 20 Jan 2006 10:58:04 +0900 -->
+<!--X-Message-Id: 43D043AC.2030908@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00534.html">Date Prev</a>][<a href="msg00536.html">Date Next</a>][<a href="msg00617.html">Thread Prev</a>][<a href="msg00540.html">Thread Next</a>][<a href="maillist.html#00535">Date Index</a>][<a href="threads.html#00535">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] re: Searching for kanji strings</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 20 Jan 2006 10:58:04 +0900</li>
+<li><strong>From</strong>: <strong>David Riggs &lt;<A HREF="mailto:dariggs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20re%3A%20Searching%20for%20kanji%20strings">dariggs@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] re: Searching for kanji strings</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.7) Gecko/20050420 Debian/1.7.7-2</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Steven T, thanks for the FreeWAIS idea-- and yes, storage is cheap.
+
+ &gt;Steve S. wrote:
+ &gt;
+ &gt;&gt; Would it be worth while to just write a simple [C] executable for this?
+ &gt;
+ &gt;It is wise to avoid premature optimization.
+ &gt;
+ &gt;First make it work _right_, then make it work _fast_.
+ &gt;
+ &gt;In the mean time, while using the existing solutions,
+ &gt;David will learn how good they are for a wide variety of cases,
+ &gt;and will also learn exactly what needs to be optimized.
+ &gt;
+ &gt;David, of the hundreds of megabytes of text, how big is each file?
+ &gt;What is the longest line in any of those files?
+ &gt;What is the largest file?
+ &gt;
+ &gt;Jim
+
+
+I am indeed learning a lot as I go through this.
+
+To answer the data questions: each line is 20 to 80 characters (not 
+bytes-- the original data is big5, converted to utf-8 locally).
+
+The 326MB is in 2460 files in 56 folders, 2.5MB max file size, with many 
+less than 10K, and examples of everything in between. The organization 
+is by the &quot;Taisho&quot; number, which maps to the title of a text. Most 
+happily the file names are just numbers, not kanji, so no encoding 
+problems there.
+
+My current perl script does what I had originally hoped for. It is 
+invoked as &quot;supersearch kanjistring fileglob&quot;. ( In is in utf-8, just 
+for the &quot;maru&quot; and hard space in the skipping string--)
+
+#!/usr/bin/perl -0777 -n
+BEGIN {($s = shift) =~ s/(.)/$1\[0-9pabc()|。　\n\015]*/g;}
+@example.com = m/$s.*[0-9pabc()|。　\n\015]*/gxo;
+if (@example.com) {print &quot;in file: &quot;, $ARGV, &quot;\n&quot;;
+	 foreach $one ( @example.com) {print $one, &quot;\n&quot;;}}
+
+
+Briefly, what it does is:
+
+#1.grap first arg, replace every character with
+#  that character+junk-skipper, and put into $s
+#2. put all the matches in the entire slurped file
+#   into @example.com array
+#3. if there is anything in @example.com, print out the file name,
+#   then each match, which has at lease one line number
+
+
+Hoping I can make the next step and figure out how to index this heap. 
+It is really pretty fast, for what it does, but it would be a big help 
+to figure out how to do real indexing and do flexible context searching, 
+as Steven says is done in FreeWAIS.
+
+Thanks,
+
+David Riggs, Kyoto
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00540" href="msg00540.html">[tlug] Optimizing Search for kanji strings</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00534.html">[tlug] Docbook XML for documenting database tables</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00536.html">Re: [tlug] Skype Ports/Servers(IPs) Query</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00617.html">Re: [tlug] Docbook XML for documenting database tables</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00540.html">[tlug] Optimizing Search for kanji strings</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00535"><strong>Date</strong></a></li>
+<li><a href="threads.html#00535"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

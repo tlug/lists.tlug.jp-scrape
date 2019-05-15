@@ -1,0 +1,178 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Watching servers: information overload -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Wed, 21 Oct 1998 11:43:01 +0900 -->
+<!--X-Message-Id: 19981021114117F.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3.0.6.32.19981021110958.0097e500@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00847.html">Date Prev</A>][<A HREF="msg00849.html">Date Next</A>][<A HREF="msg00847.html">Thread Prev</A>][<A HREF="msg00901.html">Thread Next</A>][<A HREF="maillist.html#00848">Date Index</A>][<A HREF="threads.html#00848">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Watching servers: information overload</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:darren@example.com">darren@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Watching servers: information overload</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 21 Oct 1998 11:41:17 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Wed, 21 Oct 1998 11:09:58"&lt;<A HREF="msg00844.html">3.0.6.32.19981021110958.0097e500@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00844.html">3.0.6.32.19981021110958.0097e500@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Darren" == Darren Cook &lt;darren@example.com&gt; writes:
+
+    Darren&gt; Various cron jobs (backups, log rotation,etc.) send emails
+    Darren&gt; to say they've done. The problem with this is that if you
+    Darren&gt; get the email everythings okay, and if you don't there's a
+    Darren&gt; problem. But noticing you've not got an email is hard.
+
+    Darren&gt; So I want to set up two machines (A and B) to watch each
+    Darren&gt; other. My plan so far is: A runs it's cron job to do the
+    Darren&gt; backup. It makes a report file.  B runs a cron job an hour
+    Darren&gt; later, to ftp in to A and get that file. If the file is
+    Darren&gt; not there, or the date stamp is not today, or the file
+    Darren&gt; size is very different from yesterdays file, it sends an
+    Darren&gt; email. Otherwise it writes one line in a log file to say
+    Darren&gt; everything okay.
+
+    Darren&gt; I want to expand this to checking servers are running
+    Darren&gt; every hour, checking disk space is above a certain amount,
+    Darren&gt; etc.
+
+    Darren&gt; Does anyone see any flaw in this plan. Do you know of any
+    Darren&gt; scripts/programs that can save me some work? Ideally
+    Darren&gt; something that will work on both NT and unix.
+
+Darren,
+
+	Sounds very much like one of our products :) In our case we
+have a daemon process that runs on each machine, which reads in a
+number of rules that specifies what it should to. These rules get data
+from various sources:
+
+	matching regex's in tailed log files
+	number of some process running, memory in use
+	various system stats, IO, swap
+	file system info
+	....
+
+The daemon takes the latest updates and applies them to rules. If the
+rule fires, then some action is taken, such as starting a process,
+sending mail, paging someone etc. The main idea is that this daemon
+handles all the system admin for the machine.
+
+In addition, you can send out a query to all the machines to say "who
+is running process x", or "show me all the file systems that are &gt; 90%
+full" ( most of ours! ) 
+
+The rules can also have attached schedules, so they are only in effect
+during certain hours.
+
+This is a commercial product, and as such, is not free. I would be
+happy if you want to buy it, but the point here was to give you some
+more ideas for putting some scripts together. 
+
+For portability, you might want to write your stuff in perl, as it
+will run on NT, and should give you some access to NT stats. I'm
+rather ignorant about NT, so I can't help you there much.
+
+Hope this helps,
+
+	Andy
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00844" HREF="msg00844.html">tlug: Watching servers: information overload</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00847.html">Re: tlug: Watching servers: information overload</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00849.html">Re: tlug: What's happening at other LUGS? ... This is VanLUG:</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00847.html">Re: tlug: Watching servers: information overload</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00901.html">Re: tlug: Watching servers: information overload</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00848"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00848"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Strange clock problem finally solved! -->
+<!--X-From: Dennis McMurchy <denismcm@example.com> -->
+<!--X-Date:  Tue, 13 May 1997 05:27:29 GMT -->
+<!--X-Message-Id: Pine.LNX.3.93.970513135750.162A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00114.html">Date Prev</A>][<A HREF="msg00116.html">Date Next</A>][<A HREF="msg00117.html">Thread Prev</A>][<A HREF="msg00119.html">Thread Next</A>][<A HREF="maillist.html#00115">Date Index</A>][<A HREF="threads.html#00115">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Strange clock problem finally solved!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"Tokyo Lignux Abusers' Group" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Strange clock problem finally solved!</strong></LI>
+<LI><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@example.com">denismcm@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 13 May 1997 14:26:40 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Dennis McMurchy &lt;denismcm@example.com&gt;
+--------------------------------------------------------
+  Hi gang,
+
+  I am feeling a little sheepish about this, but others may also have
+run into the same problem and assumed like I did that it was due to
+faulty hardware.
+
+  The problem is this:  Not long after I bought my AST Pentium 100 in 
+the fall of 1995, I began to notice that the clock was running a little
+slow.  Didn't seem to matter how often I reset the time using the 'date'
+command.  The time just kept slowly falling further and further behind
+every time I turned off the machine.
+
+  Finally, it was a good twenty minutes or so behind and I was getting
+a little ticked at having to reset it manually every time I booted up,
+so I wrote a script that would run automatically every time I logged
+in as root on bootup and reset the time for me ( I include this below
+for any who might be interested in the details of how to do it).  
+
+  Well this was pretty cool, I thought.  The only trouble was that I
+had to periodically edit the script to increase the number of minutes 
+that it would add to the clock, because this hardware problem (bizarre
+though it seemed) was slowly getting worse and worse and worse, until
+finally in the latest iteration I'm adding a full 46 minutes to the 
+clock every time I boot up.
+
+  Well, I happened to be browsing through Lars Wirzenius' html version of
+
+		Linux System Administrators' Guide 0.4
+(The LaTeX source code and other machine readable formats can be found on
+the Internet via anonymous ftp on sunsite.unc.edu, in the directory
+/pub/Linux/docs/LDP. Also available are at least Postscript and TeX
+.DVI formats. )
+
+  In a section titled 'Hardware and Software Clocks' he notes:
+
+	The Linux kernel keeps track of time independently from the
+	hardware clock.  During the boot, Linux sets its own clock to
+	the same time as the hardware clock. After this, both clocks run
+	independently. Linux maintains its own clock because looking at
+	the hardware is slow and complicated.  
+
+  Well, sure enough, a little experimentation revealed that setting the
+time with the 'date' command does NOT affect the hardware clock at all.
+Once I reset the time in the bios setup routine, I found that this 
+strange problem of losing greater and greater amounts of time has 
+disappeared.
+
+  So, if anybody needs a really cool, slightly used automatic time
+setting script, here it is below.  
+
+  At least I don't catch colds... 
+
+Dennis McMurchy, 
+Tojinmachi, Fukuoka
+
+p.s. I just noticed that it's exactly a year to the day since I wrote this:
+
+ # a shell script to adjust the clock, which loses forty-some minutes
+# every time the machine is turned off.
+# Mon May 13 22:30:49 JST 1996
+
+if [ $(date +%M) -ge 14 ]; then     #we're coming up to the hour,so
+	if [ $(date +%H) -ge 23 ]; then 
+	   echo "timer: too close to midnight - better change it manually"
+           exit 1
+	else
+	   date --set=$(( 86+10#$(date +%H%M) )) # the 10# forces no. into base ten ; the 86 is just 46 + 40 (i.e. 100 - 60) to add the hour
+	fi
+else
+   date --set=$(( 46+10#$(date +%H%M) ))     #add forty-six minutes 
+fi
+
+
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00119" HREF="msg00119.html">Re: tlug: Strange clock problem finally solved!</A></STRONG>
+<UL><LI><EM>From:</EM> Totoro &lt;riley@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00120" HREF="msg00120.html">Re: tlug: Strange clock problem finally solved!</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Tittsler &lt;jwt@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00141" HREF="msg00141.html">Re: tlug: Strange clock problem finally solved!</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Wiles &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00114.html">tlug: Will the REAL Japanese Internet please connect to Tsukuba?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00116.html">Re[2]: tlug: Alan Stone + DIY Machines</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00117.html">Re: tlug: Netscape 4.0 not for me</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00119.html">Re: tlug: Strange clock problem finally solved!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00115"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00115"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

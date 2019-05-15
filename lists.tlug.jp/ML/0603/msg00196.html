@@ -1,0 +1,183 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: [tlug] Palm/Linux connection woes. -->
+<!--X-From-R13: Ubqjva Egrjneg <tbqjva.fgrjnegNtznvy.pbz> -->
+<!--X-Date: Wed, 29 Mar 2006 21:46:43 +0900 -->
+<!--X-Message-Id: 20060329144532.173d2ba6.godwin.stewart@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgpQl78ZeArZd.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00195.html">Date Prev</a>][<a href="msg00197.html">Date Next</a>][<a href="msg00195.html">Thread Prev</a>][<a href="msg00198.html">Thread Next</a>][<a href="maillist.html#00196">Date Index</a>][<a href="threads.html#00196">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Palm/Linux connection woes.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 29 Mar 2006 14:45:32 +0200</li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<a href="mailto:godwin.stewart@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Palm%2FLinux%20connection%20woes.">godwin.stewart@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Palm/Linux connection woes.</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I recently acquired a Palm Z22 and have been trying to sync it to the PC
+using J-Pilot as the gooey and pilot-link as the back-end.
+
+The kernel is correctly rigged up with the usb-serial and visor modules, as
+evidenced in these logs when I attach the device:
+
+Mar 29 12:14:27 dragonfly kernel: usb 4-2: new full speed USB device using uhci_hcd and address 64
+Mar 29 12:14:28 dragonfly kernel: usb 4-2: configuration #1 chosen from 1 choice
+Mar 29 12:14:28 dragonfly kernel: visor 4-2:1.0: Handspring Visor / Palm OS converter detected
+Mar 29 12:14:28 dragonfly kernel: usb 4-2: Handspring Visor / Palm OS converter now attached to ttyUSB0
+Mar 29 12:14:28 dragonfly kernel: usb 4-2: Handspring Visor / Palm OS converter now attached to ttyUSB1
+
+and also by this entry in /proc/bus/usb/devices:
+
+T:  Bus=04 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#= 66 Spd=12  MxCh= 0
+D:  Ver= 1.10 Cls=ff(vend.) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+P:  Vendor=0830 ProdID=0061 Rev= 1.00
+S:  Manufacturer=Palm, Inc.
+S:  Product=Palm Handheld
+C:* #Ifs= 1 Cfg#= 1 Atr=c0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 4 Cls=ff(vend.) Sub=00 Prot=00 Driver=visor &lt;-----
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+
+
+The idea is to set up J-Pilot such that it points to the second tty
+created, ttyUSB1 in this case, to click on the hot-sync button in the
+interface, upon which you're prompted to tap on the PDA's hot-sync button.
+When you do this, the PDA disconnects from ttyUSB[0-1] and reconnects to
+ttyUSB[2-3] and J-Pilot starts eating up 100% CPU:
+
+Mar 29 12:29:22 dragonfly kernel: usb 4-2: USB disconnect, address 66
+Mar 29 12:29:22 dragonfly kernel: visor 4-2:1.0: device disconnected
+Mar 29 12:29:23 dragonfly kernel: usb 4-2: new full speed USB device using uhci_hcd and address 67
+Mar 29 12:29:23 dragonfly kernel: usb 4-2: configuration #1 chosen from 1 choice
+Mar 29 12:29:23 dragonfly kernel: visor 4-2:1.0: Handspring Visor / Palm OS converter detected
+Mar 29 12:29:23 dragonfly kernel: usb 4-2: Handspring Visor / Palm OS converter now attached to ttyUSB2
+Mar 29 12:29:23 dragonfly kernel: usb 4-2: Handspring Visor / Palm OS converter now attached to ttyUSB3
+
+
+I've spent the past couple of hours googling for a solution but they all go
+on about using udev to have a dynamic /dev directory. I don't use udev.
+
+Of course, www.linuxpda.com is veeerrry helpful because the whole domain
+throws an HTTP error 403 and most other pages I've found refer to it, to
+other broken links, or either copy or refer to the howto on TLDP, which is
+about 5 years out of date.
+
+Does anyone here have any further ideas or am I going to have to start
+using udev?
+
+-- 
+G. Stewart - godwin.stewart@example.com
+
+&quot;I don't understand that attitude.  Don't we want email that has dancing
+ bears, cute little videos, musical tunes, animated waving hands, sixty
+ fonts, and looks like it's been done with crayolas? Good grief, man,
+ think like a three year old!&quot;
+                                   -- Norm Reitzel discussing HTML email
+
+</pre><p><strong>Attachment:
+<a href="pgpQl78ZeArZd.pgp" ><tt>pgpQl78ZeArZd.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00198" href="msg00198.html">Re: [tlug] Palm/Linux connection woes.</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00195.html">Re: [tlug] Dell Dimension-C Autopsy - Chemical Spill!</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00197.html">Re: [tlug] Dell Dimension-C Autopsy - Specifics!</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00195.html">Re: [tlug] Dell Dimension-C Autopsy - Chemical Spill!</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00198.html">Re: [tlug] Palm/Linux connection woes.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00196"><strong>Date</strong></a></li>
+<li><a href="threads.html#00196"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

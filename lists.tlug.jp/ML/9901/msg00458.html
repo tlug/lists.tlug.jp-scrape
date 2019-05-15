@@ -1,0 +1,174 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Auto run at boot time -->
+<!--X-From: Matt Gushee <matt@example.com> -->
+<!--X-Date:  Thu, 28 Jan 1999 10:23:09 +0900 -->
+<!--X-Message-Id: 199901280026.JAA16254@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3.0.6.32.19990128095311.009a7d30@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00457.html">Date Prev</A>][<A HREF="msg00459.html">Date Next</A>][<A HREF="msg00459.html">Thread Prev</A>][<A HREF="msg00463.html">Thread Next</A>][<A HREF="maillist.html#00458">Date Index</A>][<A HREF="threads.html#00458">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Auto run at boot time</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Auto run at boot time</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 28 Jan 1999 09:26:59 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00453.html">3.0.6.32.19990128095311.009a7d30@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00453.html">3.0.6.32.19990128095311.009a7d30@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Darren Cook writes:
+ &gt; I've been reading how-to's and man pages, but I can't seem to find a simple
+ &gt; explanation of the following. I want to know where I put commands to run at
+ &gt; boot time. Here are the three types:
+ &gt; 
+ &gt; 1.A command to run once at boot-time, eg. to make a backup of all the files
+ &gt; in a directory.
+
+Hmm ... /etc/rc.d/rc.local ? Or maybe ../rc.sysinit .
+
+ &gt; 2.Run apache (or some similar server) so it will be listening even if I
+ &gt; don't log in. I found the init.d directory, but I couldn't find where I
+ &gt; specify which daemons I want to be started. [*]
+
+There are two main types of init configuration: the SysV type (used by 
+most distributions, I think ... I know RedHat and TL use it) and the
+BSD type. I'm only familiar with the former.
+
+Anyway, if you have a SysV-type setup, you'll have /etc/rc.d/init.d,
+and then some numbered directories -- /etc/rc.d/rc0.d,
+/etc/rc.d/rc1.d, ... one for each runlevel. The contents of these
+directories look like this:
+
+K20rusersd
+K20rwhod
+K55routed
+K95nfsfs
+S01kerneld
+S10network
+S20random
+S30syslog
+S40atd
+S40crond
+S50inet
+S60lpd
+S60nfs
+S75keytable
+S80sendmail
+S85gpm
+S96canna
+S99local
+
+These are all symlinks to the init scripts in /etc/rc.d/init.d. The
+'K' or 'S' prefix means 'kill' or 'start', and the number determines
+the order to run the scripts in. 
+
+[ Note that these scripts all control daemons; all the ones I know of
+conform to a simple protocol using the commands 'start,' 'stop,'
+'restart,' ... umm, and one or two others ... e.g., the command
+'/etc/rc.d/init.d/sendmail restart' would do just what it looks like,
+independently of the normal boot sequence. ]
+
+Best of luck,
+
+Matt Gushee
+Oshamanbe, Hokkaido
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00453" HREF="msg00453.html">tlug: Auto run at boot time</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00457.html">Re: tlug: The aftermath of having one's server hacked.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00459.html">Re: tlug: Auto run at boot time</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00459.html">Re: tlug: Auto run at boot time</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00463.html">tlug: Auto run at boot time</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00458"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00458"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Networking two Linux computers harder than Linux toWindows? -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 16 Apr 2007 00:14:35 +0900 -->
+<!--X-Message-Id: 87odlpvex8.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 46149486.3040103@example.com -->
+<!--X-Reference: 877c5f0172dad5ccba68580282838145@example.com -->
+<!--X-Reference: f118b8b90704050712v2f6d4817g237ee560c4df2016@example.com -->
+<!--X-Reference: Pine.NEB.4.64.0704060843510.9645@example.com -->
+<!--X-Reference: 4620AB24.10200@example.com -->
+<!--X-Reference: 87tzvivo7c.fsf@example.com -->
+<!--X-Reference: 46216903.4000903@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00266.html">Date Prev</a>][<a href="msg00268.html">Date Next</a>][<a href="msg00262.html">Thread Prev</a>][<a href="msg00101.html">Thread Next</a>][<a href="maillist.html#00267">Date Index</a>][<a href="threads.html#00267">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Networking two Linux computers harder than Linux toWindows?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 Apr 2007 00:24:35 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Networking%20two%20Linux%20computers%20harder%20than%20Linux%20toWindows%3F">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Networking two Linux computers harder than Linux toWindows?</strong></li>
+<li>References: &lt;<a href="msg00099.html">46149486.3040103@example.com</a>&gt;	&lt;<a href="msg00100.html">877c5f0172dad5ccba68580282838145@example.com</a>&gt;	&lt;<a href="msg00104.html">f118b8b90704050712v2f6d4817g237ee560c4df2016@example.com</a>&gt;	&lt;<a href="msg00113.html">Pine.NEB.4.64.0704060843510.9645@example.com</a>&gt;	&lt;<a href="msg00242.html">4620AB24.10200@example.com</a>&gt;	&lt;<a href="msg00249.html">87tzvivo7c.fsf@example.com</a>&gt;	&lt;<a href="msg00253.html">46216903.4000903@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+
+ &gt; exportfs: /etc/exports [2]: Neither 'subtree_check' or 
+ &gt; 'no_subtree_check' specified for export &quot;192.168.0.3:/home/fileserver&quot;.
+
+ &gt; Those OK notes look encouraging.
+
+Actually, they only tell you that the server has started, but not that
+anything is properly exported.  However, you've already confirmed that
+192.168.0.3 is the client machine's address, and that everything else
+you can check is kosher.  So the warning message would seem that
+/home/fileserver has been properly exported.
+
+ &gt; The thing is, is there a command I should be running on the client?
+
+There are commands you *can* run, but as Patrick says, all necessary
+programs should be run automatically by mount.
+
+NFS is actually a rather complicated protocol.  There are several
+ports that must be managed by the server, in particular the RPC
+portmapper and also a user id server.  However, presumably all this is
+done by the command to run the server.
+
+I don't know if the kernel server needs the portmapper running, or how
+it does access control.  However, when I was using NFS I used the
+client daemon &quot;rpc.nfsd&quot;, which does require several auxiliary
+daemons, including &quot;rpc.mountd&quot;, &quot;rpc.ugidd&quot;, and &quot;portmap&quot;.
+
+The portmap daemon apparently does access control using the
+tcpwrappers facility, so you may need entries for your gf's machine in
+/etc/hosts.allow.  See &quot;man portmap&quot; for more information.  &quot;ps ax |
+grep 'portmap|nfs|mountd|ugidd'&quot; will tell you if the portmapper and
+other daemons are running.
+
+(N.B. since you're using the kernel nfs server, you may or may not
+need some or all of those, since the nfs server may provide some of
+the other services for you.)
+
+ &gt; &gt; This is bad, it should only take a couple of seconds to determine that
+ &gt; &gt; NFS server is or is not running.  How long did you wait?
+
+ &gt; Ages. As I'm writing this it's still waiting, and has been for a good 
+ &gt; ten minutes.
+
+Your word &quot;ages&quot; is quite justified here.  That's way too long.
+
+I wonder if you've got a misconfigured routing or firewall.  I don't
+know for sure, but I would hope that a properly configured server
+would say &quot;connection refused&quot; and mount would fail quickly.  The fact
+that it hangs suggests that it keeps trying on a long timeout.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00099" href="msg00099.html">Re: [tlug] Networking two Linux computers harder than Linux to	Windows?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00100" href="msg00100.html">Re: [tlug] Networking two Linux computers harder than Linux	toWindows?</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00104" href="msg00104.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00113" href="msg00113.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+<ul><li><em>From:</em> Curt Sampson</li></ul></li>
+<li><strong><a name="00242" href="msg00242.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00249" href="msg00249.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00253" href="msg00253.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00266.html">Re: [tlug] more Mac fun</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00268.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00262.html">Re: [tlug] Networking two Linux computers harder than Linux toWindows?	[SOLVED]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00101.html">Re: [tlug] Networking two Linux computers harder than Linux to	Windows?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00267"><strong>Date</strong></a></li>
+<li><a href="threads.html#00267"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

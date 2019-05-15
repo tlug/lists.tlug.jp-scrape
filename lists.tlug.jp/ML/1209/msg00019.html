@@ -1,0 +1,172 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: [tlug] Help understanding a disk near&#45;disaster -->
+<!--X-From-R13: Rnivq X Wnaahppv <wyvahkNchapuphggre.zy1.arg> -->
+<!--X-Date: Mon, 10 Sep 2012 06:02:53 +0900 -->
+<!--X-Message-Id: 1347224570.15140.140661125655697.579854CC@webmail.messagingengine.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00018.html">Date Prev</a>][<a href="msg00020.html">Date Next</a>][<a href="msg00035.html">Thread Prev</a>][<a href="msg00020.html">Thread Next</a>][<a href="maillist.html#00019">Date Index</a>][<a href="threads.html#00019">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Help understanding a disk near-disaster</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 09 Sep 2012 11:02:50 -1000</li>
+<li><strong>From</strong>: <strong>David J Iannucci &lt;<a href="mailto:jlinux@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Help%20understanding%20a%20disk%20near-disaster">jlinux@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Help understanding a disk near-disaster</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>HI... me again. I'd like some help understanding what happened the other
+day when I came (it seems) close to disaster as a result of trying to be
+clever :-S
+
+So... what I wanted to do was to be able to hibernate my laptop, boot
+off a live USB stick, then shut that down and wake up the original OS
+intact. I had tried just doing this the naive way before, but found on
+waking the original booted OS, that it had been corrupted by the live
+boot - I figured, after a little thought, because the original boot was
+storing its state in the swap partition, and the live boot was using
+that for swap, thus corrupting it.
+
+&quot;So,&quot; I figure, &quot;if I can establish a separate partition for the
+hibernate to use, I'll be ok.&quot;  Just recently got around to setting that
+up. Hibernate is told where to store its state by the &quot;resume&quot; keyword
+on my grub boot cmd line (resume=/dev/sda5). If there's somewhere else
+that needs to be configured, I'm not aware of it. My normal swap is on
+/dev/sda8. At first I configure sda5 to be of type 82 (Linux swap).
+
+When I first try this out, I can't hibernate. D'oh... right now can't
+remember exactly what happened or what I was told. However I try
+changing sda5 to type 83 (Linux) on the fly, and that works, for some
+reason.  I try hibernating and waking up a few more times this way, and
+it seems fine (but without rebooting in between).
+
+So, full of confidence, I go ahead (later) and try booting a live distro
+during one of these hibernations. Herein, I mount sda6, a file system
+that is normally mounted on /opt (don't ask), that I want to store some
+stuff on so I can get to it from my normal system. Funny thing is, when
+I wake up, a file I copied into sda6 is not there. I try
+hibernate/reboot-
+into-live sequence again, try to pay close attention and do everything
+carefully - unmounting sda6 properly in the live boot before waking up,
+etc. No good.
+
+Again, can't remember the exact sequence, but I must have had
+opportunity to cold reboot the main OS, and...... goodlord.... terrible
+filesystem errors emanate from sda6. Crap is duly scared out of me.
+I go into root and do fsck.ext4 and repair the errors and, long story
+short... now everything seems fine. No damage is apparent (yet).
+
+So....... I'd be grateful if anyone can figure out from this story why
+this didn't work, and why my sda6 (normally /opt) should have been
+corrupted in this way by trying to mount and modify it during the live
+boot.  I've continued hibernating and waking up since then, using the
+same sda5 (type=83) resume partition (that isn't used for anything
+else), and that aspect seems fine.
+
+Even if you only have the &quot;correct&quot; instructions for how to do this kind
+of &quot;boot alternation&quot;, I'd love to hear it :-)
+
+よろしく。
+
+Dave
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00020" href="msg00020.html">Re: [tlug] Help understanding a disk near-disaster</a></strong>
+<ul><li><em>From:</em> David J Iannucci</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00018.html">Re: [tlug] HELP: Ubuntu 12.04 Input not Supported error</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00020.html">Re: [tlug] Help understanding a disk near-disaster</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00035.html">Re: [tlug] HELP: Ubuntu 12.04 Input not Supported error</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00020.html">Re: [tlug] Help understanding a disk near-disaster</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00019"><strong>Date</strong></a></li>
+<li><a href="threads.html#00019"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

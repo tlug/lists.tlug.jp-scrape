@@ -1,0 +1,263 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: UTF&#45;8 [was: Re: tlug: A couple of questions about Unicode] -->
+<!--X-From: Gaspar Sinai <gsinai@example.com> -->
+<!--X-Date: Mon, 19 Jan 1998 06:47:15 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.LNX.3.95.980119201916.1535A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m0xuCEX&#45;00012bC@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00204.html">Date Prev</A>][<A HREF="msg00206.html">Date Next</A>][<A HREF="msg00203.html">Thread Prev</A>][<A HREF="msg00207.html">Thread Next</A>][<A HREF="maillist.html#00205">Date Index</A>][<A HREF="threads.html#00205">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</strong></LI>
+<LI><strong>From</strong>: <strong>Gaspar Sinai &lt;<A HREF="mailto:gsinai@example.com">gsinai@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 19 Jan 1998 20:45:39 +0000 (Local time zone must be set--see zic manual page`)</LI>
+<LI>cc: <A HREF="mailto:gaspar.sinai@example.com">gaspar.sinai@example.com</A></LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00203.html">m0xuCEX-00012bC@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi All,
+
+I feel that UTF8 is the best tranformation format ever invented. And the
+reason why I think Linux only gains with is because it is able to encode
+the whole UCS4 space unlike the NT (UCS2). If I want to use Egyptian
+scripts I can not use NT unless I use my propriatory format in user
+defined space, which is not portable. Please read on.
+
+On Mon, 19 Jan 1998, Stephen J. Turnbull wrote:
+
+&gt; &gt;&gt;&gt;&gt;&gt; "Gaspar" == Gaspar Sinai &lt;gsinai@example.com&gt; writes:
+&gt; 
+&gt;     Gaspar&gt; Hi,
+&gt;     Gaspar&gt; I feel compelled to contribute to this thread. So here are
+&gt;     Gaspar&gt; my thoughts:
+&gt; 
+&gt;     Gaspar&gt;   I think linux only gains if it uses utf8 instead of ucs2.
+&gt; 
+&gt; I don't see this.  UTF-8 works like this, as I recall.  First of all,
+&gt; it's modal (which is bad in itself, but not terrible).  
+
+I don't feel bad about modality. After all UCS2 itself is modal at some
+places (even though they don't advertise this fact...). 
+
+&gt; In the start  state,
+&gt; 
+&gt; if (0x80 &amp; byte) == 0x00, it's a single-byte character to be
+&gt;                           interpreted as GL of ISO-8859-1 (= US-ASCII?)
+&gt; else it's multibyte and
+&gt;   if (0xC0 &amp; byte) == 0x80, it's a two-byte character with Unicode
+&gt;                           value == 256 * (0x3F &amp; byte) + next-byte + 128
+&gt;   else it's two or more bytes
+&gt; 
+&gt; and it continues from there using the top bits to identify the length
+&gt; of a multi-byte sequence.  (What I meant by "modal" is that picking up
+&gt; a byte stream at an arbitrary place, trailing bytes in the range
+&gt; 0x00-0x7F can't be distinguished from ASCII unless you backtrack 8 (?
+&gt; or so) bytes, the longest multibyte sequence, or to the previous
+&gt; multibyte leader byte.)  Now, at best this can encode 256*64 + 256, or
+&gt; somewhat over 16K characters.  If I remember correctly, none of these
+&gt; are kanji or Devanagari (I could be wrong).  Definitely none of them
+&gt; are private space.
+
+ASCII goes intact, as you said: if (ucs4&lt;0x80) the charaters is copied.
+
+But if (0xc0 &amp; ucs4) == 0xc0 it is the beginning of a sequence. If
+(0xc0 &amp; ucs2) == 0x80 this is the middle of the multibyte sequence.
+
+Here is our UCS4 space:
+======================
+Octet           Format          No. of          Maximum
+usage           (binary)        free bits       UCS-4 value
+
+1st of 1        0xxxxxxx        7               0000 007F
+1st of 2        110xxxxx        5               0000 07FF // Most JP chars
+1st of 3        1110xxxx        4               0000 FFFF
+1st of 4        11110xxx        3               001F FFFF
+1st of 5        111110xx        2               03FF FFFF
+1st of 6        1111110x        1               7FFF FFFF
+
+then
+
+continuing )    10xxxxxx        6
+2nd .. 6th )
+
+As you can see it can encode the whole ucs4 space. 
+
+It can fully map the whole UCS4 space. With recovery. If you jump
+into a string you can always determine where it started.
+The penalty is not high - the second half of UCS2 is 3 bytes, the rest
+is 2 bytes.
+
+
+&gt; That means that in UTF-8 the majority of human beings on the planet
+&gt; require 3 bytes or more to write the vast majority of their text. 
+
+I have just received a JIS encoded email from one of my providers.
+(not paying moans...) in full Japanese. Here are the results of the
+conversions.
+
+With email header:
+Encoding  Size
+========  ====
+JIS       3178
+EUC       2836
+UTF7      3432
+UTF8      3519
+MSoft TXT 4444
+
+Without email header - full Japanese:
+Encoding  Size
+========  ====
+JIS       2311
+EUC       1969
+UTF7      2562
+UTF8      2652
+MSoft TXT 2678
+
+* MSoft TXT is basically the dump of UCS2 buffer.
+As you can see most Japanese can be encoded with 2 bytes (slightly less
+because of newlines e.t.ca).
+
+&gt; I think that in fact UTF-8 fixes the modality partially by requiring
+&gt; that trailing bytes be in the range 0x00-0x7F (this guarantees at most
+&gt; one corrupt character per error as you scan forward in the stream,
+&gt; although you don't know whether error results in one-for-one
+&gt; substitution---if a 2-byte leading byte gets dropped, the trailer
+&gt; becomes ASCII, or many-for-one substitution, or one-for-many, if an
+&gt; ASCII byte is corrupted to a leading byte), but that reduces the
+&gt; number of code points expressible in 2 bytes by nearly 1/2.
+
+I hope you don't receive your ELF binaries the way you expect unicode
+message :).
+
+&gt; That's an oops in my opinion, one which is going to make people like
+&gt; Ohta ("Now, Japanese is in Danger") even less happy than Unicode
+&gt; itself.
+
+I am personaly happy that Japan received something that will make it
+possible to eliminate a lot of  confusion.
+
+To Craig:
+========
+I know I owe you something about utf8. I can get to it when I am back
+from New York - next week.
+
+Cheers,
+gaspar
+
+PS:
+===
+Those who want to test Netscape Communicator's utf8 encoding please jump
+to my Hungarian Grammar pages in utf8:
+
+    <A TARGET="_top" HREF="http://www2.gol.com/users/gsinai/Hungarian/">http://www2.gol.com/users/gsinai/Hungarian/</A> 
+
+
+
+---------------------------------------------------------------
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00207" HREF="msg00207.html">Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00203" HREF="msg00203.html">UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00204.html">Re: tlug: memory size strangeness(?)</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00206.html">tlug: Roasting TLUG CD-ROMS</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00203.html">UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00207.html">Re: UTF-8 [was: Re: tlug: A couple of questions about Unicode]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00205"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00205"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

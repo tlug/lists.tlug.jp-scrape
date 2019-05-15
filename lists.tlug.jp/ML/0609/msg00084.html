@@ -1,0 +1,166 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] troubleshooting lockup -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Fri, 08 Sep 2006 14:37:41 +0900 -->
+<!--X-Message-Id: d8fcc0800609072237oce9c285rf4b63c4c4b30d1c7@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1157514742.7342.13.camel@example.com -->
+<!--X-Reference: 20060906090000.157df7a7.jep200404@example.com -->
+<!--X-Reference: d8fcc0800609070818s17ed956t63b95085e647ca1a@example.com -->
+<!--X-Reference: 20060907134903.435a5f43.jep200404@example.com -->
+<!--X-Reference: 17664.65233.730067.685760@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00083.html">Date Prev</a>][<a href="msg00085.html">Date Next</a>][<a href="msg00083.html">Thread Prev</a>][<a href="msg00057.html">Thread Next</a>][<a href="maillist.html#00084">Date Index</a>][<a href="threads.html#00084">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] troubleshooting lockup</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 8 Sep 2006 14:37:37 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] troubleshooting lockup</strong></li>
+<li>References: &lt;<a href="mailto:1157514742.7342.13.camel@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">1157514742.7342.13.camel@example.com</a>&gt;	&lt;<a href="mailto:20060906090000.157df7a7.jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">20060906090000.157df7a7.jep200404@example.com</a>&gt;	&lt;<a href="mailto:d8fcc0800609070818s17ed956t63b95085e647ca1a@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">d8fcc0800609070818s17ed956t63b95085e647ca1a@example.com</a>&gt;	&lt;<a href="mailto:20060907134903.435a5f43.jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">20060907134903.435a5f43.jep200404@example.com</a>&gt;	&lt;<a href="mailto:17664.65233.730067.685760@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20troubleshooting%20lockup">17664.65233.730067.685760@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+On 08/09/06, stephen@example.com &lt;stephen@example.com&gt; wrote:
+
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+Magic SYSREQ key to the rescue!
+</pre></blockquote><pre style="margin: 0em;">
+
+Yeah. I mentioned this to Mike at the last meeting, but the thing to
+do when your Linux box locks up is to promptly press the Ctrl, Alt,
+and SysRq (also known as Print Screen on most keyboards) keys, and,
+holding them down, type the following key sequence:
+
+e (pause for a few seconds)   # send SIGINT to all processes
+i (pause for a few seconds)  # send SIGTERM to all processes
+s (pause for a few seconds)  # sync the kernel's buffers to disk
+u (pause for a few seconds)  # unmount filesystems
+b  # reboot the computer
+
+Of course, in order for this to work, you will need to make sure that
+your kernel was compiled with the CONFIG_MAGIC_SYSRQ option. Simply:
+
+grep CONFIG_MAGIC_SYSRQ /usr/src/linux/.config
+
+If you don't see a line saying:
+
+CONFIG_MAGIC_SYSRQ=y
+
+You need to run &quot;make menuconfig&quot; (or &quot;make xconfig&quot; if you prefer),
+then select &quot;Kernel hacking&quot; from the top-level menu. Select &quot;Kernel
+debugging&quot; if it is not already, then &quot;Magic SysRq key&quot; (which will
+appear when you turn on &quot;Kernel debugging&quot;). Save and exit, then
+recompile your kernel.
+
+-Josh
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00050" href="msg00050.html">[tlug] troubleshooting alsa in kde</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00067" href="msg00067.html">Re: [tlug] troubleshooting lockup</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00080" href="msg00080.html">Re: [tlug] troubleshooting lockup</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00081" href="msg00081.html">Re: [tlug] troubleshooting lockup</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00083" href="msg00083.html">Re: [tlug] troubleshooting lockup</a></strong>
+<ul><li><em>From:</em> stephen</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00083.html">Re: [tlug] troubleshooting lockup</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00085.html">[tlug] Oops</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00083.html">Re: [tlug] troubleshooting lockup</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00057.html">[tlug] Linux/UNIX job opportunities</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00084"><strong>Date</strong></a></li>
+<li><a href="threads.html#00084"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Fwd: [PATCH] '&#45;b superblock' flag for tune2fs -->
+<!--X-From-R13: Xbfu Uybire <wztybiNvapbtra.pbz> -->
+<!--X-Date: Sat, 22 Mar 2003 14:13:42 &#45;0500 -->
+<!--X-Message-Id: 20030322191342.GG24720@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Derived: pgp00014.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00096.html">Date Prev</a>][<a href="msg00098.html">Date Next</a>][<a href="msg00112.html">Thread Prev</a>][<a href="msg00098.html">Thread Next</a>][<a href="maillist.html#00097">Date Index</a>][<a href="threads.html#00097">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Fwd: [PATCH] '-b superblock' flag for tune2fs</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 22 Mar 2003 14:13:42 -0500</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Fwd%3A%20%5BPATCH%5D%20%27-b%20superblock%27%20flag%20for%20tune2fs">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Fwd: [PATCH] '-b superblock' flag for tune2fs</strong></li>
+<li>User-agent: Mutt/1.4.1i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+[ Just to toot my own horn... ;) ]
+
+
+----- Forwarded message from Josh Glover &lt;jmglov@example.com&gt; -----
+
+Date: Sat, 22 Mar 2003 13:39:21 -0500
+From: Josh Glover &lt;jmglov@example.com&gt;
+To: linux-fsdevel@example.com
+Subject: [PATCH] '-b superblock' flag for tune2fs
+
+I searched the archives of this list, as well as a general Google search,
+and found nothing to suggest that this has been suggested and dismissed as
+a bad idea, so here goes:
+
+The attached patch adds the '-b superblock' flag to tune2fs. The flag works
+exactly like the '-b superblock' flag to e2fsck:
+
+-b superblock
+       Instead  of  using  the  normal  superblock,  use an alternative
+       superblock specified by superblock.   This  option  is  normally
+       used  when the primary superblock has been corrupted.  The loca-
+       tion of the backup superblock is dependent on  the  filesystem's
+       blocksize.    For  filesystems  with  1k  blocksizes,  a  backup
+       superblock can be found at block 8193; for filesystems  with  2k
+       blocksizes,  at  block  16384;  and  for 4k blocksizes, at block
+       32768.
+
+       Additional backup superblocks can be  determined  by  using  the
+       mke2fs  program  using  the  -n  option  to  print out where the
+       superblocks were created.   The -b option to mke2fs, which spec-
+       ifies blocksize of the filesystem must be specified in order for
+       the superblock locations that are printed out to be accurate.
+
+       If an alternative superblock is specified and the filesystem  is
+       not  opened  read-only,  e2fsck  will make sure that the primary
+       superblock is  updated  appropriately  upon  completion  of  the
+       filesystem check.
+
+So, you could run 'tune2fs -b 16384 -l /dev/hda1' on a filesystem with a
+blocksize of 2K and a block group size of 16384 to look at the first of
+the backup superblocks on the filesystem.
+
+I found this flag to be useful, but YMMV, of course. As noted in the patch
+filename, I generated the patch against version 1.32 of e2fsprogs.
+
+
+Cheers,
+Josh
+
+       
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+<A  HREF="http://www.incogen.com/">http://www.incogen.com/</A>
+
+GPG keyID 0x62386967 (7479 1A7A 46E6 041D 67AE  2546 A867 DBB1 6238 6967)
+gpg --keyserver pgp.mit.edu --recv-keys 62386967
+
+diff -uNr e2fsprogs-1.32/misc/tune2fs.8.in 0_JMGLOV_e2fsprogs-1.32/misc/tune2fs.8.in
+--- e2fsprogs-1.32/misc/tune2fs.8.in	2002-10-25 17:31:08.000000000 -0400
++++ 0_JMGLOV_e2fsprogs-1.32/misc/tune2fs.8.in	2003-03-22 13:13:05.000000000 -0500
+@@ -8,6 +8,10 @@
+ .SH SYNOPSIS
+ .B tune2fs
+ [
++.B \-b
++.I superblock
++]
++[
+ .B \-l
+ ]
+ [
+@@ -87,6 +91,32 @@
+ adjusts tunable filesystem parameters on a Linux second extended filesystem.
+ .SH OPTIONS
+ .TP
++.BI \-b &quot; superblock&quot;
++Instead of using the normal superblock, use an alternative superblock
++specified by 
++.IR superblock .
++This option is normally used when the primary superblock has been
++corrupted.  The location of the backup superblock is dependent on the
++filesystem's blocksize.  For filesystems with 1k blocksizes, a backup
++superblock can be found at block 8193; for filesystems with 2k
++blocksizes, at block 16384; and for 4k blocksizes, at block 32768.  
++.IP
++Additional backup superblocks can be determined by using the 
++.B mke2fs 
++program using the 
++.B \-n
++option to print out where the superblocks were created.   The 
++.B \-b 
++option to 
++.BR mke2fs ,
++which specifies blocksize of the filesystem must be specified in order
++for the superblock locations that are printed out to be accurate.
++.IP
++If an alternative superblock is specified and  
++the filesystem is not opened read-only, e2fsck will make sure that the
++primary superblock is updated appropriately upon completion of the 
++filesystem check.
++.TP
+ .BI \-c &quot; max-mount-counts&quot;
+ Adjust the maximal mounts count between two filesystem checks.  If 
+ .I max-mount-counts
+diff -uNr e2fsprogs-1.32/misc/tune2fs.c 0_JMGLOV_e2fsprogs-1.32/misc/tune2fs.c
+--- e2fsprogs-1.32/misc/tune2fs.c	2002-10-15 17:44:46.000000000 -0400
++++ 0_JMGLOV_e2fsprogs-1.32/misc/tune2fs.c	2003-03-22 13:06:56.000000000 -0500
+@@ -58,6 +58,7 @@
+ char * new_label, *new_last_mounted, *new_UUID;
+ static int c_flag, C_flag, e_flag, f_flag, g_flag, i_flag, l_flag, L_flag;
+ static int m_flag, M_flag, r_flag, s_flag = -1, u_flag, U_flag, T_flag;
++static int b_flag = 0;
+ static time_t last_check_time;
+ static int print_label;
+ static int max_mount_count, mount_count, mount_flags;
+@@ -78,9 +79,8 @@
+ static void usage(void)
+ {
+ 	fprintf(stderr,
+-		_(&quot;Usage: %s [-c max-mounts-count] [-e errors-behavior] &quot;
+-		  &quot;[-g group]\n&quot;
+-		  &quot;\t[-i interval[d|m|w]] [-j] [-J journal-options]\n&quot;
++		_(&quot;Usage: %s [-b superblock] [-c max-mounts-count] [-e errors-behavior]\n &quot;
++		  &quot;\t[-g group] [-i interval[d|m|w]] [-j] [-J journal-options]\n&quot;
+ 		  &quot;\t[-l] [-s sparse-flag] [-m reserved-blocks-percent]\n&quot;
+ 		  &quot;\t[-o [^]mount-options[,...]] [-r reserved-blocks-count]\n&quot;
+ 		  &quot;\t[-u user] [-C mount-count] [-L volume-label] &quot;
+@@ -462,9 +462,12 @@
+ 	struct passwd * pw;
+ 
+ 	printf(&quot;tune2fs %s (%s)\n&quot;, E2FSPROGS_VERSION, E2FSPROGS_DATE);
+-	while ((c = getopt(argc, argv, &quot;c:e:fg:i:jlm:o:r:s:u:C:J:L:M:O:T:U:&quot;)) != EOF)
++	while ((c = getopt(argc, argv, &quot;b:c:e:fg:i:jlm:o:r:s:u:C:J:L:M:O:T:U:&quot;)) != EOF)
+ 		switch (c)
+ 		{
++      case 'b':
++				b_flag = atoi(optarg);
++        break;
+ 			case 'c':
+ 				max_mount_count = strtol (optarg, &amp;tmp, 0);
+ 				if (*tmp || max_mount_count &gt; 16000) {
+@@ -712,15 +715,27 @@
+ 	else
+ 		parse_tune2fs_options(argc, argv);
+ 	
+-	retval = ext2fs_open (device_name, open_flag, 0, 0,
+-			      unix_io_manager, &amp;fs);
+-        if (retval) {
+-		com_err (program_name, retval, _(&quot;while trying to open %s&quot;),
+-			 device_name);
+-		fprintf(stderr,
+-			_(&quot;Couldn't find valid filesystem superblock.\n&quot;));
+-		exit(1);
+-	}
++  if (b_flag) {
++		int blocksize;
++		for (blocksize = EXT2_MIN_BLOCK_SIZE;
++		     blocksize &lt;= EXT2_MAX_BLOCK_SIZE; blocksize *= 2) {
++			retval = ext2fs_open (device_name, open_flag, b_flag, blocksize,
++                            unix_io_manager, &amp;fs);
++			if (!retval)
++				break;
++		}
++	} else {
++    retval = ext2fs_open (device_name, open_flag, 0, 0,
++                          unix_io_manager, &amp;fs);
++    if (retval) {
++      com_err (program_name, retval, _(&quot;while trying to open %s&quot;),
++               device_name);
++      fprintf(stderr,
++              _(&quot;Couldn't find valid filesystem superblock.\n&quot;));
++      exit(1);
++    }
++  }
++  
+ 	sb = fs-&gt;super;
+ 	if (print_label) {
+ 		/* For e2label emulation */
+
+
+
+
+----- End forwarded message -----
+
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+<A  HREF="http://www.incogen.com/">http://www.incogen.com/</A>
+
+GPG keyID 0x62386967 (7479 1A7A 46E6 041D 67AE  2546 A867 DBB1 6238 6967)
+gpg --keyserver pgp.mit.edu --recv-keys 62386967
+</pre>
+<p><strong>Attachment:
+<a href="pgp00014.pgp" ><tt>pgp00014.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00096.html">[tlug] Gjiten segfaults</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00098.html">[tlug] Windows Japanese file name</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00112.html">Re: [tlug] Gjiten segfaults</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00098.html">[tlug] Windows Japanese file name</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00097"><strong>Date</strong></a></li>
+<li><a href="threads.html#00097"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

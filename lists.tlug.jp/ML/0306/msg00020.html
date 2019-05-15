@@ -1,0 +1,192 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: 'Postfix' as SMTP AUTH Client -->
+<!--X-From-R13: Rraavf [p[hepul <qravfzpzNtby.pbz> -->
+<!--X-Date: Thu, 5 Jun 2003 16:05:45 +0900 (KST) -->
+<!--X-Message-Id: Pine.LNX.4.44.0306051539300.4380&#45;100000@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: Pine.LNX.4.44.0306050658510.6173&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00019.html">Date Prev</a>][<a href="msg00021.html">Date Next</a>][<a href="msg00016.html">Thread Prev</a>][<a href="msg00021.html">Thread Next</a>][<a href="maillist.html#00020">Date Index</a>][<a href="threads.html#00020">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: 'Postfix' as SMTP AUTH Client</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 5 Jun 2003 16:05:45 +0900 (KST)</li>
+<li><strong>From</strong>: <strong>Dennis McMurchy &lt;<A HREF="mailto:denismcm@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20%27Postfix%27%20as%20SMTP%20AUTH%20Client">denismcm@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: 'Postfix' as SMTP AUTH Client</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 5 Jun 2003, Dennis McMurchy wrote:
+
+&gt;   I'm trying to use the 'postfix' MTA as a client for SMTP AUTH.
+&gt;   This made me think that perhaps the PLAIN and LOGIN mechanisms that
+&gt; GOL is offering were explicitly disallowed in ..postfix/main.cf, but this
+&gt; isn't the case.
+
+  I have fixed the problem finally.  My hunch above was right, after all.
+Plaintext authentication methods are not EXPLICITLY disallowed in the
+..postfix/main.cf, they are disallowed BY DEFAULT.
+
+  This is clearly stated in 
+/usr/share/doc/postfix-1.1.11/README_FILES/SASL_README.sasl2
+(I had looked carefully at the SASL_README, but somehow missed this
+one):
+
+	Note: some SMTP servers support PLAIN or LOGIN authentication
+	only.  By default, the Postfix SMTP client does not use
+	authentication methods that send plaintext passwords, and defers
+	delivery with the following error message:  &quot;Authentication
+	failed: cannot SASL authenticate to server&quot;. To enable plaintext
+	authentication specify, for example: 
+
+	    /etc/postfix/main.cf:
+		smtp_sasl_security_options = 
+
+(That's right, there's nothing at all after that there '=' sign).
+  Anyhow, adding this to /etc/postfix/main.cf, got everything working.
+
+  I found no reference anywhere in any of the documentation that I
+pored over in the last 36 hours to the fact that you need to run
+'/usr/sbin/postmap  /etc/postfix/saslpass' to generate the saslpass.db
+file that 'postfix' actually uses.  This may be OBVIOUS to some people,
+but it sure to me a long, long time to get there.  
+
+  Summing this all up just for the record:
+
+ You add the following lines to /etc/postfix/main.cf:
+
+	relayhost = mail.your.isp
+
+	smtp_sasl_auth_enable = yes
+	smtp_sasl_password_maps = hash:/etc/postfix/saslpass
+
+	# this next line allows plaintext methods
+	smtp_sasl_security_options =
+
+  The 'saslpass' file has the following form:
+mail.your.isp	userID:Password
+
+  You then run '/usr/sbin/postmap  /etc/postfix/saslpass' on it.
+And don't forget, of course, to run '/sbin/service postfix restart' so
+the configuration files are reread.  It's pretty simple, really.  
+
+  I guess I won't have to telnet to the mailserver and manually 
+authenticate to relay my email, after all.  
+
+  Does anyone have any thoughts on whether it makes any sense at all to
+require users who are already connected to the ISP to authenticate 
+themselves in this way to the mailserver?  I don't quite see the point,
+myself, but I may just be missing something obvious (again).
+
+  Cheers, Dennis
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00021" href="msg00021.html">Re: [tlug] Re: 'Postfix' as SMTP AUTH Client</a></strong>
+<ul><li><em>From:</em> Henning Peters</li></ul></li>
+<li><strong><a name="00032" href="msg00032.html">Re: [tlug] Re: 'Postfix' as SMTP AUTH Client</a></strong>
+<ul><li><em>From:</em> Shimpei Yamashita</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00016" href="msg00016.html">[tlug] 'Postfix' as SMTP AUTH Client</a></strong>
+<ul><li><em>From:</em> Dennis McMurchy</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00019.html">[tlug] OT Cisco Errors...</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00021.html">Re: [tlug] Re: 'Postfix' as SMTP AUTH Client</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00016.html">[tlug] 'Postfix' as SMTP AUTH Client</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00021.html">Re: [tlug] Re: 'Postfix' as SMTP AUTH Client</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00020"><strong>Date</strong></a></li>
+<li><a href="threads.html#00020"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

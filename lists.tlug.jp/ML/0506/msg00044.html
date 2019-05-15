@@ -1,0 +1,256 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Script Kiddy Defence Script -->
+<!--X-From-R13: Xbr Znenoryy <ynenoryyNflabcflf.pb.wc> -->
+<!--X-Date: Thu, 9 Jun 2005 19:38:14 +0900 (JST) -->
+<!--X-Message-Id: Pine.LNX.4.51.0506091923240.4420@example.com&#45;pc95 -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20050607225949.2fd16669@example.com -->
+<!--X-Reference: 20050608094344.91802.qmail@example.com -->
+<!--X-Reference: 20050608191147.613e42b4@example.com -->
+<!--X-Reference: Pine.LNX.4.51.0506091759390.4420@example.com&#45;pc95 -->
+<!--X-Reference: 20050609190745.7cd7614d@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00043.html">Date Prev</a>][<a href="msg00045.html">Date Next</a>][<a href="msg00042.html">Thread Prev</a>][<a href="msg00025.html">Thread Next</a>][<a href="maillist.html#00044">Date Index</a>][<a href="threads.html#00044">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Script Kiddy Defence Script</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 9 Jun 2005 19:38:14 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Joe Larabell &lt;<A HREF="mailto:larabell@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Script%20Kiddy%20Defence%20Script">larabell@???</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Script Kiddy Defence Script</strong></li>
+<li>References: &lt;<a href="msg00022.html">20050607225949.2fd16669@example.com</a>&gt;&lt;<a href="msg00027.html">20050608094344.91802.qmail@example.com</a>&gt; &lt;<a href="msg00028.html">20050608191147.613e42b4@example.com</a>&gt;&lt;<a href="msg00039.html">Pine.LNX.4.51.0506091759390.4420@example.com</a>&gt; &lt;<a href="msg00042.html">20050609190745.7cd7614d@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+&gt; Yes, sounds interesting (even though I don't like perl at all ;-).
+
+Oh... you're in luck. While the original test version of the script was
+in perl it seems I re-wrote the 'production' version in C. I'm ataching
+it below. To use it you would create a SHITLIST chain using iptables and
+route your incoming packets through that chain (using a seperate chain
+makes it really easy to clear the auto-banned IP addresses later). Then
+pipe the log output of Apache to this script (you can do that from the
+config file). The scanner acts like a null filter so you can re-pipe the
+output to your real log file or to some other log processing filter.
+
+The list of probe strings is probably out-of-date. You should eyeball a
+fairly recent Apache log file to see if there have been any new exploits
+added to the typical noise.
+
+With just a bit of parsing... maybe with the perl-like RE library... one
+could concoct a whole slew of real-time monitors to lock out the kiddies.
+
+BTW, in looks like there may be another buffer overflow vulnerability in
+the 'examine( )' routine. You might want to add some sanity checks to make
+sure 'referer[ fieldSep - buffer ]' falls within the range of the string.
+
+====
+
+#include &lt;stdio.h&gt;
+#include &lt;malloc.h&gt;
+#include &lt;string.h&gt;
+
+char* badguys[ ] =
+{
+    &quot;/default.ida&quot;,
+    &quot;/scripts&quot;,
+    &quot;/c/winnt&quot;,
+    &quot;/d/winnt&quot;,
+    &quot;/_mem_bin&quot;,
+    &quot;/msadc&quot;,
+    &quot;/MSADC&quot;,
+    &quot;/_vti_bin&quot;,
+    0
+};
+
+static int   bufsiz;
+static char* buffer;
+
+void shitcan( char* referer )
+{
+    char tmp[ 1024 ]; strcpy( tmp, referer ); strcat( tmp, &quot;/32&quot; );
+
+    execl( &quot;/sbin/ipchains&quot;, &quot;ipchains&quot;, &quot;-A&quot;, &quot;shitlist&quot;, &quot;-s&quot;, tmp, &quot;-j&quot;, &quot;REJECT&quot;, 0 );
+
+    exit( 0 );
+}
+
+void examine( char* buffer )
+{
+    char  referer[ 1024 ];
+
+    char* fieldSep = index( buffer, ' ' );
+    char* rqString = strstr( buffer, &quot;GET &quot; );
+
+    if ( fieldSep )
+    {
+        strncpy( referer, buffer, ( fieldSep - buffer ) );
+
+        referer[ fieldSep - buffer ] = 0x00;
+
+        if ( rqString )
+        {
+            char** ptr = badguys;
+
+            while ( *ptr )
+            {
+                if ( strncmp( ( rqString + 4 ), *ptr, strlen( *ptr ) ) == 0 )
+                {
+                    int pid = fork( );
+
+                    if ( pid )
+                    {
+                        wait( 0 );
+                    }
+                    else
+                    {
+                        shitcan( referer );
+                    }
+                }
+                ++ptr;
+            }
+        }
+    }
+}
+
+int main( int argc, char* argv[ ] )
+{
+    /*
+     *  Initial buffer should be plenty for now
+     */
+    buffer = malloc( bufsiz = 2 );
+
+    /*
+     *  Main loop is simple -- read lines forever and process them
+     */
+    while ( fgets( buffer, bufsiz, stdin ) )
+    {
+        /*
+         *  Buffer overflow protection (should have an upper bound)
+         */
+        while ( *( buffer + ( strlen( buffer ) - 1 ) ) != '\n' )
+        {
+            buffer = realloc( buffer, bufsiz *= 2 );
+
+            fgets( ( buffer + strlen( buffer ) ), ( bufsiz / 2 ), stdin );
+        }
+        examine( buffer ); fputs( buffer, stdout ); fflush( stdout );
+    }
+    return( 0 );
+}
+
+
+--
+Joe Larabell -- Synopsys VCS Support      US: larabell@example.com
+<A  HREF="http://wwwin.synopsys.com/~larabell/">http://wwwin.synopsys.com/~larabell/</A>   Japan: larabell@?jp
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00022" href="msg00022.html">[tlug] Script Kiddy Defence Script</a></strong>
+<ul><li><em>From:</em> Michael Reinsch</li></ul></li>
+<li><strong><a name="00027" href="msg00027.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+<ul><li><em>From:</em> Nguyen Hung Vu</li></ul></li>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+<ul><li><em>From:</em> Michael Reinsch</li></ul></li>
+<li><strong><a name="00039" href="msg00039.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+<ul><li><em>From:</em> Joe Larabell</li></ul></li>
+<li><strong><a name="00042" href="msg00042.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+<ul><li><em>From:</em> Michael Reinsch</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00043.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00045.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00042.html">Re: [tlug] Script Kiddy Defence Script</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00025.html">[tlug] CAcert assurer?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00044"><strong>Date</strong></a></li>
+<li><a href="threads.html#00044"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

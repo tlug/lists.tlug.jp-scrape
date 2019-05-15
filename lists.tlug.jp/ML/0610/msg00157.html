@@ -1,0 +1,181 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Authenticating to Samba with AD account -->
+<!--X-From-R13: "Bngevpx @example.com" <gyht.avrffraNtznvy.pbz> -->
+<!--X-Date: Thu, 19 Oct 2006 14:59:32 +0900 -->
+<!--X-Message-Id: 2d4c9c600610182259g1b4c9f03r61346bf799b5852b@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20061017004300.GA14839@example.com&#45;net.ne.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00156.html">Date Prev</a>][<a href="msg00158.html">Date Next</a>][<a href="msg00136.html">Thread Prev</a>][<a href="msg00198.html">Thread Next</a>][<a href="maillist.html#00157">Date Index</a>][<a href="threads.html#00157">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Authenticating to Samba with AD account</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 19 Oct 2006 14:59:29 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Patrick Niessen&quot; &lt;<a href="mailto:tlug.niessen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Authenticating%20to%20Samba%20with%20AD%20account">tlug.niessen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Authenticating to Samba with AD account</strong></li>
+<li>References: &lt;<a href="msg00136.html">20061017004300.GA14839@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">Nik,</pre><br>
+<pre style="margin: 0em;">First of all, ensure your samba machine is properly registered in the
+domain.  If necessary delete from Windows, and then add it again,
+following correct procedure as specified by Samba manual.  Ensure your
+time is synced!  You may need to use NTP using AD controller as a
+timesource.  Kerberos is very time sensitive!</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">[global]
+        workgroup = FOO
+</pre></blockquote><pre style="margin: 0em;">old style windows domain name, eg: domain</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>        realm = FOO.LOCAL
+</tt></blockquote><pre style="margin: 0em;">this must be the full AD domain name, ie. FOO.LOCAL.COM</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">        netbios name = BAR
+        security = ADS
+        password server = BAR.FOO.LOCAL
+</pre></blockquote><pre style="margin: 0em;"><br>this must be your domain controller's beautifully long name</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;"><br>        winbind uid = 100000-120000
+        winbind gid = 100000-120000
+        winbind separator = +
+        winbind use default domain = yes
+</pre></blockquote><pre style="margin: 0em;"><br>Is your winbindd backend working?  Look inside to see whether users
+are all in.   I actually use LDAP for backend.</pre><br>
+<pre style="margin: 0em;">Increase log level to get more output from samba, any problem with resolution?</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>        obey pam restrictions = yes
+</tt></blockquote><pre style="margin: 0em;"><br>I don't use this, so not sure whether it affects the system.  If you
+only need to provide Samba access there is no need to involve PAM !
+Authent will be handled only by samba.  Use Pam if you need to access
+other services like ssh or ftp with AD username &amp; password. To have
+unified login from other services, it may be an option to use ldap
+instead of PAM (I use ldap from php to check passowrd and username are
+correct).</pre><br>
+<pre style="margin: 0em;"><br>You forgot to include the share section.</pre><br>
+<pre style="margin: 0em;">Make sure it looks something like this:</pre><br>
+<pre style="margin: 0em;">[Main]
+       comment = Basic Share for Main users
+       path = /srv/samba/Main
+       read only = No
+       inherit permissions = Yes
+       nt acl support = No
+       hide unreadable = Yes
+       map archive = No
+       mangled names = No</pre><br>
+<pre style="margin: 0em;">Secondly set permission on dir.  Try &quot;chmod -r a+rwx /srv/samba/Main&quot;
+for a start, and check whether problems persist.  Also please
+remember that USer and group are now domain users, eg: NOT &quot;chown
+patrick /srv/samba/Main/Patrick&quot; BUT &quot;chown foo+patrick
+/srv/samba/Main/Patrick&quot;.</pre><br>
+<pre style="margin: 0em;">I had similar problems before with the backend.  Is it really stable
+in operation, is winbind really running?  ONe way to check is to
+delete winbind.tdb and winbind cache files while daemons are down,
+then start them up and check what happens.  If backend doesn't work,
+winbindd falls back to tdb. So maybe no matter what you change in
+LDAP, it doesn't have effect.  In case of LDAP, samba may have trouble
+connecting to LDAP server.</pre><br>
+<pre style="margin: 0em;"><br>Check logfiles, also system logfiles to narrow down problem.</pre><br>
+<pre style="margin: 0em;">Good Luck</pre><br>
+<pre style="margin: 0em;">--
+Patrick Niessen</pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00198" href="msg00198.html">Re: [tlug] Authenticating to Samba with AD account</a></strong>
+<ul><li><em>From:</em> Nikolay Elenkov</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00136" href="msg00136.html">[tlug] Authenticating to Samba with AD account</a></strong>
+<ul><li><em>From:</em> Nikolay Elkov</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00156.html">[tlug] Flash Player 9 - beta</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00158.html">RE: [tlug] Linux and Windows {2k|Xp|Vista} Comparison</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00136.html">[tlug] Authenticating to Samba with AD account</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00198.html">Re: [tlug] Authenticating to Samba with AD account</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00157"><strong>Date</strong></a></li>
+<li><a href="threads.html#00157"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

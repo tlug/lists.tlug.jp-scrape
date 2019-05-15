@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: 1run C++,Fortran,Ratfor makes -->
+<!--X-From: "Manuel M. T. Chakravarty" <chak@example.com> -->
+<!--X-Date:  Wed, 13 Jan 1999 14:46:19 +0900 -->
+<!--X-Message-Id: 19990113144538Y.chak@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 369B274C.B90A049B@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00127.html">Date Prev</A>][<A HREF="msg00129.html">Date Next</A>][<A HREF="msg00114.html">Thread Prev</A>][<A HREF="msg00095.html">Thread Next</A>][<A HREF="maillist.html#00128">Date Index</A>][<A HREF="threads.html#00128">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: 1run C++,Fortran,Ratfor makes</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:sean@example.com">sean@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: 1run C++,Fortran,Ratfor makes</strong></LI>
+<LI><strong>From</strong>: <strong>"Manuel M. T. Chakravarty" &lt;<A HREF="mailto:chak@example.com">chak@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 13 Jan 1999 14:45:38 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Tue, 12 Jan 1999 19:43:24 +0900"&lt;<A HREF="msg00111.html">369B274C.B90A049B@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00111.html">369B274C.B90A049B@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Sean Bennett &lt;sean@example.com&gt; wrote,
+
+&gt; "Stephen J. Turnbull" wrote:
+&gt; 
+&gt; &gt; ...Many people who want to use GCC
+&gt; &gt; for some reason on various systems do so, but then let the system's ld
+&gt; &gt; program link the output of the various compilers into a single
+&gt; &gt; executable object.
+&gt; 
+&gt; This sounds to be what the client was refering to - linking various object
+&gt; files into a single executable object module...
+&gt; 
+&gt; linux's linker is 'ld';  am I correct in assuming Sun's is MRI??  'info ld'
+&gt; makes reference to aiding users in 'the transition to GNU `ld' from the MRI
+&gt; linker'...
+
+I worked on SunOS for about 7 years, and I mean I wrote
+software on SunOS, and I always used `ld' to link my
+programs.  I am not sure what MRI is, but I can assure you
+that on SunOS you link with `ld'.  Any compiler writer in
+his or her right mind will generate object files on a Un*x
+system that can be processed by the standard `ld' of that
+system.[1]  This implies that you can link object files of
+different compiler into one executable.
+
+The problem is, as Steve already pointed out, that different
+programming languages uses different conventions on how to
+organize arguments to functions etc in memory, which can
+make interfacing different languages tricky.  *But* this is
+much more a language than OS issue and the common
+denominator on Un*x systems is that usually every language
+provides support for the calling conventions used by C (and
+if two languages have one supported calling convention in
+common, this is usually enough to get the job done - in the
+worst case by using some additional marshalling code in C).
+In other words, when it worked on SunOS, it'll probably also 
+work on Linux (it depends on the different versions of the
+compilers on the different OSes).
+
+&gt; &gt; The question about the single `make' command puzzles me as
+&gt; &gt; it does Steve.
+&gt; 
+&gt; after a quick study care of Turnbull, Chakravarty, and O'reilly&amp;Ass., and a
+&gt; somewhat better understanding of the compile/linking process, I think they
+&gt; were refering to producing a single object file after
+&gt; 'making' and linking the various source files...
+
+As I said, I don't expect any problems there, because the
+different compilers use the same linker and object format
+anyway.
+
+&gt; &gt; There might be one problem though, what kind of Fortran does
+&gt; &gt; you client need (F77, F90)?
+&gt; 
+&gt; f77 I believe...
+
+This definitely makes it easier (and cheaper ;-)   Maybe g77
+does the job.  I'd try running some of their sources through
+g77.  Actually, for a kind of simple fesability study, your
+client could install gcc/g++ and g77 on their Suns and try
+to compile their stuff with it (there are CDs with the GNU
+tools precompiled for Suns).  This would also allow them to 
+compare the performance of the generated code (if this is an 
+issue).  If this works, it'll also work on Linux.
+
+Cheers,
+
+Manuel
+
+[1] Actually, anybody in the right mind will generate C or
+    symbolic assembler code (.s files), which will be
+    assembled into object files (.o) by `as', the assembler,
+    which guarantees that the files are in absolutely the
+    same format.
+-------------------------------------------------------------------
+Next Nomikai: 14 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+*** it will will be Jan 14 (Thu), as Jan 15 (Fri) is a natl holiday
+Next Technical Meeting: Feb 13 (Sat), 12:30    ace: Temple Univ.
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: tlug: 1run C++,Fortran,Ratfor makes</A></STRONG>
+<UL><LI><EM>From:</EM> Sean Bennett &lt;sean@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00127.html">Re: tlug: gtk-config</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00129.html">Re: tlug: gtk-config</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00114.html">Re: tlug: 1run C++,Fortran,Ratfor makes</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00095.html">tlug: X Windows cursor</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00128"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00128"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

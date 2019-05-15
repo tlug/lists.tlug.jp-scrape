@@ -1,0 +1,182 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Japanese fonts & input -->
+<!--X-From: B0Ti <9915104t@example.com&#45;u.ac.jp> -->
+<!--X-Date: Thu, 02 Nov 2000 16:05:01 +0900 -->
+<!--X-Message-Id: 3A011233.419B8301@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200011020359.eA23xJ706969@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00025.html">Date Prev</A>][<A HREF="msg00027.html">Date Next</A>][<A HREF="msg00020.html">Thread Prev</A>][<A HREF="msg00029.html">Thread Next</A>][<A HREF="maillist.html#00026">Date Index</A>][<A HREF="threads.html#00026">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Japanese fonts &amp; input</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Japanese fonts &amp; input</strong></LI>
+<LI><strong>From</strong>: <strong>B0Ti &lt;<A HREF="mailto:9915104t@example.com">9915104t@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 02 Nov 2000 16:05:01 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: Kobe University, Japan</LI>
+<LI>References: &lt;200011020359.eA23xJ706969@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;SdTVYC.A.7yB.dhRA6@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>Sender: <A HREF="mailto:boti@example.com">boti@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; Subject: gtk 1.2.8 and Japanese fonts
+&gt; Date: Wed, 1 Nov 2000 11:27:12 +0900
+&gt; From: Phil Cummins &lt;cummins@example.com&gt;
+
+&gt; But the character widths seem to
+&gt; be calculated incorrectly somewhere. Many of the labels for
+&gt; buttons and menus get truncated, for example. (although in
+&gt; text windows everthing is fine). Does anyone have any idea how
+&gt; to fix this problem? Thanks.
+
+Try to modify the fonts in /etc/gtkrc.ja
+here is mine:
+[boti@example.com Java]$ cat /etc/gtk/gtkrc.ja
+style "gtk-default-ja" {
+       fontset = "-adobe-helvetica-medium-r-normal--12-*-*-*-p-*-iso8859-1,\
+                  -misc-fixed-medium-r-normal--13-*-*-*-*-*-jisx0208.1983-0"
+}
+class "GtkWidget" style "gtk-default-ja"
+
+
+&gt; Subject: Re: Japanese Input
+&gt; Date: Wed, 01 Nov 2000 20:18:39 +0900
+&gt; From: Venkatesh Raghavan &lt;raghavan@example.com&gt;
+
+&gt; Thanks for the tip. I have somewhat managed to
+&gt; get kinput working on Mandrake 7.1 without
+&gt; downgrading. Ctrl+\ key returns me back to
+&gt; English mode now. May be my default keybyindings
+&gt; are a litte messed up.
+
+Actually yesterday I found out what was causing the trouble. Eventhough I downgraded to
+wnn4 of mdk7.0 at one point the kinput2 wouldn't return me to normal input mode again, and
+the reason for this was that I had NumLock on.
+I assigned the shift-kanji key to the kinput2 conversion key instead of shift-space via
+.Xdefaults.
+[boti@example.com boti]$ cat .Xdefaults
+*inputMethod: kinput2
+*xlcConversionStartKey: Shift&lt;Key&gt;Kanji
+*conversionStartKeys:  Shift&lt;Key&gt;Kanji
+Kinput2*useOverrideShellForMode: true
+
+What I don't get is why doesn't kinput2 return me to normal input mode when I have NumLock
+on??? Weird.
+
+&gt;  Any ideas how to get kinput2 to start
+&gt; automatically.
+
+Put a kinput2 startup script into /etc/X11/xinit.d/
+(From MDK 7.1.  7.0 doesn't have this)
+[boti@example.com boti]$ cat /etc/X11/xinit.d/kinput2
+/usr/X11R6/bin/kinput2
+
+&gt;&gt; Put this line in your .xinitrc and/or .xsession.
+&gt;Putting the command in .xinitrc causes my Xserver to crash.
+Is it a real crash or just an exit?
+I guess the reason is that you didn't have an .xinitrc before. If you put "kinput2 -wnn
+-jerver localhost &amp;" and nothing else into it would make X exit immediately (cause of &amp;),
+because there is no window manager started up, etc.
+If you wish to use .xinitrc, then put the appropriate commands for starting your window
+manager into it as well.
+But the xinit.d script should be a cleaner way to do it, unless you don't want a kinput2
+for your other users.
+
+Hope this helps,
+B0Ti.
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00029" HREF="msg00029.html">Re: Japanese fonts &amp; input</A></STRONG>
+<UL><LI><EM>From:</EM> Venkatesh Raghavan &lt;raghavan@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00055" HREF="msg00055.html">Re: Japanese fonts &amp; input</A></STRONG>
+<UL><LI><EM>From:</EM> Venkatesh Raghavan &lt;raghavan@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00025.html">Re: Japanese Input</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00027.html">LWN on the TL IPO</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00020.html">[ann] 11/11 TLUG Technical Meeting</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00029.html">Re: Japanese fonts &amp; input</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00026"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00026"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

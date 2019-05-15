@@ -1,0 +1,217 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] Empty databases after moving MySQL data files -->
+<!--X-From-R13: Rnir [ U <qnirNnegvpynff.bet> -->
+<!--X-Date: Mon, 19 Apr 2010 19:54:58 +0900 -->
+<!--X-Message-Id: 4BCC3681.2080809@articlass.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00083.html">Date Prev</a>][<a href="msg00085.html">Date Next</a>][<a href="msg00091.html">Thread Prev</a>][<a href="msg00085.html">Thread Next</a>][<a href="maillist.html#00084">Date Index</a>][<a href="threads.html#00084">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Empty databases after moving MySQL data files</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 19 Apr 2010 19:54:57 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:dave@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Empty%20databases%20after%20moving%20MySQL%20data%20files">dave@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Empty databases after moving MySQL data files</strong></li>
+<li>User-agent: Thunderbird 2.0.0.24 (X11/20100411)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>TLUG,
+
+In order to have consistent backups, I wanted to move all my MySQL data
+from it's default directory to my home directory (which I keep on a
+separate partition and backup regularly). I looked on the web and found
+various instructions.
+
+I did this on two computers, my home desktop and my laptop. On my home
+computer, after a couple of stumbles, I got it to work.
+
+However on my laptop, despite having followed the same instructions
+twice, it's not working. If I look at my databases in phpmyadmin (my
+preferred way of handling MySQL), they're empty. However, I'm sure the
+data is there because if I reverse what I did and set the data files
+back to the default location, the databases are no longer empty.
+
+Just for further clarification, what I mean is that when I go into
+phpmyadmin, I can see all the databases listed on the left side of the
+screen. All my users and privileges are also set if I look under the
+&quot;privileges&quot; tab. However, if I click on any one database to view its
+contents, it says that it has no tables.
+
+Further, there's another snag. After my latest attempt to follow the
+instructions and move the data to the home directory, when I try to stop
+the MySQL server, it won't let me:
+
+$ sudo /etc/init.d/mysql stop
+[sudo] password for dave:
+ * Stopping MySQL database server mysqld   [fail]
+
+Hmmm... it seems dangerous to be moving the files if I can't stop the
+server.
+
+Okay, so, here's how I tried to move the data files. Perhaps someone can
+tell me what I might have screwed up:
+
+1. Stop MySQL server
+
+sudo /etc/init.d/mysql stop
+
+2. Create new directory in home folder
+
+mkdir /home/dave/Dropbox/MySQL
+
+3. Move all MySQL data files from /var/lib/mysql to new directory. Move
+everything that is a directory. DO NOT move anything that is a file.
+
+4. Make sure new directory and contents are owned by MySQL
+
+sudo chown -R mysql:mysql /home/dave/Dropbox/MySQL
+sudo chown -R mysql:mysql /home/dave/Dropbox/MySQL/*
+
+5. Edit the my.cnf file
+
+sudo gedit /etc/mysql/my.cnf
+
+5a. Replace:
+
+datadir        = /var/lib/mysql
+
+With:
+
+datadir        = /home/dave/Dropbox/MySQL
+
+6. Edit the apparmor settings file
+
+sudo gedit /etc/apparmor.d/usr.sbin.mysqld
+
+6a. Replace:
+
+/var/lib/mysql/ r,
+/var/lib/mysql/** rwk,
+
+With:
+
+/home/dave/Dropbox/MySQL/ r,
+/home/dave/Dropbox/MySQL/** rwk,
+
+7. Restart apparmor
+
+sudo /etc/init.d/apparmor restart
+
+8. Restart MySQL
+
+sudo /etc/init.d/mysql start
+
+
+That's basically it. Worked okay on my desktop. Not sure what else to do
+to diagnose and fix the problem on my laptop.
+
+Any ideas?
+
+-- 
+Dave M G
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00085" href="msg00085.html">Re: [tlug] Empty databases after moving MySQL data files</a></strong>
+<ul><li><em>From:</em> Romeo Theriault</li></ul></li>
+<li><strong><a name="00086" href="msg00086.html">Re: [tlug] Empty databases after moving MySQL data files</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+<li><strong><a name="00087" href="msg00087.html">Re: [tlug] Empty databases after moving MySQL data files</a></strong>
+<ul><li><em>From:</em> Lewske Wada</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00083.html">Re: [tlug] multibyte tr (or i18n coreutils)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00085.html">Re: [tlug] Empty databases after moving MySQL data files</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00091.html">Re: [tlug] multibyte tr (or i18n coreutils)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00085.html">Re: [tlug] Empty databases after moving MySQL data files</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00084"><strong>Date</strong></a></li>
+<li><a href="threads.html#00084"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

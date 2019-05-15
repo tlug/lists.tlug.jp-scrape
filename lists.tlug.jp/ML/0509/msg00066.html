@@ -1,0 +1,197 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Questions about specifications for some cutting edge videorecording via laptop -->
+<!--X-From-R13: oehab enbhyg <oehabNenbhyg.pbz> -->
+<!--X-Date: Tue, 13 Sep 2005 23:42:46 +0900 -->
+<!--X-Message-Id: 4326E566.3090909@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 43211F0A.8030000@example.com -->
+<!--X-Reference: 87oe72wtnz.fsf@example.com -->
+<!--X-Reference: 4321A9EF.5000105@example.com -->
+<!--X-Reference: 30ce843605091006136d3bd204@example.com -->
+<!--X-Reference: 4322DEF6.7070507@example.com -->
+<!--X-Reference: 30ce8436050910064057721ae2@example.com -->
+<!--X-Reference: 87d5neg1px.fsf@example.com -->
+<!--X-Reference: 30ce843605091203485add5600@example.com -->
+<!--X-Reference: d8fcc08005091305533045b8e1@example.com -->
+<!--X-Derived: pgp00002.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00065.html">Date Prev</a>][<a href="msg00067.html">Date Next</a>][<a href="msg00064.html">Thread Prev</a>][<a href="msg00041.html">Thread Next</a>][<a href="maillist.html#00066">Date Index</a>][<a href="threads.html#00066">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Questions about specifications for some cutting edge videorecording via laptop</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 13 Sep 2005 23:42:46 +0900</li>
+<li><strong>From</strong>: <strong>bruno raoult &lt;<A HREF="mailto:bruno@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Questions%20about%20specifications%20for%20some%20cutting%20edge%20videorecording%20via%20laptop">bruno@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Questions about specifications for some cutting edge videorecording via laptop</strong></li>
+<li>References: &lt;<a href="msg00033.html">43211F0A.8030000@example.com</a>&gt;	 &lt;<a href="msg00034.html">87oe72wtnz.fsf@example.com</a>&gt;	 &lt;<a href="msg00036.html">4321A9EF.5000105@example.com</a>&gt;	 &lt;<a href="msg00042.html">30ce843605091006136d3bd204@example.com</a>&gt;	 &lt;<a href="msg00043.html">4322DEF6.7070507@example.com</a>&gt;	 &lt;<a href="msg00045.html">30ce8436050910064057721ae2@example.com</a>&gt;	 &lt;<a href="msg00050.html">87d5neg1px.fsf@example.com</a>&gt;	 &lt;<a href="msg00051.html">30ce843605091203485add5600@example.com</a>&gt; &lt;<a href="msg00064.html">d8fcc08005091305533045b8e1@example.com</a>&gt;</li>
+<li>User-agent: Mozilla Thunderbird 1.0.6 (X11/20050716)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Josh Glover wrote:
+&gt; Yes, writes are buffered and written in a file-independent manner. The
+&gt; write(3) syscall simply places the data to be written in the block
+&gt; buffer, which the Linux kernel then writes to disk in an intelligent
+&gt; fashion. So it should not matter how many files you are writing to,
+&gt; the disk will still be used efficiently.
+
+Not exactly. write(2, sorry) syscall places the data to the block
+device, only if the opened file is a block device.
+On most Unix-like systems, you can access the same devices, but in
+a raw mode. Example: dd [...] of=my-raw-disk will not use at all the
+block device.
+
+The write(2) syscall sends a command to the underlying device (mainly
+block or raw).
+
+I would like to add that write(), even on a block device, could be
+highly inefficient. Just try to &quot;write&quot; one char at once 1,000,000
+times. Try again with a library call (3) like putc() - that one
+will add one more layer of &quot;caching&quot;. This is of course
+more visible with some kind of seeks in middle of the write...
+You just have to manage yourself the balance between security and
+speed, depending also on the way you need to write.
+
+You can do the same with memory only: Allocate (your memory * 2) with
+a malloc(3!). Then fill it with a double loop:
+1  for (b=0; b&lt;nb_blocks; b++)
+2	  for (c=0; c&lt;b_size; c++)
+3		  *(b*b_size+c) = 0;
+
+Try this, Then invert lines 1 and 2, and compare the execution time.
+This is a problem with some developpers, as they don't understand the
+underlying layers...
+You can try this with b_size=4k for instance, and nb_blocks being
+your memory * 2 / b_size (assuming you have enough swap). In fact
+physical memory + 1 block will give the same result, probably.
+
+
+br.
+
+--
+GPG Key: 653514E5 (<A  HREF="http://www.raoult.com/gpg">http://www.raoult.com/gpg</A>)
+--
+Yoda: &quot;No! Try Not! Do! Or Do not! There IS no try. Only Do.&quot;
+Yoda showed Luke what could be done.
+Luke: &quot;I don't believe it...&quot;
+Yoda: &quot;That, is why you fail...&quot;
+</pre>
+<p><strong>Attachment:
+<a href="pgp00002.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> OpenPGP digital signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00033" href="msg00033.html">[tlug] Questions about specifications for some cutting edge video recording  via laptop</a></strong>
+<ul><li><em>From:</em> Dave Gutteridge</li></ul></li>
+<li><strong><a name="00034" href="msg00034.html">Re: [tlug] Questions about specifications for some cutting edgevideo recording  via laptop</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00036" href="msg00036.html">Re: [tlug] Questions about specifications for some cutting edge videorecording  via laptop</a></strong>
+<ul><li><em>From:</em> Dave Gutteridge</li></ul></li>
+<li><strong><a name="00042" href="msg00042.html">Re: [tlug] Questions about specifications for some cutting edge video recording via laptop</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00043" href="msg00043.html">Re: [tlug] Questions about specifications for some cutting edge videorecording via laptop</a></strong>
+<ul><li><em>From:</em> Dave Gutteridge</li></ul></li>
+<li><strong><a name="00045" href="msg00045.html">Re: [tlug] Questions about specifications for some cutting edge video recording via laptop</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00050" href="msg00050.html">Re: [tlug] Questions about specifications for some cutting edgevideo recording via laptop</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00051" href="msg00051.html">Re: [tlug] Questions about specifications for some cutting edge video recording via laptop</a></strong>
+<ul><li><em>From:</em> Ian Wells</li></ul></li>
+<li><strong><a name="00064" href="msg00064.html">Re: [tlug] Questions about specifications for some cutting edge video recording via laptop</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00065.html">Re: [tlug] TLUG Shirt design details and proposal</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00067.html">RE: [tlug-digest] [tlug] TLUG Shirt design details and proposal</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00064.html">Re: [tlug] Questions about specifications for some cutting edge video recording via laptop</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00041.html">[tlug] Free computer hardware to give away.</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00066"><strong>Date</strong></a></li>
+<li><a href="threads.html#00066"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

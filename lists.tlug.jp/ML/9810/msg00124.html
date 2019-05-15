@@ -1,0 +1,172 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Dial&#45;up &#45; IMPOSSIBLE! -->
+<!--X-From: Scott Stone <sstone@example.com> -->
+<!--X-Date:  Mon, 5 Oct 1998 09:56:44 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.981005095504.621q&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810042102.VAA00479@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00123.html">Date Prev</A>][<A HREF="msg00125.html">Date Next</A>][<A HREF="msg00115.html">Thread Prev</A>][<A HREF="msg00135.html">Thread Next</A>][<A HREF="maillist.html#00124">Date Index</A>][<A HREF="threads.html#00124">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Dial-up - IMPOSSIBLE!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Dial-up - IMPOSSIBLE!</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 5 Oct 1998 09:56:41 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00115.html">199810042102.VAA00479@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Sun, 4 Oct 1998, Karl-Max Wagner wrote:
+
+&gt; &gt; Once a dial-up connection is established, from home, I can ping, slogin,
+&gt; &gt; telnet, FTP etc. from the dial-up client to the dial-up server.  I cannot,
+&gt; &gt; however, make a connection to any other machine (local or otherwise).
+&gt; &gt; Upon looking at the logs of a machine on the local subnet of the server
+&gt; &gt; diring a ping or other type of connection, I see ICMP redirect requests
+&gt; &gt; coming from the gateway of the subnet.  It's as if the packets go out from
+&gt; &gt; the client, through the dial-up server yet the server does not respond to
+&gt; &gt; anything destined for the dial-up client.
+&gt; 
+&gt; Very neat observation :-). That's your problem. Gonna explain:
+&gt; if a packet destined for one of your dial-up ports floats along
+&gt; the ethernet to which your dial-up server is connected, the
+&gt; dial-up server should grab it off the net and hand it over to
+&gt; the respective dial-up port. That's what you need but what's not
+&gt; happening at the moment. In order to get that working you have
+&gt; to use proxyARP. In order to do so you have to add additional
+&gt; entries into your kernel routing table. 
+&gt; 
+&gt; You do this with the following command:
+&gt; 
+&gt; arp -s &lt;IP-addr_of_dialup_port&gt; &lt;eth?_HWaddre&gt; pub
+&gt; 
+&gt; The HWaddr is the hardware address of your ethernet interface
+&gt; linking you to your LAN ( the stuff you get behind HWaddr when
+&gt; doing an ifconfig ). The other parameter is the IP address of
+&gt; your dial-up port. The pub neans "publish". It MUST be there. It
+&gt; says that the dial-up port IP addresses, and not only, the
+&gt; machine's own address, are linked to the hardware address of the
+&gt; ethernet port. In that way the packets for your dial-up ports
+&gt; are grabbed off the ethernet by means of the HWaddress, and,
+&gt; once inside the gateway machine, are routed to the respective
+&gt; dial-up port ( it is, of course, necessary to provide the proper
+&gt; routes with appropriate "route add .... gw ...." commands.
+&gt; However, this seems to have been done ).
+&gt; 
+&gt; That should do it.
+
+Or, use mgetty to answer the modem lines - mgetty takes care of proxyarp
+for you - I'm not sure if it does this on its own or if it's passing a
+commandline arg to pppd that takes care of it, but it does.  If you have
+pppd and mgetty both [properly] installed, all you need to do is add a
+line to /etc/inittab to have an mgetty respawn on the modem port in your
+default runlevel, and then you can dial-in to it.
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+               &lt;sstone@example.com&gt;
+Head of TurboLinux Development/Systems Administrator
+Pacific HiTech, Inc (USA) / Pacific HiTech, KK (Japan)
+<A TARGET="_top" HREF="http://www.pht.com">http://www.pht.com</A>		<A TARGET="_top" HREF="http://armadillo.pht.co.jp">http://armadillo.pht.co.jp</A>
+<A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>	        <A TARGET="_top" HREF="http://www.turbolinux.com">http://www.turbolinux.com</A>
+
+
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00115" HREF="msg00115.html">Re: tlug: Dial-up - IMPOSSIBLE!</A></STRONG>
+<UL><LI><EM>From:</EM> karlmax@example.com (Karl-Max Wagner)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00123.html">Re: tlug: Dial-up - IMPOSSIBLE!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00125.html">Re: tlug: Grep for subdirectories?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00115.html">Re: tlug: Dial-up - IMPOSSIBLE!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00135.html">Re: tlug: Dial-up - IMPOSSIBLE!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00124"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00124"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

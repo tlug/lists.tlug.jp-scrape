@@ -1,0 +1,191 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: CJK Latex: embed Type1 fonts in my pdf file -->
+<!--X-From-R13: Sina [baebvt <rina.zbaebvtNtznvy.pbz> -->
+<!--X-Date: Thu, 19 Jan 2006 11:57:08 +0900 -->
+<!--X-Message-Id: 20060119025708.GB31658@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 20060118112426.GA21723@example.com -->
+<!--X-Derived: pgp00047.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00456.html">Date Prev</a>][<a href="msg00458.html">Date Next</a>][<a href="msg00624.html">Thread Prev</a>][<a href="msg00431.html">Thread Next</a>][<a href="maillist.html#00457">Date Index</a>][<a href="threads.html#00457">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: CJK Latex: embed Type1 fonts in my pdf file</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 19 Jan 2006 11:57:08 +0900</li>
+<li><strong>From</strong>: <strong>Evan Monroig &lt;<A HREF="mailto:evan.monroig@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20CJK%20Latex%3A%20embed%20Type1%20fonts%20in%20my%20pdf%20file">evan.monroig@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: CJK Latex: embed Type1 fonts in my pdf file</strong></li>
+<li>References: &lt;<a href="msg00418.html">20060118112426.GA21723@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.9i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Jan.18 20h24, Evan Monroig wrote :
+&gt; So there is an error in my map. After some searching I do some replace 
+&gt; the lines in cyberbit.map:
+&gt; 
+&gt; before:
+&gt; cyberbit00 &lt;cyberbit.ttf &lt;cyberbit00.enc
+&gt; 
+&gt; after:
+&gt; cyberbit00 cyberbit &lt;cyberbit00.enc &lt;cyberbit.pfb
+
+Here is another try at cyberbit.map
+
+First I installed the package ttf2pt1 which claims converting TrueType 
+fonts to Type1 fonts. And I am running it now on the ttf font as follows 
+(for some reason it takes a long time):
+
+for i in *.enc
+    do ttf2pt1 -L $i -e -b $TTFDIR/cyberbit.ttf $TYPE1DIR/${i%.enc} \
+    &gt; /dev/null 2&gt;&amp;1
+done
+
+looking inside cyberbit00.enc I find that the encoding name is 
+'cyberbit00Encoding'
+
+looking inside cyberbit00.afm I find that the font name is 
+'BitstreamCyberbit-Roman'
+
+The command 'afm2tfm cyberbit00.afm' also produces the following line
+cyberbit00 BitstreamCyberbit-Roman
+
+Looking at /usr/share/texmf/dvips/misc/mathpi.map shows me that the 
+syntax for the map file is like the following:
+
+mh2scr MathematicalPi-Two &quot; mh2scrEncoding ReEncodeFont &quot; &lt;mh2scr.enc &lt;mh2.pfb
+
+So I come up with a cyberbit.map file with entries like this for each 
+subfont:
+
+cyberbit00 BitstreamCyberbit-Roman &quot; cyberbit00Encoding ReEncodeFont &quot; &lt;cyberbit00.enc &lt;cyberbit00.pfb
+
+I still have to wait for the conversion to end, but in the meanwhile 
+I can still test again. This time dvips gives the following errors:
+
+$ dvips -q -t a4 -P pdf -G0 sample-utf8.dvi
+Warning: module writet1 of dvips (file cyberbit51.pfb): glyph `index0x229A' undefined
+Warning: module writet1 of dvips (file cyberbit51.pfb): glyph `index0x2CC0' undefined
+Warning: module writet1 of dvips (file cyberbit51.pfb): glyph `index0x6820' undefined
+Warning: module writet1 of dvips (file cyberbit51.pfb): glyph `index0x680A' undefined
+(...)
+
+checking cyberbit51.pfb, I discover lines like this, which seem not so 
+good:
+
+dup 1 /.notdef put
+dup 2 /.notdef put
+dup 3 /.notdef put
+dup 4 /.notdef put
+(...)
+
+Did I do something wrong in the generation of the Type1 font files? Is 
+there a *standard* method for converting those fonts?
+
+cheers,
+
+Evan
+</pre>
+<p><strong>Attachment:
+<a href="pgp00047.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> Digital signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00418" href="msg00418.html">[tlug] CJK Latex: embed Type1 fonts in my pdf file</a></strong>
+<ul><li><em>From:</em> Evan Monroig</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00456.html">Re: [tlug] Threaded email readers</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00458.html">Re: [tlug] Base64 and headers (was: Editing Soud Files (WAV &amp; MP3))</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00624.html">[tlug] Re: Posting Limits</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00431.html">[tlug] Make GMail Follow Polysaturated Threads. (Was ... you know the drill)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00457"><strong>Date</strong></a></li>
+<li><a href="threads.html#00457"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

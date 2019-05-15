@@ -1,0 +1,195 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Java and Japanese e&#45;mail -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 25 Aug 1997 02:46:44 GMT -->
+<!--X-Message-Id: m0x2p9A&#45;00000wC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.HPP.3.95.970824184319.20376A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00112.html">Date Prev</A>][<A HREF="msg00114.html">Date Next</A>][<A HREF="msg00111.html">Thread Prev</A>][<A HREF="msg00106.html">Thread Next</A>][<A HREF="maillist.html#00113">Date Index</A>][<A HREF="threads.html#00113">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Java and Japanese e-mail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Java and Japanese e-mail </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 25 Aug 1997 11:44:51 +0900</LI>
+<LI>In-reply-to: Your message of "Sun, 24 Aug 1997 18:58:57 +0900."            &lt;<A HREF="msg00111.html">Pine.HPP.3.95.970824184319.20376A-100000@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Craig" == Craig Oda &lt;craig@example.com&gt; writes:
+
+    &gt;&gt; From Todd Rudick, I got this bit of information:
+
+    Craig&gt; Java uses Unicode internally, and has full support for many
+    Craig&gt; encodings externally. For example, to convert an array of
+    Craig&gt; bytes that contains SJIS portions to a Unicode string, you
+    Craig&gt; can type: uniString = new String(sjisByteArray, "SJIS");
+  
+    Craig&gt; To convert that from Unicode to a JIS byte array: byte[]
+    Craig&gt; jisByteArray = uniString.getBytes("JIS");
+
+Hey, this is way cool.  But this is the easy part.
+
+    Craig&gt; My problem right now is that I can't figure out how to get
+    Craig&gt; the servlet to receive a byte stream from the HTTP server.
+
+The short answer is there is a primitive InputStream class in the
+java.io package.  Use that.
+
+    Craig&gt; I have these methods:
+
+Where?  Did you write them?  Inherit them?  Anyway....
+
+What you probably need to do is
+(1) Use the raw InputStream attached to the server.  Probably you can
+    get your hands on it with getInputStream.
+(2a) (Happy days are here again, Content-Encoding comes in handy
+    again) Get the charset from the Content-Encoding header which is
+    REQUIRED by the HTML/HTTP protocols.
+(2b) (Oh damn, no such header) Use some kind of heuristic (OS of
+    client eg) to get the charset (this loses generically, I bet,
+    but would be a hack to start with) OR
+(2c) bind that InputStream to some kind of FilteredStream that uses
+    jconv.c-like code to get the charset (warning, this is not an
+    algorithm in the sense that there are byte streams that are both
+    EUC-8 and SJIS; the shorter, the more likely this is to happen)
+    AND back this up by being ready to try multiple charset
+    interpretations if your first guess fails (eg, if the file doesn't 
+    exist under the SJIS interpretation, try converting to EUC)
+(3) Do what you've been doing:
+
+    Craig&gt; I've been using  getParameter("name");
+    Craig&gt; For example, if an HTML form is 
+
+but you read from the pre-converted stream, not the raw stream, and
+you must be prepared to backtrack to a second-guess charset if
+interpreting a request as given charset fails.
+
+Warning: this could be potentially very expensive computationally.
+Eg, if it's a name of a person that you're ADDING to a database, you'd
+have to do a lookup in the Edict "names" dictionary, say.  However, my
+experience has been that the human eye IMMEDIATELY recognizes bogus
+encodings, mainly because the displayed text contains lots of hankaku
+kana.  Provide a warning on the form that "use of hankaku kana will
+possibly cause you to get bogus results", and then reject any encoding
+that implies implicit hankaku.  (Ie, permit things like &lt;FONT
+KANAWIDTH="HANKAKU"&gt; or the escape sequence equivalent.)  For general
+text processing, you might be able to use edict.el- or Wnn-like
+grammatical tests to check that it "looks like" Japanese.  (This would 
+probably barf on names of government departments and such though
+without that expensive dictionary lookup.)
+
+I'm sorry it's such a mess---welcome to Japanese information
+processing.  Blame JIS, not me.
+
+    Craig&gt; Thus, the String is not usuable.
+
+Not without external encoding information.  (External in the sense
+that you need to pass it to the getBytes(String encoding) method.)
+
+    Craig&gt; I'm going to take a rest on this Japanese problem and look
+    Craig&gt; at kaffe again after dinner.
+
+I'm going to lunch after drinking some kaffe.  :-)
+
+Steve
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00111" HREF="msg00111.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+<UL><LI><EM>From:</EM> Craig Oda &lt;craig@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00112.html">tlug: [A] Kaffe 0.9.1</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00114.html">RE: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00111.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00106.html">Re: tlug: Java and Japanese e-mail (trying again, key bounceon ^C yarrrgh)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00113"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00113"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

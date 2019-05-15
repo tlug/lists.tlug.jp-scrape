@@ -1,0 +1,192 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Tip of the Day: Printing Keymap Table with xmodmap -->
+<!--X-From-R13: "Xbfu Uybire" <wztybiNjznyhzav.pbz> -->
+<!--X-Date: Fri, 18 May 2007 11:36:08 +0900 -->
+<!--X-Message-Id: d8fcc0800705171909n302ab73fyabb9b643c4fc32b7@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00362.html">Date Prev</a>][<a href="msg00364.html">Date Next</a>][<a href="msg00369.html">Thread Prev</a>][<a href="msg00365.html">Thread Next</a>][<a href="maillist.html#00363">Date Index</a>][<a href="threads.html#00363">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Tip of the Day: Printing Keymap Table with xmodmap</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 18 May 2007 11:09:56 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Josh Glover&quot; &lt;<a href="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Tip%20of%20the%20Day:%20Printing%20Keymap%20Table%20with%20xmodmap">jmglov@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Tip of the Day: Printing Keymap Table with xmodmap</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">xmodmap -pke</pre><br>
+<pre style="margin: 0em;">View the pretty version of this tip in the TLUG wiki:
+<a  href="http://tlug.jp/wiki/Linux_Help:Tip_of_the_Day:Printing_Keymap_Table_with_xmodmap">http://tlug.jp/wiki/Linux_Help:Tip_of_the_Day:Printing_Keymap_Table_with_xmodmap</a></pre><br>
+<pre style="margin: 0em;">This tip is helpful when you have a (mostly) working keyboard, and one
+that isn't working so well. For example, I have a Dell Latitude D410
+laptop with a Japanese keyboard. For some odd reason, when I tell
+X.org to use a jp106 keyboard model, the backslash / underscore / &#xE3;
+key that is located just to the left of my right shift key does not
+work. Neither do the various Japanese input-specific special keys (&#xE5;&#xE8;
+/ &#xE5;&#xE8; / &#xE6;&#xE5;, &#xE7;&#xE5;&#xE6;, &#xE5;&#xE6;, and &#xE3;&#xE3;&#xE3;&#xE3; / &#xE3;&#xE3;&#xE3;&#xE3; / &#xE3;&#xE3;&#xE3;&#xE5;), the Windows keys, or the
+volume raise, lower, and mute keys. Luckily, I also have a jp106
+keyboard on my Gentoo desktop.</pre><br>
+<pre style="margin: 0em;">Here's how I got my keymap on the Dell laptop straightened out.</pre><br>
+<pre style="margin: 0em;">  1. On the desktop, run:</pre><br>
+<pre style="margin: 0em;">     xmodmap -pke</pre><br>
+<pre style="margin: 0em;">     You will get a bunch of output like this:</pre><br>
+<pre style="margin: 0em;">     keycode  47 = semicolon plus kana_RE
+     keycode  48 = colon asterisk kana_KE
+     keycode  49 = Zenkaku_Hankaku Kanji
+     keycode  50 = Shift_L</pre><br>
+<pre style="margin: 0em;">  2. On the laptop, open at least two terminal emulators
+  3. In one term, cd to your home directory and edit the file
+.xmodmaprc (this file most likely will not exist, and thus be empty
+when you edit it)
+  4. In the other term, run:</pre><br>
+<pre style="margin: 0em;">     xev</pre><br>
+<pre style="margin: 0em;">     This will launch a little window that, when it has focus, will
+spew information about X events to the terminal from which it was
+launched
+  5. Get used to xev by giving it the focus, waiting for a second
+until there is no new output to the terminal window, then pressing a
+key. You should see out like this appear:</pre><br>
+<pre style="margin: 0em;">     KeyPress event, serial 27, synthetic NO, window 0x1600001,
+         root 0x3b, subw 0x0, time 2049376201, (158,128), root:(1269,943),
+         state 0x0, keycode 208 (keysym 0xff27, Hiragana_Katakana),
+same_screen YES,
+         XLookupString gives 0 bytes:
+         XmbLookupString gives 0 bytes:
+         XFilterEvent returns: False</pre><br>
+<pre style="margin: 0em;">     KeyRelease event, serial 30, synthetic NO, window 0x1600001,
+         root 0x3b, subw 0x0, time 2049376297, (158,128), root:(1269,943),
+         state 0x0, keycode 208 (keysym 0xff27, Hiragana_Katakana),
+same_screen YES,
+         XLookupString gives 0 bytes:</pre><br>
+<pre style="margin: 0em;">     The main thing you want to note here is the keycode, which will
+be the second bit of data in the third line of every log statement
+output in response to a KeyPress event.
+  6. Now, follow these steps for each key that is not working on the laptop:
+        1. On the laptop (i.e. non-working keyboard), give the xev
+window the focus, wait a few seconds and press the troublesome key.
+e.g. I press the backslash / underscore / &#xE3; key
+        2. Note the keycode. e.g. I see</pre><br>
+<pre style="margin: 0em;">           KeyPress event, serial 27, synthetic NO, window 0x1600001,
+               root 0x3b, subw 0x0, time 2049376201, (158,128),
+root:(1269,943),
+               state 0x0, keycode 211 (keysym 0x0, NoSymbol), same_screen YES,
+               ...</pre><br>
+<pre style="margin: 0em;">           I note keycode 211.
+        3. On the desktop (i.e. working keyboard), find the line that
+corresponds to the key you are trying to map. Note that it may not
+have the same keycode. In my example, I find the line</pre><br>
+<pre style="margin: 0em;">           keycode 211 = backslash underscore kana_RO</pre><br>
+<pre style="margin: 0em;">        4. On the laptop, switch to the terminal where you are
+editing .xmodmaprc and enter the line just as it appeared in the
+output of xmodmap -pke on the desktop, but changing the keycode if
+necessary. e.g. I enter</pre><br>
+<pre style="margin: 0em;">           keycode 211 = backslash underscore kana_RO</pre><br>
+<pre style="margin: 0em;">  7. After entering mapping expressions into .xmodmaprc on the laptop
+for each of your troublesome keys, save .xmodmaprc and exit
+  8. Close xev by hitting Ctrl-C in the terminal from which you launched it
+  9. Now, make sure that the command</pre><br>
+<pre style="margin: 0em;">     xmodmap ${HOME}/.xmodmaprc</pre><br>
+<pre style="margin: 0em;">     runs on startup of your window manager. If you are using an
+old-school .xinitrc, simply add the line</pre><br>
+<pre style="margin: 0em;">     xmodmap ${HOME}/.xmodmaprc</pre><br>
+<pre style="margin: 0em;">     to the file before the window manager is started. GNOME / KDE
+user: update this section to give instructions for running xmodmap on
+startup!</pre><br>
+<pre style="margin: 0em;">Cheers,
+Josh
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00362.html">[tlug] cups and networking</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00364.html">Re: [tlug] cups and networking</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00369.html">[tlug] cups and networking</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00365.html">[tlug] Re: cups and networking</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00363"><strong>Date</strong></a></li>
+<li><a href="threads.html#00363"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

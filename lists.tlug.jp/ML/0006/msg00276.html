@@ -1,0 +1,145 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: archiving mail -->
+<!--X-From: shimpei@example.com -->
+<!--X-Date:  Wed, 28 Jun 2000 13:49:21 +0900 -->
+<!--X-Message-Id: 20000628044853.12558157B0@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00275.html">Date Prev</A>][<A HREF="msg00277.html">Date Next</A>][<A HREF="msg00274.html">Thread Prev</A>][<A HREF="msg00285.html">Thread Next</A>][<A HREF="maillist.html#00276">Date Index</A>][<A HREF="threads.html#00276">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: archiving mail</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: archiving mail</strong></LI>
+<LI><strong>From</strong>: <strong><A HREF="mailto:shimpei@example.com">shimpei@example.com</A></strong></LI>
+<LI>Date: Wed, 28 Jun 2000 13:48:53 +0900</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; shimpei@example.com (lists.tlug):
+&gt; &gt;of things could happen between individual calls. If mail gets delivered
+&gt; &gt;between the move and new creation, the mail could get truncated; if it
+&gt; 
+&gt; Yes, I spotted that bug this morning.
+&gt; 
+&gt; &gt;gets delivered between creation and flock, it could get overwritten by
+&gt; &gt;whatever the script does afterwards.
+&gt; 
+&gt; You can only lock a filehandle, and you only have a filehandle once
+&gt; you've opened a file. Perl doesn't have atomic open-and-flock, as far
+&gt; as I'm aware. The way to fix it would be to use:
+&gt;  unless (open ORIG, "+&gt;".$file) {
+&gt; which won't clobber, and writing will be safe since we only write when
+&gt; we've got a lock.
+
+You could conceivably hack up the .procmailrc and wrapper your mail client
+so that they compete for a dotlock (which can be done atomically unless
+your filesystem is NFS) with your mail archive program before attempting 
+delivery. This, of course, assumes that absolutely no one else is going to 
+touch your mail spool, which is not guaranteed.
+
+I went in circles around these ideas a few years ago and eventually reached
+the conclusion that the file-per-message format is the only sane one for
+mailboxes that expect to be written to from multiple sources. A database
+would work, too, but a) you can't grep a database and b) good luck 
+finding a mail client that works with one. Maildir [1] is pretty much worry-free
+in this respect. It also makes the original problem that started this thread
+trivial: grep the Date: line in each message file and mv old ones to a new 
+folder. You don't even have to conjure up new filenames for them.
+
+Shimpei.
+
+[1] Dan Bernstein's handiwork. Insert obligatory flames here. -&gt;
+It's completely independent of qmail, though.
+
+
+-----------------------------------------------------------------------
+Next Technical Meeting: July 8 (Sat)  13:30  Place: LinuxProbe Hall
+Next Nomikai meeting: August 18 (Fri) 19:00  Place: TBD
+-----------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00275.html">Re: tlug: Mozilla, uh, M15</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00277.html">Re: tlug: Mozilla, uh, M15</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00274.html">Re: tlug: archiving mail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00285.html">Re: tlug: archiving mail</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00276"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00276"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Routing problems -->
+<!--X-From: "Brett Robson" <brettr@example.com> -->
+<!--X-Date: Wed, 27 Jun 2001 16:52:36 +0900 -->
+<!--X-Message-Id: 001301c0fede$22232fa0$5a00a8c0@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 5.0.2.1.0.20010627152131.022d17f0@example.com&#45;comm.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00638.html">Date Prev</A>][<A HREF="msg00640.html">Date Next</A>][<A HREF="msg00636.html">Thread Prev</A>][<A HREF="msg00648.html">Thread Next</A>][<A HREF="maillist.html#00639">Date Index</A>][<A HREF="threads.html#00639">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Routing problems</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>&lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Routing problems</strong></LI>
+<LI><strong>From</strong>: <strong>"Brett Robson" &lt;<A HREF="mailto:brettr@example.com">brettr@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 27 Jun 2001 16:52:36 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain;charset="iso-8859-1"</LI>
+<LI>References: &lt;<A HREF="msg00636.html">5.0.2.1.0.20010627152131.022d17f0@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;20p_-D.A.d3D.7CZO7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+I'm at a loss, here.
+
+My RedHat 7.1 box has two eth cards, 192.1.2.248 and 192.1.1.231 (not their
+real names),
+each with netmasks 255.255.255.0 and has Apache running on it.
+
+On both eth cards are PCs.
+  PC1,  192.1.1.230   has Apache running
+  PC2,  192.1.2.230
+
+The RedHat box and PC1 can happily browse each others webservers and ping
+each other.
+The RedHat box and PC2 can ping each other.
+
+But the PCs can not see each other. Ping-ing each other gives "Destination
+host unreachable"
+
+This is the config stuff
+Note that in the routing table I have added the host 192.1.1.230 to see if
+that would help, it didn't.
+
+I must be missing something, there must be a magic switch somewhere I
+haven't turned on?
+
+mouiya
+Brett
+
+------------------------------------------------------------------------
+netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt
+Iface
+192.1.1.230     0.0.0.0         255.255.255.255 UH       40 0          0
+eth1
+192.1.2.0       0.0.0.0         255.255.255.0   U        40 0          0
+eth0
+192.1.1.0       0.0.0.0         255.255.255.0   U        40 0          0
+eth1
+127.0.0.0       0.0.0.0         255.0.0.0       U        40 0          0 lo
+
+ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:A0:CC:5E:C9:5C
+          inet addr:192.1.2.248  Bcast:192.1.2.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:9808 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10392 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:71 txqueuelen:100
+          Interrupt:10 Base address:0xc000
+eth1      Link encap:Ethernet  HWaddr 00:A0:CC:5D:90:85
+          inet addr:192.1.1.231  Bcast:192.1.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1328 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:746 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100
+          Interrupt:11 Base address:0xc400
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:10300 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10300 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+
+ipchains -L
+Chain input (policy ACCEPT):
+Chain forward (policy ACCEPT):
+Chain output (policy ACCEPT):
+
+cat /proc/sys/net/ipv4/ip_forward
+1
+
+------------------------------------------------------------------------
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00636" HREF="msg00636.html">Red Hat &amp; Postgres</A></STRONG>
+<UL><LI><EM>From:</EM> Rod Holmes &lt;rod@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00638.html">Re: not-even-newbie printer question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00640.html">RE: Routing problems</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00636.html">Red Hat &amp; Postgres</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00648.html">OT: 13w3 cable/adapter?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00639"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00639"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

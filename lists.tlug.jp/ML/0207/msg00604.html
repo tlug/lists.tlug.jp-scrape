@@ -1,0 +1,199 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] C puzzle -->
+<!--X-From-R13: Xbfu Uybire <wztybiNvapbtra.pbz> -->
+<!--X-Date: Wed, 31 Jul 2002 01:00:26 +0900 (JST) -->
+<!--X-Message-Id: 20020730160200.GF20209@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20020726012006.M48242&#45;100000@example.com&#45;pun.prv -->
+<!--X-Reference: 15680.11598.642676.889439@example.com -->
+<!--X-Reference: 1027725222.13382.6.camel@example.com -->
+<!--X-Reference: m3d6t6xcn8.wl@example.com -->
+<!--X-Reference: 15685.61809.707516.99320@example.com -->
+<!--X-Reference: 3D45F5AD.7030707@example.com -->
+<!--X-Reference: 1028034551.13418.130.camel@example.com -->
+<!--X-Reference: 3D4693D2.1020208@example.com -->
+<!--X-Reference: 15686.45289.914784.491660@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00603.html">Date Prev</a>][<a href="msg00605.html">Date Next</a>][<a href="msg00611.html">Thread Prev</a>][<a href="msg00605.html">Thread Next</a>][<a href="maillist.html#00604">Date Index</a>][<a href="threads.html#00604">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] C puzzle</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 30 Jul 2002 12:02:00 -0400</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20C%20puzzle">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] C puzzle</strong></li>
+<li>References: &lt;<a href="msg00549.html">20020726012006.M48242-100000@example.com</a>&gt; &lt;<a href="msg00550.html">15680.11598.642676.889439@example.com</a>&gt; &lt;<a href="msg00562.html">1027725222.13382.6.camel@example.com</a>&gt; &lt;<a href="msg00583.html">m3d6t6xcn8.wl@example.com</a>&gt; &lt;<a href="msg00584.html">15685.61809.707516.99320@example.com</a>&gt; &lt;<a href="msg00586.html">3D45F5AD.7030707@example.com</a>&gt; &lt;<a href="msg00595.html">1028034551.13418.130.camel@example.com</a>&gt; &lt;<a href="msg00596.html">3D4693D2.1020208@example.com</a>&gt; &lt;<a href="msg00601.html">15686.45289.914784.491660@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Tue, Jul 30, 2002 at 11:29:45AM -0400, Viktor Pavlenko quoth, and most verily thus:
+&gt; 
+&gt; What about the one which always crashes?
+&gt; 
+&gt; The following program contains 25 characters, uses no library
+&gt; functions and segfaults when run:
+&gt; 
+&gt; main(){((void(*)())0)();}
+&gt; 
+&gt; I used the following line to test the code (may save you some typing):
+&gt; 
+&gt; $ echo 'main(){((void(*)())0)();}' &gt; f.c; gcc -o f f.c; ./f; rm f.c f
+&gt; Segmentation fault
+
+Now *that* is w4j 1337!
+
+OK, here is my best guess of how it works:
+
+main() contains one function call, which is typecast as a void pointer.
+Therefore, the 0 is actually the function name, right? So what happens
+when you exec it is it tries to exec whatever function lies at the memory
+address 0x0, and that causes a segfault.
+
+My gdb session would seem to confirm this, right?
+
+(gdb) l
+1       main(){((void(*)())0)();}
+(gdb) b 1
+Breakpoint 1 at 0x8048430: file f.c, line 1.
+(gdb) r
+Starting program: /home/jmglov/./f 
+
+Breakpoint 1, main () at f.c:1
+1       main(){((void(*)())0)();}
+(gdb) p ((void(*)())0)
+$1 = (void (*)()) 0
+(gdb) p ((void(*)())0)()
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000 in ?? ()
+
+
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00605" href="msg00605.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00549" href="msg00549.html">[tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Tod McQuillin</li></ul></li>
+<li><strong><a name="00550" href="msg00550.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+<li><strong><a name="00562" href="msg00562.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00583" href="msg00583.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Masato BITO</li></ul></li>
+<li><strong><a name="00584" href="msg00584.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+<li><strong><a name="00586" href="msg00586.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00595" href="msg00595.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> bruno raoult</li></ul></li>
+<li><strong><a name="00596" href="msg00596.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00601" href="msg00601.html">Re: [tlug] C puzzle</a></strong>
+<ul><li><em>From:</em> Viktor Pavlenko</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00603.html">Re: [tlug] C puzzle</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00605.html">Re: [tlug] C puzzle</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00611.html">Re: [tlug] C puzzle</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00605.html">Re: [tlug] C puzzle</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00604"><strong>Date</strong></a></li>
+<li><a href="threads.html#00604"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

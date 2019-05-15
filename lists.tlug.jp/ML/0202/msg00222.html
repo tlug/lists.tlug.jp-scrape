@@ -1,0 +1,196 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Using TAR -->
+<!--X-From-R13: Xbfu Uybire <wztybiNjz.rqh> -->
+<!--X-Date: Thu, 14 Feb 2002 22:35:52 +0900 (JST) -->
+<!--X-Message-Id: 3C6BBD36.8010003@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: JNEKIALKKBDCNHBDFKEDEEDICDAA.acmuller@example.com -->
+<!--X-Reference: 3C6B62CA.FA2769ED@example.com&#45;u.ac.jp -->
+<!--X-Reference: 1013687769.4334.19.camel@example.com -->
+<!--X-Reference: 20020214120124.GG5982@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00221.html">Date Prev</a>][<a href="msg00223.html">Date Next</a>][<a href="msg00223.html">Thread Prev</a>][<a href="msg00224.html">Thread Next</a>][<a href="maillist.html#00222">Date Index</a>][<a href="threads.html#00222">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Using TAR</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Using TAR</strong></li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN">jmglov@example.com</A>&gt;</strong></li>
+<li>Date: Thu, 14 Feb 2002 08:35:50 -0500</li>
+<li>Content-transfer-encoding: 7bit</li>
+<li>Content-type: text/plain; charset=us-ascii; format=flowed</li>
+<li>References: &lt;<a href="msg00169.html">JNEKIALKKBDCNHBDFKEDEEDICDAA.acmuller@example.com</a>&gt; &lt;<a href="msg00181.html">3C6B62CA.FA2769ED@example.com</a>&gt; &lt;<a href="msg00197.html">1013687769.4334.19.camel@example.com</a>&gt; &lt;<a href="msg00200.html">20020214120124.GG5982@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:0.9.8) Gecko/20020205</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Christopher SEKIYA wrote:
+&gt; 
+&gt; Hrm.  &quot;Classic&quot; UNIX system loadout[1] is as follows:
+&gt; 
+&gt; /		64M
+&gt; swap		= memory installed
+&gt; /var		32M if not a mailhost, as needs dictate otherwise
+&gt; /usr		256M
+&gt; /usr/X11R6	64M
+&gt; /home		512M or so, depending on personal preference
+&gt; /usr/local	the balance
+
+If you have a bigger drive, I would simply scale these numbers by some factor 
+and then give the excess to /home.
+
+&gt;&gt;Naturally that 376 mb was filling up almost immediately.
+&gt;&gt;
+&gt; 
+&gt; Bloody well shouldn't have.  / should be used for things critical for system
+&gt; boot and nothing else.  Hell, everything in / should be statically linked.
+
+You have to remember, Chris, that things work a bit differently in the end user 
+world. On Redhat 7.2, a reasonable install will not fit in a 256mb /usr for very 
+long, if at all. I tend to give /usr about 2gb on my personal desktop. On a 
+server, sure, it looks more like your layout.
+
+Mandrake is based on (originally, though now it is much further away from) 
+Redhat, so I would image it is the same way.
+
+Note that /usr is currently 1.5 gb on this Redhat 7.2 system, only 48 mb of that 
+being in /usr/local and 124 mb in /usr/X11R6.
+
+Is this A Good Thing? Almost certainly not, for some. But Redhat (and Mandrake) 
+are trying to make distros that people can use without knowing too much about 
+Linux. By default, I think that RH 7.2 (in workstation install mode) makes 
+partitions for swap, /boot, and throws everything else in /.
+
+My RH installs on workstations tend to get:
+
+/ 	250 mb
+swap  	=memory
+/home 
+the balance
+/var 
+1 gb
+/usr 
+2 gb	
+/tmp 
+500 mb
+
+There are a couple of reasons for this. I agree with you about swap, make it too 
+large and your system doesn't want to do any actual work. I actually don't have 
+much of a swap at all, since I have 1 gb of RAM.
+
+Why the hell should /usr and /var be so big? you may ask. Naze ka to iu to, as I 
+noted, RPM-based systems like to chew on /usr (namely because of the 
+/usr/src/redhat/RPMS tree). And most people simply aren't capable of running 
+through their list of RPMs and uninstalling everything they don't need. Lots of 
+people have no idea what they *do* need. And /var? Well, I don't want to lose my 
+logs, but the key reason is Ximian GNOME. It keeps a cache of its downloaded 
+packages in /var/cache/redcarpet. Sure, I could creatively symlink that 
+somewhere else, but that is a bit too much trouble for most end users, and I 
+just let 'em lie in /var because I want to have them around anyway, and I can't 
+think of any other place I want them.
+
+What I am trying to get at here is that the partitioning scheme for modern 
+desktop Linux boxen is very different from that of a server.
+
+-Josh
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00224" href="msg00224.html">Re: [tlug] Using TAR</a></strong>
+<ul><li><em>From:</em> Christopher SEKIYA</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00169" href="msg00169.html">[tlug] Using TAR</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+<li><strong><a name="00181" href="msg00181.html">Re: [tlug] Using TAR</a></strong>
+<ul><li><em>From:</em> BOTi</li></ul></li>
+<li><strong><a name="00197" href="msg00197.html">Re: [tlug] Using TAR</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+<li><strong><a name="00200" href="msg00200.html">Re: [tlug] Using TAR</a></strong>
+<ul><li><em>From:</em> Christopher SEKIYA</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00221.html">Re: [tlug] Using TAR</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00223.html">Re: [tlug] Using TAR</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00223.html">Re: [tlug] Using TAR</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00224.html">Re: [tlug] Using TAR</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00222"><strong>Date</strong></a></li>
+<li><a href="threads.html#00222"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

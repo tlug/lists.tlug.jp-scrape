@@ -1,0 +1,299 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] timing for geeks -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Sat, 03 Dec 2005 05:26:10 +0900 -->
+<!--X-Message-Id: 20051202152527.302e2f6f.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20051202154627.GB4348@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00017.html">Date Prev</a>][<a href="msg00019.html">Date Next</a>][<a href="msg00016.html">Thread Prev</a>][<a href="msg00020.html">Thread Next</a>][<a href="maillist.html#00018">Date Index</a>][<a href="threads.html#00018">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] timing for geeks</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 2 Dec 2005 15:25:27 -0500</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20timing%20for%20geeks">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] timing for geeks</strong></li>
+<li>References: &lt;<a href="msg00016.html">20051202154627.GB4348@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Michal Hajek &lt;hajek1@example.com&gt; wrote:
+
+&gt; I need a time mark in my experiments, so I have used ftime() function.
+&gt; But what was my surprise, when I discovered, that time mark for the
+&gt; _later_ measurements are actually more recent than _sooner_
+&gt; measurements. 
+
+This is a rich experiment with many twists and turns. 
+
+On my Linux box man ftime shows: 
+
+BUGS
+       This function is obsolete. Don't use it. 
+...
+       gettimeofday(2) gives microseconds; 
+       clock_gettime(3) gives nanoseconds but
+       is not yet widely available.
+
+       Under  libc4  and  libc5  the millitm field is meaningful.
+       But early glibc2 is buggy and returns 0 there; glibc 2.1.1
+       is correct again.
+
+What does man ftime show on your system? 
+
+That said, you might also be exposing accuracy limits of floating 
+point math used in awk and/or gnuplot. 
+
+Beside the point is: 
+
+&gt; This beast writes to my disk with cca 21MB/s, so be carefull!
+&gt; 
+&gt; 4. since many of the lines are same, lets uniq it :)
+&gt; uniq cas.txt &gt; uniq.txt
+
+Since you are concerned about the big file, 
+it would have been better to pipe the output from cas to uniq to awk, 
+without saving the intermediate data. 
+I.e., 
+
+   $ ./cas | uniq | awk '{print $1, $1 - 1133531643.784}' &gt;data.awk
+
+To avoid awk's accuracy limits, use a cruder tool to 'normalize' the data: 
+
+   $ ./cas | uniq | sed -e 's/^113353//g' &gt;data.sed
+
+then grep to make sure sed didn't prune all the lines. 
+I.e., the following should have no matching lines. 
+
+   $ grep 113353 data.sed
+
+Then run gnuplot: 
+
+   $ gnuplot
+   gnuplot&gt; plot 'data.sed'
+
+Of course, you'll have to update the 113353 string to prune. 
+
+With my style of sed pruning, gnuplot is not stressed and 
+still shows the suspect sawtooth-ish waveform. 
+
+Also, look at the data a little closer: 
+
+   $ ./cas | uniq &gt;data.uniq
+
+yielded: 
+
+   1133553014.999
+   1133553015.0
+   1133553015.1
+   1133553015.2
+   1133553015.3
+   1133553015.4
+   1133553015.5
+   1133553015.6
+   1133553015.7
+   1133553015.8
+   1133553015.9
+   1133553015.10
+   1133553015.11
+   1133553015.12
+   1133553015.13
+
+Oops. 
+
+1133553015.1 should be 1133553015.001
+1133553015.10 should be 1133553015.010
+
+Good old fashioned browsing the data for reasonableness 
+revealed the problem. 
+
+Go back to your program and change the format string to: 
+
+   &quot;%d.%03d \t \n&quot;
+
+I.e.: 
+
+   $ cat cas2.c
+   #include &lt;stdio.h&gt;
+   #include &lt;stdlib.h&gt;
+   #include &lt;sys/timeb.h&gt;
+
+   int main(int argc,char *argv[])
+   {
+      struct timeb start;
+
+      for (;;) {
+         ftime(&amp;start);
+         printf(&quot;%d.%03d \t \n&quot;,start.time,start.millitm);
+      }
+
+      return 0;
+   }
+
+   $ make cas2
+   cc     cas2.c   -o cas2
+   $ ./cas2 | uniq | sed -e 's/^113355//g' &gt;data.sed
+
+   $ gnuplot
+
+   gnuplot&gt; plot 'data.sed'
+
+yields a better line, although I can not see if the discontinuity 
+is monotonic or not. I'll leave that as an exercise for you to zoom 
+in on. 
+
+Of course, even if it is monotonic, you should avoid using ftime. 
+
+For fun review your old plots, especially 
+
+   <a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/detail.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/detail.png</a>
+
+and correlate the crazy points with the data. I.e., from: 
+
+   1133553015.1
+   1133553015.2
+   1133553015.3
+   1133553015.4
+   1133553015.5
+   1133553015.6
+   1133553015.7
+   1133553015.8
+   1133553015.9
+
+you should have about nine crazy points and from: 
+
+   1133553015.10
+   1133553015.11
+   1133553015.12
+   1133553015.13
+...
+   1133553015.99
+
+you should have about ninety crazy points. I counted the nine bad points, 
+but I'll let you count the ~90 bad points. 
+
+Notice how the trash clusters repeat about every 1000 points in 
+
+   <a  rel="nofollow" href="http://material.karlov.mff.cuni.cz/people/hajek/timetest/uniq.png">http://material.karlov.mff.cuni.cz/people/hajek/timetest/uniq.png</a>
+
+(actually a little less because not all milliseconds were caught). 
+
+Crazy data often has important clues. The nine crazy points and 
+the ~ninety crazy points and the repetition about every 1000 points 
+were all important clues. Mulling stuff over helps. Some folks 
+use beverages to improve their vision. 
+
+I did not actually offer a proper solution, just a patch and an 
+analysis of the bugs, so of course I must leave it to you to 
+decide if that warrants a free one when I get to Prague. 
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00020" href="msg00020.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00023" href="msg00023.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: [tlug] timing for geeks</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00016" href="msg00016.html">[tlug] timing for geeks :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00017.html">Re: [tlug] Mea Culpa</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00019.html">Re: [tlug] Video Clips</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00016.html">[tlug] timing for geeks :)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00020.html">Re: [tlug] timing for geeks</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00018"><strong>Date</strong></a></li>
+<li><a href="threads.html#00018"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Easy (?) perl syntax question -->
+<!--X-From: urs roesch <urs@example.com&#45;mines.com> -->
+<!--X-Date:  Sun, 25 Oct 1998 19:55:00 +0900 -->
+<!--X-Message-Id: 3633036C.49C87782@example.com&#45;mines.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3.0.6.32.19981025184317.00972650@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg01036.html">Date Prev</A>][<A HREF="msg01038.html">Date Next</A>][<A HREF="msg01036.html">Thread Prev</A>][<A HREF="msg01039.html">Thread Next</A>][<A HREF="maillist.html#01037">Date Index</A>][<A HREF="threads.html#01037">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Easy (?) perl syntax question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Easy (?) perl syntax question</strong></LI>
+<LI><strong>From</strong>: <strong>urs roesch &lt;<A HREF="mailto:urs@example.com">urs@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 25 Oct 1998 19:54:36 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: digital mines</LI>
+<LI>References: &lt;<A HREF="msg01036.html">3.0.6.32.19981025184317.00972650@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Darren Cook wrote:
+&gt; 
+&gt; I'm trying to get a cgi variable (called "formnum") into a string.  If
+&gt; the variable is not in the input the string should be blank.
+&gt; 
+&gt; 1.This code gives a server error:
+&gt;   $formnum="";
+&gt;   if($data{'formnum'} eq "1")$formnum="1";
+
+Hmm let's see this should do it....
+
+   $formnum="";
+   $formnum = "1" if $data{'formnum'} eq "1";
+
+if you feel more comfortable with lots of parenthesis you can write it
+this way
+   $formnum = "1" if ($data{'formnum'} eq "1");
+
+or 
+   if ($data{'formnum'} eq "1"){ $formnum = "1" }
+
+they all do the job....
+
+ 
+&gt; 2.This sets to "1" correctly, but the extension does not get appended
+&gt; to $filename. It seems there is something in the $formnum that
+&gt; terminates the string early??
+&gt;   $formnum=$data{'formnum'};
+&gt;  $filename= $BASE . "/" . $formnum . $extension;
+
+
+Where do you get the value for $extension? Are you overwriting the
+$extension somewhere in the script?  
+Finding the problem here is a bit more involved. Try to print $extension
+to STDOUT. That will show you if $extension is empty or contains data
+[1]. 
+
+Since the syntax is correct here you probably overwrote $extension
+somewhere earlier in the script. Stuff like...
+
+$extension = s/.*(\..*)$/$1/; # $extension contains 1 now
+
+instead of
+$extension =~ s/.*(\..*)$/$1/; #$extension contains e.g. ".html" 
+           ^^
+...could be the reason here.
+
+
+# [1] checking $extension 
+$formnum=$data{'formnum'};
+print "extension = $extension&lt;br&gt;"; 
+$filename= $BASE . "/" . $formnum . $extension; 
+
+&gt; I'm obviously misunderstanding something fundamental here. Can anyone
+&gt; tell me what it is?
+&gt; (To add to that, I went through the perl online manuals, and as far as I
+&gt; can see my syntax is correct. So now I'm really confused!)
+
+Sometimes the solution somewhere totally different then you expect it. I
+spent hours trying to fix the wrong subs in a scripts and the problem
+was somewhere else (it was a Monday morning, though ;)
+
+hope that helps...
+
+urs
+
+-- 
+u r s  r o e s c h             h a c h i o j i,  t o k y o
+----------------------------------------------------------
+e# urs@example.com                   aim# uru uru 71
+w# <A HREF="http://www.digital-mines.com">http://www.digital-mines.com</A>              icq# 13780972
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="01039" HREF="msg01039.html">Re: tlug: Easy (?) perl syntax question</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="01036" HREF="msg01036.html">tlug: Easy (?) perl syntax question</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg01036.html">tlug: Easy (?) perl syntax question</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg01038.html">Re: tlug: partition</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg01036.html">tlug: Easy (?) perl syntax question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg01039.html">Re: tlug: Easy (?) perl syntax question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#01037"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#01037"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

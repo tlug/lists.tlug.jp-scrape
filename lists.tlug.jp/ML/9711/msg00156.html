@@ -1,0 +1,189 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: gcc bug in SlackWare 3.3 -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Thu, 20 Nov 1997 22:41:23 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xYjmf&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.971121004546.208A&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00155.html">Date Prev</A>][<A HREF="msg00157.html">Date Next</A>][<A HREF="msg00172.html">Thread Prev</A>][<A HREF="msg00159.html">Thread Next</A>][<A HREF="maillist.html#00156">Date Index</A>][<A HREF="threads.html#00156">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: gcc bug in SlackWare 3.3</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: gcc bug in SlackWare 3.3</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 21 Nov 1997 12:29:33 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00151.html">Pine.LNX.3.96.971121004546.208A-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00151.html">Pine.LNX.3.96.971121004546.208A-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "David" == J David Beutel &lt;jdb@example.com&gt; writes:
+
+    David&gt; I am a most unhappy camper.  When recompiling pine 3.96, I
+    David&gt; get: cc: Internal compiler error: program cc1 got fatal
+    David&gt; signal 6
+
+    David&gt; on SlackWare 3.3 (kernel 2.0.30, gcc 2.7.2.2).  I've looked
+
+Well, GCC is up to 2.7.2.3 _specifically_ to fix problems on Intel
+platforms.  I don't know what the problems are though.
+
+    David&gt; For pine 3.96, I started with the source from SlackWare 3.3
+    David&gt; (which I am running on a newly-installed laptop, kernel
+    David&gt; 2.0.30), with and without the patches from SlackWare, and
+
+What "patches from Slackware"?  To Pine?
+
+    David&gt; cc: Internal compiler error: program cc1 got fatal signal 6
+
+    David&gt; Signal 6 is SIGABRT, so I presume that cc found an error
+    David&gt; and then killed itself (not vice versa), but I would have
+    David&gt; expected a better error message in that case (like from an
+
+Huh?  If you get a stack trace, you can't complain.  Undoubtedly
+Slackware ships stripped versions of GCC's binaries.  If you're hoping 
+for information about the mailindx.c file, I think you should ask for
+the moon instead---you might get it.  This is one unhappy program
+you're asking.
+
+    David&gt; assert(), including the source file and line number).  The
+    David&gt; cc1 core file stack trace is:
+
+    David&gt; (gdb) bt
+    David&gt; #0  0x40077f61 in __kill ()
+    David&gt; #1  0x4004407d in gsignal ()
+    David&gt; #2  0x806e900 in free ()
+    David&gt; #3  0x8071503 in free ()
+    David&gt; #4  0x807146c in free ()
+    David&gt; #5  0x8073033 in free ()
+    David&gt; #6  0x8071aec in free ()
+    David&gt; #7  0x8059b91 in free ()
+    David&gt; #8  0x8058ad8 in free ()
+    David&gt; #9  0x8049fcc in free ()
+    David&gt; #10 0x80637a2 in free ()
+    David&gt; #11 0x8065cf2 in free ()
+    David&gt; #12 0x8048f5e in free ()
+    David&gt; (gdb)
+
+Looks like infinite recursion in your free store `free' routine.  What
+libc are you using?
+
+GCC may be using its own malloc.  Slackware may have decided to use
+the Doug Lea malloc which is much faster but not as well-tested as GNU
+malloc.  Try installing a different distribution's GCC (Debian or
+RedHat) or download binaries from a Sunsite mirror.
+
+    David&gt; The mailindx.c file has 4350 lines, so I haven't tried
+    David&gt; using brute force to isolate the trigger.
+
+Look for a big regular expression.
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00159" HREF="msg00159.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Wiles &lt;wileyc@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00191" HREF="msg00191.html">tlug: Linux Japan</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis Grass &lt;drg@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00151" HREF="msg00151.html">tlug: gcc bug in SlackWare 3.3</A></STRONG>
+<UL><LI><EM>From:</EM> "J. David Beutel" &lt;jdb@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00155.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00157.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00172.html">Re: japanese pine patch [was Re: tlug: gcc bug in SlackWare 3.3]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00159.html">Re: tlug: gcc bug in SlackWare 3.3</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00156"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00156"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

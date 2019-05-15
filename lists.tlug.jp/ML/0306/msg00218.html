@@ -1,0 +1,201 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] RH9 install probelm: error enabling swap device -->
+<!--X-From-R13: Xrna&#45;Quevfgvna Wzornhyg <wpNzrtn&#45;ohpxf.pb.wc> -->
+<!--X-Date: Tue, 24 Jun 2003 09:15:43 +0900 -->
+<!--X-Message-Id: 3EF7982F.6000800@example.com&#45;bucks.co.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3EF6D707.9040907@example.com&#45;bucks.co.jp -->
+<!--X-Reference: 20030623124651.0083866a.gstewart@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00217.html">Date Prev</a>][<a href="msg00219.html">Date Next</a>][<a href="msg00215.html">Thread Prev</a>][<a href="msg00232.html">Thread Next</a>][<a href="maillist.html#00218">Date Index</a>][<a href="threads.html#00218">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] RH9 install probelm: error enabling swap device</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 24 Jun 2003 09:15:43 +0900</li>
+<li><strong>From</strong>: <strong>Jean-Christian Imbeault &lt;<A HREF="mailto:jc@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20RH9%20install%20probelm%3A%20error%20enabling%20swap%20device">jc@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] RH9 install probelm: error enabling swap device</strong></li>
+<li>References: &lt;<a href="msg00214.html">3EF6D707.9040907@example.com</a>&gt; &lt;<a href="msg00215.html">20030623124651.0083866a.gstewart@example.com</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.0.2) Gecko/20030208 Netscape/7.02</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Godwin Stewart wrote:
+&gt; 
+&gt; Actually they're more down-to-earth :)
+&gt; 
+&gt; If you can log into a console somewhere between the partitioning stage and
+&gt; the error message being produced - or just before rebooting - then try
+&gt; running "mkswap /dev/hda3".
+
+Thanks for the tip. I tried that but the installer still failed.
+
+I've tried to pin down the problem some more. When the installer starts
+up and gives me a shell I immediately try and manually fdisk the HD
+myself to see what happens. It seems fdisk can't get more than 2 logical
+partitions installed on an extended partitions.
+
+Maybe I my recollection of fdisk and partitions is wrong but I though
+you could fit up to 4 logical partitions on every extended partition?
+
+The steps I do are as follows:
+
+# fdisk /dev/hda
+
+1-  add a new extended partition that uses up the whole disk
+2-  write partition table out
+3-  fdisk again and add a new logical partition of +128M
+4-  write partition table out
+5-  fdisk again and add a new logical partition of +1024M
+6-  write partition table out
+7-  fdisk again and add a new logical partition of +1024M
+8-  write partition table out
+9-  fdisk again and add a new logical partition of +1024M
+10- write partition table out
+11- fdisk again, these errors pop up:
+
+Warning: Ignoring extra data in partition table 8
+Warning: Ignoring extra data in partition table 8
+Warning: Ignoring extra data in partition table 8
+Warning: Invalid flag 0xffffea55 of partition table 7 will be corrected
+by w(rite)
+Warning: Invalid flag 0x00f0 of partition table 8 will be corrected by
+w(rite)
+
+Printing out the partition table shows that partition 8's starting and
+ending blocks have moved and have a ridiculously large range (25899 -
+297775, my HD only goes form 1 - 6496) and the partition type has
+changed to a BSDI swap.
+
+Is my HD flaky? It's a 40GB drive so I'm wondering if there is BIOS
+problem perhaps?
+
+Should I just give up on this drive? I really would like to just go out
+and get another one but I hate leaving this problem as is and not
+figuring out what the root cause is. If I don't figure it out know it
+will bite me later when I least expect it and when the server can't
+afford to be down.
+
+I'm not so sure it's the HD but feel it more of a BIOS/mobo problem
+(this is that strange korean server with (hot-swapable ?) IDE drive
+bays). On the motherboard there seems to be two IDE controller
+connectors, each with a round type of IDE cable I haven't seen before.
+These two cables then connect into a board that has four connectors that
+accept one HD each. The IDE drive itself needs a special adaptor/board
+plugged into it to be plugged into the board with the four connectors.
+
+The board with the four connectors is also responsible for providing the
+power. (i.e. the is no power cable going straight to the drive, it goes
+into the 4-controller board).
+
+Any advice?
+
+Thanks,
+
+Jean-Christian
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00232" href="msg00232.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Stephen Lee</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00214" href="msg00214.html">[tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+<li><strong><a name="00215" href="msg00215.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00217.html">RE: [tlug] latest suse distribution</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00219.html">RE: [tlug] latest suse distribution</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00215.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00232.html">Re: [tlug] RH9 install probelm: error enabling swap device</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00218"><strong>Date</strong></a></li>
+<li><a href="threads.html#00218"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

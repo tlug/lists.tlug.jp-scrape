@@ -1,0 +1,214 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: tlug: Linux telecom nexus -->
+<!--X-From: "J. David Beutel" <jdb@example.com> -->
+<!--X-Date:  Thu, 4 Jun 1998 00:40:33 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.980603103632.195D&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980602163106.510E&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00144.html">Date Prev</A>][<A HREF="msg00146.html">Date Next</A>][<A HREF="msg00069.html">Thread Prev</A>][<A HREF="msg00155.html">Thread Next</A>][<A HREF="maillist.html#00145">Date Index</A>][<A HREF="threads.html#00145">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: tlug: Linux telecom nexus</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: tlug: Linux telecom nexus</strong></LI>
+<LI><strong>From</strong>: <strong>"J. David Beutel" &lt;<A HREF="mailto:jdb@example.com">jdb@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 3 Jun 1998 11:43:53 -0400 (EDT)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00067.html">Pine.LNX.3.96LJ1.1b7.980602163106.510E-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, 2 Jun 1998, Jonathan Byrne - 3Web wrote:
+
+&gt; If you do find a way to make the whole setup work as envisioned, we may
+&gt; ask you to write it up for a TLUG how-to :-)
+
+Okay, I'm just getting started, but here's a progress report.
+
+I bought a NEC Aterm IT50 DSU (an ISDN TA) last night at Yodobashi
+Camera in Shinjuku for JPY26,000.  It has 2 analog and 1 serial port,
+lots of features, including PIAFS, but no PHS receiver.  It is
+configurable via the serial port with an AT command set, including
+many extensions that seem to control every feature.
+
+NTT installed my ISDN line this morning.  The Aterm's default
+configuration worked for the analog (one number) right off the bat.
+I didn't even have to set the phone number.  The digital part
+took some time to get configured for TWICS.  I tried Craig's setup
+for the IW60, but it didn't work for me.  My box has had a lot of
+ISPs, so this is *not* the most elegant configuration, but:
+
+the uncommented lines in /etc/named.boot:
+forwarders 192.135.222.9 192.135.222.10
+slave
+
+/etc/ppp/options:
+crtscts modem /dev/cua1 115200 connect /etc/ppp/twics user jdb
+asyncmap 0 lock mru 1542 passive -mn -vj lcp-echo-interval 30
+lcp-echo-failure 4 ipcp-accept-remote defaultroute
+
+/etc/ppp/pap-secrets:
+jdb * [my password]
+
+/etc/ppp/twics:
+#!/bin/sh
+#
+chat -v TIMEOUT 5 "" \
+	'\KAT' OK-AT-OK \
+	'AT&amp;K3Q0V1X3' "OK" \
+	'AT$N1=1' "OK" ATD53617270 "CONNECT 64000"
+
+Getting the modem to start talking to chat was the hardest thing.
+The modem configuration isn't really a bootstrap, of course,
+since it assumes that the modem is already using hardware flow control
+and returning verbal result codes.  Incidentally, $N1=0 did not work
+for me; it would connect for a few seconds, but then disconnect.
+
+Next, I'll try to configure my ppp to dial on demand.
+
+I'll also be upgrading the NEC's firmware this weekend.  There's a 
+few interesting new features.  I can't read very well, so this will
+require more investigation, but as far as I can tell, it will be able
+to do "pseudo call forwarding" by using the second channel to initiate
+its own call to the number you configure.  They contrast this with
+call forwarding via NTT's "flexphone" service, which would use the
+D channel to re-route the original call rather than rack up new charges
+and tie up both B channels.  I think the D channel way was NEC's
+original intent, but perhaps the pseudo way will let me ring the local
+line, forward to a PHS, and eventually have vgetty answer the local line
+to do voicemail.  The manual seems to have configurations for forwarding
+and original numbers and whether or not each line exists (the forwarding
+and the original).  (Katakana to-ki means phone line?)
+
+I think that it will also add pseudo three-way calling, which
+I haven't read about, but am guessing means that a third number
+is called via the second B channel and connected to both the local
+active analog port and the first B channel.  This might also
+let me do my PHS thing, if it can initiate the call out the 2nd
+channel before the local port answers, and connects the first one
+to answer with the incoming channel.  Or, even if the local port
+must answer, the voice mail could announce that it's trying to
+forward the call to my PHS and then initiate 3-way calling.  Oooh,
+it could even give the caller the choice of trying my mobile or
+just leaving a message.
+
+If anyone has more info on this new stuff (www.mesh.ne.jp/aterm/)
+please let me know.  Also, does anyone know if I can register a
+PHS number as one of the two telehoudai numbers (for unlimited calling
+late at night)?  Then pseudo call forwarding would be cheaper.
+Plus, if I can get this call forwarding thing working, then I can
+make international call-back calls from my PHS.  Shoot, I could
+even make free local calls the same way, if I throw in some kind of
+caller ID thing.  Is it cheaper to call from a home to a PHS than
+vice versa?  Also, is calling to a PHS more expensive than a local call?
+
+Well, I've gotta goto bed now.  I'm getting too excited..
+
+--
+David Beutel    A monk asked Ryuge, "What did old Masters attain when they
+jdb@example.com      entered the ultimate stage?"  "They were like burglars
+11011011              sneaking into a vacant house," Ryuge replied.
+
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: 17 July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+After June 13, the next meeting is 8 August at Tokyo Station
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00155" HREF="msg00155.html">RE: tlug: Linux telecom nexus</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00067" HREF="msg00067.html">RE: tlug: Linux telecom nexus</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne - 3Web &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00144.html">Re: tlug: Linux telecom nexus</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00146.html">Re: tlug: Linux telecom nexus</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00069.html">RE: tlug: Linux telecom nexus</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00155.html">RE: tlug: Linux telecom nexus</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00145"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00145"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

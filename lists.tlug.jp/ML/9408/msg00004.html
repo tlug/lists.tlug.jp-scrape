@@ -1,0 +1,193 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [LINUX:34] -->
+<!--X-From-R13: TADSXW@example.com@example.com -->
+<!--X-Date: Sun, 21 Aug 1994 22:07:00 +0900 -->
+<!--X-Message-Id: 34@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00003.html">Date Prev</a>][<a href="msg00005.html">Date Next</a>][<a href="msg00003.html">Thread Prev</a>][<a href="msg00005.html">Thread Next</a>][<a href="maillist.html#00004">Date Index</a>][<a href="threads.html#00004">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[LINUX:34]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 21 Aug 1994 22:07:00 +0900</li>
+<li><strong>From</strong>: <strong><A HREF="mailto:FOREJIN@DOMAIN.HIDDEN?SUBJECT=Re:%20%5BLINUX%3A34%5D">FOREJIN@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>[LINUX:34]</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hello,
+
+Recently I've been having some very unusual problems on my Linux
+system.  The problem is when doing some standard disk i/o things (cp, cat,
+tar, etc) I get the message:
+
+command:  filename: I/O error
+
+For example if I was cat'ing a file foo it would say:
+
+cat:  foo: I/O error
+
+Unfortunately, it does not give any more information than that.  Like
+what type or I/O error or anything like that.  Also it has some other
+strange characteristics.  The error seems to be physical, and it seems to
+be limited to one directory, though it may crop up in other directories as
+well.  The can best be exaplained with the following examples (which are
+what really happened).
+
+#cp /dosd/incoming/linux/foo .
+#cat foo &gt; /dev/null
+#cp /dosd/incoming/linux/foo bar
+#cat bar &gt; /dev/null
+#sync
+#cat bar &gt; /dev/null
+cat:  bar: I/O error
+#cat foo &gt; /dev/null
+#
+
+So, as you can see it seems to be a physical thing on the disk as it
+appeared after the sync.  But the strange thing is shown below.  This
+follows exactly after the above:
+
+#rm foo
+#rm bar
+#cp /dosd/incoming/linux/foo ..
+#sync
+#cat ../foo &gt; /dev/null
+#cp /dosd/incoming/linux/foo ../bar
+#sync
+#cat ../bar &gt; /dev/null
+#
+
+So, it appeared it was somehow a problem in the current directory only,
+and not its parent.  I then thought that if it was a physical error the
+second set of events might have not used the same sectors as the first, so
+I repeated the second set copying to &quot;foo1&quot;, &quot;foo2&quot;, . . ., &quot;foon&quot; until
+the filesystem was full.  I then cat'd them all to /dev/null and not a
+single one gave me the error.  Mind you all of this occured in the parent
+directory, not the problem directory.  Just for my sanity I removed all of
+those foo's, and repeated the experiment in the problem directory and I got
+the error again.
+
+My last set of tests was to create another directoy in the parent
+(good) directory, and move everything from the bad one to there.  At first
+that seemed fine, as I didn't get the error for a while, but eventually I
+did.  So, following the specs on my system, are my questions:
+
+My Linux System:
+
+Kernel 1.1.45 (no additional patches)
+(this error also occurred under 1.1.0 and 1.1.9)
+IBM ThinkPad 750
+340 MB HD (my Linux partition is 150MB, swap is 20M, and DOS is the rest)
+
+My questions:
+
+1.  Does anyone have any idea why this is occurring?
+2.  How can I fix it?
+3.  Why is it's behavior so erratic and strange?
+4.  Is there a Linux command to do a low level check of the hard drive
+for errors, without harming the data already on it (I've fsck with no
+results)?
+5.  Does anyone have any other suggestion, comments, or questions?
+
+
+Thank you,
+
+Rainer
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00003.html">[LINUX:32]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00005.html">[LINUX:35]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00003.html">[LINUX:32]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00005.html">[LINUX:35]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00004"><strong>Date</strong></a></li>
+<li><a href="threads.html#00004"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

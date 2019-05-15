@@ -1,0 +1,222 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: XFree86 + X&#45;TrueType: Success! -->
+<!--X-From: Matt Gushee <matt@example.com> -->
+<!--X-Date:  Tue, 22 Dec 1998 18:21:47 +0900 -->
+<!--X-Message-Id: 199812220825.RAA18596@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199812210652.PAA17075@example.com -->
+<!--X-Reference-Id: 13950.1566.238506.518132@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00459.html">Date Prev</A>][<A HREF="msg00461.html">Date Next</A>][<A HREF="msg00463.html">Thread Prev</A>][<A HREF="msg00467.html">Thread Next</A>][<A HREF="maillist.html#00460">Date Index</A>][<A HREF="threads.html#00460">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: XFree86 + X-TrueType: Success!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: XFree86 + X-TrueType: Success!</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 22 Dec 1998 17:25:36 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00441.html">13950.1566.238506.518132@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00434.html">199812210652.PAA17075@example.com</A>&gt;&lt;<A HREF="msg00441.html">13950.1566.238506.518132@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Stephen J. Turnbull writes:
+
+ &gt; Cool.  Now try loading up a heavily font-customized XEmacs/Mule and
+
+ &gt; Seriously, my experience with the Ryobi fonts is about
+ &gt; 10-15sec/instance in xfontsel.  My XEmacs usually instantiates about
+ &gt; 50 fonts on startup, of which 12 are Japanese.  
+
+You don't mean 50/12 font *families*, do you? If so, then that raises
+the question, 'What on earth do you *do* with all of those?' (you
+don't have to answer if it's embarrassing :-)
+
+ &gt; If you do _not_ have this experience, I'd like to know about it,
+ &gt; because it probably means my configuration is messed up....  :-)
+
+Hmm. I don't know if I can come close to duplicating your setup. For
+one thing, I don't really understand yet how to put together a
+collection of XEmacs faces that is at once diverse, useful, sensible,
+and pleasing to the eye (what should I be reading about that, by the
+way?).
+
+But you got me interested, so I ran a simple (simplistic?) performance 
+test ... lisp code attached below, of course. I have no idea how to
+compare my results to your situation, but FWIW, I started up X,
+started XEmacs (so none of the fonts in question would be loaded yet), 
+and ran the test on a buffer containing 10 copies of the output of
+'jchar'.
+
+With X running at 8 bpp, the first invocation took about 21 seconds,
+and subsequent invocations about 1.75 seconds each on average. At 16
+bpp, the times were about 1 second and .25 seconds longer,
+respectively. This was on my slower machine, the Pentium 100 notebook
+w/ 24M of RAM, 2M of VRAM, ct65550 chipset, 800x600 DSTN display. The
+X server is XF86_SVGA, w/ virtual screen size set to 1024x768 @ 8 bpp
+(I think), and 960x720 @ 16bpp. Pretty OK results, I'd say.
+
+I don't know much about the configuration. Besides building and
+installing the patched XFree86, all I did was make a fonts.dir and set 
+the FontPath.
+
+I wonder if the fonts themselves make a difference. At the moment,
+Microsoft Mincho and Gothic are the only Japanese TrueType fonts I
+have. I'm not familiar w/ the Ryobi fonts ... is there some reason
+they would work the server harder?
+
+Anyway, here's the test code:
+
+;;; no particular logic to this order, except I wanted to end
+;;; with a readable size
+
+(setq font-test-list
+      '("-ricoh-ms gothic-medium-r-normal--14-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--16-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--18-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--21-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--24-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--8-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--10-*-*-*-*-*-*-*"
+	"-ricoh-ms gothic-medium-r-normal--12-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--12-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--10-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--8-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--24-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--21-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--18-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--16-*-*-*-*-*-*-*"
+	"-ricoh-ms mincho-medium-r-normal--14-*-*-*-*-*-*-*"))
+
+;;; note that TEST-BUFFER needs to be set outside the function
+(defun font-test ()
+  (interactive)
+  (let ((fontlist font-test-list)
+	(test-extent (make-extent (point-min) (point-max) test-buffer))
+	(time0 (current-time)))
+    (while fontlist
+      (set-face-font 'default (car fontlist) test-buffer)
+      (set-extent-face test-extent 'default)
+      (redisplay-frame)
+      (setq fontlist (cdr fontlist)))
+    (let* ((time1 (current-time))
+	   (start-time (+ (cadr time0) (* .000001 (caddr time0))))
+	   (end-time (+ (cadr time1) (* .000001 (caddr time1)))))
+      (message "Elapsed time %.2f seconds." (- end-time
+                                               start-time)))))
+
+
+
+See what you think.
+
+Cheers,
+
+Matt Gushee
+Oshamanbe, Hokkaido
+
+
+      
+-------------------------------------------------------------------
+Next Nomikai: 14 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+*** it will will be Jan 14 (Thu), as Jan 15 (Fri) is a natl holiday
+Next Technical Meeting: 13 February, 12:30               Place: TBD
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00467" HREF="msg00467.html">tlug: XFree86 + X-TrueType: Success!</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00434" HREF="msg00434.html">tlug: XFree86 + X-TrueType: Success!</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00441" HREF="msg00441.html">tlug: XFree86 + X-TrueType: Success!</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00459.html">Re: tlug: Wrong password worked!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00461.html">tlug: Please somebody help</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00463.html">Re: tlug: XFree86 + X-TrueType: Success!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00467.html">tlug: XFree86 + X-TrueType: Success!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00460"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00460"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

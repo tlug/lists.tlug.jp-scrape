@@ -1,0 +1,202 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Using JDIC from inside .. -->
+<!--X-From-R13: Xvz Perra <Xvz.PerraNvasbgrpu.zbanfu.rqh.nh> -->
+<!--X-Date: Tue, 25 May 2004 16:35:17 +1000 (EST) -->
+<!--X-Message-Id: 200405250635.i4P6ZHDD002180@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00258.html">Date Prev</a>][<a href="msg00260.html">Date Next</a>][<a href="msg00258.html">Thread Prev</a>][<a href="msg00263.html">Thread Next</a>][<a href="maillist.html#00259">Date Index</a>][<a href="threads.html#00259">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Using JDIC from inside ..</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 25 May 2004 16:35:17 +1000 (EST)</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<A HREF="mailto:Jim.Breen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Using%20JDIC%20from%20inside%20..">Jim.Breen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Using JDIC from inside ..</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>"Stephen J. Turnbull" &lt;stephen@example.com&gt; wrote:
+&gt;&gt; &gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;Jim.Breen@example.com&gt; writes:
+&gt;&gt;     Jim&gt; Can you make it loop looking for something to turn up? That
+&gt;&gt;     Jim&gt; was a nice feature of the one that Todd &amp; I started on. No
+&gt;&gt;     Jim&gt; keystrokes at all; just highlight the text. ISTR it sits in a
+&gt;&gt;     Jim&gt; 1000ms sleep loop doing a "catch" on the cut buffer.
+&gt;&gt; 
+&gt;&gt; First, I'm sure it's not a cut buffer.  :-)
+
+No, it's a "selection" in X-speak.
+
+&gt;&gt; Second, there's a way to register a callback on the PRIMARY selection
+&gt;&gt; (what it is instead of a cut buffer ;-).  Look in the standard
+&gt;&gt; distribution xclipboard application for how it's done (that app uses
+&gt;&gt; the CLIPBOARD selection, however).  Motif also has a clipboard, but
+&gt;&gt; its protocol is fairly complicated.  You'd also want to check the
+&gt;&gt; ICCCM.  I don't think there are any gotchas if you just want to get
+&gt;&gt; the selection, but you should check.
+
+I want to see how far I can push it in Tcl/Tk before going into the
+really hard stuff. I revisited my Tcl code and fiddled until it is 
+working a lot better. Tcl has a "selection" operation which talks pretty
+straight to X and claims to do the full ICCCM thang. It looks like:
+
+	selection get -displayof "." -selection PRIMARY -type COMPOUND_TEXT
+
+(in fact those displayof and selection options are the defaults.)
+
+I've unsnarled some of the hassles. For Japanese text, the "selection"
+only returns things for type "STRING" for Netscape/Mozilla/Galeon/etc.
+and for type "COMPOUND_TEXT" for kterm/mlterm/yudit/etc., so I've put in
+both and respond to whichever works first. Most return text in that
+'orrible C2/C3 ICCCM format. mlterm, bless its heart, returns it in that
+ISO-2022-JP-like format with Esc ( B $ or whatever in front.
+
+The BIG problem, is that both kterm and yudit result in the selection
+being stripped of the first character, which doesn't help the
+functionality of the hover-in-the-background lookup. Anyone here had
+experience of that happening? I'll try posting on the main tcltk
+newsgroup and see if Jeff Hobbs or anyone recognizes the problem.
+
+If anyone has Tcl/Tk installed, they might have some fun with the
+attached. When run, it chases the mouse-pointer round he screen flashing
+the last selection.
+
+Cheers
+
+Jim
+===========================================================
+encoding system euc-jp
+wm withdraw .
+toplevel .popup
+wm overrideredirect .popup 1
+label .popup.l -text "" -background linen -relief "raised" -justify "left" -borderwidth 3 
+pack .popup.l
+set startX 0
+set startY 0
+
+proc poller {} {
+  set ntexte ""
+  set ntext ""
+  set x [winfo pointerx .]
+  set y [winfo pointery .]
+
+  catch {set ntext [selection get -type STRING]}
+#  catch {set ntext [selection get -type COMPOUND_TEXT]}
+  set ntexte [encoding convertfrom $ntext]
+  set slen [string length $ntext]
+  if {$slen == 0} then {set ntexte "Zero length string"}
+  .popup.l configure -text "$ntext\n$ntexte"
+  wm geometry .popup +$x+[expr $y+20]
+  wm deiconify .popup
+  after 1000 {wm withdraw .popup}
+  after 2000 {poller}
+}
+after 2000 {poller}
+
+===========================================================
+
+
+-- 
+Jim Breen                                <A HREF="http://www.csse.monash.edu.au/~jwb/">http://www.csse.monash.edu.au/~jwb/</A>
+Computer Science &amp; Software Engineering,                Tel: +61 3 9905 9554
+Monash University, VIC 3800, Australia                  Fax: +61 3 9905 5146
+(Monash Provider No. 00008C)                ジム・ブリーン@モナシュ大学
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00263" href="msg00263.html">Re: [tlug] Using JDIC from inside ..</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00258.html">Re: [tlug] Samba and VPN (Was CIFS Problems)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00260.html">[tlug] linux contracters within Tokyo/Kanagawa</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00258.html">Re: [tlug] Samba and VPN (Was CIFS Problems)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00263.html">Re: [tlug] Using JDIC from inside ..</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00259"><strong>Date</strong></a></li>
+<li><a href="threads.html#00259"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

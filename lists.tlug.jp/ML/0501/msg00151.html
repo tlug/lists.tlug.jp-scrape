@@ -1,0 +1,215 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] Re: Crazy automount solution -->
+<!--X-From-R13: Fbovnf Rvrqevpu <enaznNgqvrqevpu.qr> -->
+<!--X-Date: Sun, 23 Jan 2005 20:00:06 +0100 -->
+<!--X-Message-Id: 20050123190006.GA18966@example.com&#45;a&#45;geek.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: d8fcc0800501190852557b1fd5@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00150.html">Date Prev</a>][<a href="msg00152.html">Date Next</a>][<a href="msg00145.html">Thread Prev</a>][<a href="msg00111.html">Thread Next</a>][<a href="maillist.html#00151">Date Index</a>][<a href="threads.html#00151">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Re: Crazy automount solution</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 23 Jan 2005 20:00:06 +0100</li>
+<li><strong>From</strong>: <strong>Tobias Diedrich &lt;<A HREF="mailto:ranma@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re%3A%20Crazy%20automount%20solution">ranma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Re: Crazy automount solution</strong></li>
+<li>References: &lt;<a href="msg00109.html">d8fcc0800501190852557b1fd5@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.6+20040907i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hi all,
+
+maybe some of you are interested in this automount-Solution using
+udev and autofs, which will create storage$n and
+$volumelabel-Symlinks in /dev/usb.
+The autofs part will then look for $somename in /dev/usb, if you
+access /usb/$somename.
+
+So you can use the volume label as a persistent device name (even if
+you don't want the automounting part). :-)
+
+udev-Rule:
+BUS=&quot;usb&quot;, SYSFS{bDeviceClass}=&quot;00&quot;, PROGRAM=&quot;/etc/udev/scripts/usbstorage.sh&quot;, SYMLINK=&quot;usb/%c{1} usb/%c{2}&quot;
+
+---- usbstorage.sh ----
+#!/bin/bash
+
+if [ `/sbin/udev_volume_id | grep &quot;^F&quot; ` != &quot;F:filesystem&quot; ]; then
+	exit 0
+fi
+
+n=1
+while [ $n -lt 10 -a -e /dev/usb/storage$n ]; do
+	let &quot;n+=1&quot;
+done
+if [ ! -e /dev/usb/storage$n ]; then
+	echo -n &quot;storage$n &quot;
+fi
+
+/sbin/udev_volume_id -l
+---- end of usbstorage.sh ----
+
+---- /etc/auto.usb ----
+#!/bin/sh
+
+key=&quot;$1&quot;
+opts=&quot;-fstype=autofshack,utf8&quot;
+dev=&quot;/dev/usb/$1&quot;
+
+if [ -r &quot;$dev&quot; -a ! -d &quot;$dev&quot; ]; then
+	echo -n &quot;$opts / auto:$dev&quot;
+fi
+---- end of /etc/auto.usb ----
+
+---- /etc/auto.master ----
+# $Id: auto.master,v 1.3 2003/09/29 08:22:35 raven Exp $
+#
+# Sample auto.master file
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# For details of the format look at autofs(5).
+#/misc	/etc/auto.misc --timeout=60
+#/misc	/etc/auto.misc
+/nfs	/etc/auto.net --timeout=5
+/smb	/etc/auto.smb --timeout=5
+/usb	/etc/auto.usb --timeout=5
+---- end of /etc/auto.master ----
+
+---- /sbin/mount.autofshack ----
+#!/bin/bash
+#
+# Work around autofs-borkage
+#
+#  mount -t autofshack realtype:/device /mountpoint
+#  gets mangled to
+#  mount -t realtype /device /mountpoint
+#
+
+index=1
+args=&quot;&quot;
+realtype=&quot;&quot;
+
+for arg in &quot;$@&quot;; do
+	if [ &quot;`echo -n &quot;$arg&quot; | sed -e 's@[^:]*:/.*@example.com@'`&quot; = &quot;__magic__&quot; ]; then
+		realtype=`echo -n &quot;$arg&quot; | sed -e 's@example.com([^:]*\):\(.*\)@example.com@'`
+		dev=`echo -n &quot;$arg&quot; | sed -e 's@example.com([^:]*\):\(.*\)@example.com@'`
+		args=&quot;$args \&quot;$dev\&quot;&quot;
+	else
+		if [ &quot;$arg&quot; = &quot;autofshack&quot; ]; then
+			args=&quot;$args \&quot;\$$realtype\&quot;&quot;
+		else
+			args=&quot;$args \&quot;\$$index\&quot;&quot;
+		fi
+	fi
+	let &quot;index+=1&quot;
+done
+
+eval &quot;exec /bin/mount $args&quot;
+---- end of /sbin/mount.autofshack ----
+
+-- 
+Tobias						PGP: <A  HREF="http://9ac7e0bc.uguu.de">http://9ac7e0bc.uguu.de</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00109" href="msg00109.html">[tlug] Crazy automount solution</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00150.html">Re: [tlug] Fedora Friendly Printer</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00152.html">[tlug] Color Codes</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00145.html">Re: [tlug] Crazy automount solution</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00111.html">[tlug] HELP! A possible Linux Rescue CD for my Japanese files!</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00151"><strong>Date</strong></a></li>
+<li><a href="threads.html#00151"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

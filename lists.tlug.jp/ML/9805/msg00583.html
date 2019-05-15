@@ -1,0 +1,213 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Draft of June 13 TLUG General Meeting Announcement -->
+<!--X-From: Manuel Chakravarty <chak@example.com> -->
+<!--X-Date:  Wed, 27 May 1998 16:16:58 +0900 -->
+<!--X-Message-Id: 199805270711.QAA26953@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13674.38117.595251.283601@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00582.html">Date Prev</A>][<A HREF="msg00584.html">Date Next</A>][<A HREF="msg00536.html">Thread Prev</A>][<A HREF="msg00592.html">Thread Next</A>][<A HREF="maillist.html#00583">Date Index</A>][<A HREF="threads.html#00583">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Draft of June 13 TLUG General Meeting Announcement</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Draft of June 13 TLUG General Meeting Announcement</strong></LI>
+<LI><strong>From</strong>: <strong>Manuel Chakravarty &lt;<A HREF="mailto:chak@example.com">chak@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 27 May 1998 16:11:53 +0900</LI>
+<LI>CC: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>In-reply-to: &lt;<A HREF="msg00536.html">13674.38117.595251.283601@example.com</A>&gt;(turnbull@example.com)</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+"Stephen J. Turnbull" &lt;turnbull@example.com&gt; wrote,
+
+&gt;     Manuel&gt; Anyway, the TurboLinux package seemed to install without
+&gt;     Manuel&gt; any problems!  Thanks very much!
+&gt; 
+&gt; But does it work?  Ie, get rid of the missing font error.  Inquiring
+&gt; minds want to know!
+
+Of course, life is not *that* easy ;-)  The TurboLinux package
+`VFlib-2.22pl9-2tlj.i386.rpm' also doesn't include the fonts
+(likewise for the .deb package as I checked by having a look 
+at the included files).
+
+Playing around a bit with VFlib and trying to understand the 
+`/etc/vfontcap' file, I guess one problem is that most of
+the interesting fonts are commercial.  Nevertheless, I found 
+the following comment in `/etc/vfontcap':
+
+# Use these for less cost.
+#min|min5|min6|min7|min8|min9|min10|min12|min17|Mincho Font:\
+#	:fc=scrn:
+#goth|goth5||goth6|goth7|goth8|goth9|goth10|goth12|goth17|Gothic Font:\
+#	:fc=bdf14:
+
+So, I uncomment these lines and commented the lines above
+these in the original file, which seemed to use a
+`ricoh-heisei-mincho' font.  *And* I changed `:fc=scrn:' to
+`:fc=kscrn:' in the above.  As far as I understand
+`/etc/vfontcap', this leads to the use of X windows BDF
+font files whenever the font `min' is required, as specified 
+by the following lines appearing earlier in `/etc/vfontcap':
+
+###-------------------------- 
+### BDF fonts (X Window font)
+### 
+bdf14:\
+	:ft=bdf:\
+	:ff=/usr/local/font/bdf/k14:\
+	:ox#0:oy#0:fx#95:fy#95:
+bdf16:\
+	:ft=bdf:\
+	:ff=/usr/local/font/bdf/jiskan16:\
+	:ox#0:oy#0:fx#95:fy#95:
+bdf24:\
+	:ft=bdf:\
+	:ff=/usr/local/font/bdf/jiskan24:\
+	:ox#0:oy#0:fx#95:fy#95:
+bdf14sl:sl#20:fc=bdf14:
+bdf16sl:sl#20:fc=bdf16:
+bdf24sl:sl#20:fc=bdf24:
+LED:ds=square:dz#60:fc=bdf14:
+kscrn:ds=diamond:fc=bdf14:
+
+After copying the required BDF files to
+`/usr/local/font/bdf/' and running the program `bdfindex'
+(included in the VFlib package) on them...IT WORKED (oops,
+sorry for getting loud...)
+
+It worked = it is fast (in contrast to being dead slow
+	    without VFlib), but the fonts are very ugly, as
+	    they are not really made for being scaled in
+	    this way. 
+
+I guess (from `/etc/vfontcap'), it is possible to use the M$
+TrueType fonts that come with Windoze.
+
+Does anybody know whether there are any descent *free* fonts
+available for VFlib?
+
+Scott, one point I was wondering about in
+`VFlib-2.22pl9-2tlj.i386.rpm' is, why is there no link
+
+  libVFlib.so.2 -&gt; libVFlib.so.2.22.9
+
+in `/usr/jp/lib'?
+
+Regarding MagicPoint itself, one not so magical point is
+that there doesn't seem to be any descent support for
+mathematics (i.e., big formulae with many super- and
+subscripts, greek, and old german letters, fancy symbols
+etc).  Of course, PowerPoint suffers from the same problem.
+Of course, you can map in an Xdvi window to display some
+LaTeX, but then it won't have the same background as the
+rest of the display, I guess...or does it??
+
+Cheers,
+
+Manuel
+
+--------------------------------------------------------------
+Next TLUG Meeting: 13 June Sat, Tokyo Station Yaesu gate 12:30
+Featuring Stone and Turnbull on .rpm and .deb packages
+Next Nomikai: (?) July, 19:30 Tengu TokyoEkiMae 03-3275-3691
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00592" HREF="msg00592.html">Re: tlug: Draft of June 13 TLUG General Meeting Announcement</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00638" HREF="msg00638.html">Re: tlug: Draft of June 13 TLUG General Meeting Announcement</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00536" HREF="msg00536.html">Re: tlug: Draft of June 13 TLUG General Meeting Announcement</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00582.html">Re: tlug: test</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00584.html">Re: MagicPoint [was: tlug: Draft of June 13 TLUG ... ]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00536.html">Re: tlug: Draft of June 13 TLUG General Meeting Announcement</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00592.html">Re: tlug: Draft of June 13 TLUG General Meeting Announcement</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00583"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00583"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

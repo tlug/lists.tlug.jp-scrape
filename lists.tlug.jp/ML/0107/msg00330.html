@@ -1,0 +1,176 @@
+<!-- MHonArc v2.4.8 -->
+<!--X-Subject: Re: Apache fails to start under RH7.1 -->
+<!--X-From-R13: "Xrna&#45;Quevfgvna Wzornhyg" <wrna_puevfgvnaNubgznvy.pbz> -->
+<!--X-Date: Mon, 16 Jul 2001 07:10:16 &#45;0000 -->
+<!--X-Message-Id: F122ZWkKkqTgtoBjfgB0000286a@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00329.html">Date Prev</a>][<a href="msg00331.html">Date Next</a>][<a href="msg00318.html">Thread Prev</a>][<a href="msg00331.html">Thread Next</a>][<a href="maillist.html#00330">Date Index</a>][<a href="threads.html#00330">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: Apache fails to start under RH7.1</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: Apache fails to start under RH7.1</strong></li>
+<li><strong>From</strong>: <strong>&quot;Jean-Christian Imbeault&quot; &lt;<A HREF="mailto:jean_christian@example.com">jean_christian@example.com</A>&gt;</strong></li>
+<li>Date: Mon, 16 Jul 2001 07:10:16 -0000</li>
+<li>Content-Type: text/plain; format=flowed</li>
+<li>Delivered-To: tlug@example.com</li>
+<li>List-Help: &lt;<A HREF="mailto:tlug-request@example.comsubject=help">mailto:tlug-request@example.comsubject=help</A>&gt;</li>
+<li>List-Post: &lt;<A HREF="mailto:tlug@example.com">mailto:tlug@example.com</A>&gt;</li>
+<li>List-Subscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=subscribe">mailto:tlug-request@example.comsubject=subscribe</A>&gt;</li>
+<li>List-Unsubscribe: &lt;<A HREF="mailto:tlug-request@example.comsubject=unsubscribe">mailto:tlug-request@example.comsubject=unsubscribe</A>&gt;</li>
+<li>Old-Return-Path: &lt;jean_christian@example.com&gt;</li>
+<li>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-From: <A HREF="mailto:tlug@example.com">tlug@example.com</A></li>
+<li>Resent-Message-ID: &lt;pz9HhD.A.nQG.HNpU7@example.com&gt;</li>
+<li>Resent-Sender: <A HREF="mailto:tlug-request@example.com">tlug-request@example.com</A></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;From: &quot;Stephen J. Turnbull&quot; &lt;turnbull@example.com&gt;
+&gt;
+&gt;Apache can be run from [x]inetd, but it is designed to run as a
+&gt;standalone server.  It is almost surely set up as a standalone by the
+&gt;package manager's configuration, so adding it to [x]inetd will confuse 
+&gt;things badly.
+
+Thanks for the info! Removed the xinetd httpd file I had created.
+
+&gt;You should be seeing an entry for the httpd service from netstat, but
+&gt;it should be provided by the httpd, not by [x]inetd, in the standalone 
+&gt;case.
+
+I have both an https and http entry. Is this kosher?
+
+[root@example.com xinetd.d]# netstat -l https | grep http
+tcp        0      0 *:http                  *:*                     LISTEN   
+    tcp        0      0 *:https                 *:*                     
+LISTEN      [root@example.com xinetd.d]# netstat -l | more
+
+&gt;You removed the host name from where?
+
+Actually I don't know. I removed it from the GUI tool RH7.1 provides for 
+network configuration. But the first time I did that it didn't really do 
+anything. Then I removed the HOSTNAME line from /etc/sysconfig/network but 
+since it was &quot;HOSTNAME=&quot; I figured it wasn't doing much anyhow.
+
+&gt;In /etc/hosts, the 127.0.0.1 &quot;loopback&quot; entry should
+&gt;_never_ be given the host name, always localhost.
+
+
+
+  There may be a file
+&gt;/etc/hostname which has the host name in it.  /etc/mailname may also
+&gt;exist, but it will have a fully-qualified domain name in it.
+&gt;
+&gt;Try &quot;fgrep $HOSTNAME /etc/* /etc/sysconfig/*&quot;.  (You may have to
+&gt;replace $HOSTNAME with the literal name if HOSTNAME isn't defined in
+&gt;your environment.  That should catch most of the likely places.
+
+Thanks. Unfortunately that came up empty.
+
+But if I fgrep recursively starting from / I get these matches. 
+Unfortunately looks like stuff that in the kernel
+
+/proc/sys/kernel/hostname:devtwo.bogusdomain.com
+/proc/net/unix:c316ba80: 00000002 00000000 00010000 0001 01  1684 
+/tmp/.sawfish-root/devtwo.bogusdomain.com:0.0
+Binary file /proc/kcore matches
+
+Does this mean that my hostname is hardocded into the kernel and can not be 
+erased simply by removing the hostname line from /etc/hosts or 
+/etc/sysconfig/network?
+
+Jc
+_________________________________________________________________________
+Get Your Private, Free E-mail from MSN Hotmail at <A  HREF="http://www.hotmail.com">http://www.hotmail.com</A>.
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00331" href="msg00331.html">Re: Apache fails to start under RH7.1</a></strong>
+<ul><li><em>From:</em> &quot;Stephen J. Turnbull&quot; &lt;turnbull@example.com&gt;</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00329.html">Re: round 2</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00331.html">Re: Apache fails to start under RH7.1</a></strong>
+</li>
+<li>Prev by thread:
+<strong><a href="msg00318.html">Re: Apache fails to start under RH7.1</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00331.html">Re: Apache fails to start under RH7.1</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00330"><strong>Date</strong></a></li>
+<li><a href="threads.html#00330"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

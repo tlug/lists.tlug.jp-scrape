@@ -1,0 +1,175 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] ssh&#45;agent not being magical enough -->
+<!--X-From-R13: Rneera Qbbx <qneeraNqpbbx.bet> -->
+<!--X-Date: Thu, 26 May 2011 12:43:34 +0900 -->
+<!--X-Message-Id: 4DDDCC63.9000401@dcook.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00078.html">Date Prev</a>][<a href="msg00080.html">Date Next</a>][<a href="msg00076.html">Thread Prev</a>][<a href="msg00081.html">Thread Next</a>][<a href="maillist.html#00079">Date Index</a>][<a href="threads.html#00079">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] ssh-agent not being magical enough</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 26 May 2011 12:43:31 +0900</li>
+<li><strong>From</strong>: <strong>Darren Cook &lt;<a href="mailto:darren@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ssh-agent%20not%20being%20magical%20enough">darren@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] ssh-agent not being magical enough</strong></li>
+<li>User-agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;	rv:1.9.2.17) Gecko/20110424 Thunderbird/3.1.10</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>I asked a few months back about using ssh-add to just store the key
+passphrase for the lifetime of a script [1]. Thanks again for everyone's
+help at that time.
+
+What is weird is that the passphrase gets asked once after boot, then is
+saved forever (i.e. nothing to do with that script). Not what I
+intended, but I shrugged and accepted it.
+
+But, now I want to do that deliberately on a remote server and it won't
+work! What I want is:
+  $ ssh first
+  [first]$ scp abc second:~
+   --&gt; prompt for the key passphrase [2]
+  [first]$ scp abc second:~
+   --&gt; used saved passphrase
+
+This isn't what happens - it asks for the passphrase each time I use
+scp. Whether I have started ssh-agent or not.
+
+If I put this in .bash_profile on second:
+  eval `ssh-agent`
+  ssh-add ~/.ssh/testkey
+
+then it saves the passphrase. But annoyingly it asks the passphrase
+every time I login to &quot;first&quot;. I don't want that, as perhaps only 10% of
+my &quot;first&quot; ssh sessions will involve scp-ing to &quot;second&quot;.
+
+And I don't want to have to remember to use ssh-add manually before my
+first call to scp.
+
+Is the on-demand passphrase prompting that ubuntu/gnome is giving me
+possible on a remote non-desktop server, or is this magic only available
+to gnome?
+
+TIA,
+
+Darren
+
+[1]:
+<a  rel="nofollow" href="http://darrendev.blogspot.com/2010/12/scp-with-multiple-targets-ssh-add.html">http://darrendev.blogspot.com/2010/12/scp-with-multiple-targets-ssh-add.html</a>
+
+
+[2] I have a ~/.ssh/config file with this in it, and this part works fine:
+
+Host second
+        IdentityFile /home/darren/.ssh/testkey
+
+
+
+-- 
+Darren Cook, Software Researcher/Developer
+
+<a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+<a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00081" href="msg00081.html">Re: [tlug] ssh-agent not being magical enough</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+<li><strong><a name="00084" href="msg00084.html">[tlug] ssh-agent not being magical enough [Josh: C&amp;C for toshiyori]</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00078.html">Re: [tlug] [announcement] nomikai May 27 (Friday)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00080.html">Re: [tlug] Browser share in Japan?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00076.html">Re: [tlug] Computer to give away or sell [SOLVED]</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00081.html">Re: [tlug] ssh-agent not being magical enough</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00079"><strong>Date</strong></a></li>
+<li><a href="threads.html#00079"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

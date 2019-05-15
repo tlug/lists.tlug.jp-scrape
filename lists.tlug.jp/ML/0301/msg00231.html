@@ -1,0 +1,184 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] eth0 not coming up ... -->
+<!--X-From-R13: Xbfu Uybire <wztybiNvapbtra.pbz> -->
+<!--X-Date: Tue, 21 Jan 2003 09:28:28 &#45;0500 -->
+<!--X-Message-Id: 20030121142828.GD28758@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 3E2D0402.5040808@example.com&#45;bucks.co.jp -->
+<!--X-Reference: 20030121173530.02842da3.oconnell@example.com -->
+<!--X-Reference: 3E2D086F.3070106@example.com&#45;bucks.co.jp -->
+<!--X-Derived: pgp00063.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00230.html">Date Prev</a>][<a href="msg00232.html">Date Next</a>][<a href="msg00266.html">Thread Prev</a>][<a href="msg00252.html">Thread Next</a>][<a href="maillist.html#00231">Date Index</a>][<a href="threads.html#00231">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] eth0 not coming up ...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 21 Jan 2003 09:28:28 -0500</li>
+<li><strong>From</strong>: <strong>Josh Glover &lt;<A HREF="mailto:jmglov@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20eth0%20not%20coming%20up%20...">jmglov@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] eth0 not coming up ...</strong></li>
+<li>References: &lt;<a href="msg00219.html">3E2D0402.5040808@example.com</a>&gt; &lt;<a href="msg00221.html">20030121173530.02842da3.oconnell@example.com</a>&gt; &lt;<a href="msg00223.html">3E2D086F.3070106@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.4i</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Quoth Jean-Christian Imbeault (Tue 2003-01-21 05:44:31PM +0900):
+&gt;
+&gt; Jim O'Connell wrote:
+&gt; &gt;
+&gt; &gt;See if /sbin/netconfig is installed. (It should be on 7.2) Do as root.
+&gt; 
+&gt; No, not installed. I did a minimal installation of RH7.2 packages.
+
+That is OK. netconfig does not do anything that you cannot do yourself with
+ifconfig or dhcpcd.
+
+&gt; I don't think it is a driver problem so much as an rpm is missing or 
+&gt; something. The strange thing is that my custom kernel try to start eth0 
+&gt; (and succeeds) while the RH kernel doesn't even try. And a 
+&gt; /etc/init.d/network restart doesn't try for eth0 either.
+
+It is most certainly a driver problem. Do you know what kind of network card
+you have? I would assume, since you said the machine was a 1U box, that the
+network card is onboard. Being even more assumptuous, I will state that the
+card is more than likely an Intel Pro-100, as that card is a very popular
+one for rack-mount server boards.
+
+First, find out what kind of network card you have. Then, follow these steps:
+
+1) ls /lib/modules/2.4.18-3/kernel/drivers/net/
+2) Locate the driver for your card here (try eepro100 if you do not know)
+3) Become root:
+4) modprobe eepro100
+5) tail /var/log/kern   # look for notices about drivers claiming devices
+6) ifconfig eth0 192.168.0.1 up
+7) ifconfig   # do you see eth0 now?
+
+If that worked, see 'man ifconfig' or 'man dhcpcd' to configure your card.
+
+HTH,
+Josh
+
+
+-- 
+Josh Glover &lt;jmglov@example.com&gt;
+
+Associate Systems Administrator
+INCOGEN, Inc.
+<A  HREF="http://www.incogen.com/">http://www.incogen.com/</A>
+
+GPG keyID 0x62386967 (7479 1A7A 46E6 041D 67AE  2546 A867 DBB1 6238 6967)
+gpg --keyserver pgp.mit.edu --recv-keys 62386967
+</pre>
+<p><strong>Attachment:
+<a href="pgp00063.pgp" ><tt>pgp00063.pgp</tt></a></strong><br>
+<em>Description:</em> PGP signature</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00252" href="msg00252.html">Re: [tlug] eth0 not coming up ...</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00219" href="msg00219.html">[tlug] eth0 not coming up ...</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+<li><strong><a name="00221" href="msg00221.html">Re: [tlug] eth0 not coming up ...</a></strong>
+<ul><li><em>From:</em> Jim O'Connell</li></ul></li>
+<li><strong><a name="00223" href="msg00223.html">Re: [tlug] eth0 not coming up ...</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00230.html">Re: [tlug] purple monitor problem</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00232.html">[tlug] Distro for the Mac</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00266.html">Re: [tlug] eth0 not coming up ...</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00252.html">Re: [tlug] eth0 not coming up ...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00231"><strong>Date</strong></a></li>
+<li><a href="threads.html#00231"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

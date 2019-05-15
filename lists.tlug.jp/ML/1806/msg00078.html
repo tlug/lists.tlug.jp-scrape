@@ -1,0 +1,199 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] White Box: Some Assembly Required ... -->
+<!--X-From-R13: vairefr <vairefrNatv.vg> -->
+<!--X-Date: Wed, 27 Jun 2018 15:52:16 +0900 -->
+<!--X-Message-Id: CAM1dQ5kXHdFWffSy4XHNK9z=XUpazQfYnS=QaNW0Ud1UzTMSOg@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: 60b0ec21&#45;9d7a&#45;320d&#45;c82f&#45;94733761c5c1@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00077.html">Date Prev</a>][<a href="msg00079.html">Date Next</a>][<a href="msg00042.html">Thread Prev</a>][<a href="msg00080.html">Thread Next</a>][<a href="maillist.html#00078">Date Index</a>][<a href="threads.html#00078">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] White Box: Some Assembly Required ...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 27 Jun 2018 08:52:12 +0200</li>
+<li><strong>From</strong>: <strong>inverse &lt;<a href="mailto:inverse@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20White%20Box:%20Some%20Assembly%20Required%20...">inverse@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] White Box: Some Assembly Required ...</strong></li>
+<li>References: &lt;<a href="msg00038.html">60b0ec21-9d7a-320d-c82f-94733761c5c1@gmail.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr"><div>Hi CL,</div><div><br></div><div>here&#39;s my word of advice regarding RAID5 and long term storage.</div><div>I used to work, among other things, as a system and network admin for a large Institution,</div><div>so before the advent of large scale virtualization we used to have a great number of servers <br></div><div>set up with RAID 5 , RAID 6 and hybrid schemes such as RAID 5 plus hot spares.</div><div><br></div><div>When you read &quot;very high fault tolerance&quot; in a certain RAID scheme, please take note this fault tolerance only refers to physical disk failures.</div><div><br></div><div>In case one or two (depending on the scheme) of your disks do fail, your data is still safe.</div><div><br></div><div>BUT, no RAID will protect you from:</div><div><br></div><div>- filesystem-level corruption. That cannot be prevented by RAID schemes.<br></div><div>- logical corruption within the array itself. If your controller for any reason is malfunctioning. <br></div><div>you may not notice it until your striping / parity data is too damaged for any reconstruction attempt. Also, parity inconsistency caused by system failures can be as bad. Been there, seen that.</div><div>- failure of the RAID controller itself. Yeah, that can be a single point of failure, and a very bad one. One does not simply swap in a new RAID controller.<br></div><div>- failure of two (in case of RAID5) or more (in case of RAID6) disks within a short period of time.<br></div><div><br></div><div>Any of the the above can hurt really bad, it can happen, and has already happened many times. Please set up another kind of alternative or offline backup. RAID 5 is mostly about performance and some disk fault tolerance.</div><div>Don&#39;t use it for long term storage, it&#39;s not safe. Any striping / distributed parity scheme will effectively prevent you from recovering your data by most offline means. <br></div><div><br></div><div>If you want something a bit more reliable, that will allow you to recover your data in case your controller fails, at least use mirroring. If possible, mirror to more disks, not just 1:1. I would rather setup a rsync job that does the trick during the night.<br></div><div>Avoid using any kind of striping, that would be really bad.<br></div><div><br></div><div>Also, disks of the same production lot of just from the same manufacturer have an eerie tendency to fail reliably in the same manner. Again, you don&#39;t want to lose two disks within hours, even if you do pure mirroring. <br><br><br></div><div>That&#39;s it. <br></div><div><br></div><div><br></div><div>Bye,</div><div><br></div><div>Inverse<br></div><div> <br></div><div><br></div></div><div class="gmail_extra"><br><div class="gmail_quote">On Fri, Jun 22, 2018 at 4:39 PM, CL <span dir="ltr">&lt;<a rel="nofollow" href="mailto:az.4tlug@example.com" target="_blank">az.4tlug@example.com</a>&gt;</span> wrote:<br><blockquote class="gmail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">Got a bit of a head scratcher going on and, now that I have read <br>
+everything I can find on the subject, I feel as though I know less now <br>
+than when I started.  I am building / rebuilding a torrenting box.  I <br>
+have the following parts, but don&#39;t know how to put it all together ... <br>
+or whether I can ... to get the setup I think I want.  Can anyone <br>
+suggest a possible working setup.  I am not sure I have all of the <br>
+software required or that I have hardware bits connected to the right <br>
+other hardware.<br>
+<br>
+O/S is Lubuntu 18.04.  No RAID or LVM drivers are installed.<br>
+<br>
+The hardware is:<br>
+<br>
+- ASUS Motherboard (8-core AMD 8370e) with AMD SB950 chipset, which <br>
+permits setting up hardware RAIDs (0, 1, 5, 10) and six onboard SATA3 <br>
+slots. BIOS is the latest version.<br>
+<br>
+- SATA control is set to RAID in BIOS, but that does not seem to have <br>
+any effect in the current setup.<br>
+<br>
+- A Kuroto Shikou 10-port SATA3 controller card which is mounted in the <br>
+second PCIe x16 slot (x4) (and which reports it is AHCI<br>
+<br>
+Disks:<br>
+<br>
+- My boot disk is a 120Gb Samsung SSD<br>
+<br>
+- Optiarc CD/DVD R/W<br>
+<br>
+- Six Toshiba 3Tb HDDs, which I want to use to make a hardware RAID 5 <br>
+long-term storage disk.<br>
+<br>
+- A 2.5 and a 4Tb for current incoming and pre-sorting (and because I <br>
+had them and they&#39;re free extra storage on which I can place stuff I <br>
+want to review immediately or soon before placing in &quot;deep&quot; storage).<br>
+<br>
+What I want to do is have my O/S on the SSD, receive incoming data on <br>
+the two &quot;other disks&quot; and organize, sort and catalogue data to be <br>
+logically stored on the RAID.<br>
+<br>
+Right now, I have the CD/DVD, SSD, 2.5Tb and 4.0Tb connected to <br>
+motherboard slots and I have the six HDDs I want to use for the RAID <br>
+connected to the controller card.<br>
+<br>
+EXCEPT:<br>
+<br>
+When I boot up, I can only see two of the controller card mounted HDDs.  <br>
+I&#39;ve tried switching the cables around and I have two ten-packs of SATA3 <br>
+cables that I&#39;ve switched in and out with no change.  I can remove all <br>
+of the 3Tb RAID HDDs and start / view them individually in Lubuntu when <br>
+they&#39;re mounted in a USB chassis.  I have changed cables around and can <br>
+always see two, but not always the same two.<br>
+<br>
+In the course of researching the problem, and before I sent this, I <br>
+found an AMD report on the SB950 chipset which says that it can only be <br>
+used for hardware RAIDs of four disks or less, which means that I should <br>
+be trying to make a software RAID from the six HDDs.<br>
+<br>
+The Windows solution is to plug all HDD and SSDs into the controller <br>
+card and to start all operations from the card rather than the <br>
+motherboard (which seems to me to be creating an electron bottleneck).  <br>
+Is that also the Ubuntu solution?<br>
+<br>
+Does RAID / LVM software play a role that I haven&#39;t understood or <br>
+figured out until now?<br>
+<br>
+I feel as though the answer is staring me in the face, but I am not <br>
+seeing it.<br>
+<span class="HOEnZb"><font color="#888888"><br>
+CL<br>
+<br>
+<br>
+-- <br>
+To unsubscribe from this mailing list, <br>
+please see the instructions at <a rel="nofollow" href="http://lists.tlug.jp/list.html" rel="noreferrer" target="_blank">http://lists.tlug.jp/list.html</a><br>
+<br>
+The TLUG mailing list is hosted by ASAHI Net, provider of mobile and<br>
+fixed broadband Internet services to individuals and corporations.<br>
+Visit ASAHI Net&#39;s English-language Web page: <a rel="nofollow" href="http://asahi-net.jp/en/" rel="noreferrer" target="_blank">http://asahi-net.jp/en/</a></font></span></blockquote></div><br><br clear="all"><br>-- <br><div class="gmail_signature" data-smartmail="gmail_signature">&quot;In a sea of glass shards, I hear you screaming&quot;<br>--icchan</div>
+</div>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00038" href="msg00038.html">[tlug] White Box: Some Assembly Required ...</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00077.html">Re: [tlug] Bogus Japanese zipfiles [was: Kudos to Jim Breen]</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00079.html">Re: [tlug] Bogus Japanese zipfiles [was: Kudos to Jim Breen]</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00042.html">Re: [tlug] White Box: Some Assembly Required ...</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00080.html">Re: [tlug] White Box: Some Assembly Required ...</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00078"><strong>Date</strong></a></li>
+<li><a href="threads.html#00078"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

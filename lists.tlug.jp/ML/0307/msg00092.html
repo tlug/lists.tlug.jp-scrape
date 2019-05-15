@@ -1,0 +1,186 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] mount: /dev/cdrom is not a valid block device -->
+<!--X-From-R13: Eunja <wninwhaxvrNxblheh.pbz> -->
+<!--X-Date: Fri, 11 Jul 2003 17:25:33 +0900 -->
+<!--X-Message-Id: oprr40cvq60fabl5@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00091.html">Date Prev</a>][<a href="msg00094.html">Date Next</a>][<a href="msg00112.html">Thread Prev</a>][<a href="msg00094.html">Thread Next</a>][<a href="maillist.html#00092">Date Index</a>][<a href="threads.html#00092">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] mount: /dev/cdrom is not a valid block device</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 11 Jul 2003 17:25:33 +0900</li>
+<li><strong>From</strong>: <strong>Shawn &lt;<A HREF="mailto:javajunkie@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20mount%3A%20%2Fdev%2Fcdrom%20is%20not%20a%20valid%20block%20device">javajunkie@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] mount: /dev/cdrom is not a valid block device</strong></li>
+<li>User-agent: Opera7.11/Linux M2 build 406</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hello,
+
+On RH8.0 my cdrom stopped functioning with a &quot;mount: /dev/cdrom&quot; is not a 
+valid block device error message.
+
+To make sure that my system is finding your cdrom drive when it boots.
+I did dmesg | less which showed me that it was &quot;hdc: SONY CD-RW CRX140E, 
+ATAPI CD/DVD-ROM drive&quot;, but also gave me a &quot;hdc: driver not present&quot; 
+message.
+
+Why? I need SCSI-emulation to burn a CD with a burner don't I?  How can I 
+check if I have that?  How can I configure it?
+
+(somewhat of a newby, haven't ever complied a kernel)
+
+I am guessing from the following and the info below that for some reason 
+SCSI-emulation has been turned off or removed. But I really am not sure. 
+Any help please (even if just to let me know I am really really off-track)?
+
+/sbin/lsmod | grep cd
+ide-cd 30632 0
+cdrom 30208 0 [sr_mod ide-cd]
+ehci-hcd 15464 0 (unused)
+usbcore 69664 1 [usb-storage hid usb-uhci ehci-hcd usb-ohci]
+
+
+
+/sbin/lsmod | grep ide
+ide-cd                 30632   0
+cdrom                  30208   0 [sr_mod ide-cd]
+
+******the following was found in my searches *********
+As
+suggested, you could use SCSI-emulation, which is necessary for burning CDs
+with a burner, but not necessary for read-only drives. It's simpler to
+stick with the IDE CD driver.
+
+
+The source of your &quot;driver not present&quot; error message is the ide_open()
+function in /usr/src/linux/drivers/ide/ide.c.  Even if you don't know C,
+it's not too hard to understand:
+
+
+static int ide_open (struct inode * inode, struct file * filp)
+{
+ide_drive_t *drive;
+...
+if (drive-&gt;driver == NULL) {
+if (drive-&gt;media == ide_disk)
+(void) request_module(&quot;ide-disk&quot;);
+if (drive-&gt;scsi)
+(void) request_module(&quot;ide-scsi&quot;);
+if (drive-&gt;media == ide_cdrom)
+(void) request_module(&quot;ide-cd&quot;);
+if (drive-&gt;media == ide_tape)
+(void) request_module(&quot;ide-tape&quot;);
+if (drive-&gt;media == ide_floppy)
+(void) request_module(&quot;ide-floppy&quot;);
+}
+
+-- 
+Shawn
+
+Happily using M2, Opera's revolutionary e-mail client: 
+<A  HREF="http://www.opera.com/m2/">http://www.opera.com/m2/</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00094" href="msg00094.html">Re: [tlug] mount: /dev/cdrom is not a valid block device</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00091.html">Re: [tlug] keitai encodings</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00094.html">Re: [tlug] mount: /dev/cdrom is not a valid block device</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00112.html">Re: [tlug] keitai encodings</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00094.html">Re: [tlug] mount: /dev/cdrom is not a valid block device</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00092"><strong>Date</strong></a></li>
+<li><a href="threads.html#00092"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

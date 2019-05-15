@@ -1,0 +1,74 @@
+# Copyright 1999-2008 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/app-editors/xemacs/xemacs-21.4.21.ebuild,v 1.7 2008/02/02 13:24:26 graaff Exp $
+
+inherit autotools eutils
+
+DESCRIPTION="highly customizable open source text editor and application development system"
+HOMEPAGE="http://www.xemacs.org/"
+SRC_URI="http://ftp.xemacs.org/pub/xemacs/beta/${P}.tar.gz"
+
+LICENSE="GPL-2"
+SLOT="0"
+KEYWORDS="~x86"
+IUSE=""
+
+DEPEND="virtual/libc
+	!virtual/xemacs
+	>=sys-libs/zlib-1.1.4
+	>=dev-libs/openssl-0.9.6
+	>=media-libs/audiofile-0.2.3
+	>=sys-libs/ncurses-5.2
+	>=app-admin/eselect-emacs-0.7-r1"
+
+PDEPEND="app-xemacs/xemacs-base"
+
+PROVIDE="virtual/xemacs"
+
+src_install() {
+	emake prefix="${D}"/usr \
+		mandir="${D}"/usr/share/man/man1 \
+		infodir="${D}"/usr/share/info \
+		install gzip-el || die "emake install failed"
+
+	# Rename some applications installed in bin so that it is clear
+	# which application installed them and so that conflicting
+	# packages (emacs) can't clobber the actual applications.
+	# Addresses bug #62991.
+	for i in b2m ctags etags rcs-checkin ; do
+		mv "${D}"/usr/bin/${i} "${D}"/usr/bin/${i}-xemacs || die "mv ${i} failed"
+	done
+
+	# rename man pages
+	for i in ctags etags; do
+		mv "${D}"/usr/share/man/man1/${i}{,-xemacs}.1 || die "mv ${i}.1 failed"
+	done
+
+	# install base packages directories
+	dodir /usr/lib/xemacs/xemacs-packages/
+	dodir /usr/lib/xemacs/site-packages/
+	dodir /usr/lib/xemacs/site-modules/
+	dodir /usr/lib/xemacs/site-lisp/
+
+	# remove extraneous info files
+	cd "${D}"/usr/share/info
+	rm -f dir info.info texinfo* termcap* standards*
+
+	cd "${S}"
+	dodoc BUGS CHANGES-* ChangeLog GETTING* INSTALL PROBLEMS README*
+	dodoc "${FILESDIR}"/README.Gentoo
+
+	insinto /usr/share/pixmaps
+	newins "${S}"/etc/${PN}-icon.xpm ${PN}.xpm
+
+	insinto /usr/share/applications
+	doins "${FILESDIR}"/${PN}.desktop
+}
+
+pkg_postinst() {
+	eselect emacs update --if-unset
+}
+
+pkg_postrm() {
+	eselect emacs update --if-unset
+}

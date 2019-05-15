@@ -1,0 +1,166 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Simple rm question -->
+<!--X-From: Rex Walters <rex@example.com> -->
+<!--X-Date:  Wed, 30 Sep 1998 22:59:47 +0900 -->
+<!--X-Message-Id: 19980930225939.C7262@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 36120F3C.16C8A86A@example.com -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.980930205624.16412d&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00978.html">Date Prev</A>][<A HREF="msg00980.html">Date Next</A>][<A HREF="msg00970.html">Thread Prev</A>][<A HREF="msg00980.html">Thread Next</A>][<A HREF="maillist.html#00979">Date Index</A>][<A HREF="threads.html#00979">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Simple rm question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>tlug &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Simple rm question</strong></LI>
+<LI><strong>From</strong>: <strong>Rex Walters &lt;<A HREF="mailto:rex@example.com">rex@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 30 Sep 1998 22:59:39 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00970.html">Pine.LNX.3.96LJ1.1b7.980930205624.16412d-100000@example.com</A>&gt;; from Scott Stone on Wed, Sep 30, 1998 at 08:56:57PM +0900</LI>
+<LI>Mail-Followup-To: tlug &lt;tlug@example.com&gt;</LI>
+<LI>References: &lt;<A HREF="msg00967.html">36120F3C.16C8A86A@example.com</A>&gt; &lt;<A HREF="msg00970.html">Pine.LNX.3.96LJ1.1b7.980930205624.16412d-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Sep 30, 1998 at 08:56:57PM +0900, Scott Stone wrote:
+&gt; On Wed, 30 Sep 1998, Neil Booth wrote:
+&gt; 
+&gt; &gt; Why, when I'm logged in as myself, can I delete root-owned, read-only
+&gt; &gt; files using rm?
+&gt; &gt; 
+&gt; &gt; I get asked for confirmation like "delete XYZ, overriding mode 0644?"
+&gt; &gt; 
+&gt; &gt; There must be a setting somewhere to stop this, as it seems a basic
+&gt; &gt; security hole. Couldn't find anything in the man pages.
+&gt; 
+&gt; It's because you own and have write permission in the directory containing
+&gt; the file.  It's like playing Go - root has a group with only one eye, and
+&gt; you've got it surrounded :)
+
+Ye, Gods!  I should never have showed him the game.  &lt;shake head&gt;
+
+Anyway, Neil, both "files" and "directories" in Unix filesystems use
+something called an "inode" as the primary data structure.  A directory
+is indistinguishable from a file -- they are really the same thing.  The
+only difference is that the contents (the data blocks pointed to from
+the inode) of a directory contain a table, where each row in the table
+contains a name and a pointer to an inode.  The contents of a file, of
+course, are just arbitrary data.  To remove a file from the directory
+you must delete a row in the table.
+
+One surprising result is that to rm a file -- actually the unlink()
+system call under the covers -- you have to modify the contents of the
+parent directory, NOT the file's contents itself.  (Actually one
+modification is made to the file's inode: the nlink counter is reduced
+by one -- if it goes to zero the datablocks and inode are reclaimed).
+
+Most modern Unix systems add a wrinkle: if the sticky bit is set on the
+directory (chmod +t /path/to/dir) only the owner of a file may delete
+it.
+
+My favorite write-up of Unix filesystems is in the BSD 4.4 Operating
+System Internals book (or whatever it's called -- the one with the
+little devil on the cover).
+
+Regards,
+-- 
+Rex
+---------------------------------------------------------------
+Next Meeting: 10 October, 12:30 Tokyo Station Yaesu central gate
+Featuring the IMASY Eng. Team on "IPv6 - The Next Generation IP"
+Next Nomikai: 20 November, 19:30  Tengu TokyoEkiMae 03-3275-3691
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00967" HREF="msg00967.html">tlug: Simple rm question</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00970" HREF="msg00970.html">Re: tlug: Simple rm question</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00978.html">Re: tlug: Odd little e-mail problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00980.html">Re: tlug: Simple rm question</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00970.html">Re: tlug: Simple rm question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00980.html">Re: tlug: Simple rm question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00979"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00979"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

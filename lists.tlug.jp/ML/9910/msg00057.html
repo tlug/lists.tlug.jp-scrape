@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: gcc use -->
+<!--X-From: Muni <fukudam@example.com> -->
+<!--X-Date:  Sun, 10 Oct 1999 12:19:29 +0900 -->
+<!--X-Message-Id: 3800064C.A3BA2CBF@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 19991008155717R.atomita@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00056.html">Date Prev</A>][<A HREF="msg00058.html">Date Next</A>][<A HREF="msg00044.html">Thread Prev</A>][<A HREF="msg00058.html">Thread Next</A>][<A HREF="maillist.html#00057">Date Index</A>][<A HREF="threads.html#00057">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: gcc use</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>Alberto Tomita &lt;<A HREF="mailto:atomita@example.com">atomita@example.com</A>&gt;, <A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: gcc use</strong></LI>
+<LI><strong>From</strong>: <strong>Muni &lt;<A HREF="mailto:fukudam@example.com">fukudam@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 09 Oct 1999 23:21:48 -0400</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Organization: STWing</LI>
+<LI>References: &lt;19991008155717R.atomita@example.com&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Alberto Tomita wrote:
+&gt; 
+&gt; &gt; Hi, I'm a newbie in linux (just installed Vine Linux last week).
+&gt; &gt;  Well, I wanted to learn OpenGL programming, so I downloaded stuffs like
+&gt; &gt;  GL lib and include files from MESA site. The HOWTO says that I'm
+&gt; &gt;  supposed to copy all the GLlib and includes in /usr/local/lib and
+&gt; &gt;  /usr/local/includes respectively.  Then I tested with demos and they
+&gt; &gt;  didn't run.. So I copied the lib and includes again from the original
+&gt; &gt;  to /usr/lib and /usr/includes. And this time, it worked fine. All the
+&gt; &gt;  demos (except ones which need hardware acceleration) ran.
+&gt; 
+&gt; There are two different issues: error at runtime and error at compilation
+&gt; time.
+&gt; 
+&gt; The first can be solved by indicating the path to the dynamic libraries.
+&gt; Edit your /etc/ld.so.conf and add a line pointing to /usr/local/lib.
+&gt; Mine looks like:
+&gt; 
+&gt;    /usr/X11R6/lib
+&gt;    /usr/lib
+&gt;    /usr/i486-linux-libc5/lib
+&gt;    /usr/local/lib
+&gt; 
+&gt; To compile including the new libraries, you have to tell gcc not only
+&gt; which ones to include (as someone already wrote) but also where to
+&gt; find them. Give the path to the libraries with the -L option:
+&gt; 
+&gt;    gcc ... -L/usr/local/lib ...
+&gt; 
+&gt; If it still doesn't work, please post again to the TLUG list telling us
+&gt; what happened.
+
+   First of all, thanks for the advice.
+
+   Well, interestingly it still didn't work after I edited
+/etc/ld.so.conf
+to include "/usr/local/lib" (after I erased the lib and includes from
+/usr/lib ). When I tried to run the demo, it returned:
+$ ./gears
+./gears: error in loading shared libraries
+libglut.so.3: cannot open shared object file: No such file or directory
+
+   Hmm, I don't know why...   The demos only run when I put all the lib
+and includes in /usr/lib, but not /usr/local/lib.  Is there anything
+else
+I'm supposed to do after editing /etc/ld.so.conf??? (Well, I guess it's
+ok
+since it runs using /usr/lib)
+
+   And compiling doesn't work either.  Here's the result:
+$ gcc -o hello hello.c -lMesaGLU -lMesaGL -lXext -lXmu -lX11 -lm
+-L/usr/lib
+ld: cannot open -lXext: No such file or directory
+
+$ gcc -L/usr/lib hello.c -lMesaGLU -lMesaGL -lXext -lXmu -lX11 -lm
+ld: cannot open -lXext: No such file or directory
+
+
+------------------------------------------------------------------------
+Munenari Fukuda                           "Methodology, like sex,is
+School of Engineering &amp; Applied Science    better demonstrated than
+University of Pennsylvania                 discussed, though often
+e-mail : fukudam@example.com          better anticipated than
+address: Box 747, Harrison                 experienced."
+         3910 Irving Street                   --Edward Leamer
+         Philadelphia, PA 19104
+------------------------------------------------------------------------
+-------------------------------------------------------------------
+Next Technical Meeting: October 9 (Sat), 13:30   place: Temple Univ.
+* Linux Internationalisation Initiative (Li18nux) speaker: Akio Kido
+* Japanese TrueType Fonts                     speaker: Adrian Havill
+Next Technical Meeting: November 13 (Sat), 13:30 place: Temple Univ.
+* Network Security                               speaker: Steve Baur
+Next Nomikai:  December 17 (Fri), 19:00 Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00058" HREF="msg00058.html">Re: tlug: gcc use</A></STRONG>
+<UL><LI><EM>From:</EM> "J. David Beutel" &lt;jdb@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00056.html">tlug: libwcsmbs thing</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00058.html">Re: tlug: gcc use</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00044.html">Re: tlug: gcc use</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00058.html">Re: tlug: gcc use</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00057"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00057"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

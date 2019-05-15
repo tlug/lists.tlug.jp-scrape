@@ -1,0 +1,186 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug]  Making my LAN a passwordless zone -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Fri, 10 Jul 2009 01:52:58 +0900 -->
+<!--X-Message-Id: 8763e1n6jj.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4A55DA40.2060202@articlass.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00063.html">Date Prev</a>][<a href="msg00065.html">Date Next</a>][<a href="msg00061.html">Thread Prev</a>][<a href="msg00065.html">Thread Next</a>][<a href="maillist.html#00064">Date Index</a>][<a href="threads.html#00064">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug]  Making my LAN a passwordless zone</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 10 Jul 2009 01:51:43 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Making%20my%20LAN%20a%20passwordless%20zone">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug]  Making my LAN a passwordless zone</strong></li>
+<li>References: &lt;<a href="mailto:4A55DA40.2060202@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20%20Making%20my%20LAN%20a%20passwordless%20zone">4A55DA40.2060202@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+
+ &gt; Sometimes I run programs via ssh from one computer to another.
+ &gt; Thing is, when I do that, I have to start it from the command line
+ &gt; and enter a password, like so:
+ &gt; 
+ &gt; ssh -X media@example.com amarokapp
+ &gt; 
+ &gt; I'd really rather just set up icon shortcuts and not have to worry about 
+ &gt; passwords.
+
+If once per session is acceptable, then the following procedure is
+secure:
+
+(1) Install OpenSSH.  (Done, I assume, but there are other
+    implementations available.  The following is only known to be
+    correct spelling for OpenSSH.)
+
+(2) Create a public key, private key pair with &quot;ssh-keygen&quot;.  IIRC you
+    can just invoke the command, but you may need to specify the type
+    and location.  The four-part harmony version is
+
+    $ mkdir ~/.ssh
+    $ ssh-keygen -t rsa ~/.ssh/id_rsa
+
+    This will create the private and public keys in ~/.ssh/id_rsa and
+    ~/.ssh/id_rsa.pub, and these will automatically be read by ssh on
+    startup.  However, you can only use them by entering the
+    passphrase, and if you only use ssh, this must be done every time.
+
+    &quot;-t rsa&quot; is preferred because RSA1 is known to be weak, and DSA
+    had a configuration problem on Debian making it trivially weak,
+    and many sites (such as Debian's own development hosts) prohibit
+    use of DSA keys.  If you're *sure* you'll never use it except on
+    hosts you control, then which v2 key type you use doesn't matter
+    so much.
+
+   Choose a nice long passphrase, with either a couple of nonsense
+   strings that don't even look like words or several different
+   languages mixed together.
+
+(3) Copy the public key to ~/.ssh/id_rsa.pub on all hosts you wish to
+    log in to.  Copy the private key to ~/.ssh/id_rsa on all hosts
+    whose keyboard you will actually touch.  (You could have separate
+    keys for each host, but this would only make sense if you give
+    them separate passwords.)
+
+(4) Run the reconfiguration utility for OpenSSH and make sure that the
+    SSH agent is enabled.
+
+(5) At the start of each session, run &quot;ssh-add&quot;, and type in your
+    pass phrase.  Use &quot;ssh -A ...&quot; to login in to remote hosts from
+    which you might use ssh, or enable &quot;agent forwarding&quot; in the
+    ~/.ssh/config file on the *origin* host.
+
+If you really want no passwords at all, not even once a session (which
+could last many days if you sleep instead of shut down), then you need
+to enable &quot;RSA-based host authentication&quot; in /etc/sshd_config (or
+something like that, man sshd will probably tell you where the
+sshd_config file lives) on all hosts you will log in to, and also on
+the hosts you use SSH from.  You will need to set up a host key, I
+believe.  You use ssh-keygen for that, too.
+
+You can also have personal keys with no pass phrase.  I don't
+recommend this.
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00059" href="msg00059.html">[tlug] Making my LAN a passwordless zone</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00063.html">[tlug] How to use eMobile Huawei USB dongles (with Asashi net)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00065.html">Re: [tlug] Making my LAN a passwordless zone</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00061.html">Re: [tlug] Making my LAN a passwordless zone</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00065.html">Re: [tlug] Making my LAN a passwordless zone</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00064"><strong>Date</strong></a></li>
+<li><a href="threads.html#00064"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

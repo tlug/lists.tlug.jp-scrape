@@ -1,0 +1,179 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: tiger script FAIL w/ pop2 -->
+<!--X-From: Karl&#45;Max Wagner <karlmax@example.com> -->
+<!--X-Date: Wed, 25 Mar 1998 17:54:39 &#45;0500 (EST) -->
+<!--X-Message-Id: 199803251608.QAA00441@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 13591.31982.673577.613079@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00635.html">Date Prev</A>][<A HREF="msg00637.html">Date Next</A>][<A HREF="msg00599.html">Thread Prev</A>][<A HREF="msg00602.html">Thread Next</A>][<A HREF="maillist.html#00636">Date Index</A>][<A HREF="threads.html#00636">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: tiger script FAIL w/ pop2</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: tiger script FAIL w/ pop2</strong></LI>
+<LI><strong>From</strong>: <strong>Karl-Max Wagner &lt;<A HREF="mailto:karlmax@example.com">karlmax@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 25 Mar 1998 16:08:44 +0000 (GMT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00599.html">13591.31982.673577.613079@example.com</A>&gt; from "Stephen J. Turnbull" at Mar 24, 98 06:32:54 pm</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt; 
+&gt; &gt;&gt;&gt;&gt;&gt; "Jim" == Jim Tittsler &lt;jwt-tlug@example.com&gt; writes:
+&gt; 
+&gt;     Jim&gt; On Mon, Mar 23, 1998 at 10:15:35PM +0900, Jim Schweizer
+&gt;     Jim&gt; wrote:
+&gt;     &gt;&gt; # Checking services from /etc/services.  --FAIL-- [inet003f]
+&gt;     &gt;&gt; The port for service pop-2 is assigned to service pop2.
+&gt; 
+&gt;     Jim&gt; I'm only guessing... but it may be because of the
+&gt;     Jim&gt; inconsistency of /etc/services (which refers to the service
+&gt;     Jim&gt; as pop-2) and /etc/inetd.conf (which calls it pop2 in your
+&gt;     Jim&gt; quoted example).
+&gt; 
+&gt; Caveat:  I don't know the internals of the tiger script.
+&gt; 
+&gt; However, the primary name of each service should be the one that is
+&gt; registered with the IANA.  You can put variants in as aliases if
+&gt; you're dependent on it.
+&gt; 
+&gt; I think the main thing is that any unknown service down in privileged
+&gt; land is possibly a hole, because only root is supposed to use those
+&gt; ports; if somebody finds there way in there it could be bad....
+That tiger stuff is REAL GOOD I guess.....it saved you a lot of
+work ! Apparently in your inetd.conf and in your services file
+the writing of pop2 is different: pop-2 in one and pop2 in the
+other. Replace that pop-2 thingy by pop2 and everything is OK.
+tiger apparently checks all options - even those that are
+commented out. Good !!!! This saves you a few headaches in case
+you activate a new service. I once had this kind of problem with
+pop3 - had pop-3 in inetd.conf and pop3 in services. The
+conseqience was that I couldn't connect to the pop3 port. It
+took me quite some time to find that out - I had some machines
+which worked and others that didn't - GRRR !!!!! Due to some
+obscure reason those that didn't pop had the above problems. I
+didn't know about tiger at the time.
+
+Here a short explanation what those files are good for:
+
+inetd is the Internet - superserver. It listens on all ports
+given to it in inetd.conf and starts the appropriate service as
+soon as a call is received on a port ( the name of the
+corresponding service daemon is also given in inetd.conf ). This
+eliminates the need to run all those service daemons all the
+time and thus saves computing time. However, these ports are
+given by their name. The services file is a translation list
+translating the service names into their respective socket port
+numbers. So the names in both files have to correspond - or nogo !
+
+BTW, all services that run directly ( like sendmail and innd )
+have to be _commented out_ in inetd.conf or inetd competes for
+those ports with the directly running service daemons - which
+ensues normally in the service daemon dying immediately (some
+years ago we had that problem with innd and it took us quite a
+bit of time to figure out why). So watch out !
+
+Hope that helps.
+
+                                  Karl-Max Wagner
+                                  karlmax@example.com
+---------------------------------------------------------------
+Next TLUG Meeting: 11 April Sat, Tokyo Station Yaesu gate 12:30
+Featuring Tague Griffith of Netscape i18n talking on source code
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00599" HREF="msg00599.html">Re: tlug: tiger script FAIL w/ pop2</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00635.html">Re: tlug: serious aic7xxx driver bug</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00637.html">RE: tlug: Cathedral and Bazar</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00599.html">Re: tlug: tiger script FAIL w/ pop2</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00602.html">Re: tlug: tiger script FAIL w/ pop2</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00636"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00636"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

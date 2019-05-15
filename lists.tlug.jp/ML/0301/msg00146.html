@@ -1,0 +1,237 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Finding Device Assignment -->
+<!--X-From-R13: [nep Quevfgrafra <znepNzrpjbexf.pbz> -->
+<!--X-Date: Fri, 17 Jan 2003 09:03:49 &#45;0700 -->
+<!--X-Message-Id: 200301170903.49028.marc@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030117.172946.71089163.acmuller@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00145.html">Date Prev</a>][<a href="msg00147.html">Date Next</a>][<a href="msg00165.html">Thread Prev</a>][<a href="msg00147.html">Thread Next</a>][<a href="maillist.html#00146">Date Index</a>][<a href="threads.html#00146">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Finding Device Assignment</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 17 Jan 2003 09:03:49 -0700</li>
+<li><strong>From</strong>: <strong>Marc Christensen &lt;<A HREF="mailto:marc@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Finding%20Device%20Assignment">marc@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Finding Device Assignment</strong></li>
+<li>References: &lt;<a href="msg00139.html">20030117.172946.71089163.acmuller@example.com</a>&gt;</li>
+<li>Organization: Mecworks Engineering and Consulting</li>
+<li>User-agent: KMail/1.4.3</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Friday 17 January 2003 01:29, Charles Muller wrote:
+&gt; I just installed an external SCSI hard drive, and would like to assign it
+&gt; some mounting specifications in FSTAB, but I don't know how the Linux
+&gt; system identified it when I installed it (such as /dev/sda5, etc.). This is
+&gt; on RH 8.0, and I can normally get this information with the RH Hardware
+&gt; Browser applet, but this applet is broken at the moment (I'm still waiting
+&gt; for my answer from RHN support as to how to fix it). Is there somewhere
+&gt; else that this information might be accessible without the RH Browser?
+
+Chuck,
+
+From the command line:
+
+For SCSI devices, you can 'cat /proc/scsi/scsi' which gives output like this:
+
+  virtual0:/home/marc &gt; cat /proc/scsi/scsi
+  Attached devices:
+  Host: scsi0 Channel: 00 Id: 00 Lun: 00
+    Vendor: Quantum  Model: XP32150          Rev: L912
+    Type:   Direct-Access                    ANSI SCSI revision: 02
+  Host: scsi0 Channel: 00 Id: 03 Lun: 00
+    Vendor: PLEXTOR  Model: CD-R   PX-W1210S Rev: 1.00
+    Type:   CD-ROM                           ANSI SCSI revision: 02
+
+The harddrive listed above will be /dev/sda.  The CD-ROM will be /dev/sg1 
+(second generic SCSI device).  If there were another HD following the CD-ROM, 
+it would be /dev/sdb as the sd* refer only to hard disks.  The sg* device 
+listings follow _all_ SCSI devices so in our example, if there were another 
+HD that followed the CD-ROM then a scanner, making a total of 4 SCSI devices, 
+the scanner would be /dev/sg3.  The hard drives also take up an sg* address 
+(first hard drive listed above is /dev/sg0) but are not typicaly accessed 
+using that device listing.  Historicaly, there also used to be links in /dev 
+named sga, sgb, sgc, etc pointing to sg0, sg1, sg2, and so on.
+
+'dmesg' output can also give you some information on scsi devices.
+
+More detailed information can be given about what devices are on an individual 
+controller.  This output is from catting /proc/scsi/BusLogic/0 (the first 
+Buslogic controller.  Not all drivers provide such verbose statistics:
+
+
+virtual0:/home/marc &gt; cat /proc/scsi/BusLogic/0
+***** BusLogic SCSI Driver Version 2.1.15 of 17 August 1998 *****
+Copyright 1995-1998 by Leonard N. Zubkoff &lt;lnz@example.com&gt;
+Configuring BusLogic Model BT-930 PCI Ultra SCSI Host Adapter
+  Firmware Version: 5.02, I/O Address: 0xD800, IRQ Channel: 9/Level
+  PCI Bus: 1, Device: 9, Address: 0xFF8FF000, Host Adapter SCSI ID: 7
+  Parity Checking: Enabled, Extended Translation: Enabled
+  Synchronous Negotiation: UFSFFFF#, Wide Negotiation: Disabled
+  Disconnect/Reconnect: Enabled, Tagged Queuing: Enabled
+  Driver Queue Depth: 255, Scatter/Gather Limit: 128 segments
+  Tagged Queue Depth: Automatic, Untagged Queue Depth: 3
+  Error Recovery Strategy: Default, SCSI Bus Reset: Enabled
+  SCSI Bus Termination: Enabled, SCAM: Disabled
+*** BusLogic BT-930 Initialized Successfully ***
+
+Target 0: Queue Depth 28, Synchronous at 10.0 MB/sec, offset 15
+Target 3: Queue Depth 3, Synchronous at 10.0 MB/sec, offset 15
+
+Current Driver Queue Depth:     255
+Currently Allocated CCBs:       35
+
+
+                           DATA TRANSFER STATISTICS
+
+Target  Tagged Queuing  Queue Depth  Active  Attempted  Completed
+======  ==============  ===========  ======  =========  =========
+   0        Active           28         0          225        225
+   3    Not Supported         3         0        14279      14279
+
+Target  Read Commands  Write Commands   Total Bytes Read    Total Bytes 
+Written
+======  =============  ==============  ===================  
+===================
+   0             72            146                 675840              3620864
+   3          13923              0              602550272                    0
+
+Target  Command    0-1KB      1-2KB      2-4KB      4-8KB     8-16KB
+======  =======  =========  =========  =========  =========  =========
+   0     Read            0         36          0         14          4
+   0     Write           0          0          0         56         22
+   3     Read            0          0       3490         19        435
+   3     Write           0          0          0          0          0
+
+Target  Command   16-32KB    32-64KB   64-128KB   128-256KB   256KB+
+======  =======  =========  =========  =========  =========  =========
+   0     Read            4         14          0          0          0
+   0     Write          16         31         21          0          0
+   3     Read         1018        840       8121          0          0
+   3     Write           0          0          0          0          0
+
+
+                           ERROR RECOVERY STATISTICS
+
+          Command Aborts      Bus Device Resets   Host Adapter Resets
+Target  Requested Completed  Requested Completed  Requested Completed
+  ID    \\\\ Attempted ////  \\\\ Attempted ////  \\\\ Attempted ////
+======   ===== ===== =====    ===== ===== =====    ===== ===== =====
+   0         0     0     0        0     0     0        0     0     0
+   3         0     0     0        0     0     0        0     0     0
+
+External Host Adapter Resets: 0
+Host Adapter Internal Errors: 0
+
+-- 
+Marc Christensen
+<A  HREF="http://www.mecworks.com">http://www.mecworks.com</A>
+<A  HREF="http://www.mecworks.com/~marc/resume">http://www.mecworks.com/~marc/resume</A>
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00147" href="msg00147.html">Re: [tlug] Finding Device Assignment</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00139" href="msg00139.html">[tlug] Finding Device Assignment</a></strong>
+<ul><li><em>From:</em> Charles Muller</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00145.html">Re: [tlug] Finding Device Assignment</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00147.html">Re: [tlug] Finding Device Assignment</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00165.html">Re: [tlug] Finding Device Assignment</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00147.html">Re: [tlug] Finding Device Assignment</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00146"><strong>Date</strong></a></li>
+<li><a href="threads.html#00146"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

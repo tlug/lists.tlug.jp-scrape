@@ -1,0 +1,206 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Sony VAIO & apm -->
+<!--X-From: Frank Bennett <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Thu, 12 Nov 1998 18:18:40 +0900 -->
+<!--X-Message-Id: m3af1xuv23.fsf@example.com&#45;325.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: m3vhklwmkv.fsf@example.com&#45;325.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Reference-Id: 19981112145626R.chak@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00404.html">Date Prev</A>][<A HREF="msg00406.html">Date Next</A>][<A HREF="msg00389.html">Thread Prev</A>][<A HREF="msg00417.html">Thread Next</A>][<A HREF="maillist.html#00405">Date Index</A>][<A HREF="threads.html#00405">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Sony VAIO &amp; apm</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Sony VAIO &amp; apm</strong></LI>
+<LI><strong>From</strong>: <strong>Frank Bennett &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: 12 Nov 1998 18:20:04 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: "Manuel M. T. Chakravarty"'s message of "Thu, 12 Nov 1998 14:56:26 +0900"</LI>
+<LI>References: &lt;<A HREF="msg00388.html">m3vhklwmkv.fsf@example.com</A>&gt;&lt;<A HREF="msg00389.html">19981112145626R.chak@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Short answers:
+
+  (1) The PHDISK.EXE utility from the VAIO recovery CD can be
+      used to re-create a deleted hibernation-mode partition.
+      Without this partition, the power saving features of the
+      BIOS will behave strangely, so it shouldn't be deleted.
+
+  (2) The kernel for a VAIO 731 should be compiled with "Ignore User
+      Suspend" turned "OFF".
+
+  (3) The commands "apm -s" (or "apm --suspend") and "apm -S" (or
+      "apm --standby") should NEVER be used on a VAIO.  These
+      commands may be the cause of subsequent suspend or standby
+      mode failures; they should be treated (on a VAIO 731) as
+      EVIL.  Use the handy-dandy "processor snooze" and "disk
+      snooze" keys instead; they at least MAY be safe.
+
+Long-winded Posting in Full:
+
+Okay, here's what I've derived from the day's experience (sigh).
+
+I used the PHDISK.EXE utility from the recovery CD for the VAIO
+to create the requisite partition at the tail end of the disk.
+Once this was put in place, the stubborn spin-down and screen
+blanking behavior that I had noted earlier went away, and the
+machine began to behave in accordance with the BIOS settings.
+
+However, the machine did lock up on my first attempt to allow a
+timed backup, and the "apm" utility would put the machine into
+"suspend" (i.e. memory kept alive on battery, with apm -s), but
+not "standby" (i.e. memory saved to disk and system powered down,
+with apm -S).[1] I also had a keyboard lockup after a restore and
+a couple of keystrokes.
+
+Andy Howell suggested that I have a look at the kernel options
+relating to APM, which I did.  Two options seemed potentially
+relevant to my troubles: Ignore User Suspend; and Enable APM at
+Startup.  The former was "OFF" (i.e. don't ignore), and the
+latter was "ON" (i.e. yes do initialize).
+
+I recompiled the kernel with the options reversed (i.e. YES
+ignore user suspend, and NO don't initialize APM).  The result of
+that trial was to disable APM altogether, even via the "suspend"
+and "standby" keys on the keyboard.  Oddly, "apm -s" and "apm -S"
+still seemed to behave as they had with the previous kernel.
+
+I guessed (correctly, it seems) that the Ignore User Suspend
+option was the cause of the disabling of the keyboard options; I
+turned that back OFF and recompiled.  I then torture-tested the
+hibernate feature (hibernating during a kernel compile) about ten
+times with no sign of failure.
+
+I have concluded, tentatively, that "Enable APM at Startup" is
+irrelevant to our problems, that "apm -s" and "apm -S" are evil
+on the VAIO, and that the hardwired keys are safe.
+
+The machine has also been through one timed hibernation in its
+new configuration (which is just the old configuration, minus
+Frank attempting to use those two commands).  The shortest fuse
+that the BIOS allows for this is 5 minutes, so it will take some
+time to work out whether it's truly stable from that angle as
+well.
+
+But (as Steve McQueen said in the Magnificent Seven, quoting some
+poor fella in Denver who found himself falling out of a
+seventh-story window) "So far, so good".
+
+
+[1] Is this correct, or is the BIOS in the VAIO getting these
+backwards?  The words seem to have a meaning opposite to their
+natural sense here.
+
+Cheers,
+-- 
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+
+
+----------------------------------------------------------------
+Next Nomikai: 20 November, 19:30   Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00417" HREF="msg00417.html">Re: tlug: Sony VAIO &amp; apm</A></STRONG>
+<UL><LI><EM>From:</EM> David Dibben &lt;dibben@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00388" HREF="msg00388.html">Re: tlug: Sony VAIO &amp; apm</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00389" HREF="msg00389.html">Re: tlug: Sony VAIO &amp; apm</A></STRONG>
+<UL><LI><EM>From:</EM> "Manuel M. T. Chakravarty" &lt;chak@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00404.html">Re: tlug: Quest for e-mail continues</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00406.html">Re: tlug: Perl linked against libc 5 &amp; 6 on TL2.0J ??</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00389.html">Re: tlug: Sony VAIO &amp; apm</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00417.html">Re: tlug: Sony VAIO &amp; apm</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00405"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00405"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

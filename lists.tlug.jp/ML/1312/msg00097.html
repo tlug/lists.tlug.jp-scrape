@@ -1,0 +1,220 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] using eucjp on Linux -->
+<!--X-From-R13: Ynyva YALVGVODAH <zr.xnyvaNtznvy.pbz> -->
+<!--X-Date: Tue, 24 Dec 2013 13:22:30 +0900 -->
+<!--X-Message-Id: CAKXLc7dotHh9TtDXK+tsV1HygUbM&#45;cy6W4ur0DPms8QSd1ccvw@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20131223213339.GA29849@fluxcoil.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00096.html">Date Prev</a>][<a href="msg00098.html">Date Next</a>][<a href="msg00104.html">Thread Prev</a>][<a href="msg00100.html">Thread Next</a>][<a href="maillist.html#00097">Date Index</a>][<a href="threads.html#00097">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] using eucjp on Linux</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 24 Dec 2013 13:22:08 +0900</li>
+<li><strong>From</strong>: <strong>Kalin KOZHUHAROV &lt;<a href="mailto:me.kalin@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20using%20eucjp%20on%20Linux">me.kalin@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] using eucjp on Linux</strong></li>
+<li>References: &lt;<a href="msg00092.html">20131223213339.GA29849@fluxcoil.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tue, Dec 24, 2013 at 6:33 AM, Christian Horn &lt;chorn@example.com&gt; wrote:
+&gt; I try to get a better understanding on encodings and am puzzled
+&gt; about the following.
+&gt;
+&gt; In a utf8 xterm date and outputting utf8 files works fine, also date:
+&gt;
+&gt;         [chris@hive ~]$ echo $LC_ALL
+&gt;         ja_JP.utf8
+&gt;         [chris@hive ~]$ cat test_utf8
+&gt;         日本語
+&gt;         [chris@hive ~]$ date
+&gt;         2013年 12月 23日 月曜日 22:20:21 CET
+&gt;
+so, works as expected.
+
+Can you try the following in this terminal:
+`LC_ALL=ja_JP.eucjp date|iconv -f eucjp`
+`LC_ALL=ja_JP.eucjp date|xxd`
+
+
+&gt; I converted the file to eucjp,
+&gt;
+to make sure just run `cat test_utf8| iconv -f utf8 -t eucjp` instead
+of converting off-side.
+
+&gt; I think I have the locale,
+&gt;
+Can you confirm by running `locale -a |grep -i euc` ?
+Also what does `locale` show &quot;after the switch&quot; ?
+
+&gt; but I
+&gt; fail to get the eucjp encoded file displayed.  Also the date out-out is not correct:
+&gt;
+&gt;         [chris@hive ~]$ LC_ALL=ja_JP.eucjp luit
+&gt;         [chris@hive ~]$ locale charmap
+&gt;         EUC-JP
+&gt;         [chris@hive ~]$ cat test_eucjp
+&gt;         F|K\8l
+&gt;         [chris@hive ~]$ date
+&gt;         2013G/ 127n 23F| 7nMKF| 22:21:45 CET
+&gt;         [chris@hive ~]$ cat test_utf8
+&gt;         f%f,h*
+&gt;
+&gt; Running these commands in a terminal &quot;xterm -en eucjp&quot;.
+&gt;
+&gt; I think I am missing something.. any ideas?
+&gt;
+quite a few things may be going on... try the above commands and let's see.
+Also for xterm, show the output of `xrdb -q|grep -i XTerm`
+
+These days I use mostly x11-terms/xfce4-terminal, but I just tried the
+following and it works fine:
+
+$ LC_ALL=ja_JP.eucjp xterm
+$ date &lt;-- in the new terminal
+$ date
+2013年 12月 24日 火曜日 13:09:46 JST
+$ date |xxd
+0000000: 3230 3133 c7af 2031 32b7 ee20 3234 c6fc  2013.. 12.. 24..
+0000010: 20b2 d0cd cbc6 fc20 3133 3a30 393a 3437   ...... 13:09:47
+0000020: 204a 5354 0a                              JST.
+
+which is EUC-JP.
+
+Finally after some tinkering, here is a unit test for you to check
+that most things around locales are fine (start from UTF8 locale):
+
+for l in utf8 eucjp sjis; do echo -e &quot;$l\t $(LC_ALL=ja_JP.utf8 date
++%A)&quot;; LC_ALL=ja_JP.$l date +%A|xxd; echo; done
+utf8     火曜日
+0000000: e781 abe6 9b9c e697 a50a                 ..........
+
+eucjp     火曜日
+0000000: b2d0 cdcb c6fc 0a                        .......
+
+sjis     火曜日
+0000000: 89ce 976a 93fa 0a                        ...j...
+
+If you run it today (Tuesday), you may check this as well:
+$ for l in utf8 eucjp sjis; do echo -e &quot;$l\t $(LC_ALL=ja_JP.utf8 date
++%A)&quot;; LC_ALL=ja_JP.$l date +%A|xxd; echo; done|md5sum -c &lt;(echo
+&quot;bc2ec6dc8e941801ee37286c8b28c277  -&quot;)
+-: OK
+(it should print OK, be careful with spaces).
+
+BTW, last time I checked (2-5 years ago) luit is not needed explicitly.
+
+Cheers,
+Kalin.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00100" href="msg00100.html">Re: [tlug] using eucjp on Linux</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00102" href="msg00102.html">Re: [tlug] using eucjp on Linux</a></strong>
+<ul><li><em>From:</em> Jens Oliver John</li></ul></li>
+<li><strong><a name="00105" href="msg00105.html">Re: [tlug] using eucjp on Linux</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+<li><strong><a name="00115" href="msg00115.html">Re: [tlug] using eucjp on Linux</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00092" href="msg00092.html">[tlug] using eucjp on Linux</a></strong>
+<ul><li><em>From:</em> Christian Horn</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00096.html">[tlug]   using eucjp on Linux</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00098.html">Re: [tlug] refurbished Thinkpad X60 with Coreboot &amp; Linux</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00104.html">Re: [tlug] using eucjp on Linux</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00100.html">Re: [tlug] using eucjp on Linux</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00097"><strong>Date</strong></a></li>
+<li><a href="threads.html#00097"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

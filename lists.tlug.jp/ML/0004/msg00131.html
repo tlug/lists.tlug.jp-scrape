@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Making big ones out of little ones [was: tlug: Debian install...] -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Fri, 21 Apr 2000 05:38:41 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000421044019.8425A&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000420103451.2D7FF4055@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00130.html">Date Prev</A>][<A HREF="msg00132.html">Date Next</A>][<A HREF="msg00128.html">Thread Prev</A>][<A HREF="msg00135.html">Thread Next</A>][<A HREF="maillist.html#00131">Date Index</A>][<A HREF="threads.html#00131">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Making big ones out of little ones [was: tlug: Debian install...]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Making big ones out of little ones [was: tlug: Debian install...]</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 21 Apr 2000 05:34:18 +0900 (JST)</LI>
+<LI>cc: <A HREF="mailto:ulrike@example.com">ulrike@example.com</A></LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00128.html">20000420103451.2D7FF4055@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Thu, 20 Apr 2000 ulrike@example.com wrote:
+
+&gt;  &lt;stephen&gt;
+&gt;  
+&gt;  Eg, I'm looking at a 1GB partition
+&gt;  mounted on /usr, and that's just not going to cut it if Debian keeps
+&gt;  adding packages at the current rate.  So I can add 33% free space to
+&gt;  that partition by creating a 500MB partition somewhere (say
+&gt;  /dev/sdb1), formatting it, mounting it to /tmp/share, copying
+&gt;  /usr/share recursively to /tmp/share, then adding
+&gt;  
+&gt;  /dev/sdb1 /usr/share ext2 defaults 0 2
+&gt;  
+&gt;  to /etc/fstab, and doing `diff -rq /usr/share /tmp/share &gt;
+&gt;  /tmp/just-for-grins' to make sure everything's OK before doing rm -rf
+&gt;  /usr/share; mkdir /usr/share; umount /tmp/share; mount /usr/share.
+&gt;  
+&gt;  &lt;/stephen&gt;
+&gt;  
+&gt;  OK, how about this scenario: I tried to install some packages with dselect, and 
+&gt;  before it is finished the drive on which I mounted /usr is 100% full ( which 
+&gt;  confirms my fears about my partitioning). On the other hand the much larger 
+&gt;  drive on which I mounted /var is only 2% full, so I would like to change this, 
+&gt;  swap them if possible. Now before I screw up my not yet really existing system 
+&gt;  if possible I would like to have a confirmation about the following strategy: I 
+&gt;  move /usr to /tmp/usr assuming that /tmp is on the same drive with / which would 
+&gt;  have enough room. Then I exchange /usr and /var in fstab .. ??? No - err - error 
+&gt;  - ??? I won't solve it today, what is the solution? And isn't something missing 
+&gt;  in the example above? Some moving of files at some point?
+
+Dont think any step is missing in Stephen's example.
+
+Still, here is one way to do the swapping. 
+Say, /dev/hda2 is mounted on /usr and /dev/hda3 on /var. You want to
+swap the data on these two partitions and then swap their mount points,
+right?
+
+Boot to single user mode.
+Now move the present contents of /var to /var/varcopy :
+
+cd /var 
+mkdir varcopy 
+mv * varcopy
+
+'mv' may print out some error like varcopy cannot be moved to varcopy
+--- it is nice on the part of mv not to do that, so be happy..
+
+Now you have nothing in /var except one directory /varcopy. we will
+later copy that to /usr. 
+
+Recursively copy the contents of /usr to /var :
+
+cd /usr
+cp -a * /var
+
+If you are paranoic, check that everything is copied. I think it's
+overkill to run diff on all files, but may be you can run diff on the
+outputs of 'ls -lR /usr' and 'ls -lR /var'. Be prepared to find some
+differences like the time stamps on symbolic links.
+   
+Then delete all that's on /usr and copy varcopy/* to /usr:
+(guess deleting /usr cant break the hell loose ...?)
+
+cp -a /varcopy/* /usr
+
+Now edit /etc/fstab to swap the entries for /usr and /var
+(ie . mount /dev/hda3 on /usr and /dev/hda2 on /var. ) and reboot.
+Viola ! 
+
+(Actually you dont have to reboot, only umount /usr and /var and
+remount them as per the new fstab, but rebooting cant hurt.. )
+
+
+
+
+"Was it a vision, or a waking dream 
+ Fled is that music, do I wake or sleep "
+
+i'm half asleep --- sure, no guarantees to  have got it right.. 
+
+Selva
+
+
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00128" HREF="msg00128.html">Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00130.html">Re: tlug: Re: Making big ones out of little ones</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00132.html">Re: tlug: Re: Making big ones out of little ones</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00128.html">Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00135.html">Re: Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00131"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00131"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Redhat Enterprise and PHPs MBSTRING -->
+<!--X-From-R13: "Oyrffnaqeb [nagryyv?VAPWPAJ?" <nyrkNubovobk.arg> -->
+<!--X-Date: Thu, 31 Mar 2005 16:08:05 +0900 -->
+<!--X-Message-Id: 001101c535c0$63357d50$5d00a8c0@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 424B82CA.8050302@example.com -->
+<!--X-Reference: 20050331.154601.778328271.dave@?om -->
+<!--X-Reference: 424BA00A.4020902@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00380.html">Date Prev</a>][<a href="msg00382.html">Date Next</a>][<a href="msg00380.html">Thread Prev</a>][<a href="msg00382.html">Thread Next</a>][<a href="maillist.html#00381">Date Index</a>][<a href="threads.html#00381">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Redhat Enterprise and PHPs MBSTRING</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 31 Mar 2005 16:08:05 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Alessandro Mantelli?HOBIBOX?&quot; &lt;<A HREF="mailto:alex@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Redhat%20Enterprise%20and%20PHPs%20MBSTRING">alex@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Redhat Enterprise and PHPs MBSTRING</strong></li>
+<li>References: &lt;<a href="msg00377.html">424B82CA.8050302@example.com</a>&gt; &lt;<a href="msg00379.html">20050331.154601.778328271.dave@?om</a>&gt; &lt;<a href="msg00380.html">424BA00A.4020902@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+You should use this kind of script, it works both with the contents and with
+the subject fields.
+
+
+ function send_mail($receiver,$subject,$mailcontent) {
+  $sender_mail=sendermail@example.com;
+  $stInputEnc=&quot;SJIS&quot;;
+  $stOutputEnc  = &quot;SJIS&quot; ;
+  $stInternalEnc = &quot;SJIS&quot; ;
+  ini_set( &quot;mbstring.http_input&quot;,           $stInputEnc ) ;
+  ini_set( &quot;mbstring.http_output&quot;,          $stOutputEnc ) ;
+  ini_set( &quot;mbstring.internal_encoding&quot;,    $stInternalEnc ) ;
+  $stHeader =
+  &quot;From: &quot;.mb_encode_mimeheader($sender_mail).&quot;\n&quot;.
+  &quot;MIME-Version: 1.0\n&quot;.
+  &quot;Content-Type: text/plain; charset=\&quot;ISO-2022-JP\&quot;\n&quot;.
+  &quot;Content-Transfer-Encoding: 7bit\n&quot;.
+  &quot;Reply-To: $sender_mail\n&quot;;
+  mb_language( &quot;ja&quot;);
+  mb_send_mail($receiver,  $subject, $mailcontent, $stHeader,&quot;$sender_mail&quot;)
+;
+ }
+
+by the way, I'm using it on debian but it should work anyway
+
+Alex
+
+
+
+----- Original Message ----- 
+From: &quot;Robert Fisher&quot; &lt;robert@example.com&gt;
+To: &quot;David E&quot; &lt;dave@?om&gt;
+Cc: &lt;tlug@example.com&gt;
+Sent: Thursday, March 31, 2005 4:00 PM
+Subject: Re: [tlug] Redhat Enterprise and PHPs MBSTRING
+
+
+&gt; David E wrote:
+&gt;
+&gt; &gt;From: Robert Fisher &lt;robert@example.com&gt;
+&gt; &gt;Subject: [tlug] Redhat Enterprise and PHPs MBSTRING
+&gt; &gt;Date: Thu, 31 Mar 2005 13:55:38 +0900
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;&gt;I am installing a system and for some reason we are having a problem
+&gt; &gt;&gt;with encoding of japanese text to be sent out in emails.  The emails
+&gt; &gt;&gt;either come in &quot;mojibake&quot; or cutoff.  Has anyone else had any problems
+&gt; &gt;&gt;using Redhat Linux Enterprise with PHP and MBString?
+&gt; &gt;&gt;
+&gt; &gt;&gt;
+&gt; &gt;
+&gt; &gt;You've probably already thought of this, but just in case...
+&gt; &gt;
+&gt; &gt;Have you checked the mb-related settings in the two php.ini files, and/or
+&gt; &gt;compared the output of phpinfo() on the 2 systems?
+&gt; &gt;
+&gt; &gt;-dave
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;
+&gt; &gt;
+&gt; Dave,
+&gt;
+&gt; Thanks for your response, yeah was the very first thing we did.  That
+&gt; step there usually the one that kicks us in the butt.
+&gt;
+&gt; Would the Locale of the server have any effect?  on both servers the
+&gt; locale is english utf8.
+&gt;
+&gt; Regards,
+&gt; Robert Fisher
+&gt;
+&gt; -- 
+&gt; The TLUG server is hosted by Open Source Development Lab Japan.
+&gt; <A  HREF="http://www.osdl.jp/">http://www.osdl.jp/</A>
+&gt;
+&gt; To unsubscribe from this mailing list,
+&gt; please see the instructions at &lt;<A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>&gt;
+&gt;
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00377" href="msg00377.html">[tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+<ul><li><em>From:</em> Robert Fisher</li></ul></li>
+<li><strong><a name="00379" href="msg00379.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+<ul><li><em>From:</em> David E</li></ul></li>
+<li><strong><a name="00380" href="msg00380.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+<ul><li><em>From:</em> Robert Fisher</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00380.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00382.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00380.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00382.html">Re: [tlug] Redhat Enterprise and PHPs MBSTRING</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00381"><strong>Date</strong></a></li>
+<li><a href="threads.html#00381"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

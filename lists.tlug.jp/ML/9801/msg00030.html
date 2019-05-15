@@ -1,0 +1,306 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Mule&#45;begotten problems for Emacs and Gnus -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Tue, 6 Jan 1998 22:38:46 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xpm7D&#45;00012bC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 867m8drhvy.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00029.html">Date Prev</A>][<A HREF="msg00031.html">Date Next</A>][<A HREF="msg00022.html">Thread Prev</A>][<A HREF="msg00035.html">Thread Next</A>][<A HREF="maillist.html#00030">Date Index</A>][<A HREF="threads.html#00030">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Mule-begotten problems for Emacs and Gnus</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Mule-begotten problems for Emacs and Gnus</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 7 Jan 1998 12:25:11 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:michael@example.com">michael@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00022.html">867m8drhvy.fsf@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00022.html">867m8drhvy.fsf@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Your subject refers to Gnus, but the post doesn't mention it?
+
+AFAIK in XEmacs Mule causes no problems for Gnus (configuration
+complexities apart); I would suspect that if it's a problem in FSF
+Emacs it's due to the lack of character type as discussed below.
+
+&gt;&gt;&gt;&gt;&gt; "Jon" == Jon Babcock &lt;jon@example.com&gt; writes:
+
+    Jon&gt; I find that a number of those who belong to the Faith of
+    Jon&gt; Emacs are crying out ... in pain. Anybody know why?
+
+    Jon&gt; It doesn't use Unicode and the documentation is woefully
+    Jon&gt; inadequate * ... I know about these.
+
+The Unicode issue, as such, is a red herring.  Unicode is a Western
+imperialist plot in the minds of many Orientals.  Europeans are not
+going to change from one byte ISO 8859 encodings to two byte Unicode
+encodings for most purposes; why should the Orientals be restricted to
+Unicode?  And in fact there is a real loss to Orientals in using
+Unicode (the "Han unification" problem), unlike the Eastern Europeans
+who will have to use table-driven sorts, but otherwise lose nothing to
+Unicode.  (NB.  I'm told that Ukrainians have complaints about the
+Unicode implementation of Cyrillic, but this is a political issue and
+could be fixed in future editions; by contrast, there isn't enough
+room in a two-byte code to accomodate the Orientals.)  Allowing
+Unicode as an external representation is trivial (assuming the CCL
+interpreter doesn't SIGSEGV as it is prone to do), so I leave it as an
+exercise for the reader :-).
+
+The real issue is not Unicode qua Unicode; while the Europeans in
+general would love to use Unicode to handle Oriental character sets,
+many Orientals are adamantly opposed.  Books have been written about
+how Unicode will be the demise of the Japanese language, for example.
+The real issue is that the internal encoding of Mule is a string of
+variable length codes rather than an array of "wide characters."  More 
+about that below.
+
+And the woeful documentation is a "feature".  Mule itself is supposed
+to be transparent to the user, and the user interface aspects (Quail)
+self-documenting.  Now, I have an option on the Rainbow Bridge;
+anybody interested in buying shares?  :-P
+
+What's _really_ wrong with this merger?
+
+As for the Arcana, I am an initiate of a heretical sect (XEmacs), so I
+can't say much about FuzzyFace Emacs 20.x from experience.  However,
+some of the perspective from the XEmacs community may be of use.  DO
+NOT quote me or use this material directly without verifying it; this
+is for background only.
+
+Further information about a lot of this can be gotten from the XEmacs
+documentation.  Much of it comes from discussion on the XEmacs beta
+mailing list, which as far as I know is not archived.  I would suggest
+finding an archive of the FSF Emacs beta list if you can.  The Mule
+developer's list has none of this stuff on it, as far as I can
+remember.  Try dejanews for comp.emacs.*, too.
+
+Going a circuitous route, the reason that XEmacs is a heresy is that
+the XEmacs developers (originally Lucid, Inc; you may have heard of
+LEmacs---many of these guys have migrated to Netscape; until recently
+supported by Sun, especially the port of Mule to XEmacs) disagreed
+with RMS about the implementation of editing primitives in the
+underlying Emacs LISP language.  In particular, RMS being an "old"
+LISPer believes that functions should be polymorphic because the data
+is what it is (this may be a misrepresentation; it's the way I make
+sense of his position).  The L/XEmacs developers, on the other hand,
+felt that more strongly typed primitives were necessary.  In
+particular, Emacs LISP did not, and does not, make a distinction
+between a character and an integer.  XEmacs LISP does.  The separation 
+of the character type and the integer type in XEmacs caused a great
+amount of pain to the developers; so much so that character/integer
+confusion is referred to as "Ebola":  swift and mysterious fatal
+errors.
+
+I believe this was originally done to make it easier to create an
+8-bit clean XEmacs.  (I wasn't involved then.)  The purpose was
+supporting Latin-1 editing cleanly.  It has recently been shown,
+serendipitously, that any Latin-X character set is supported on
+localized terminals.  (Mule does not support Latin-X, X != 1, very
+well on a localized terminal; it has assumptions built in, in XEmacs
+anyway, that make it think that TTYs are either X-Windows, or
+Japanese, or Latin-1.)  This shows the strength of the character
+abstraction, I think.  This made porting Mule to XEmacs easier as
+well.
+
+The point is that Mule does not admit a convenient representation of
+characters as integers; in the buffer, ASCII characters are one byte,
+all other one-byte characters (including Latin-1 GR) are two bytes,
+and most Oriental languages are three bytes.  Some may be four or
+more; I forget the details.  All multi-byte characters are (tiny)
+structs; the first, so-called "leading byte", defines the character
+set, the remainder gives the encoded value.  XEmacs went through the
+pain of distinguishing between buffer bytes, individual characters,
+and integers, and now the type conversions are built in.  Converting
+the conversion functions to handle the Mule representation was
+tedious, but the painful part had already been done.  The GNU project
+is only now going through the painful part, and because of RMS's
+objections to stronger typing, paradoxically instead of being able to
+use polymorphous functions, the programmer is required to use
+different functions for dealing with the same entities in different
+contexts.
+
+This is not so bad at the LISP level in XEmacs; the buffer processing
+functions were converted to count Bufbytes instead of bytes, at a
+fairly great efficiency cost in large files.  However, in FSF Emacs it
+is very painful, since there is no Bufbyte abstraction.  Programmers
+must be very careful about how they write C extensions (this is still
+somewhat true in XEmacs as well; the C code is sprinkled with "this
+file has been Mule-ized ... but see the comment on func()"), and in
+fact I have heard that many functions are duplicated depending on
+whether they treat the buffer as an array of bytes or as a string of
+Mule characters.  The former is much more efficient, but the burden is
+on the programmer to decide whether the semantics are correct.  This
+has in fact infected the LISP level in FSF Emacs I have heard.
+
+Apparently Erik Naggum stated on one of the Emacs newsgroups that
+almost every existing .el file would need to be converted to use new
+functions to handle Mule.  The LISP code would still work on ASCII
+(but not Latin-1), but any other charset would have undefined results.
+The painful consequences implied for Western European Emacs users are
+obvious.  In XEmacs, OTOH, the LISP interface is backward compatible.
+
+I think that covers the major cries of pain.  
+
+Mule tries too hard to be transparent (see the discussion of
+heuristics below).  I think that this is a bad design decision; simple 
+heuristics just don't do a very good job in the complex world
+post-Tower of Babel, where there not only isn't a single language, but 
+no satisfactory Uni-code either, nor do people talk to each other
+enough to really want one.  It worked quite well for Japanese, but
+the only thing the Japanese are missing is a Uni-code.  ("Good grief,
+Charlie Brown!")
+
+Mule is a dancing bear, and it dances a lot better than I can.  People 
+who actually use Mule have to admit, I think, that there just isn't
+anything like it, not even proprietary.  Many proprietary systems
+provide good bilingual support, or even Oriental language plus
+Latin-1.  But truly multi-lingual?  Mule.  Gotta have it.  Gotta love
+it.
+
+But as long as I'm here....
+
+Mule itself is not well designed, IMHO.  For example, there is no way
+to get a "raw" binary buffer image in LISP (in XEmacs/Mule; I don't
+know if this has been changed for FSF Emacs 20.x)---binary files are
+represented as Latin-1 internally.  This means that it is a _major_
+pain in the butt to implement things like MD5 signatures of non-ASCII
+files efficiently.  Naive implementations give incorrect results.
+
+Mule has a very sophisticated set of heuristics for guessing the
+character set.  However, in early 1997 (when I was still using FSF
+Emacs 19.34b/Mule), Mule was still occasionally screwing up on the
+EUC/SJIS distinction (I haven't had to deal with SJIS in XEmacs since
+last spring except for once using W3; it seems like everybody on
+campus now has a mailer that sends ISO-2022-JP), and I believe this is
+actually rather common for Chinese and Korean EUC, as they overlap the
+Japanese EUC space (by definition) and Mule is (understandably)
+Japan-centric.  Although it is simple to specify the default language
+environment so that Chinese will not be mistaken for Japanese when
+Chinese is the default, it is not so simple to override the heuristics
+when they err in exceptional cases because the various controls
+interact in complex ways.
+
+I assume that FSF Emacs 20.x allows input methods like Canna and Wnn,
+and XIM.  However, as far as I know they are not supported in the
+sense that they are inaccessible from the so-called Library of Emacs
+Input Methods; only Quail is.  This strikes me as obnoxious; it took
+me about an hour to write the prototype LEIM interfaces to XEmacs/Mule
+for SKK (the origin of Quail), Canna, and Wnn.  It really wouldn't
+have been all that tough for the developers to include this support.
+(XIM is much tougher, at least in XEmacs.)
+
+HTH
+
+---------------------------------------------------------------
+Next TLUG Nomikai: 14 January 1998 19:15  Tokyo station
+Yaesu Chuo ticket gate.  Or go directly to Tengu TokyoEkiMae 19:30
+Chuo-ku, Kyobashi 1-1-6, EchiZenYa Bld. B1/B2 03-3275-3691
+Next Saturday Meeting: 14 February 1998 12:30 Tokyo Station
+Yaesu Chuo ticket gate.
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00035" HREF="msg00035.html">Re: tlug: Mule-begotten problems for Emacs and Gnus</A></STRONG>
+<UL><LI><EM>From:</EM> Jon Babcock &lt;jon@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00054" HREF="msg00054.html">Re: tlug: Mule-begotten problems for Emacs and Gnus</A></STRONG>
+<UL><LI><EM>From:</EM> Karl-Max Wagner &lt;karlmax@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00022" HREF="msg00022.html">tlug: Mule-begotten problems for Emacs and Gnus</A></STRONG>
+<UL><LI><EM>From:</EM> Jon Babcock &lt;jon@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00029.html">tlug: Applixware and printers</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00031.html">Re: tlug: Applixware and printers and OCR</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00022.html">tlug: Mule-begotten problems for Emacs and Gnus</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00035.html">Re: tlug: Mule-begotten problems for Emacs and Gnus</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00030"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00030"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

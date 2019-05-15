@@ -1,0 +1,276 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: ethner card problem -->
+<!--X-From: Frank BENNETT <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date: Wed, 27 Sep 2000 14:30:48 +0900 -->
+<!--X-Message-Id: 20000927143048.A30395@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 000c01c0282f$1433ffe0$722ad8cb@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00416.html">Date Prev</A>][<A HREF="msg00418.html">Date Next</A>][<A HREF="msg00416.html">Thread Prev</A>][<A HREF="msg00418.html">Thread Next</A>][<A HREF="maillist.html#00417">Date Index</A>][<A HREF="threads.html#00417">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: ethner card problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: ethner card problem</strong></LI>
+<LI><strong>From</strong>: <strong>Frank BENNETT &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 27 Sep 2000 14:30:48 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00413.html">000c01c0282f$1433ffe0$722ad8cb@example.com</A>&gt;; from Ulrike Schmidt on Wed, Sep 27, 2000 at 11:59:58AM +0900</LI>
+<LI>References: &lt;<A HREF="msg00413.html">000c01c0282f$1433ffe0$722ad8cb@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;4mQfU.A.ar.4iY05@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Wed, Sep 27, 2000 at 11:59:58AM +0900, Ulrike Schmidt wrote:
+
+&gt; ... I
+&gt; finally was successful in recompling kernel and pcmcia-cs, but unfortunately
+&gt; cardctl ident has still no product info available.
+
+Hurray!  Remember how you got there.  You will walk that road again,
+probably sooner than later.
+
+&gt; I loaded pcnet_cs by
+&gt; hand, it is unused. Frank's card was identified by cardctl ident, so I guess
+&gt; it is useless to comment anything out in the /etc/pcmcia/config. So I guess
+&gt; I will have to bring the card back.
+
+Don't lose faith!  You've done it!  You have only one more tiny bridge to
+cross!  When lsmod reports that the card is unused, it just means that the
+kernel doesn't see anyone using it.  It does not (necessarily) mean that it
+*can't* be used.
+
+To check by hand, you would want to run ifconfig and see if you can store data
+to the card.  The "unused" flag report in the lsmod listing should go away
+then.  But it's easier to go for the complete solution straight away, since we
+know a little something about the card already.
+
+For example, on my machine here, my system currently shows (with everything
+working and a net connection up):
+
+*****
+
+vaio:/.commons/home/bennett# lsmod
+Module                  Size  Used by
+pcnet_cs                8468   1 
+8390                    6104   0  [pcnet_cs]
+parport_pc              7300   0  (unused)
+parport                 7072   0  [parport_pc]
+ds                      6536   2  [pcnet_cs]
+i82365                 28516   2 
+pcmcia_core            44448   0  [pcnet_cs ds i82365]
+sb                     32820   1 
+uart401                 6096   1  [sb]
+sound                  55404   0  [sb uart401]
+soundcore               2372   6  [sb sound]
+vaio:/.commons/home/bennett# 
+
+*****
+
+I then comment out the listing for the card in /etc/pcmcia/config:
+
+*****
+
+#card "Corega PCC-T Ethernet"
+##  version "corega K.K.", "corega EtherII PCC-T"
+#  manfid 0xc00f, 0x0000
+#  bind "pcnet_cs"
+
+*****
+
+I then remove the card and restart PCMCIA services to be sure that the new
+config file will control the card manager:
+
+*****
+
+/etc/init.d/pcmcia stop
+/etc/init.d/pcmcia start
+
+*****
+
+I manually install the module for the card:
+
+*****
+
+modprobe pcnet_cs
+
+*****
+
+I now get this listing for lsmod:
+
+*****
+
+vaio:/.commons/home/bennett# lsmod
+Module                  Size  Used by
+pcnet_cs                8468   0  (unused)
+8390                    6104   0  [pcnet_cs]
+ds                      6536   2  [pcnet_cs]
+i82365                 28516   2 
+pcmcia_core            44448   0  [pcnet_cs ds i82365]
+parport_pc              7300   0  (unused)
+parport                 7072   0  [parport_pc]
+sb                     32820   1 
+uart401                 6096   1  [sb]
+sound                  55404   0  [sb uart401]
+soundcore               2372   6  [sb sound]
+vaio:/.commons/home/bennett# 
+
+*****
+
+I'll bet that looks kind of familiar.  If the card is recognized,
+then the settings in /etc/pcmcia/network.opts will be applied to
+it, and the kernel will recognize it as used when it is inserted.
+All you have to do is take the /etc/pcmcia/config text above,
+paste it into that file, and uncomment it.  Like this:
+
+*****
+
+card "Corega PCC-T Ethernet"
+#  version "corega K.K.", "corega EtherII PCC-T"
+  manfid 0xc00f, 0x0000
+  bind "pcnet_cs"
+
+*****
+
+(I just tried this with the version info uncommented, and the
+card is sometimes recognized incorrectly, and sometimes not
+recognized at all; let's take a guess that you have the same
+card and that it has the same number recorded in it)
+
+After making that change to the config file, I remove the card, and
+again restart the card manager:
+
+*****
+
+/etc/init.d/pcmcia stop
+/etc/init.d/pcmcia start
+
+*****
+
+Now I insert the card, and (here, at least) the machine chirps twice.  An
+lsmod listing shows:
+
+*****
+
+vaio:/.commons/home/bennett# lsmod
+Module                  Size  Used by
+pcnet_cs                8468   1 
+8390                    6104   0  [pcnet_cs]
+ds                      6536   2  [pcnet_cs]
+i82365                 28516   2 
+pcmcia_core            44448   0  [pcnet_cs ds i82365]
+parport_pc              7300   0  (unused)
+parport                 7072   0  [parport_pc]
+sb                     32820   1 
+uart401                 6096   1  [sb]
+sound                  55404   0  [sb uart401]
+soundcore               2372   6  [sb sound]
+vaio:/.commons/home/bennett# 
+
+*****
+
+And not only that, I find that my internet connection is back up, so I can
+send this message to the TLUG list :-)
+
+Cheers,
+----
+-x80
+Frank G Bennett, Jr         @@
+Faculty of Law, Nagoya Univ () email: bennett@example.com
+Tel: +81[(0)52]789-2239     ()
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00418" HREF="msg00418.html">Re: ethner card problem</A></STRONG>
+<UL><LI><EM>From:</EM> Frank BENNETT &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00413" HREF="msg00413.html">Re: ethner card problem</A></STRONG>
+<UL><LI><EM>From:</EM> "Ulrike Schmidt" &lt;ulrike@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00416.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00418.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00416.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00418.html">Re: ethner card problem</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00417"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00417"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

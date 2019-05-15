@@ -1,0 +1,206 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Connecting to Air H" -->
+<!--X-From-R13: Pngnen Yrfhzn <oxrfhznNzy.tnvwvajro.pbz> -->
+<!--X-Date: Mon, 10 Jan 2005 01:28:55 +0900 -->
+<!--X-Message-Id: 20050110012855.37d0e766.bkesuma@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20050108033808.3efc3776.bkesuma@example.com -->
+<!--X-Reference: 200501080359.33573.jstubbs@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00050.html">Date Prev</a>][<a href="msg00052.html">Date Next</a>][<a href="msg00049.html">Thread Prev</a>][<a href="msg00053.html">Thread Next</a>][<a href="maillist.html#00051">Date Index</a>][<a href="threads.html#00051">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Connecting to Air H&quot;</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 10 Jan 2005 01:28:55 +0900</li>
+<li><strong>From</strong>: <strong>Batara Kesuma &lt;<A HREF="mailto:bkesuma@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Connecting%20to%20Air%20H%22">bkesuma@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Connecting to Air H&quot;</strong></li>
+<li>References: &lt;<a href="msg00044.html">20050108033808.3efc3776.bkesuma@example.com</a>&gt;&lt;<a href="msg00045.html">200501080359.33573.jstubbs@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Hi Jason,
+
+After 3 days trying without any luck, at last I managed to borrow PCMCIA
+card from a friend. This card is a Honda Electron AH-G10. When I
+inserted it into the slot I could hear the double beep sound, and I have
+this in /var/log/syslog:
+Jan 10 01:18:27 localhost cardmgr[2902]: socket 0: Serial or Modem
+Jan 10 01:18:27 localhost cardmgr[2902]: executing: 'modprobe serial_cs'
+Jan 10 01:18:27 localhost cardmgr[2902]: executing: './serial start
+ttyS1'
+Jan 10 01:18:27 localhost kernel: ttyS1 at I/O 0x2f8 (irq = 10) is a
+16550A
+
+It is also detected correctly by cardctl.
+storm:/proc# cardctl info
+PRODID_1=&quot;HONDA ELECTRON CO.,LTD&quot;
+PRODID_2=&quot;AH-G10&quot;
+PRODID_3=&quot;&quot;
+PRODID_4=&quot;&quot;
+MANFID=c036,001a
+FUNCID=2
+
+But when I tried to connect with wvdial, same thing happened. At first I
+tried to probe with wvdialconf. Here is the result.
+Port Scan&lt;*1&gt;: Scanning ttyS1 first, /dev/modem is a link to it.
+ttyS1&lt;*1&gt;: ATQ0 V1 E1 -- ERROR
+ttyS1&lt;*1&gt;: failed with 2400 baud, next try: 9600 baud
+ttyS1&lt;*1&gt;: ATQ0 V1 E1 -- ERROR
+ttyS1&lt;*1&gt;: failed with 9600 baud, next try: 115200 baud
+ttyS1&lt;*1&gt;: ATQ0 V1 E1 -- ERROR
+ttyS1&lt;*1&gt;: and failed too at 115200, giving up.
+Port Scan&lt;*1&gt;: S0   S2   S3   S4   
+...
+
+Then I just ignored the wvdialconf, and edited the conf file manually.
+Here is my /etc/wvdial.conf
+[Dialer Defaults]
+Modem = /dev/modem
+Baud = 115200
+Phone = 0570570724##64
+Username = my_user@example.com
+Password = my_password
+
+And here is the result from wvdial:
+--&gt; WvDial: Internet dialer version 1.54.0
+--&gt; Initializing modem.
+--&gt; Sending: ATZ
+ATZ
+OK
+--&gt; Modem initialized.
+--&gt; Sending: ATDT0570570724##64
+--&gt; Waiting for carrier.
+ATDT0570570724##64
+NO CARRIER
+--&gt; No Carrier!  Trying again.
+--&gt; Sending: ATDT0570570724##64
+--&gt; Waiting for carrier.
+ATDT0570570724##64
+NO CARRIER
+--&gt; No Carrier!  Trying again.
+--&gt; Sending: ATDT0570570724##64
+--&gt; Waiting for carrier.
+ATDT0570570724##64
+NO CARRIER
+--&gt; No Carrier!  Trying again.
+--&gt; Sending: ATDT0570570724##64
+--&gt; Waiting for carrier.
+ATDT0570570724##64
+DELAYED
+--&gt; Invalid dial command.
+--&gt; Disconnecting at Mon Jan 10 01:24:50 2005
+
+What is the problem here? How do you connect yours? 
+
+Regards,
+--bk
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00053" href="msg00053.html">Re: [tlug] Connecting to Air H&quot;</a></strong>
+<ul><li><em>From:</em> Jason Stubbs</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00044" href="msg00044.html">[tlug] Connecting to Air H&quot;</a></strong>
+<ul><li><em>From:</em> Batara Kesuma</li></ul></li>
+<li><strong><a name="00045" href="msg00045.html">Re: [tlug] Connecting to Air H&quot;</a></strong>
+<ul><li><em>From:</em> Jason Stubbs</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00050.html">Re: [tlug] [Annoucement] TLUG Technical Meeting 2005-1-15</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00052.html">Re: [tlug] Japanese TV + Radio Tuner Card</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00049.html">Re: [tlug] Connecting to Air H&quot;</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00053.html">Re: [tlug] Connecting to Air H&quot;</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00051"><strong>Date</strong></a></li>
+<li><a href="threads.html#00051"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

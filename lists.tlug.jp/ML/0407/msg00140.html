@@ -1,0 +1,224 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Weird problem with xine and KDE -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 10 Jul 2004 11:12:03 +0900 -->
+<!--X-Message-Id: 87zn68haq4.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20040707235347.1900678e.gstewart@example.com -->
+<!--X-Reference: 87llhvmav1.fsf@example.com -->
+<!--X-Reference: 20040708133847.23a43ca0.gstewart@example.com -->
+<!--X-Reference: 87d636lk5s.fsf@example.com -->
+<!--X-Reference: 20040708214626.635fa924.gstewart@example.com -->
+<!--X-Reference: 87zn6aj9pm.fsf@example.com -->
+<!--X-Reference: 20040709104115.692b5466.gstewart@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00139.html">Date Prev</a>][<a href="msg00141.html">Date Next</a>][<a href="msg00139.html">Thread Prev</a>][<a href="msg00141.html">Thread Next</a>][<a href="maillist.html#00140">Date Index</a>][<a href="threads.html#00140">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Weird problem with xine and KDE</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 10 Jul 2004 11:12:03 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Weird%20problem%20with%20xine%20and%20KDE">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Weird problem with xine and KDE</strong></li>
+<li>References: &lt;<a href="msg00103.html">20040707235347.1900678e.gstewart@example.com</a>&gt;&lt;<a href="msg00106.html">87llhvmav1.fsf@example.com</a>&gt;&lt;<a href="msg00116.html">20040708133847.23a43ca0.gstewart@example.com</a>&gt;&lt;<a href="msg00119.html">87d636lk5s.fsf@example.com</a>&gt;&lt;<a href="msg00121.html">20040708214626.635fa924.gstewart@example.com</a>&gt;&lt;<a href="msg00122.html">87zn6aj9pm.fsf@example.com</a>&gt;&lt;<a href="msg00136.html">20040709104115.692b5466.gstewart@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (chayote, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Godwin&quot; == Godwin Stewart &lt;gstewart@example.com&gt; writes:
+
+    Godwin&gt; Is there a way to get the ID of the window SENDING the
+    Godwin&gt; message?
+
+The unhelpful (in the short run) answer is, &quot;No, windows don't send
+events (the particular kind of message you're tracing here), the
+server does.  Window only receive events.&quot;  Of course, the server
+sends events in response to client requests, so what you want to know
+is what client is sending the requests.
+
+What happens in Xt (and I presume GTK+ and Qt, as well) is that each
+widget has a geometry manager.  When you want to make a change in a
+window's configuration, you call the geometry manager, which then
+negotiates with the window's parent.  If the window's parent is owned
+by the same client, it all happens within libXt.  If not, then the
+client sends a ConfigureRequest to the server, _which can be denied or
+altered_ by the server, so the client has to wait for a
+ConfigureNotify event in that window, and then adjust its own idea of
+the window's geometry according to the properties in the
+ConfigureNotify event.  It can't really argue about it, you see---the
+server is always going to win.
+
+The way a window manager works is to take responsibility for
+geometry management of the root window.  It intercepts window creation
+calls, creates an otherwise empty window just large enough to swallow
+the desired window as a child of the root, then reissues the window
+creation call with its &quot;shell&quot; window as the parent of the new
+window.  After that, it's all automated by standard Xt callbacks.
+
+There may be better ways of doing this, but that's how it works in X.
+Remember, the server, the window manager, and the client may be
+running on three different CPUs, and X protocol to the server is the
+only communication channel known to be available to both the WM and
+the client.
+
+In order to trace the source of the configure requests, you'd need to
+monitor all protocol requests to the server, because that information
+is not part of the event sent to the window.  It can be done, but I
+don't know how offhand.  To interpret it, you need to know the kind of
+thing I just explained, and once you know that, you can usually guess
+where in the source the problem is.  The problem is how to achieve the
+functionality without triggering the bad behavior.
+
+Since toolkits are very high-level beasties, it's rarely possible to
+fix this kind of thing at the level of compiler switches or user
+options.
+
+    &gt;&gt; Also, can you see a flicker or anything like that in the GUI? 
+    &gt;&gt; Does the GUI have a dynamic display in it?
+
+    Godwin&gt; No flicker, and there's no real dynamic display - just a
+    Godwin&gt; slider moving along slowly, marking the elapsed time.
+
+By dynamic I mean &quot;asynchronous compared to user generated (mouse or
+keyboard) events&quot;, so this is dynamic enough.  Actually, from the X
+server's point of view, this can involve _more_ protocol traffic than
+(eg) a fancy twirler.  Eg, netscape's &quot;I'm downloading&quot; shooting star
+animation.  That is probably implemented as a sequence of pixmaps, so
+once they're stored in the server, it's _one_ proto-call per frame.
+Whereas the slider is probably implemented as a dozen or so rectangle
+or trapezoid fills, each requiring a proto-call, to implement
+shading for each frame.
+
+I wonder if xine is unmapping the window to avoid flicker and then the
+window manager (presumably kicker) is doing a Configure dance on every
+one-pixel displacement of the slider.  How fast do those events come?
+
+You know, if you were running Windows you wouldn't have this problem.
+;-)
+
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00141" href="msg00141.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00103" href="msg00103.html">[tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00106" href="msg00106.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00116" href="msg00116.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00119" href="msg00119.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00121" href="msg00121.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+<li><strong><a name="00122" href="msg00122.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+<li><strong><a name="00136" href="msg00136.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00139.html">Re: [tlug] Weird problem with xine and KDE - apparently solved</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00141.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00139.html">Re: [tlug] Weird problem with xine and KDE - apparently solved</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00141.html">Re: [tlug] Weird problem with xine and KDE</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00140"><strong>Date</strong></a></li>
+<li><a href="threads.html#00140"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

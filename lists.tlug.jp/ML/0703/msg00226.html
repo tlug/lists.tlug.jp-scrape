@@ -1,0 +1,345 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Adding text to the beginning of a file -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 17 Mar 2007 16:08:34 +0900 -->
+<!--X-Message-Id: 17915.38471.365371.297631@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 45FA6B45.3040500@example.com -->
+<!--X-Reference: ba75897e0703160413oc5219d7gb2bea3d53cd0afc2@example.com -->
+<!--X-Reference: 45FB452B.8050205@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00225.html">Date Prev</a>][<a href="msg00227.html">Date Next</a>][<a href="msg00230.html">Thread Prev</a>][<a href="msg00242.html">Thread Next</a>][<a href="maillist.html#00226">Date Index</a>][<a href="threads.html#00226">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Adding text to the beginning of a file</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 17 Mar 2007 16:18:31 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Adding%20text%20to%20the%20beginning%20of%20a%20file">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Adding text to the beginning of a file</strong></li>
+<li>References: &lt;<a href="msg00219.html">45FA6B45.3040500@example.com</a>&gt;	&lt;<a href="msg00220.html">ba75897e0703160413oc5219d7gb2bea3d53cd0afc2@example.com</a>&gt;	&lt;<a href="msg00221.html">45FB452B.8050205@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Dave M G writes:
+
+ &gt; If I change it to:
+ &gt; cat file_with_new_data tmp_file &gt;&gt; end_result_file
+ &gt; 
+ &gt; ... then it adds the contents of file_with_new_data to the *end* of 
+ &gt; tmp_file. This is better, but actually, what I want to do is stick the 
+ &gt; data on at the beginning. Prepend, not append. I looked up command 
+ &gt; options for &quot;cat&quot; but couldn't find how to do it.
+
+[I license the following content under the Academic Free License,
+v. 3.0 or later.  Ie, do what you want, as long as you don't sue me.]
+
+Don't mistake the hammer for the workshop.  Unix tools are designed to
+do one thing cleanly.  To do a job, you typically need to use several
+tools.  However, because each tool is very simple and regular, it is
+possible to line them up as an automated assembly line, which is
+called a pipeline.  OTOH, an interactive program is like a
+full-equipped workshop.  It can do anything without going out to get
+another tool, but only if the master is at the workbench.
+
+The fundamental idea here is the concept of a stream, which is just a
+sequence of bytes.  (You will immediately recognize that the name
+&quot;pipeline&quot; derives from the fact that a stream flows through it.)
+Processing streams is like eating nagashi-soba (or kaiten-zushi): you
+grab some of the data as it flows by and transform it.  (Here the
+kaiten-zushi analogy fails: in a stream the data never goes by again.)
+
+Fire up a terminal window, please.  Then type the contents of the
+lines starting with &quot;$&quot; (omitting the &quot;$&quot;) after me:
+
+$ echo abc
+abc
+$ echo abc &gt; letters
+$ echo 123 &gt; digits
+$ 
+
+The lines not starting with &quot;$&quot; are output.  The &quot;$ &quot; is a prompt
+provided by the shell; yours may differ in various ways.
+
+Now, what happened in the example?
+
+There are three special &quot;studly&quot; streams always available in a Unix
+program: standard input (aka stdin), standard output (aka stdout), and
+standard error (aka stderr).  stderr is special, and will not be
+treated in this sho-tutorial.
+
+In the example above, you've already met stdout several times.  stdout
+is aliased by default to terminal output, so anything written to stdout
+appears on your terminal.  The command &quot;echo&quot; does exactly that; it
+echoes its arguments to stdout.  Thus echo is a way of getting &quot;stuff&quot;
+from the command line into a stream.  When you type &quot;echo abc&quot;, echo
+takes the argument &quot;abc&quot;, writes it to stdout, and it appears on your
+terminal.  Echoes cleans up by writing a newline to stdout.  That's
+why the result of &quot;echo abc&quot; is not &quot;abc$ &quot;, with the next prompt
+glommed onto the end of echo's output.
+
+Streams can be redirected.  The &quot;&gt;&quot; operator is preceded by a command
+and followed by a filename; it takes the stdout of the command and
+writes it to the named file.  So the example first echoed to the
+terminal, then created two files.
+
+To get &quot;stuff&quot; from a file into a stream, use cat.  What cat does is
+to take several named files and concatenate them into one stream by
+copying them, in the order given on the command line, to stdout.
+Let's see what's in letters and digits:
+
+$ cat letters digits
+abc
+123
+$ cat digits letters
+123
+abc
+$ cat letters digits &gt; characters
+$ cat characters
+abc
+123
+$ 
+
+So to prepend new to old, you merely need to put new before old in
+cat's arguments.  (Thus cat is more powerful than the shell's &quot;&gt;&gt;&quot;
+operator.)
+
+cat has some special cases which need to be considered carefully.
+Unlike echo, which always discards stdin, cat will take input from
+stdin.  stdin is also normally aliased to the terminal, so it is taken
+from terminal input.  Try entering the command &quot;cat&quot; followed to Enter
+to execute it, then typing &quot;456&quot;, the Enter key, then Ctrl+D.  You
+should see
+
+$ cat
+456
+456
+$ 
+
+This behavior is not terribly useful, but combined with redirection it
+can be used as a (very!) primitive editor.
+
+stdin can also be redirected.  The &quot;&lt;&quot; operator is like the &quot;&gt;&quot;
+operator, except that it binds stdin to the existing contents of the
+named file.
+
+$ cat &gt; moredigits
+[4][5][6][Enter][Ctrl+D]
+$ cat moredigits
+456
+$ cat &lt; moredigits
+456
+$ cat letters digits
+abc
+123
+$ cat letters &lt; digits
+abc
+$ 
+
+The words in square brackets in lines not preceded by &quot;$&quot; are key
+names.  Thus &quot;[4]&quot; means &quot;push the key labelled '4'&quot; and &quot;[Ctrl+D]&quot;
+means &quot;push the Ctrl key and the D key at the same time.&quot;
+
+&gt;From the &quot;cat moredigits&quot; examples, it looks like the first filename
+and stdin are related, but that is not the case.  We can see from the
+letters digits examples that actually cat discards stdin if there are
+filename arguments.  It's probably better to think of this in the
+opposite way: cat's use of stdin is a special case, ie, only when
+there are no arguments, it takes its input from the single stream
+stdin.
+
+It is often useful to concatenate stdin and streams taken from files
+in the same command.  If cat did this automatically, you'd be in the
+same situation as you found with the &quot;&gt;&gt;&quot; operator: sometimes you
+can't get there from here.  So what is done is to have a special file
+name, &quot;-&quot;, which most Unix tools interpret contextually.  If an input
+file is wanted, &quot;-&quot; refers to stdin, while if an output file is
+wanted, &quot;-&quot; refers to stdout.  Thus
+
+$ cat - letters
+[4][5][6][Enter][Ctrl+D]
+456
+abc
+$ cat letters -
+[4][5][6][Enter][Ctrl+D]
+abc
+456
+$ 
+
+The pipe operator is also a redirection.  It binds the stdin of the
+right hand command to the stdout of the left hand command:
+
+$ echo def | cat
+def
+$ 
+
+This is not the same as
+
+$ echo def
+def
+$ 
+
+In the pipelined case, cat actually does the (useless) work of copying
+bytes from stdin to stdout.  If you want to avoid the redundant work,
+just omit the &quot;| cat&quot;; the shell or OS won't do that for you. :-)
+
+Note that the semantics of stdout redirection to a file is a matter of
+life-and-death import.  Placing &quot;&gt;&quot; in a command is a death sentence
+for the named file it controls, even if the command is an error.  But
+if the command succeeds, a new file is born, containing the stdout of
+the command.  There are ways to tame this Rambo-esque shell, but this
+violent behavior is useful enough to be default.  Go-chuui shite
+kudasai.  Pipes and stdin redirection, on the other hand, have no
+persistent effects.  When the program exits, it's as if they were
+never there.  Go-anshin shite kudasai.
+
+Note that I have described &quot;|&quot;, &quot;&gt;&quot;, and &quot;&lt;&quot; as operators.  Pipes and
+redirection are features of the operating system, and are available to
+all programs.  They are given different &quot;names&quot; in different languages.
+In C redirections are stdio function calls.  In C++ redirections are
+stream operators.  In both pipes are (IIRC) stdlib function calls.
+In the shell, they are all operators, with the names &quot;|&quot;, &quot;&gt;&quot;, and &quot;&lt;&quot;.
+
+I mention this to point out that confusion about these concepts is
+pretty natural.  The shell interprets the characters by setting up the
+program's environment in certain ways.  However, the actual operation
+of redirection is not done by the shell, but by the OS.  This implies
+certain limitations that are non-intuitive if you think of the shell
+as &quot;doing&quot; redirection.  It doesn't.  It tells the OS, which actually
+does the work.  This means that &quot;&gt;&gt;&quot; cannot mean both append and
+prepend; you must pick one.
+
+Also, cat never sees the redirection operators, so it is impossible
+for an option to cat to &quot;work&quot; (ie, select appending vs. prepending).
+Consider again
+
+$ echo abc &gt; letters
+$ cat letters
+abc
+$ 
+
+Where did the &quot;&gt; letters&quot; go?  echo is supposed to copy its arguments,
+shouldn't it be in the file?  The answer is, no, &quot;&gt;&quot; and &quot;letters&quot; are
+not arguments to echo, they are shell operator and operand.  The shell
+interprets them as instructions about program setup, and removes them
+from the command line *before* executing echo.
+
+Thus, the only way to specify the order in which streams are combined
+is to use cat with its arguments (files names) in the desired order.
+
+$ echo 789 | cat letters -
+abc
+789
+$ echo 789 | cat - letters
+789
+abc
+$ 
+
+HTH
+
+-- 
+..  Now I think I just reached the state of HYPERTENSION that comes
+ JUST BEFORE you see the TOTAL at the SAFEWAY CHECKOUT COUNTER!
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00219" href="msg00219.html">[tlug] Adding text to the beginning of a file</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00220" href="msg00220.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+<ul><li><em>From:</em> Arwyn Hainsworth</li></ul></li>
+<li><strong><a name="00221" href="msg00221.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00225.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00227.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00230.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00242.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00226"><strong>Date</strong></a></li>
+<li><a href="threads.html#00226"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

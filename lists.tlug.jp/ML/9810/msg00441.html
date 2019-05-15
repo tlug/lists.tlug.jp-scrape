@@ -1,0 +1,211 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Kterm/Xterm remote windows config -->
+<!--X-From: Scott Stone <sstone@example.com> -->
+<!--X-Date:  Tue, 13 Oct 1998 12:58:44 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.96LJ1.1b7.981013125010.2090v&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199810130344.MAA10157@example.com&#45;u.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00440.html">Date Prev</A>][<A HREF="msg00442.html">Date Next</A>][<A HREF="msg00439.html">Thread Prev</A>][<A HREF="msg00444.html">Thread Next</A>][<A HREF="maillist.html#00441">Date Index</A>][<A HREF="threads.html#00441">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Kterm/Xterm remote windows config</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Kterm/Xterm remote windows config</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:sstone@example.com">sstone@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 13 Oct 1998 12:58:42 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00439.html">199810130344.MAA10157@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, 13 Oct 1998, Frank Bennett wrote:
+
+&gt; 
+&gt; I am badly stumped by a Kterm problem.  I _think_ that my
+&gt; difficulty is not specific to Kterm, but would appear under Xterm
+&gt; as well.
+&gt; 
+&gt; Our mail server (nomolog) is a Sun SS5 running Redhat Linux 4.1.
+&gt; My own machine runs TurboLinux-J 2.0.  I do most of the system
+&gt; work on the mail server via Kterm, which I have configured to run
+&gt; from a *Wharf button in my ~/.steprc file thus:
+&gt; 
+&gt;   *Wharf Nomo     xterm-nomo.xpm Exec "-" rsh nomolog.nagoya-u.ac.jp /usr/bin/X11/kterm -ls -T 'Nomo'  -display 133.6.33.14:0 &amp;
+
+I think this should be:
+
+*Wharf Nomo xterm-nomo.xpm Exec "kterm" kterm -T "Nomo" -e rsh nomolog.nagoya-u.ac.jp -display 133.6.33.14:0 &amp;
+
+&gt; 
+&gt; This works swimmingly, except that the "@" key appears to trigger
+&gt; a "kill", and neither that key nor ^C works to kill running
+&gt; processes.  This is a real pain.  Among other things, it bars me
+&gt; from using the "mail" command, because I can't enter the "@" in
+&gt; an offsite address.
+&gt; 
+
+try the above suggestion, it might fix it...
+
+&gt; I have tried starting the terminal with an without the -ls (login
+&gt; shell) option.  I have tried setting the TERMCAP environment
+&gt; variable to the same value it has on my TurboLinux system.  TERM
+&gt; is correctly set to "kterm" on the remote system, when invoked as
+&gt; a login shell.
+&gt; 
+
+does the Sun know about 'kterm' in its termcap/terminfo database?
+I'd suggest not using -ls with a remote shell.. the '-ls' in your original
+command line is basically telling kterm to start as a login shell and then
+rsh, which doesn't seem useful to me unless you need to reset your login
+variables locally before rshing...?
+
+&gt; Stty reports the following on the remote (misbehaving) kterm:
+&gt; 
+&gt;   bash$ stty
+&gt;   speed 9600 baud; line = 0;
+&gt;   intr = ^?; erase = #; kill = @; start = &lt;undef&gt;; stop = &lt;undef&gt;;
+&gt;   susp = &lt;undef&gt;; dsusp = &lt;undef&gt;; rprnt = M-^?; werase = M-^?; lnext = M-^?;
+&gt;   flush = M-^?;
+&gt;   -brkint -imaxbel
+&gt;   -iexten -echoctl -echoke
+&gt;   bash$ 
+&gt; 
+&gt; It reports this status regardless of the value of TERM, and
+&gt; regardless of whether TERMCAP is set or not.  Issuing the
+&gt; following does NOT restore "@" as a useful key --- I still get a
+&gt; bell when it is pressed:
+&gt; 
+&gt;   stty kill undef
+&gt; 
+&gt; The only way I appear to be able to get a normal terminal is by
+&gt; opening a Kterm on the local machine and telnetting through to
+&gt; the server.  I can write a little Expect script to make this
+&gt; transparent, but it bugs me when things don't work as (I think)
+&gt; they ought, and sooner or later this will come around and bite me
+&gt; again anyway.
+&gt; 
+&gt; Cheers,
+&gt; -- 
+&gt; -x80
+&gt; Frank G Bennett, Jr         @@
+&gt; Faculty of Law, Nagoya Univ () email: bennett@example.com
+&gt; Tel: +81[(0)52]789-2239     () WWW:   <A TARGET="_top" HREF="http://rumple.soas.ac.uk/~bennett/">http://rumple.soas.ac.uk/~bennett/</A>
+&gt; ---------------------------------------------------------------
+&gt; Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+&gt; Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+&gt; ---------------------------------------------------------------
+&gt; Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+&gt; 
+
+--------------------------------------------------
+Scott M. Stone &lt;sstone@example.com, sstone@example.com&gt;
+               &lt;sstone@example.com&gt;
+Head of TurboLinux Development/Systems Administrator
+Pacific HiTech, Inc (USA) / Pacific HiTech, KK (Japan)
+<A TARGET="_top" HREF="http://www.pht.com">http://www.pht.com</A>		<A TARGET="_top" HREF="http://armadillo.pht.co.jp">http://armadillo.pht.co.jp</A>
+<A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>	        <A TARGET="_top" HREF="http://www.turbolinux.com">http://www.turbolinux.com</A>
+
+
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00444" HREF="msg00444.html">Re: tlug: Kterm/Xterm remote windows config</A></STRONG>
+<UL><LI><EM>From:</EM> Rex Walters &lt;rex@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00471" HREF="msg00471.html">Re: tlug: Kterm/Xterm remote windows config (solved)</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00439" HREF="msg00439.html">tlug: Kterm/Xterm remote windows config</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00440.html">Re: tlug: Re: file counting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00442.html">tlug: Re: My *beepin* 486</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00439.html">tlug: Kterm/Xterm remote windows config</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00444.html">Re: tlug: Kterm/Xterm remote windows config</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00441"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00441"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

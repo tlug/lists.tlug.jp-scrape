@@ -1,0 +1,242 @@
+<!-- MHonArc v2.6.12 -->
+<!--X-Subject: Re: [tlug] MySQL and utf8 Japanese characters. Again. -->
+<!--X-From-R13: "Pvexve O. Pnexnefba" <ovexveoNfgbvpivxvat.arg> -->
+<!--X-Date: Fri, 28 Apr 2006 18:13:30 +0900 -->
+<!--X-Message-Id: 4451CD9B.1070302@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4451BB05.6070609@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00528.html">Date Prev</a>][<a href="msg00530.html">Date Next</a>][<a href="msg00528.html">Thread Prev</a>][<a href="msg00532.html">Thread Next</a>][<a href="maillist.html#00529">Date Index</a>][<a href="threads.html#00529">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] MySQL and utf8 Japanese characters. Again.</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 28 Apr 2006 17:08:59 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Birkir A. Barkarson&quot; &lt;<a href="mailto:birkirb@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20MySQL%20and%20utf8%20Japanese%20characters.%20Again.">birkirb@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] MySQL and utf8 Japanese characters. Again.</strong></li>
+<li>References: &lt;<a href="msg00521.html">4451BB05.6070609@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5 (X11/20060313)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">
+I had a similar problem a few months back.
+
+You might try this,
+</pre><tt>In the mysqld section of my.cnf (or the main configuration file if it is 
+</tt><tt> named differently) add the 'skip-character-set-client-handshake' 
+</tt><tt>directive so.
+</tt><pre style="margin: 0em;">
+
+[mysqld]
+#character-set-client           = utf8
+#character-set-connection        = utf8
+#character-set-results           = utf8
+character-set-server            = utf8
+default-character-set           = utf8
+user                                            = mysql
+port                                            = 3306
+</pre><tt>socket                                          = 
+</tt><tt>/var/run/mysqld/mysqld.sock
+</tt><pre style="margin: 0em;">
+pid-file                                        = /var/run/mysqld/mysqld.pid
+log-error                                       = /var/log/mysql/mysqld.err
+basedir                                         = /usr
+datadir                                         = /var/lib/mysql
+skip-locking
+#skip-innodb
+skip-character-set-client-handshake
+
+
+Regards,
+
+BAB
+
+Dave M G wrote:
+</pre><blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><pre style="margin: 0em;">
+TLUG,
+
+Old problems are new again. Yay!
+
+</pre><tt>Some might recall that I had some trouble getting Japanese contained 
+</tt><tt>within my MySQL database to display correctly in my home environment:
+</tt><pre style="margin: 0em;">
+<a  rel="nofollow" href="http://www.tlug.jp/ML/0602/msg00259.html">http://www.tlug.jp/ML/0602/msg00259.html</a>
+
+</pre><tt>To summarize, I have a database on a server that contains English and 
+</tt><tt>Japanese text. I have tried to ensure at every turn that all text 
+</tt><tt>encoding is in utf8.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>On the web hosting server where the live site resides, everything is 
+</tt><tt>working fine.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>But on my testing environment at home, the Japanese text displays as 
+</tt><tt>question marks.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Japanese text that is written directly into the PHP/HTML displays 
+</tt><tt>correctly. Only Japanese text retrieved from the database displays 
+</tt><tt>incorrectly.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>All the Japanese text was initially entered on the hosting server. To 
+</tt><tt>get the database duplicated onto my testing environment, I exported the 
+</tt><tt>database, and then imported it again. I also checked the .sql file that 
+</tt><tt>was generated to ensure that the utf8 encoded Japanese was still 
+</tt><tt>readable as Japanese before importing it.
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Further, when I look at the database in phpMyAdmin, it displays the 
+</tt><tt>Japanese correctly, thus indicating that it is possible to see the text 
+</tt><tt>from within a PHP/HTML page.
+</tt><pre style="margin: 0em;">
+
+The solution, last time, was to add the following lines to /etc/mysql/my.cnf
+init-connect='SET NAMES utf8'
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+I've done this, and so these are my collation variables:
+
+Variable   Session value   Global value
+character set client        utf8       utf8
+character set connection     utf8     utf8
+character set database     utf8     utf8
+character set results     utf8     utf8
+character set server     utf8     utf8
+character set system     utf8     utf8
+</pre><tt>character sets dir     /usr/share/mysql/charsets/    
+</tt><tt>/usr/share/mysql/charsets/
+</tt><pre style="margin: 0em;">
+collation connection     utf8_general_ci     utf8_general_ci
+collation database     utf8_general_ci     utf8_general_ci
+collation server     utf8_general_ci     utf8_general_ci
+
+But this time the same solution does not seem to be working now.
+
+</pre><tt>I've posted on the MySQL mailing list, but people the question doesn't 
+</tt><tt>seem to be attracting any interest. So here I am again:
+</tt><pre style="margin: 0em;">
+
+</pre><tt>Is there any other character set related setting that I may need to do 
+</tt><tt>on my local MySQL server to correctly display Japanese?
+</tt><pre style="margin: 0em;">
+
+My home set up:
+Ubuntu Dapper Drake 6.06
+MySQL MySQL 4.1.15
+phpMyAdmin 2.7
+PHP 4.4.2
+
+Any help would be much appreciated.
+
+Thank you.
+
+</pre></blockquote><pre style="margin: 0em;">
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00532" href="msg00532.html">Re: [tlug] MySQL and utf8 Japanese characters. Again. [SOLVED]</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00521" href="msg00521.html">[tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00528.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00530.html">Re: [tlug] 2.6 Kernel vs 2.4 Kernel: &quot;internal s/w&quot;</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00528.html">Re: [tlug] MySQL and utf8 Japanese characters. Again.</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00532.html">Re: [tlug] MySQL and utf8 Japanese characters. Again. [SOLVED]</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00529"><strong>Date</strong></a></li>
+<li><a href="threads.html#00529"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

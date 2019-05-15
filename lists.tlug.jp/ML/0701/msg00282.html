@@ -1,0 +1,172 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] dropping any IP that tries port 22? -->
+<!--X-From-R13: fpbgg <fpbggNfynpxvfynaq.bet> -->
+<!--X-Date: Fri, 19 Jan 2007 18:57:22 +0900 -->
+<!--X-Message-Id: 1169200640.29848.19.camel@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 52599.210.168.237.209.1169184208.squirrel@example.com -->
+<!--X-Reference: 45B05710.6090005@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00281.html">Date Prev</a>][<a href="msg00283.html">Date Next</a>][<a href="msg00279.html">Thread Prev</a>][<a href="msg00284.html">Thread Next</a>][<a href="maillist.html#00282">Date Index</a>][<a href="threads.html#00282">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] dropping any IP that tries port 22?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 19 Jan 2007 18:57:20 +0900</li>
+<li><strong>From</strong>: <strong>scott &lt;<a href="mailto:scott@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20dropping%20any%20IP%20that%20tries%20port%2022%3F">scott@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] dropping any IP that tries port 22?</strong></li>
+<li>References: &lt;<a href="msg00278.html">52599.210.168.237.209.1169184208.squirrel@example.com</a>&gt;	&lt;<a href="msg00279.html">45B05710.6090005@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Fri, 2007-01-19 at 14:28 +0900, Birkir A. Barkarson wrote:
+
+&gt; Nice idea, although I have on occasion forgot to put the -p &lt;non 
+&gt; standard port&gt; on the ssh command line before trying to connect. 
+
+Yeah I know what you mean. I was on vacation a while back and couldn't
+login to my server as none of the public Internet access points would
+allow me install a knock client- at least now I've got squirrel mail up
+so I can check my mail :-)
+
+&gt;On Fri, 2007-01-19 at 16:56 +0900, Stephen J. Turnbull wrote:
+&gt;iptables -I INPUT 1 -d yo.ur.i.p --proto tcp --dport 22 --syn -j LOG
+
+&gt;(You then need to use position 1 for the bans, otherwise the same
+&gt;script kiddie gets banned a couple thousand times.)
+
+This is a great idea. I'm not familiar with what position 1 is so I've
+gotta do some more reading...
+
+I've been using shorewall to manage Iptables and it defaults all of the
+drop logs to ulogd. So I did this and got a nice list of IPs of ssh
+attempts (please forgive my ugly code):
+
+tac /var/log/ulogd/ulogd.syslogemu | grep 'DPT=22' | awk {'print $9'} |
+sort | uniq | cut -c 5-19 &gt; /var/log/sshattemptssorted.txt
+
+so now I have this list, but wc -l shows there are 2,537 IPs there, so I
+have to install ipsets into shorewall to handle this large blacklist. I
+think after that is done I can start automating this by cron maybe, have
+a script that scans the ulog for ssh attempts, compares the IPs to the
+existing sshattemptessorted.txt and if it isn't there automatically adds
+it to the list and the shorewall blacklist. Or maybe there is a simpler
+way? 
+
+Cheers,
+Scott VanDusen
+Tokyo
+
+
+
+
+
+
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00284" href="msg00284.html">Re: [tlug] dropping any IP that tries port 22?</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00278" href="msg00278.html">[tlug] dropping any IP that tries port 22?</a></strong>
+<ul><li><em>From:</em> scott</li></ul></li>
+<li><strong><a name="00279" href="msg00279.html">Re: [tlug] dropping any IP that tries port 22?</a></strong>
+<ul><li><em>From:</em> Birkir A. Barkarson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00281.html">[tlug] Web server access</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00283.html">Re: [tlug] Re: CJK Printing from Web Browsers in Debian 3.3.2</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00279.html">Re: [tlug] dropping any IP that tries port 22?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00284.html">Re: [tlug] dropping any IP that tries port 22?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00282"><strong>Date</strong></a></li>
+<li><a href="threads.html#00282"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

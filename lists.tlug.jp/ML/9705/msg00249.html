@@ -1,0 +1,278 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Problem with KTERM -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Mon, 26 May 1997 05:48:16 GMT -->
+<!--X-Message-Id: m0wVsWD&#45;00005cC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 01BC67C0.26564120@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00248.html">Date Prev</A>][<A HREF="msg00250.html">Date Next</A>][<A HREF="msg00233.html">Thread Prev</A>][<A HREF="msg00221.html">Thread Next</A>][<A HREF="maillist.html#00249">Date Index</A>][<A HREF="threads.html#00249">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Problem with KTERM</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Problem with KTERM </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 26 May 1997 14:40:29 +0900</LI>
+<LI>In-reply-to: Your message of "Fri, 23 May 1997 21:27:42."            &lt;<A HREF="msg00220.html">01BC67C0.26564120@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+I've seen several replies to this, but they didn't have everything I
+wanted to quote so I've gone back to the original.  If I'm repeating
+somebody's answer or misquoting them, sorry.
+
+&gt;&gt;&gt;&gt;&gt; "Karthik" == K Karthik Rishi &lt;karthik@example.com&gt; writes:
+
+    Karthik&gt;    I am working on the implementation of X Input Methods
+    Karthik&gt; Protocol . 
+
+Brave, brave person.
+
+    Karthik&gt; I have a US Linux Machine , Windows
+    Karthik&gt; 95(Japanese) machine from where I run my X-Server. I run
+
+Check.
+
+    Karthik&gt; kterm from the Linux Machine and get the display on my
+    Karthik&gt; X-Server . When the user enters KeyStrokes , I get the
+    Karthik&gt; Japanese Text in Shift-JIS format. I use JCONV
+    Karthik&gt; utility(Author KenLunde, available on the net) for the
+    Karthik&gt; conversion of this string into JIS- ISO 2022 encoding
+    Karthik&gt; which is the sameas Compound Text encoding. I pass this
+
+Is this really the same?  I seem to recall that compound text and
+ISO-2022 have certain differences, in particular tags and ISO-2022
+shift sequences aren't the same.  I think your method should work, but
+you should double check that ISO-2022 and compound text really are
+identical.
+
+    Karthik&gt; string to KTERM the client . The display on KTERM is the
+    Karthik&gt; encoded string with the escape sequences(encoded string)
+    Karthik&gt; and not the actual Japanese string.
+
+This should be because the relevant fonts are unavailable, as you
+guessed.
+
+    Karthik&gt; I have downloaded Kterm-6.2.0. I built the exe using R6
+    Karthik&gt; libraries . I have the Japanese fonts as well as the big
+
+I guess that you mean you have them on the Linux box.  This is 100%
+irrelevant.  What matters is whether you have them on the Win95 box.
+
+    Karthik&gt; fonts . But on startup of Kterm, I get a warning missing
+    Karthik&gt; font : JISX-0208-1983-0 and JISX-0201.1976-0. Could this
+    Karthik&gt; be a the cause of the problem ??
+
+In a word, yes.
+
+    Karthik&gt;  Also the readme of KTERM
+    Karthik&gt; states link the kterm with the lib lxpg4 to use XIM . Iam
+
+Irrelevant; this applies to *BSD, not Linux, and not Slowaris (is that 
+a relative of Solaris, Steve?).
+
+    Karthik&gt; not able to find this lib in the X11 sources . But the
+    Karthik&gt; exe was successfully generated . The fonts are in the
+    Karthik&gt; proper path as pcf.Z files .
+
+Gotcha!  These _are_ on the Linux box.  Winwoes would not know how to
+use .Z fonts, I'm pretty sure.
+
+    Karthik&gt; I start Kterm with the command line option
+
+    Karthik&gt; kterm -display -xim -sjis/jis/euc -fl neca24
+
+"-sjis/jis/euc"?  Is that "-km [sjis|jis|euc]"?
+
+    Karthik&gt; neca24 is available on the X-Server.
+
+Here's the multi-word explanation.
+
+"-fl neca24" is _not_ a font list AFAIK.  A font list is a list of
+_fully-qualified_ XLFDs (ie, with 14 hyphens), although kterm doesn't
+enforce that.  I'm not sure without looking at the code (that will be
+US$250/hr :-) what kterm will do with your specification.  Since
+there are no wildcards, probably kterm throws it away and just uses
+the default:
+
+    -*-fixed-medium-r-normal--14-*, \
+    -*-gothic-medium-r-normal--14-*, \
+     -*-mincho-medium-r-normal--14-*
+
+In a fontlist, what happens to that second * is that it gets expanded
+according to the current locale.  You should have to check your X
+Server docs to find out what that is in your Win95 X server, but in
+fact kterm overrides this and sets its own locale to ja_JP and
+overrides the usual X locale resources with
+
+               "iso8859-1",
+               "iso8859-2",
+               "iso8859-3",
+               "iso8859-4",
+               "iso8859-5",
+               "iso8859-6",
+               "iso8859-7",
+               "iso8859-8",
+               "iso8859-9",
+               "jisx0201.1976-0",
+               "jisx0208.1990-0" or "jisx0208.1983-0",
+               "jisx0212.1990-0",
+               "gb2312.1980-0",
+               "ksc5601.1987-0", and
+               "jisc6226.1978-0" or "jisx0208.1983-0"
+
+You need to have fonts for each registry (in the case of Japanese,
+iso8859-1, jisx0208.*, and jisx0201.*) requested by the text.
+
+    Karthik&gt; Are there any additional configuration to be done?? 
+    Karthik&gt; Please help me in this problem
+
+(1) The appropriate fonts must be available on the _X server_ (Win95),
+    _not_ on the client (Linux/kterm).
+
+(2) The fonts must be properly included in fonts.dir according to
+    their _fully-qualified_ (14-hyphen, no wildcards) XLFD names.  To
+    do this, you run mkfontdir in each directory containing X fonts,
+    _and_ use `xset -fp ...' to set the font path to point to those
+    directories.  (mkfontdir must be done on the server's host (Win95)
+    since its operation is implementation dependent; xset should work
+    from anywhere with the proper -display.)
+
+    Unfortunately, there's an excellent chance that many of the fonts
+    are not known by their XLFDs, and a bad X server will not have the
+    XLFD in the font since most US and European languages need only
+    one character set even though they may have many faces and styles.
+    This can usually be fixed by getting and compiling the BFD form of
+    the fonts; you may have to add the appropriate XLFD to the BFD
+    files.
+
+(3) If the XFree86 distribution is recent enough (I think you need
+    3.2, you may need the newest beta), you can install the X font
+    server on Linux - assuming the Win95 X server knows about font
+    servers, that is.
+
+    Karthik&gt;       Please forgive me if this is a trivial doubt. Iam
+    Karthik&gt; using the XFontsel utility of xlib to display the set of
+    Karthik&gt; fonts that are known to the X-Server. I use the following
+    Karthik&gt; commandline option .  xfontsel -display -pattern "*jis*" 
+    Karthik&gt; -print
+
+I assume the "-display" is actually "-display win95:0.0"?
+
+    Karthik&gt; The output of this says that only 2 matches are found ,
+    Karthik&gt; although I have many JIS fonts . Could any one help me
+    Karthik&gt; with this problem ???
+
+My guess is that you have lots of JIS fonts on Linux, and only a
+couple on the Win95 X server.  If that is not true, then the procedure 
+given above should fix your problem.  If that is true, you need to get 
+more fonts for Win95 or install the font server on Linux and configure 
+the X server to use it.
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00220" HREF="msg00220.html">tlug: Problem with KTERM</A></STRONG>
+<UL><LI><EM>From:</EM> "K.Karthik Rishi" &lt;karthik@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00248.html">Re: tlug: Symbol Input in Mule+Wnn+Egg</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00250.html">Re: tlug: Canna and looking for other comments on a new install</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00233.html">Re: tlug: Problem with KTERM</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00221.html">tlug: Xfontsel utility</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00249"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00249"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

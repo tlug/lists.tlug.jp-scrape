@@ -1,0 +1,204 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Font problem -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 27 May 1997 08:18:00 GMT -->
+<!--X-Message-Id: m0wWHLv&#45;00005TC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199705262323.JAA20454@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00273.html">Date Prev</A>][<A HREF="msg00275.html">Date Next</A>][<A HREF="msg00261.html">Thread Prev</A>][<A HREF="msg00258.html">Thread Next</A>][<A HREF="maillist.html#00274">Date Index</A>][<A HREF="threads.html#00274">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Font problem</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Font problem </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 27 May 1997 17:11:30 +0900</LI>
+<LI>In-reply-to: Your message of "Tue, 27 May 1997 09:23:48 EST."            &lt;<A HREF="msg00261.html">199705262323.JAA20454@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Karthik" == K Karthik Rishi &lt;karthik@example.com&gt; writes:
+
+    Karthik&gt; Hello, Iam trying to get the display of KTERM in a
+    Karthik&gt; Windows 95-Japanese Machine where I run my X-Server . I
+    Karthik&gt; get a warning on startup of kterm saying.
+    Karthik&gt; "unable to open font "" , trying fixed"
+
+This seems to be a bug in kterm; it shouldn't try to open "".
+
+    Karthik&gt; This happens irrespective of the font I specify in the
+    Karthik&gt; command line option .Iam running a font server (xfs) on
+    Karthik&gt; the Linux Machine . On my Windows 95 machine I connect to
+    Karthik&gt; this Font Server through a specified port.
+
+Check that the connection is properly specified using "xset q" and
+looking under the "Fontpath:" header.  If everything looks OK but
+there are directories as well as the font server in the font path, try
+deleting the directories from the font path.  Warning: if the font
+server is in fact not working, you will possibly have to kill and
+restart the X server once you have done that.  (Doing "xset fp
+default" should recover, but I've never tried such a thing.)
+
+    Karthik&gt; This "trying fixed" warning comes when I start Xterm also
+    Karthik&gt; specifying the fl option for the desired font.
+
+    Karthik&gt; for example when I start KTERM with the following option
+    Karthik&gt; kterm -display -fl \
+
+This should produce a "unknown display: '-fl'" error message.
+
+    Karthik&gt;     -hp-gothic-medium-r-normal--14-*-c-*-jisx0201.1976-0
+
+    Karthik&gt; any other font for that matter which is there ib my
+    Karthik&gt; Xserver, I get the warning message .
+
+And you should.  The -fl switch wants a fontlist in which fonts for
+the character sets ISO-8859-1, JIS-X-0201.1976, and JIS-X-0208.1990
+are each available.  The fontlist that you gave will choke on the
+kanji; the hardcoded default font "fixed" will exist and will permit
+display of ASCII.
+
+    Karthik&gt; I tried Xfontsel , Xlsfonts and Xfd . Xlsfonts is able to
+    Karthik&gt; display all the "hp" fonts when I specify the pattern
+    Karthik&gt; "*hp*.
+
+Where did you get -hp-* fonts for Linux?  There aren't any in the
+standard distribution.  Are you sure xlsfonts isn't finding them on
+the Win95 host?
+
+    Karthik&gt; $ xfd -display \
+    Karthik&gt;       -fn -hp-gothic-medium-r-normal--14-*-c-*-jisx0201.1976-0
+
+    Karthik&gt; output: Warning: Cannot convert string
+    Karthik&gt; "-hp-gothic-medium-r-normal--14-*-c-*-jisx0201.1976-0" to
+    Karthik&gt; type FontStruct xfd: no font to display
+
+This could be, as Jim Breen suggests, because your X server doesn't
+handle 16-bit fonts.  I think this is unlikely, since it should be
+based on at least X11R5 and probably is X11R6.  Also, you claim to
+have gotten the fonts in your X server's native format, so....
+xfontsel should have the same problem as xfd in this case.  But you
+should check it.  (Especially if you're part of a team that is
+implementing a new X server ;-)
+
+    Karthik&gt; I have run mkfontdir on all the subdirectories .
+
+After running mkfontdir you need to do "xset fp rehash" or restart the 
+X server.  In the case of the font server, you should do a "kill
+-SIGUSR1" or a "kill -SIGHUP" or restart it.
+
+Do you have an X server installed on Linux?  Is it running?  Try using 
+the font server with that X server.  Try killing the Linux X server
+and setting DISPLAY=win95:0 (or whatever the right thing is) and doing 
+the X utilities.  Are the X utilities installed on the Win95 box?  Do
+they work from there?
+
+HTH
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00261" HREF="msg00261.html">Re: tlug: Font problem</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00273.html">Re: tlug: unicode</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00275.html">Re: tlug: unicode</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00261.html">Re: tlug: Font problem</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00258.html">tlug: DeskJet 560J + ps</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00274"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00274"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

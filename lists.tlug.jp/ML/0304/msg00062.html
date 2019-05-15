@@ -1,0 +1,179 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] mail(): Received (may be forged) question -->
+<!--X-From-R13: Enz Fvyqref <fnzNwbivnacebwrpgf.pbz.nh> -->
+<!--X-Date: Mon, 7 Apr 2003 13:57:12 +1000 -->
+<!--X-Message-Id: 200304071357.12723@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3E90E265.10105@example.com&#45;bucks.co.jp -->
+<!--X-Reference: 200304071256.39080@example.com -->
+<!--X-Reference: 3E90EF05.3070500@example.com&#45;bucks.co.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00061.html">Date Prev</a>][<a href="msg00063.html">Date Next</a>][<a href="msg00061.html">Thread Prev</a>][<a href="msg00065.html">Thread Next</a>][<a href="maillist.html#00062">Date Index</a>][<a href="threads.html#00062">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] mail(): Received (may be forged) question</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 7 Apr 2003 13:57:12 +1000</li>
+<li><strong>From</strong>: <strong>Sam Tilders &lt;<A HREF="mailto:sam@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20mail%28%29%3A%20Received%20%28may%20be%20forged%29%20question">sam@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] mail(): Received (may be forged) question</strong></li>
+<li>References: &lt;<a href="msg00057.html">3E90E265.10105@example.com</a>&gt; &lt;<a href="msg00059.html">200304071256.39080@example.com</a>&gt; &lt;<a href="msg00061.html">3E90EF05.3070500@example.com</a>&gt;</li>
+<li>Organization: Jovian Projects</li>
+<li>User-agent: KMail/1.4.3</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Mon, 7 Apr 2003 13:22, Jean-Christian Imbeault wrote:
+&gt; Sam Tilders wrote:
+&gt; &gt; $ host 219.118.175.244
+&gt; &gt; Name: ns.tokyo-av-land.com
+&gt; &gt; Address: 219.118.175.244
+&gt; &gt;
+&gt; &gt; It looks like the name isn't in the DNS, but the reverse is.
+&gt;
+&gt; I don't know much about DNS but ... how is this possible. How can the
+&gt; reverse be in the DNS but not the name?
+
+The reverse DNS zone is 175.118.219.in-addr.arpa, the forward zone is 
+tokyo-av-land.com. They are managed separately and can even be hosted by 
+different NS servers, as seems to be the case here.
+
+dig ns 175.118.219.in-addr.arpa
+and
+dig ns tokyo-av-land.com
+will show what I mean.
+
+
+&gt; But what I don't understand is where the name ns.tokyo-av-land.com
+&gt; coming from? Is some DNS server somewhere sending wrong (outdated)
+&gt; information?
+
+Where I  showed the &quot;host 219.118.175.244&quot; command above you can see that the 
+answer was &quot;ns.tokyo-av-land.com&quot;. The DNS servers for the reverse domain 
+&quot;175.118.219.in-addr.arpa&quot; which includes that ip address 219.118.175.244 
+have that name, ns.tokyo-av-land.com in the zone.
+
+&gt; If I can figure out why a reverse lookup of my ip gives the wrong FQDN
+&gt; then maybe I can get this fixed?
+
+The SMTP server accepting the mail only knows who is sending it by looking up 
+the name associated to the IP address in the reverse zone. It does some 
+validation by checking the name forwards to see if it comes up with the same 
+answer. If they don't match, that causes the &quot;may be forged&quot;.
+
+Putting an entry in the forward zone, for 
+ns.tokyo-av-land.com=219.118.175.244, will probably sort this out.
+
+Either that or contacting the admin of the reverse zone and getting them to 
+change the name listed in the reverse to something matching the forward 
+lookup.
+
+-- 
+--
+Sam Tilders
+sam@example.com
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00057" href="msg00057.html">[tlug] mail(): Received (may be forged) question</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+<li><strong><a name="00059" href="msg00059.html">Re: [tlug] mail(): Received (may be forged) question</a></strong>
+<ul><li><em>From:</em> Sam Tilders</li></ul></li>
+<li><strong><a name="00061" href="msg00061.html">Re: [tlug] mail(): Received (may be forged) question</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00061.html">Re: [tlug] mail(): Received (may be forged) question</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00063.html">Re: [tlug] New in Tokyo: Meeting Regularity, Zaurus CL-700 &amp; Jobs</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00061.html">Re: [tlug] mail(): Received (may be forged) question</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00065.html">Re: [tlug] mail(): Received (may be forged) question</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00062"><strong>Date</strong></a></li>
+<li><a href="threads.html#00062"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

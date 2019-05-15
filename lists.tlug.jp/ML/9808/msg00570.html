@@ -1,0 +1,194 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd) -->
+<!--X-From: Matt Gushee <matt@example.com> -->
+<!--X-Date:  Mon, 31 Aug 1998 15:03:19 +0900 -->
+<!--X-Message-Id: 199808310607.PAA06219@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.980830144737.527B&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00569.html">Date Prev</A>][<A HREF="msg00571.html">Date Next</A>][<A HREF="msg00552.html">Thread Prev</A>][<A HREF="msg00572.html">Thread Next</A>][<A HREF="maillist.html#00570">Date Index</A>][<A HREF="threads.html#00570">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 31 Aug 1998 15:07:45 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00552.html">Pine.LNX.3.96.980830144737.527B-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00552.html">Pine.LNX.3.96.980830144737.527B-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Eric S. Standlee writes:
+
+ &gt; Questions:
+ &gt; 1)  what is the best way to set up the system to run cannaserver on
+ &gt; startup?
+ &gt; 2)  do I need an environment var initialized, if so where should I do
+ &gt; that?
+ &gt; 3)  It might be different, but in xemacs and kterm how do I initialize
+ &gt; input of Japanese characters, and just as important, how do I stop
+ &gt; Japanese input?
+
+Well, I really don't think I know the *best* way to do any of these
+things, but since noone else has answered yet, I'll tell you what
+works for me.
+
+1) If you have a System V -ish boot configuration (Red Hat,
+TurboLinux?, maybe Debian, but I think not Slackware), you should have 
+a 'canna' script in the init script directory (/etc/rc.d/init.d on
+RedHat), and a symlink to it in the directory for the runlevel you
+boot into ... e.g. on my box the /etc/rc.d/rc3.d directory includes
+'S96canna'. The initial S means start, the number determines the order 
+relative to other startup scripts. I don't know any reason why it has
+to be 96, though I imagine you wouldn't want it at the very beginning
+of the boot sequence. If you installed a binary RPM,
+this was probably taken care of automatically. What may not have been
+done automatically is creating the directory for the Canna
+lockfile. Now this part is a little weird. I use the RedHat-contrib
+version of Canna (but I built it from SRPM). When my Canna starts, it
+creates a lockfile called /usr/tmp/.iroha_unix/IROHA. The docs say
+that's the old way, no longer used, and you should have a
+/var/lock/canna directory ... but evidently the docs are not
+completely correct. Anyway, I have /var/lock/canna, which is never
+used (but I think maybe I needed it to satisfy RPM or something), and
+I have .iroha_unix in /var/tmp -- with /usr/tmp as a symlink to
+/var/tmp ... because I think /usr/tmp is a dumb place for lockfiles,
+but I didn't care to spend weeks mucking around in the code &amp;/or
+makefiles trying to actually fix it. Follow me so far?
+
+2) Not sure what you need for kinput2 (I've never used it enough to
+bother getting it set up completely), but for Canna I think you just
+need to make sure the directory w/ the several Canna executables
+(which may or may not be /usr/canna/bin or /usr/local/canna/bin) is on 
+your $PATH. The place to do that is /etc/profile. E.g.:
+
+PATH="$PATH:/usr/X11R6/bin:/usr/canna/bin"
+
+and make sure the PATH is EXPORTed.
+
+3) XEmacs: you need something like this in your .emacs:
+
+(if (and (boundp 'CANNA) CANNA)
+    (progn
+      (load-library "canna")
+      (canna) ))
+
+Then the command to switch into Japanese input is
+'canna-toggle-japanese-mode'. You might want to define a keybinding
+for that; if I remember right, the default keybinding was very
+inconvenient for me, so I set it to F12. AFAIK, F12 is not used for
+anything by default, and it's easy to find.
+
+For kinput2 in an xterm, well, kinput2 needs to be running, of course;
+then I *think* you hit Shift-Spacebar to toggle it on and off.
+
+Hope this helps.
+
+Matt Gushee
+Oshamanbe, Hokkaido
+--------------------------------------------------------------
+Next Nomikai: 18 September, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 10 October, Tokyo Station Yaesu central gate 12:30
+--------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00572" HREF="msg00572.html">tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> Matt Gushee &lt;matt@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00573" HREF="msg00573.html">tlug: 3-color picture</A></STRONG>
+<UL><LI><EM>From:</EM> Domenico Carlucci &lt;mimmo@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00575" HREF="msg00575.html">Re: tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00552" HREF="msg00552.html">tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+<UL><LI><EM>From:</EM> "Eric S. Standlee" &lt;fwiw3980@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00569.html">Re: tlug: bootp vs dhcp</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00571.html">tlug: IPASS &amp; Linux</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00552.html">tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00572.html">tlug: xemacs/MULE with cannaserver and ckinput2 (was: PJE) (fwd)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00570"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00570"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

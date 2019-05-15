@@ -1,0 +1,189 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] iptable blocking IP addresses -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Mon, 23 Feb 2004 17:41:56 +0900 -->
+<!--X-Message-Id: 87k72echm3.fsf@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20040223025748.74578.qmail@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00417.html">Date Prev</a>][<a href="msg00419.html">Date Next</a>][<a href="msg00412.html">Thread Prev</a>][<a href="msg00464.html">Thread Next</a>][<a href="maillist.html#00418">Date Index</a>][<a href="threads.html#00418">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] iptable blocking IP addresses</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 23 Feb 2004 17:41:56 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<A HREF="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20iptable%20blocking%20IP%20addresses">stephen@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] iptable blocking IP addresses</strong></li>
+<li>References: &lt;<a href="msg00404.html">20040223025748.74578.qmail@example.com</a>&gt;</li>
+<li>Organization: The XEmacs Project</li>
+<li>User-agent: Gnus/5.1006 (Gnus v5.10.6) XEmacs/21.5 (celeriac, linux)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+&gt;&gt;&gt;&gt;&gt; &quot;Gerald&quot; == Gerald Naughton &lt;naughton123@example.com&gt; writes:
+
+    Gerald&gt; IPCOP uses iptables and I can`t see in the docs on howto
+    Gerald&gt; to stop scanning etc
+
+    Gerald&gt; Anyone recommend a way to stop these scans etc ?
+
+You can't stop a scan.  If somebody's got a big enough pipe, they can
+DOS you by port scanning (google for, uh, Trinoo or DDOS).  All you
+can do is block the probes at the firewall, which is the same thing as
+blocking attempts to access those ports---by definition.  An attempt
+to access a port is exactly what a &quot;scan&quot; is; it's just not followed
+up with any data if it succeeds.  Here's a dataflow diagram:
+
+                              log
+                               A
+                               |
+                     +---------0-------+
+                     |         |       |
+allowed connection --0---------+-------0--&gt; local service or inside host
+                     |                 |
+                     | firewall router | 
+                     |                 |
+blocked connection --0---------+       X -&gt; local service or inside host
+                     |         |       |
+                     +---------0-------+
+                               |
+                         +-----+-----+
+                         |           |
+                         V           V
+                        log     ICMP reject
+
+The &quot;log&quot; and &quot;ICMP reject&quot; actions are optional.  Evidently IPCOP is
+logging the scans.  What you need to find out is if those scans are
+getting through to the services or hosts.  Look for logs on the inside
+from either the service daemons or inetd.  If not, you're done.  If
+they are, you just block them as usual, with iptables rules having
+DROP or REJECT as the target.
+
+Whether to use the &quot;reject&quot; option depends on your preferences, the
+source, and the port.  The practical implications of using REJECT
+rather than DROP are (1) you'd like to tell honest people that they've
+made an error, and your machine is not unplugged, and (2) for some
+services (eg, mail) a firm &quot;go away&quot; may actually make some bad guys
+go away (eg, spammers would prefer not to waste many milliseconds
+trying to connect to a machine that is never going to accept mail from
+them).
+
+In the case of FTP or a shotgun port scan, chances are good that
+they're looking for a single chance to suborn your machine, and
+they'll be back, sooner or later.  In the case of mail, though, they
+want to use your machine _now_, and if you definitively reject them,
+they may very well give up.
+
+
+-- 
+Institute of Policy and Planning Sciences     <A  HREF="http://turnbull.sk.tsukuba.ac.jp">http://turnbull.sk.tsukuba.ac.jp</A>
+University of Tsukuba                    Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+               Ask not how you can &quot;do&quot; free software business;
+              ask what your business can &quot;do for&quot; free software.
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00464" href="msg00464.html">[tlug] Re: iptable blocking IP addresses</a></strong>
+<ul><li><em>From:</em> Tobias Diedrich</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00404" href="msg00404.html">[tlug] iptable blocking IP addresses</a></strong>
+<ul><li><em>From:</em> Gerald Naughton</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00417.html">[tlug] Things that should be replaced with a NOOP</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00419.html">Re: [tlug] SevenFilesFromOneOpnOf?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00412.html">Re: [tlug] iptable blocking IP addresses</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00464.html">[tlug] Re: iptable blocking IP addresses</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00418"><strong>Date</strong></a></li>
+<li><a href="threads.html#00418"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

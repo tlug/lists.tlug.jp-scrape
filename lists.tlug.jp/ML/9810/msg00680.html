@@ -1,0 +1,197 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Re: linux cluster -->
+<!--X-From: "Manuel M. T. Chakravarty" <chak@example.com> -->
+<!--X-Date:  Fri, 16 Oct 1998 11:24:34 +0900 -->
+<!--X-Message-Id: 19981016112522A.chak@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 3.0.6.32.19981015123926.00978b40@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00679.html">Date Prev</A>][<A HREF="msg00681.html">Date Next</A>][<A HREF="msg00627.html">Thread Prev</A>][<A HREF="msg00720.html">Thread Next</A>][<A HREF="maillist.html#00680">Date Index</A>][<A HREF="threads.html#00680">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Re: linux cluster</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:darren@example.com">darren@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Re: linux cluster</strong></LI>
+<LI><strong>From</strong>: <strong>"Manuel M. T. Chakravarty" &lt;<A HREF="mailto:chak@example.com">chak@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 16 Oct 1998 11:25:22 +0900</LI>
+<LI>Cc: <A HREF="mailto:sali@example.com">sali@example.com</A>, <A HREF="mailto:andy@example.com">andy@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Thu, 15 Oct 1998 12:39:26"&lt;<A HREF="msg00609.html">3.0.6.32.19981015123926.00978b40@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00609.html">3.0.6.32.19981015123926.00978b40@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Darren Cook &lt;darren@example.com&gt; wrote,
+
+&gt; &gt;[If] your main bottleneck is CPU &lt;-&gt; memory bandwidth. This
+&gt; &gt;implies two things:
+&gt; &gt;
+&gt; &gt;* Buy the biggest cache you can get
+&gt; 
+&gt; Pentium-II seems limited to 512Kb cache. The next Intel chip is supposed to
+&gt; have larger cache (and be better designed for parallel processing), but it
+&gt; is going to be *much* more expensive. 
+&gt; 
+&gt; &gt;(and write your
+&gt; &gt;  application cache-friendly)
+&gt; 
+&gt; What does this mean? If it's answered in the great link (
+&gt; <A TARGET="_top" HREF="http://www.mcs.anl.gov/dbpp/">http://www.mcs.anl.gov/dbpp/</A> ) you gave yesterday, ignore this question, as
+&gt; I'm working through that site. :-)
+
+This is, I think, not covered in this book.  Simplifying the
+problem vastly, there are three things you have to take care
+of:
+
+* Memory access should largely be consecutive, ie, if you
+  process element a[i] of an array, try to process a[i+1] in 
+  the next step (or a[i-1]).  
+
+  This is because caches are maintained in chunks (called
+  cache lines).  So, if you access a[i], the processor will
+  load the whole cache line, which contains a[i].  Access to
+  neighboring elements will, therefore, hit the cache (ie,
+  access the same cache line), which is about an order of
+  magnitude faster than main memory access.
+
+* If you have pseudo-random access to some data structure,
+  adapt the boundaries of your inner loops such that the
+  processed data fits at least into the 2nd-level (better
+  the 1st-level) cache.  (This may require introducing an
+  extra loop-level only to keep the cache happy.)
+
+* If there are multiple traversals over the same arrays and
+  the arrays don't fit into the cache, try to introduce an
+  extra loop nest, which processes the arrays in slices
+  that fit into the cache (first do all traversals for the
+  first slice, then for the second, and so forth.)
+
+There are other problems, like whether your loop fits into
+the instruction cache and the strategies of different cache
+architectures.
+
+Another nice book is ``Parallel Computer Architecture: A
+Hardware/Software Approach'':
+
+  <A TARGET="_top" HREF="http://http.cs.berkeley.edu/~culler/book.alpha/index.html">http://http.cs.berkeley.edu/~culler/book.alpha/index.html</A>
+
+Unfortunately, the contents is not online.  Chapter 3
+(called ``Programming For Performance'') deals with the
+memory hierarchy in general.  IMHO, the rest of the book is
+also worth reading if you are thinking about doing parallel
+computing.
+
+&gt; &gt;* don't use two-processor boards.
+&gt; &gt;
+&gt; &gt;The two processor will only end up competing for bus access,
+&gt; &gt;instead of doing your float calculations.
+&gt; 
+&gt; I also read somewhere that even if the data set is small enough to fit in
+&gt; the processor cache, on a dual processor machine they have to spend time
+&gt; comparing the two caches to make sure the processors are not altering the
+&gt; same memory. Single processors in a cluster won't have this problem.
+
+Yes, cache consistency is another problem in multi-processor
+machines.  Modern processors try minimize the overhead by
+sophisticated processor design.  But, I am not sure how
+successful this is.
+
+Cheers,
+
+Manuel
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00609" HREF="msg00609.html">tlug: Re: linux cluster</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00679.html">Re: tlug: TLUG Finances</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00681.html">Re: tlug: TLUG Finances</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00627.html">Re: tlug: Re: linux cluster</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00720.html">Re: tlug: linux cluster</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00680"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00680"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

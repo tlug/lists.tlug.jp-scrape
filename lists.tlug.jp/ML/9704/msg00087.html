@@ -1,0 +1,198 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: sed ? -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Wed, 23 Apr 1997 07:12:15 GMT -->
+<!--X-Message-Id: m0wJw9P&#45;00001WC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: XFMail.970423103348.schweiz@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00086.html">Date Prev</A>][<A HREF="msg00088.html">Date Next</A>][<A HREF="msg00084.html">Thread Prev</A>][<A HREF="msg00089.html">Thread Next</A>][<A HREF="maillist.html#00087">Date Index</A>][<A HREF="threads.html#00087">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: sed ?</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: sed ? </strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 23 Apr 1997 16:07:34 +0900</LI>
+<LI>In-reply-to: Your message of "Wed, 23 Apr 1997 10:22:42 +0900."            &lt;<A HREF="msg00084.html">XFMail.970423103348.schweiz@example.com</A>&gt; </LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from "Stephen J. Turnbull" &lt;turnbull@example.com&gt;
+--------------------------------------------------------
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Schweizer &lt;schweiz@example.com&gt; writes:
+
+    Jim&gt; After the great help a couple of weeks ago on using sed to
+    Jim&gt; strip headers from email I decided to try to learn a little
+    Jim&gt; more about it. So, I ordered the O'Reilly 'sed &amp; awk' book
+    Jim&gt; and got to work.
+
+    Jim&gt; The problem is, sometime things don't work as advertised. For
+    Jim&gt; example in chapter 3 you're supposed to make a program for
+    Jim&gt; making single replacements called 'gres' which looks like:
+
+    Jim&gt; jim:~/bin$ cat gres
+
+Hmmmm...  where's your magic shell interpreter thingie?  Try inserting 
+
+#!/bin/sh
+
+because bash and sh are not the same, quite, but calling bash as sh
+makes it much more compatible.  This in fact doesn't work here :-)
+
+    Jim&gt; if [ $# -lt "3" ]
+    Jim&gt; then
+    Jim&gt;         echo Usage: gres pattern replacement file
+    Jim&gt;         exit 1
+    Jim&gt; fi
+    Jim&gt; pattern=$1
+    Jim&gt; replacement=$2
+    Jim&gt; if [ -f $3 ]
+    Jim&gt; then
+    Jim&gt;         file=$3
+    Jim&gt; else
+    Jim&gt;         echo $3 is not a file
+    Jim&gt;         exit 1
+    Jim&gt; fi
+    Jim&gt; A="'echo | tr '\012' '\001' '"
+    Jim&gt; 
+    Jim&gt; sed -e "s$A$pattern$A$replacement$A" $file
+
+I assume that this is a hack which allows you to use a nonprintable,
+and thus highly unlikely to appear in the pattern or replacement,
+separator in the `s' command.  Such hacks tend to be very unportable
+across shells.
+
+If you substitute backquotes for the "' and '" pairs, it works.  I
+couldn't find a way to get around the shell variable A, though.
+
+    Jim&gt; When I try to use it though I get the error:
+
+    Jim&gt; sed: Unknown option to 's'
+
+Me, too.
+
+    Jim&gt; So I tried in on both my Slackware setup and SparkLinux with
+    Jim&gt; the same result.
+
+    Jim&gt; The book was written and tested on a SparcStation 1 running
+    Jim&gt; SunOS 4.0. Is the Linux sed version different? I'm using GNU
+    Jim&gt; sed version 2.05; should I upgrade?
+
+It's not sed that's different, it's the shell.  Our Suns run csh by
+preference, maybe this is a csh-ism.
+
+FIRST, blame the shell.  Then look for problems with other programs ;-)
+
+Steve
+
+
+-- 
+                            Stephen J. Turnbull
+Institute of Policy and Planning Sciences                    Yaseppochi-Gumi
+University of Tsukuba                      <A TARGET="_top" HREF="http://turnbull.sk.tsukuba.ac.jp/">http://turnbull.sk.tsukuba.ac.jp/</A>
+Tel: +81 (298) 53-5091;  Fax: 55-3849              turnbull@example.com
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+-----------------------------------------------------------------
+The TLUG mailing list is proudly sponsored by TWICS - Japan's First
+Public-Access Internet System.  Now offering 20,000 yen/year flat
+rate Internet access with no time charges.  Full line of corporate
+Internet and intranet products are available.   info@example.com
+Tel: 03-3351-5977   Fax: 03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00089" HREF="msg00089.html">Re: tlug: sed ?</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00084" HREF="msg00084.html">tlug: sed ?</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00086.html">Re: tlug: Broken fs?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00088.html">RE: tlug: sed ?</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00084.html">tlug: sed ?</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00089.html">Re: tlug: sed ?</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00087"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00087"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

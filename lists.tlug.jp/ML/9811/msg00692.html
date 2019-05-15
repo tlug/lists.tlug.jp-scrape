@@ -1,0 +1,253 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Noseguy -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Fri, 27 Nov 1998 13:32:47 +0900 -->
+<!--X-Message-Id: 13918.11095.440857.371027@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199811260012.JAA01985@example.com&#45;352.nomolog.nagoya&#45;u.ac.jp -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.981127101400.24851S&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00691.html">Date Prev</A>][<A HREF="msg00693.html">Date Next</A>][<A HREF="msg00740.html">Thread Prev</A>][<A HREF="msg00681.html">Thread Next</A>][<A HREF="maillist.html#00692">Date Index</A>][<A HREF="threads.html#00692">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Noseguy</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Noseguy</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 27 Nov 1998 13:32:23 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00689.html">Pine.LNX.3.96LJ1.1b7.981127101400.24851S-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00678.html">199811260012.JAA01985@example.com</A>&gt;&lt;<A HREF="msg00689.html">Pine.LNX.3.96LJ1.1b7.981127101400.24851S-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Scott" == Scott Stone &lt;sstone@example.com&gt; writes:
+
+    Scott&gt; You'll have to relink noseguy with the i18n libraries so
+    Scott&gt; that it can map the encoding to the right font characters.
+
+The encoding is plain JIS.  Says so, right at the end of the XLFD.
+The i18n lib don't know nothing about X font encodings, though.
+
+    Scott&gt; See, right now it doesn't know that it's supposed to
+    Scott&gt; interpret the string as double-byte characters...
+
+I don't think so.  X11 does not depend on them there i18n libraries,
+it looks at the font description which says "this here is a font whose
+first byte runs over the range x0..x1 and whose second byte runs over
+the range y0..y1" and figures it out for itself.
+
+It is quite possible to display kanji fonts without setting locales or 
+anything like that.  Just XQueryLoad the font, and use XDrawString16.
+
+But I was wrong before when I wrote you don't have to mess with the
+source under XFree86.  You do need to use the XDrawString16 function,
+and not XDrawString.  Here's a patch to XEmacs that allows display of
+an ASCII string, interpreted as a sequence of shorts, as kanji in a
+non-Mule XEmacs; it should give an idea of what you need to do.  If
+you've got Noseguy source this may get you rolling.  I don't remember
+why this is necessary (XEmacs does a lot of protecting X from itself),
+so I'm not sure it answers the problem of Noseguy.  But the symptom
+(blank space where you want mojibake ;-) suddenly sounded familiar.
+
+(Why did I want an XEmacs that would happily interpret an ASCII string
+as kanji?  Because I'm seriously thinking about doing a Mule-ectomy on
+the C sources, and needed a guinea pig....)
+
+--- redisplay-x.c-20.5-b17	Sun Dec  7 07:26:50 1997
++++ redisplay-x.c	Wed Apr 15 00:56:07 1998
+@@ -239,12 +239,29 @@
+   Lisp_Object font_inst = FACE_CACHEL_FONT (cachel, run-&gt;charset);
+   struct Lisp_Font_Instance *fi = XFONT_INSTANCE (font_inst);
+   if (!fi-&gt;proportional_p)
++#define MUX 1
++#if ((MUX) &amp;&amp; ! (MULE))
++    return fi-&gt;width * run-&gt;len/((FONT_INSTANCE_X_FONT (fi) -&gt; min_byte1
++				  || FONT_INSTANCE_X_FONT (fi) -&gt; max_byte1)
++				 ? 2 : 1);
++#else
+     return fi-&gt;width * run-&gt;len;
++#endif
+   else
+     {
+       if (run-&gt;dimension == 2)
+ 	return XTextWidth16 (FONT_INSTANCE_X_FONT (fi),
+ 			     (XChar2b *) run-&gt;ptr, run-&gt;len);
++#define MUX 1
++#if ((MUX) &amp;&amp; ! (MULE))
++      /* Quick hack to try to get MBCS displayed under non-mule XEmacs *
++       * balloon_help.c also uses XDrawString but hasn't been hacked.  *
++       * It doesn't seem to know anything about Mule anyway....        */      
++      else if (   FONT_INSTANCE_X_FONT (fi) -&gt; min_byte1
++	       || FONT_INSTANCE_X_FONT (fi) -&gt; max_byte1)
++	return XTextWidth16 (FONT_INSTANCE_X_FONT (fi),
++			     (XChar2b *) run-&gt;ptr, run-&gt;len/2);
++#endif
+       else
+ 	return XTextWidth (FONT_INSTANCE_X_FONT (fi),
+ 			   (char *) run-&gt;ptr, run-&gt;len);
+@@ -956,6 +973,24 @@
+ 			      clip_box, 1, Unsorted);
+ 	}
+ 
++#if ((MUX) &amp;&amp; ! (MULE))
++      /* Quick hack to try to get MBCS displayed in non-mule XEmacs */
++      if (runs[i].dimension != 1)
++	(bgc ? XDrawString16 : XDrawImageString16) (dpy, x_win, gc, xpos,
++						    dl-&gt;ypos,
++						    (XChar2b *) runs[i].ptr,
++						    runs[i].len);
++      else if (FONT_INSTANCE_X_FONT (XFONT_INSTANCE (font)) -&gt; min_byte1
++		  || FONT_INSTANCE_X_FONT (XFONT_INSTANCE (font)) -&gt; max_byte1)
++	(bgc ? XDrawString16 : XDrawImageString16) (dpy, x_win, gc, xpos,
++						    dl-&gt;ypos,
++						    (XChar2b *) runs[i].ptr,
++						    runs[i].len/2);
++      else
++	(bgc ? XDrawString : XDrawImageString) (dpy, x_win, gc, xpos,
++						dl-&gt;ypos, (char *) runs[i].ptr,
++						runs[i].len);
++#else
+       if (runs[i].dimension == 1)
+ 	(bgc ? XDrawString : XDrawImageString) (dpy, x_win, gc, xpos,
+ 						dl-&gt;ypos, (char *) runs[i].ptr,
+@@ -965,6 +1000,7 @@
+ 						    dl-&gt;ypos,
+ 						    (XChar2b *) runs[i].ptr,
+ 						    runs[i].len);
++#endif
+ 
+       /* We draw underlines in the same color as the text. */
+       if (cachel-&gt;underline)
+@@ -1055,12 +1091,26 @@
+ 	  XSetClipRectangles (dpy, cgc, cursor_start, dl-&gt;ypos - dl-&gt;ascent,
+ 			      clip_box, 1, Unsorted);
+ 
++#if ((MUX) &amp;&amp; ! (MULE))
++      /* Quick hack to try to get MBCS displayed in non-mule XEmacs */
++      if (runs[i].dimension != 1)
++	XDrawImageString16 (dpy, x_win, cgc, xpos, dl-&gt;ypos,
++			    (XChar2b *) runs[i].ptr, runs[i].len);
++      else if (FONT_INSTANCE_X_FONT (XFONT_INSTANCE (font)) -&gt; min_byte1
++	       || FONT_INSTANCE_X_FONT (XFONT_INSTANCE (font)) -&gt; max_byte1)
++	XDrawImageString16 (dpy, x_win, cgc, xpos, dl-&gt;ypos,
++			    (XChar2b *) runs[i].ptr, runs[i].len/2);
++      else
++	XDrawImageString (dpy, x_win, gc, xpos, dl-&gt;ypos,
++			  (char *) runs[i].ptr, runs[i].len);
++#else
+ 	  if (runs[i].dimension == 1)
+ 	    XDrawImageString (dpy, x_win, cgc, xpos, dl-&gt;ypos,
+ 			      (char *) runs[i].ptr, runs[i].len);
+ 	  else
+ 	    XDrawImageString16 (dpy, x_win, cgc, xpos, dl-&gt;ypos,
+ 				(XChar2b *) runs[i].ptr, runs[i].len);
++#endif
+ 
+ 	  XSetClipMask (dpy, cgc, None);
+ 	  XSetClipOrigin (dpy, cgc, 0, 0);
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+__________________________________________________________________________
+__________________________________________________________________________
+What are those two straight lines for?  "Free software rules."
+----------------------------------------------------------------
+Next Technical Meeting: 12 December, 12:30 HSBC Securities Office
+Next Nomikai: 15 January 1999, 19:30 Tengu TokyoEkiMae 03-3275-3691
+----------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A> Sponsors: PHT, HSBC Securities
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00678" HREF="msg00678.html">tlug: Noseguy</A></STRONG>
+<UL><LI><EM>From:</EM> Frank Bennett &lt;bennett@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00689" HREF="msg00689.html">Re: tlug: Noseguy</A></STRONG>
+<UL><LI><EM>From:</EM> Scott Stone &lt;sstone@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00691.html">tlug: Apache restart</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00693.html">tlug: Apache restart</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00740.html">Re: tlug: qpopper vs. tcpd</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00681.html">tlug: Moving sale (hypothetical question :-)</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00692"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00692"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

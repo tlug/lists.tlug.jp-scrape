@@ -1,0 +1,202 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Limits on file numbers in sort &#45;m -->
+<!--X-From-R13: Xvz Perra <wvzoerraNtznvy.pbz> -->
+<!--X-Date: Wed, 28 May 2014 14:21:20 +0900 -->
+<!--X-Message-Id: CABHGxq4NEBMVR8jndiEvcgsGkc_B0f&#45;qcrs2sFjqaAdWH3n9sw@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: CABHGxq7jYkDDLkF8uzzNK8WeU+37t1wgpVhk6VD2HQKyEi7wBw@mail.gmail.com -->
+<!--X-Reference: CAJMSLH618MfmhL9ufAOfLXxw52i4STpF8dsc_+xe&#45;2GRB3JM8g@mail.gmail.com -->
+<!--X-Reference: 87bnui8sky.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00272.html">Date Prev</a>][<a href="msg00274.html">Date Next</a>][<a href="msg00272.html">Thread Prev</a>][<a href="msg00274.html">Thread Next</a>][<a href="maillist.html#00273">Date Index</a>][<a href="threads.html#00273">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Limits on file numbers in sort -m</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Wed, 28 May 2014 15:21:17 +1000</li>
+<li><strong>From</strong>: <strong>Jim Breen &lt;<a href="mailto:jimbreen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Limits%20on%20file%20numbers%20in%20sort%20-m">jimbreen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Limits on file numbers in sort -m</strong></li>
+<li>References: &lt;<a href="msg00267.html">CABHGxq7jYkDDLkF8uzzNK8WeU+37t1wgpVhk6VD2HQKyEi7wBw@mail.gmail.com</a>&gt;	&lt;<a href="msg00268.html">CAJMSLH618MfmhL9ufAOfLXxw52i4STpF8dsc_+xe-2GRB3JM8g@mail.gmail.com</a>&gt;	&lt;<a href="msg00272.html">87bnui8sky.fsf@uwakimon.sk.tsukuba.ac.jp</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 28 May 2014 13:55, Stephen J. Turnbull &lt;stephen@example.com&gt; wrote:
+&gt; �\��章 writes:
+&gt;
+&gt;  &gt;     A small precursor to consider is if the filename expansion
+&gt;  &gt;     (i.e. from *.interim to all the separate files) will exceed the
+&gt;  &gt;     size of ARG_MAX. On my system you'd be OK (it's ~2M, i.e. more
+&gt;  &gt;     than ~10k * 20 chars = ~200k)
+&gt;
+&gt; There are shell limits as well, even if ARG_MAX is huge Jim probably
+&gt; wants to use xargs.
+
+I can't see where xargs would assist with &quot;sort -m ....&quot;, as by definition
+it wants all the files at once.
+
+&gt;  &gt; &gt; I'm gearing up for a merging of a very large number of
+&gt;  &gt; &gt; sorted text files(*). Does anyone know if there is an upper
+&gt;  &gt; &gt; limit on how many sorted files can be merged using something
+&gt;  &gt; &gt; like: &quot;sort -m *.interim &gt; final&quot;.
+&gt;
+&gt; I don't know about upper limits, but you might consider whether you
+&gt; wouldn't get much better performance from a multipass approach.
+&gt;
+&gt;  &gt; &gt; Also, is it worth fiddling with the &quot;--batch-size=NMERGE&quot; option?
+&gt;
+&gt; Pretty much what I had in mind.  Specifically, assuming 100-byte
+&gt; lines, merging 10 files at a time means 4GB in the first pass,
+&gt; comfortably fitting in your memory and allowing very efficient I/O.
+&gt; I'll bet that this is a big win (on the first pass only).  On later
+&gt; passes, the performance analysis is non-trivial, but the I/O
+&gt; efficiency of having a big buffer for each file in the batch may
+&gt; outweigh the additional passes.
+
+But does &quot;sort -m ...&quot; pull everything into RAM? If I were
+implementing it I'd have a heap of open input files and pop
+the individual files as needed. Last night I did a test with
+~150 files. I don't know how it went about it, but it only used
+a moderate amount of RAM, so I expect it's doing a classical
+file merge.
+
+&gt; Do you expect the output file to be ~= 40x10^9 lines!?  Or is some
+&gt; uniquification going to be applied?  If so, I suspect that
+&gt; interleaving merge and uniquification passes will be a lot faster.
+
+Yes, I'll be uniquificationするing, in which identical lines are counted
+and tagged with their frequency.
+
+this
+this
+
+will become
+
+this\t2
+
+I can't get sort to do that, and rather than worry about adding a
+multi-file merge to my uniquification utility, I'll do it in a separate
+pass.
+
+&gt; For quad core, see the --parallel option.  This is better documented
+&gt; in the Info manual for coreutils than in the man page.
+
+I can't see that option in either the man page or the info/coreutils
+manual. I see when I run sort (but not sort -m) that it goes
+parallel by default. &quot;top&quot; shows the processor load going to 300+%.
+
+Cheers
+
+Jim
+
+-- 
+Jim Breen
+Adjunct Snr Research Fellow, Japanese Studies Centre, Monash University
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00274" href="msg00274.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> 黒鉄章</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00267" href="msg00267.html">[tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Jim Breen</li></ul></li>
+<li><strong><a name="00268" href="msg00268.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> 黒鉄章</li></ul></li>
+<li><strong><a name="00272" href="msg00272.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00272.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00274.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00272.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00274.html">Re: [tlug] Limits on file numbers in sort -m</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00273"><strong>Date</strong></a></li>
+<li><a href="threads.html#00273"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

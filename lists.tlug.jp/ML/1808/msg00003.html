@@ -1,0 +1,184 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Compile/load problem with graphics library -->
+<!--X-From-R13: Xbr Tbena <wbrsbenaNtznvy.pbz> -->
+<!--X-Date: Sun, 05 Aug 2018 09:49:43 +0900 -->
+<!--X-Message-Id: 32f9378d&#45;874e&#45;b475&#45;e35f&#45;fe10719cede8@gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: fe5a3e36&#45;1068&#45;ab9b&#45;e233&#45;66f92f81b522@imaginatorium.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00002.html">Date Prev</a>][<a href="msg00004.html">Date Next</a>][<a href="msg00002.html">Thread Prev</a>][<a href="msg00006.html">Thread Next</a>][<a href="maillist.html#00003">Date Index</a>][<a href="threads.html#00003">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Compile/load problem with graphics library</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 5 Aug 2018 09:49:37 +0900</li>
+<li><strong>From</strong>: <strong>Joe Foran &lt;<a href="mailto:joeforan@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Compile%2Fload%20problem%20with%20graphics%20library">joeforan@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Compile/load problem with graphics library</strong></li>
+<li>References: &lt;<a href="msg00001.html">fe5a3e36-1068-ab9b-e233-66f92f81b522@imaginatorium.org</a>&gt;</li>
+<li>User-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)	Gecko/20100101 Thunderbird/52.9.1</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<table width="100%"><tr><td bgcolor="#FFFFFF" style="background-color: #FFFFFF; color: #000000; "><font color="#000000">
+  
+  
+    <div class="moz-cite-prefix"><tt>Hi Brian,</tt><tt><br>
+      </tt><tt><br>
+      </tt><tt>The linker is giving this error because it cannot find
+        the functions in question. <br>
+        The order </tt><tt>in which the object files are provided to
+        the linker is very important. <br>
+        T</tt><tt>hey should be specified in order of most specific
+        (application object files)<br>
+        to most general (library object files). </tt><tt><br>
+      </tt><tt>In the makefile you provide on the forum thread, you have
+        lines like</tt><code><br>
+        $(CC) $(LDFLAGS) test.o cutoutbg.o boundingbox.o -o $@</code><br>
+      <code></code><code></code>
+      <pre><code>The LDFLAGS variable contains the necessary information about the ImageMagick library files 
+and should come after the application object files. i.e.
+</code><code>$(CC) test.o cutoutbg.o boundingbox.o </code><code><code>$(LDFLAGS) -o $@</code></code>
+<code></code></pre>
+      <tt>You will need to do this everywhere LDFLAGS is referenced.<br>
+        Does this help?</tt><tt><br>
+        <br>
+        Joe<br>
+      </tt><tt><br>
+      </tt><tt><br>
+      </tt><tt>On 2018/08/05 3:55, Brian Chandler wrote:</tt><tt><br>
+      </tt></div>
+    <blockquote type="cite"
+      cite="">
+      <pre wrap="">Hello! I'm looking for help with a software problem. I have a small C++ 
+program to do some basic image manipulation (basic, but very specific), 
+using the Imagemagick++ library; it ran on my webserver (at pair.com 
+hosting) for years, but stopped because of an "upgrade". I cannot now 
+recompile, cannot really understand the problem, and can't seem to get 
+any help either from pair.com or the Imagemagick forum. Here's my 
+question in full:
+
+<a rel="nofollow" class="moz-txt-link-freetext" href="https://www.imagemagick.org/discourse-server/viewtopic.php?f=23&amp;t=34332&amp;sid=364f3a5fa340bcbb3d0057542983ff5f">https://www.imagemagick.org/discourse-server/viewtopic.php?f=23&amp;t=34332&amp;sid=364f3a5fa340bcbb3d0057542983ff5f</a>
+
+It looks as though the loader has some problem. Unfortunately the forum 
+responses I've received don't suggest to me that the helpers know any 
+more than I do. Obviously the best answer is a change to the makefile, 
+or similar, that makes the library work again. But failing that, I would 
+try to install the library in my own server space, giving up on the one 
+provided by Pair.com. The worst option I suppose is to rewrite the 
+program to use something else, but I hope it doesn't come to that.
+
+Can anyone suggest where to start? If I need to provide other 
+information, then sorry, but just say. Thanks!
+
+Brian Chandler
+
+</pre>
+    </blockquote>
+    <p><tt><br>
+      </tt></p>
+  
+
+</font></td></tr></table>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00006" href="msg00006.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00001" href="msg00001.html">[tlug]  Compile/load problem with graphics library</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00002.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00004.html">[tlug] Free: 1080p Project With Bad Colour</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00002.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00006.html">Re: [tlug] Compile/load problem with graphics library</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00003"><strong>Date</strong></a></li>
+<li><a href="threads.html#00003"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

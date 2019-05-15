@@ -1,0 +1,195 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] unicode and Perl&#45; how to pass command line unicodearguments -->
+<!--X-From-R13: tnobe <tnobeNarxbznapre.arg> -->
+<!--X-Date: Tue, 14 Feb 2006 03:50:55 +0900 -->
+<!--X-Message-Id: 43F0D507.7020303@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 43EFF8C4.4050704@example.com -->
+<!--X-Reference: 87d5hrix3v.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00251.html">Date Prev</a>][<a href="msg00253.html">Date Next</a>][<a href="msg00248.html">Thread Prev</a>][<a href="msg00256.html">Thread Next</a>][<a href="maillist.html#00252">Date Index</a>][<a href="threads.html#00252">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 13 Feb 2006 19:50:47 +0100</li>
+<li><strong>From</strong>: <strong>gabor &lt;<A HREF="mailto:gabor@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20unicode%20and%20Perl-%20how%20to%20pass%20command%20line%20unicodearguments">gabor@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] unicode and Perl- how to pass command line unicodearguments</strong></li>
+<li>References: &lt;<a href="msg00242.html">43EFF8C4.4050704@example.com</a>&gt;&lt;<a href="msg00248.html">87d5hrix3v.fsf@example.com</a>&gt;</li>
+<li>User-agent: Thunderbird 1.5 (Macintosh/20051201)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Stephen J. Turnbull wrote:
+
+&gt; You might be happier with Python (or some other language with similar
+&gt; design).  Python has separate types for byte strings and Unicode
+&gt; strings.  Unicode literals are a bit of an annoyance since you have to
+&gt; do something like
+&gt; 
+&gt;     var = &quot;Yes, this is valid UTF-8!&quot;.unicode('utf-8')
+&gt; 
+&gt; but if you're generally reading from files you can set the default
+&gt; codec to the appropriate UTF, and you &quot;just read&quot; from the files and
+&gt; everything &quot;just works.&quot;  
+
+in python byte-strings are objects and unicode-strings are objects too.
+you create a byte string for example like this:
+
+string1 = &quot;byte string&quot;
+
+an unicode string:
+
+string2 = u&quot;byte string&quot;
+
+to convert between unicode and byte-strings you can use the 
+encode/decode methods of the strings.
+
+decode decodes a byte-strings into unicode, and encode encodes an 
+unicode string into a byte-string.
+
+unicodestrings = &quot;byte string&quot;.decode('utf-8')
+bytestring = u&quot;unicode string&quot;.encode('utf-8')
+
+you can also use the unicodestring object's constructor that takes a 
+bytestring and a charset specifier, like:
+
+
+unicodestring = unicode(&quot;byte string&quot;,&quot;utf-8&quot;)
+which is the same as doing
+unicodestring = &quot;byte string&quot;.decode('utf-8')
+
+one problematic &quot;feature&quot; is that when you concatenate a bytestring and 
+an unicodestring, python will convert the bytestring into unicode usint 
+the 'default encoding'. which is 'ascii'.
+this default-encoding can be changed by editing a python file in your 
+python distribution, but it is not recommended, because many packages 
+rely on the fact that default encoding is 'ascii'.
+this feature is problematic, because sometimes you write code or use 
+modules that convert the bytestring to unicodestrings, but while you 
+only use english characters, it works transparently.
+
+then, in production, of course it breaks down the first time you use a 
+non-ascii character.
+
+
+
+&gt; The basic principle is that all your
+&gt; workhorse functions should assume (and check for, if they can be
+&gt; called at higher levels) Unicode as input.  Everything should be
+&gt; converted to Unicode _explicitly_ as early as possible.
+&gt; 
+
+100% agree
+
+
+gabor
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00256" href="msg00256.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00242" href="msg00242.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> David Riggs</li></ul></li>
+<li><strong><a name="00248" href="msg00248.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+<ul><li><em>From:</em> Stephen J. Turnbull</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00251.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00253.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00248.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00256.html">Re: [tlug] unicode and Perl- how to pass command line unicodearguments</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00252"><strong>Date</strong></a></li>
+<li><a href="threads.html#00252"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Doesn't the Ampersand make commands run in the background? -->
+<!--X-From-R13: Dbznaf [nyvabifxvf <ebznavafuNtznvy.pbz> -->
+<!--X-Date: Tue, 24 Oct 2006 19:38:21 +0900 -->
+<!--X-Message-Id: 15B03C40&#45;40B6&#45;4E40&#45;88A0&#45;0347211AD8E8@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 453DBA53.9050709@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00229.html">Date Prev</a>][<a href="msg00231.html">Date Next</a>][<a href="msg00227.html">Thread Prev</a>][<a href="msg00238.html">Thread Next</a>][<a href="maillist.html#00230">Date Index</a>][<a href="threads.html#00230">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Doesn't the Ampersand make commands run in the background?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 24 Oct 2006 19:38:17 +0900</li>
+<li><strong>From</strong>: <strong>Romans Malinovskis &lt;<a href="mailto:romaninsh@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Doesn%27t%20the%20Ampersand%20make%20commands%20run%20in%20the%20background%3F">romaninsh@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Doesn't the Ampersand make commands run in the background?</strong></li>
+<li>References: &lt;<a href="msg00222.html">453DBA53.9050709@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt><br>I dutifully looked up the answer to my question before posting here,  
+but what I read doesn't seem to be the case.</tt><br>
+<br>
+<tt>A web site said:<br>
+&quot;The shell has the capacity to run multiple commands at one time,  
+and can run commands in the background using the ampersand (&amp;) after  
+the command.&quot;</tt><br>
+<br>
+<tt>But on my system, when I try adding an ampersand after a command, I  
+don't get the command prompt back. I have to either wait for wait  
+for the command to finish it's task, or press [ctrl]+C.</tt><br>
+<br>
+<tt>Did I miss something? This seems very straight forward, so it's hard  
+to guess at what could be wrong.
+</tt></blockquote><pre style="margin: 0em;"><br>If you execute something like this:</pre><br>
+<pre style="margin: 0em;"><br>app1 ; app2 &amp;</pre><br>
+<pre style="margin: 0em;">then it might not happen.. You can try</pre><br>
+<pre style="margin: 0em;">( app1; app2 ) &amp;</pre><br>
+<tt>also - even if you type ampersand at the end, application is still  
+using stdin/stdout (unless it specifically decides to detach those).  
+That means you can't run &quot;screen&quot; or &quot;mc&quot; or &quot;vi&quot; in background, they  
+would mess up your command line.</tt><br>
+<br>
+<tt>there are two tools which can help you. First you can use &quot;screen&quot;  
+application. Check it's command line arguments, you can make it detach  
+with the child process running and it will be hanging.</tt><br>
+<br>
+<tt>other way is to use &quot;nohup&quot;. It's a standard tool, but might be  
+missing from some distribution. It's idea is to detach stdin/stdout/ 
+stderr from your terminal.</tt><br>
+<br>
+<tt>Another issue you might run into is - when you exit bash session (for  
+example close terminal) child processes running in background will  
+loose their terminal. Some (like &quot;tail&quot;) don't care about that, while  
+others (like vim) will die. Once again - screen and nohup helps.</tt><br>
+<br>
+<tt>Last tip - with bash you may run some program, hit Ctrl+Z (which  
+suspends application) then type &quot;bg&quot; to resume it at the background.  
+Some application will refuse to run in background. You can use &quot;jobs&quot;  
+or &quot;fg&quot; to bring task back. You may specify number of task, see bash's  
+help (type help jobs) for more info.</tt><br>
+<br>
+<pre style="margin: 0em;"><br>There is a good howto on this, which might be a bit too geeky:)
+ - <a  href="http://www.math.ucdavis.edu/~zjohnson/doc/Adv-Bash-Scr-HOWTO/">http://www.math.ucdavis.edu/~zjohnson/doc/Adv-Bash-Scr-HOWTO/</a></pre><br>
+<pre style="margin: 0em;">I hope this helps.</pre><br>
+<pre style="margin: 0em;">romans</pre><br>
+<br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00238" href="msg00238.html">Re: [tlug] Doesn't the Ampersand make commands run in the background?</a></strong>
+<ul><li><em>From:</em> Stuart Luppescu</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00222" href="msg00222.html">[tlug] Doesn't the Ampersand make commands run in the background?</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00229.html">Re: [tlug] PHP in Japan.</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00231.html">Re: [tlug] Can I make a subdirectory of localhost behave like a root	directory for a site?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00227.html">Re: [tlug] Doesn t the Ampersand make commands run in the background?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00238.html">Re: [tlug] Doesn't the Ampersand make commands run in the background?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00230"><strong>Date</strong></a></li>
+<li><a href="threads.html#00230"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

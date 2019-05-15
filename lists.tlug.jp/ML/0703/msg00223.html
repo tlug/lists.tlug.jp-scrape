@@ -1,0 +1,161 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Adding text to the beginning of a file -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <gheaohyyNfx.gfhxhon.np.wc> -->
+<!--X-Date: Sat, 17 Mar 2007 01:16:53 +0900 -->
+<!--X-Message-Id: 17914.50503.871819.848505@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 45FA6B45.3040500@example.com -->
+<!--X-Reference: ba75897e0703160413oc5219d7gb2bea3d53cd0afc2@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00220.html">Date Prev</a>][<a href="msg00221.html">Date Next</a>][<a href="msg00220.html">Thread Prev</a>][<a href="msg00221.html">Thread Next</a>][<a href="maillist.html#00223">Date Index</a>][<a href="threads.html#00223">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Adding text to the beginning of a file</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 17 Mar 2007 01:26:47 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:turnbull@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Adding%20text%20to%20the%20beginning%20of%20a%20file">turnbull@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Adding text to the beginning of a file</strong></li>
+<li>References: &lt;<a href="msg00219.html">45FA6B45.3040500@example.com</a>&gt;	&lt;<a href="msg00220.html">ba75897e0703160413oc5219d7gb2bea3d53cd0afc2@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Arwyn Hainsworth writes:
+ &gt; On 16/03/07, Dave M G &lt;martin@example.com&gt; wrote:
+
+ &gt; &gt; Can I wipe out everything up to and including the &quot;--&quot; and then past in
+ &gt; &gt; new text?
+
+ &gt; Sed is your friend:
+ &gt; 
+ &gt; sed '1,/^#--/ d' &lt; file_with_data_to_replace &gt; tmp_file
+ &gt; cat file_with_new_data tmp_file &gt; end_result_file
+
+Note that (as in all regexps) whitespace is significant.  So the
+target regexp needs to be at least '^# --'.  Note that the classic sig
+separator uses significant whitespace to help disambiguate: '^-- $'.
+I would suggest matching that seperator exactly: '^# --$'.  This will
+help to avoid grief someday when (eg) you include a commented-out mail
+message (such as this one, except I currently have no sig :-), where
+the commented mail sig separator matches '^# -- $' -- and '^# --' as
+well.  You'd be amazed how often the naked eye misses such details
+when debugging.
+
+Also, something that might be important in writing a &quot;secure&quot; script
+that doesn't have write permission on any directory in particular,
+just that file, you can cat stdin explicitly by using '-' as the file
+name (and if you actually have a file named '-' in the current
+directory, you must qualify it explicitly: './-').  Thus:
+
+sed '1,/^#--/ d' &lt; the_file | cat new_head - &gt; the_file
+
+Note that this may not be robust, although it Works For Me (with bash
+2.05b.0(1)-release on Mac OS X).  Those familiar with stdio
+redirection will know that '&gt; the_file' truncates the_file before
+opening it and passing the fd to the process, but apparently sed gets
+to open the file before the shell truncates it for cat.
+
+This may be a race condition that happens to work out, or it may be
+required by POSIX, any shell-heads out there that know?
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00219" href="msg00219.html">[tlug] Adding text to the beginning of a file</a></strong>
+<ul><li><em>From:</em> Dave M G</li></ul></li>
+<li><strong><a name="00220" href="msg00220.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+<ul><li><em>From:</em> Arwyn Hainsworth</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00220.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00221.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00220.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00221.html">Re: [tlug] Adding text to the beginning of a file</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00223"><strong>Date</strong></a></li>
+<li><a href="threads.html#00223"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

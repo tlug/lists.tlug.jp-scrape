@@ -1,0 +1,193 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: X and fonts -->
+<!--X-From: Matt Gushee <matt@example.com> -->
+<!--X-Date:  Wed, 21 Oct 1998 20:35:19 +0900 -->
+<!--X-Message-Id: 199810211139.UAA17852@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 362DBAAD.547E3813@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00893.html">Date Prev</A>][<A HREF="msg00895.html">Date Next</A>][<A HREF="msg00893.html">Thread Prev</A>][<A HREF="msg00899.html">Thread Next</A>][<A HREF="maillist.html#00894">Date Index</A>][<A HREF="threads.html#00894">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: X and fonts</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: X and fonts</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:matt@example.com">matt@example.com</A>&gt;</strong></LI>
+<LI>Date: Wed, 21 Oct 1998 20:39:21 +0900</LI>
+<LI>Content-Type: text/plain; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00889.html">362DBAAD.547E3813@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00889.html">362DBAAD.547E3813@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Neil Booth writes:
+ 
+ &gt; Anyway, I'm trying to learn so much I don't have time to worry about
+ &gt; fonts at present. Could someone give me a quick pointer how to improve
+ &gt; the fonts / where to get them / what config files to amend?
+
+There are two issues here. One is what fonts are being displayed, the
+other is *how* the X server displays them -- i.e., the fact that all
+fonts are rasterized rather than being nicely anti-aliased. The first
+problem is pretty easily taken care of; the second, as far as I know,
+is just something you have to live with (nobody ever said Linux was
+*perfect*).
+
+You might want to get a TrueType font server. There are three
+that I know of:
+
+xfstt --
+I've been using it for 8 or 9 months. If you get a recent version it's 
+fairly stable. It may be available in RPM -- if not, you may have to
+compile it yourself, but it's pretty painless as compile jobs go. The
+README explains pretty much everything you have to know. The
+disadvantage of this one is that it labels fonts in a very
+non-standard way, so that some applications can't use them. Netscape
+can, though. If you can't find an RPM for it, check
+<A TARGET="_top" HREF="ftp://sunsite.sut.ac.jp/pub/archives/linux/X11/">ftp://sunsite.sut.ac.jp/pub/archives/linux/X11/</A> for the source code.
+
+xfsft (or is it xsfst?) --
+Don't know anything about it.
+
+X-TrueType Server --
+This one looks cool. It's developed in Japan, and designed to handle
+Japanese fonts. I'm strongly considering using it. Unfortunately, it
+has to be integrated into the X server itself, which is of course a
+BIG job. You can get RPMs of an X server w/ X-TrueType built in
+... they're from the JRPM project ... I'm sure somebody on this list
+can give you the URL ... but if you have a functioning X-Windows
+setup, I'd be cautious about this.
+
+
+* configuration:
+
+The main files you need to deal with XF86Config, which is either in
+/etc or /etc/X11 -- this sets your fontpath, which you might need to
+change if you install new fonts -- and your window manager config file
+-- this determines which of the available fonts are displayed on menus
+etc. -- which is ... augh! RedHat gives you their special
+configuration for the FVWM window manager, and last I checked their
+documentation was pretty sketchy. I haven't used FVWM for a long time,
+so I can't give you any specifics, but look for files called .fvwmrc
+or fvwmrc or .fvwm2rc.m4 ... you *should* have them in your home
+directory, but if not poke around in /etc/X11 (first) or maybe
+/usr/X11R6/lib/X11 . If you don't have them in your home dir, I'd
+suggest copying them over from /etc or wherever, then only editing
+your copies ... that way if you seriously mess something up you can
+easily go back to the system-wide defaults.
+
+* oh, yeah, one more thing ... your display fonts are generally found
+in /usr/X11R6/lib/X11/fonts ... and its subdirectories. Each
+subdirectory has a 'fonts.dir' file in the form:
+
+78	# number of fonts listed
+&lt;filename&gt;	&lt;font descriptor&gt;
+&lt;filename&gt;	&lt;font descriptor&gt;
+....
+
+This file needs to be updated if you install any new fonts. If you're
+lucky, a font installation program will update it automatically and/or 
+the font package will include the text you need to add. If you're not
+lucky ... well, let's hope you're lucky.
+
+This is probably more than you wanted to know. Oh, well. Maybe
+somebody else has some simple, specific suggestions to get you
+started. Hope this helps a little.
+
+Matt Gushee
+Oshamanbe, Hokkaido
+---------------------------------------------------------------
+Next Nomikai: 20 November, 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Meeting: 12 December, 12:30 Tokyo Station Yaesu central gate
+---------------------------------------------------------------
+Sponsor: PHT, makers of TurboLinux <A TARGET="_top" HREF="http://www.pht.co.jp">http://www.pht.co.jp</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00889" HREF="msg00889.html">tlug: X and fonts</A></STRONG>
+<UL><LI><EM>From:</EM> Neil Booth &lt;NeilB@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00893.html">tlug: X and fonts</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00895.html">Re: tlug: kanji or romaji for Japanese? (was: parallel-port IDE)</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00893.html">tlug: X and fonts</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00899.html">tlug: forwarded message from Philip Blundell</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00894"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00894"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

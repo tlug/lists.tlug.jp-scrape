@@ -1,0 +1,125 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] procfs pseudo&#45;file without a module load? -->
+<!--X-From-R13: Oxven Yhebtnar <nxven.xhebtnarNtznvy.pbz> -->
+<!--X-Date: Mon, 20 Jul 2015 11:50:00 +0900 -->
+<!--X-Message-Id: CAJMSLH5&#45;qkDV_jVGzPZgNkuXC1G&#45;K+txYyZC5OUAdfqt9+a4dQ@mail.gmail.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Reference: CAJMSLH7CPOJjdbwYVgE_n=XgDLa7ijxNa0Qj9L5TJ8EQx0&#45;_ow@mail.gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00093.html">Date Prev</a>][<a href="msg00095.html">Date Next</a>][<a href="msg00093.html">Thread Prev</a>][<a href="msg00095.html">Thread Next</a>][<a href="maillist.html#00094">Date Index</a>][<a href="threads.html#00094">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] procfs pseudo-file without a module load?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 20 Jul 2015 12:43:11 +1000</li>
+<li><strong>From</strong>: <strong>Akira Kurogane &lt;<a href="mailto:akira.kurogane@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20procfs%20pseudo-file%20without%20a%20module%20load%3F">akira.kurogane@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] procfs pseudo-file without a module load?</strong></li>
+<li>References: &lt;CAJMSLH7CPOJjdbwYVgE_n=XgDLa7ijxNa0Qj9L5TJ8EQx0-_ow@mail.gmail.com&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr">As can so often happen writing an email helped me think of a new way to investigate the issue. And it turns out the answer must be no, you can&#39;t fiddle with the entries under /proc/&lt;pid&gt; directories.<div><br></div><div>The reason is that although I had read in kernel source such things as <span style="color:rgb(0,0,0);font-size:12.8000001907349px">&quot;The idea is to create an in-memory tree ... of these proc_dir_entries, so that we can dynamically add new files to /proc.&quot; (</span><a rel="nofollow" href="http://lxr.free-electrons.com/source/fs/proc/internal.h" target="_blank" style="font-size:12.8000001907349px">http://lxr.free-electrons.com/source/fs/proc/internal.h</a><span style="color:rgb(0,0,0);font-size:12.8000001907349px"> </span><span style="color:rgb(0,0,0);font-size:12.8000001907349px">) I have since found the pseudo-files there are fixed once a kernel is compiled. </span><font color="#000000"><span style="font-size:12.8000001907349px">The array &quot;tgid_base_stuff&quot; in </span></font><span style="color:rgb(0,0,0);font-size:12.8000001907349px">fs/proc/base.c</span><span style="color:rgb(0,0,0);font-size:12.8000001907349px"> </span><span style="font-size:12.8000001907349px;color:rgb(0,0,0)">that is </span><span style="font-size:12.8000001907349px;color:rgb(0,0,0)">used to create the inode entries in /proc/&lt;pid&gt; directories is a fixed size. There is no opportunity to add to it in runtime,  module or not.</span></div><div><font color="#000000"><span style="font-size:12.8000001907349px"><br></span></font></div><div><font color="#000000"><span style="font-size:12.8000001907349px">Time to fall back to plan B for my free hacking time.</span></font></div>​<div>Cheers,</div><div><br></div><div>Akira</div></div>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00095" href="msg00095.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+<ul><li><em>From:</em> Jens Oliver John</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00093" href="msg00093.html">[tlug] procfs pseudo-file without a module load?</a></strong>
+<ul><li><em>From:</em> Akira Kurogane</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00093.html">[tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00095.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00093.html">[tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00095.html">Re: [tlug] procfs pseudo-file without a module load?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00094"><strong>Date</strong></a></li>
+<li><a href="threads.html#00094"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

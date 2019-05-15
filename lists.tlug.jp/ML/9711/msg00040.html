@@ -1,0 +1,215 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Introduction; Looking for Help on i18n -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Thu, 6 Nov 1997 19:05:50 &#45;0500 (EST) -->
+<!--X-Message-Id: m0xTbka&#45;00000LC@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 199711050600.GAA01129@example.com -->
+<!--X-Reference-Id: 3460A91B.B609A094@example.com&#45;netz.com -->
+<!--X-Reference-Id: m0xTPLz&#45;00000LC@example.com -->
+<!--X-Reference-Id: 3462100E.3405C9@example.com&#45;netz.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00039.html">Date Prev</A>][<A HREF="msg00041.html">Date Next</A>][<A HREF="msg00039.html">Thread Prev</A>][<A HREF="msg00041.html">Thread Next</A>][<A HREF="maillist.html#00040">Date Index</A>][<A HREF="threads.html#00040">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Introduction; Looking for Help on i18n</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:k.wetzel@example.com">k.wetzel@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Introduction; Looking for Help on i18n</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 7 Nov 1997 08:54:12 +0900 (JST)</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00039.html">3462100E.3405C9@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00021.html">199711050600.GAA01129@example.com</A>&gt;&lt;<A HREF="msg00025.html">3460A91B.B609A094@example.com</A>&gt;&lt;<A HREF="msg00033.html">m0xTPLz-00000LC@example.com</A>&gt;&lt;<A HREF="msg00039.html">3462100E.3405C9@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+(By the way, it's not clear to me whether you are subscribed to the
+list; if you're getting two copies and it's annoying you, say so and
+I'll stop sending to both.)
+
+&gt;&gt;&gt;&gt;&gt; "Kai" == Kai Wetzel &lt;k.wetzel@example.com&gt; writes:
+
+    Kai&gt; The LIP has to determine what we can provide in the library
+    Kai&gt; and what would be out of scope or is beeing worked on by
+    Kai&gt; other people.  I can't say much about this myself, since I
+    Kai&gt; only know that my Linux/X11 has vertially no support for
+    Kai&gt; anything outside of the "C" locale :(
+
+This I can help with.  X11 intends to use the system's native locale
+support, and by default locale support is provided by libc.  In order
+to use the support provided by X11, you should do something like the
+following in every module that requires locale support from Xlib:
+
+#define X_LOCALE
+#include &lt;X11/Xlocale.h&gt;
+
+This substitutes X11's functions for libc's.  The database is in
+/usr/X11R6/lib/X11/{i18n,locale,nls} some or all of which are symbolic 
+links to each other.  This database is not compatible with the POSIX
+format.  If you don't have that database, you're in trouble, of course.
+
+This can also be done at runtime by use of the
+"Netscrap_X11_liblocale.so" hack:  you make a wrapper function to
+interface what libc functions will be calling to the _Xsetlocale
+function.  Then run existing locale-ized programs such as Motif
+programs with `LD_PRELOAD=/path/to/Netscrap_X11_liblocale.so proggy'.
+
+These tricks both work with non-X programs, but you do have link
+against Xlib, of course.  And if you're not running under X you may
+have to provide facilities like fonts and input methods yourself.
+
+I'd provide the code, but (a) I forget where I left it and (b) you
+should figure this out for yourself anyway because the code used to
+let Netscrap work with Japanese intentionally omits some locale
+features, and you need to decide if that's appropriate.
+
+    &gt;&gt; C/C++?  Support?  NOT.  There is some support for POSIX locales
+    &gt;&gt; in Linux glibc, but no documentation I can find (I haven't
+    &gt;&gt; looked that hard, and have not joined the ML, though)
+
+    Kai&gt; Well, there is e.g. the class "locale" and there seems to be
+    Kai&gt; some other facilities.  I don't know how complete they are
+    Kai&gt; and I don't know how much of them is usable in common
+    Kai&gt; implementations of the standard C++ library.
+
+Right, but without the database they're nothing.  Some of the locale
+data are shit^H^H^H^Halpha (I believe this is true for Korean);
+without docs, you can't tell which are good.  And some locales have
+simply gone missing and nothing is said about attempts to put them
+together (eg, Japanese).
+
+    Kai&gt; Well, I think both is needed, extending existing classes as
+    Kai&gt; well as potentially introducing classes which are mainly
+    Kai&gt; there to provide i18n features.  Examples from the Java API
+    Kai&gt; would be Locale, Collation (was: "TCollator"), Date/Time
+    Kai&gt; formats (was: "formatter"), etc.  Of course some things may
+    Kai&gt; effect the core classes fundamentally, such as fonts.
+
+I may be wrong, but I suspect that if you look closely you will see
+that some or all of these classes are actually integrated into very
+low levels of the API.  Of course you _need_ a locale class to manage
+the various aspects of locale (for example, a Frenchman reading mail
+from the US might very well want the currency symbol to be `$' but the
+decimal separator to be `,', so custom locales will be necessary for
+some cranky users).  But the fact that it's user-visible doesn't mean
+that it doesn't go all the way to the root of the IO classes.  Again,
+I think you have it backwards about fonts; the fonts actually come
+last in the display pipeline:
+
+   markup -&gt; format dates, etc -&gt; line-breaking by font metrics -&gt;
+			 display using fonts
+
+and so can be grafted on at the last second.
+
+Ciao.  Off to teach.
+
+Steve
+Next TLUG meeting is Saturday Dec. 13, 1997  (possibly Nov. 13?)
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00041" HREF="msg00041.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+<UL><LI><EM>From:</EM> Kai Wetzel &lt;k.wetzel@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00021" HREF="msg00021.html">tlug: Simple Ghostview Question</A></STRONG>
+<UL><LI><EM>From:</EM> bickel@example.com</LI></UL></LI>
+<LI><STRONG><A NAME="00025" HREF="msg00025.html">tlug: Introduction; Looking for Help on i18n</A></STRONG>
+<UL><LI><EM>From:</EM> Kai Wetzel &lt;k.wetzel@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00033" HREF="msg00033.html">tlug: Introduction; Looking for Help on i18n</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00039" HREF="msg00039.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+<UL><LI><EM>From:</EM> Kai Wetzel &lt;k.wetzel@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00039.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00041.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00039.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00041.html">Re: tlug: Introduction; Looking for Help on i18n</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00040"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00040"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

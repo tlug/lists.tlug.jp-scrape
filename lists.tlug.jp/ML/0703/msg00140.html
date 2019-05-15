@@ -1,0 +1,252 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] ruby and python in Japan -->
+<!--X-From-R13: Qheg Enzcfba <pwfNfgneyvat&#45;fbsgjner.pbz> -->
+<!--X-Date: Thu, 08 Mar 2007 00:31:00 +0900 -->
+<!--X-Message-Id: Pine.NEB.4.64.0703072340280.25020@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 45E16CA8.2010909@example.com&#45;mic.ac.jp -->
+<!--X-Reference: 20070225122334.GA10626@example.com -->
+<!--X-Reference: 87r6sdk5o7.fsf@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00139.html">Date Prev</a>][<a href="msg00141.html">Date Next</a>][<a href="msg00057.html">Thread Prev</a>][<a href="msg00019.html">Thread Next</a>][<a href="maillist.html#00140">Date Index</a>][<a href="threads.html#00140">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] ruby and python in Japan</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 8 Mar 2007 00:30:59 +0900 (JST)</li>
+<li><strong>From</strong>: <strong>Curt Sampson &lt;<a href="mailto:cjs@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20ruby%20and%20python%20in%20Japan">cjs@??</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] ruby and python in Japan</strong></li>
+<li>References: &lt;45E16CA8.2010909@example.com&gt;	&lt;20070225122334.GA10626@example.com&gt;	&lt;87r6sdk5o7.fsf@example.com&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">On Mon, 26 Feb 2007, Stephen J. Turnbull wrote:</pre><br>
+<blockquote style="border-left: #5555EE solid 0.2em; margin: 0em; padding-left: 0.85em"><tt>What's the use-case for changing a class on the fly?
+</tt></blockquote><pre style="margin: 0em;"><br>Sorry about taking so long to generate a reply on this.</pre><br>
+<pre style="margin: 0em;">Most of the talk about changing classes on the fly has been related to
+monkey-patching, but that's not, in my experience, the common use case
+for changing classes at run-time in Ruby. It's far more often used for a
+form of meta-programming.</pre><br>
+<pre style="margin: 0em;">I should first make it clear that changing class definitions at run-time
+is actually the only form of class definition in Ruby: when you define
+a class, the statements in that definition are executed at runtime. So,
+for example, this will print out Hello to the standard output:</pre><br>
+<pre style="margin: 0em;">    class Foo
+	puts(&quot;Hello.&quot;)
+    end</pre><br>
+<pre style="margin: 0em;">The 'class Foo' bit defines (if it's not already defined) a constant
+Foo, creates a new object of class Class, assigns it to that constant,
+and then leaves you (until you get to the 'end' statement) in a context
+where statements and expressions are evaluated in the context of that
+class:</pre><br>
+<pre style="margin: 0em;">    class Bar
+	puts(&quot;Self class: #{self.class} Self.inspect: #{inspect}&quot;)
+	puts(&quot;Contains baz: #{instance_methods.include?('baz')}&quot;)
+	def baz; &quot;abc&quot;; end
+	puts(&quot;Contains baz: #{instance_methods.include?('baz')}&quot;)
+    end</pre><br>
+<pre style="margin: 0em;">produces:</pre><br>
+<pre style="margin: 0em;">    self class: Class  self.inspect: Bar
+    Contains baz: false
+    Contains baz: true</pre><br>
+<pre style="margin: 0em;">(Module#instance_methods [Module is the superclass of Class] returns
+a list of the methods defined in that module. Don't confuse it with
+Object#methods, which returns the list of methods that that particular
+object responds to.)</pre><br>
+<pre style="margin: 0em;">So this is really just syntatic sugar for</pre><br>
+<pre style="margin: 0em;">    Bar = Class.new
+    Bar.send(:define_method, :baz, lambda { &quot;abc&quot; })
+    puts(Bar.new.baz)</pre><br>
+<pre style="margin: 0em;">which produces</pre><br>
+<pre style="margin: 0em;">    abc</pre><br>
+<pre style="margin: 0em;">(I use send to call Bar#define_method because it's a private method.)</pre><br>
+<pre style="margin: 0em;">A very frequent use of this is the attr_* methods, which are actually
+just functions that module responds to, which create new methods in the
+module in which they're invoked:</pre><br>
+<pre style="margin: 0em;">    class Quux
+	puts(instance_methods.select { |m| /^xy/.match(m) }.inspect)
+	attr_accessor :xyzzy
+	puts(instance_methods.select { |m| /^xy/.match(m) }.inspect)
+    end</pre><br>
+<pre style="margin: 0em;">produces:</pre><br>
+<pre style="margin: 0em;">    []
+    [&quot;xyzzy&quot;, &quot;xyzzy=&quot;]</pre><br>
+<pre style="margin: 0em;">I've used this technique to create a DSL for SWF parsing in Starling's
+RSWF library. Here are some incomplete fragments to demonstrate:</pre><br>
+<pre style="margin: 0em;">    class SWFData</pre><br>
+<pre style="margin: 0em;">	def self.swfio(io_object)
+	    ...
+	    self.const_set(:IO_OBJECTS, []) unless self.const_defined?(:IO_OBJECTS)
+	    self::IO_OBJECTS &lt;&lt; io_object
+	    io_object.setup_data_class(self)
+	end</pre><br>
+<pre style="margin: 0em;">	...</pre><br>
+<pre style="margin: 0em;">    end</pre><br>
+<pre style="margin: 0em;">    class RGBA
+	...
+    end</pre><br>
+<pre style="margin: 0em;">    class RGBA_IO</pre><br>
+<pre style="margin: 0em;">	def setup_data_class(data_class)
+	    data_class.instance_eval { attr_accessor :color }
+	end</pre><br>
+<pre style="margin: 0em;">	def clear_data(data)
+	    data.color = RGBA.new(0xffffff, 0xff)
+	end</pre><br>
+<pre style="margin: 0em;">	def read_data(data, stream)
+	    data.color = RGBA.new(stream.read_ubyte &lt;&lt; 16 |
+		stream.read_ubyte &lt;&lt; 8 | stream.read_ubyte,
+		stream.read_ubyte)
+	    stream.log { ' rgba=' + data.color.inspect }
+	end</pre><br>
+<pre style="margin: 0em;">	...</pre><br>
+<pre style="margin: 0em;">    end</pre><br>
+<pre style="margin: 0em;">    class BackgroundColor &lt; Element
+	tag_number 9
+	swfio Struct::RGB_IO.new
+    end</pre><br>
+<pre style="margin: 0em;">What's happening here is that, when we define BackgroundColor, we call
+swfio with an object that knows how to do IO for the color component.
+(This is a very simple example; typically there would be a series
+of swfio statements for the various components of a tag.) The swfio
+function adds an IO_OBJECTS constant to the BackgroundColor class, sets
+it to an empty array, and appends the given IO object to that array. It
+then asks the IO object to further define the class, and the RGBA_IO
+creates 'color' and 'color=' methods on the BackgroundColor class.
+Later, when given an instance of the BackgroundColor class, it uses
+those methods to store the data that it reads and retrieve the data that
+it writes, which would be in the form of an RGBA object. (For many of
+the simpler fields in a tag, this would be just a number or a String.)</pre><br>
+<pre style="margin: 0em;">The class definition done by an IO object gets more complex. Some IO
+objects take parameters to determine the name of the accessors:</pre><br>
+<pre style="margin: 0em;">    class DefineEditText &lt; Definition
+	tag_number 37
+	swfio Struct::ID_IO.new
+	swfio Struct::Rectangle_IO.new(:bounds)
+	swfio Struct::Flags_IO.new(
+	    :has_text, :word_wrap, :multiline, :password, :readonly,
+	    :has_color, :has_max_length, :has_font, :reserved1,
+	    :auto_size, :has_layout, :no_select, :border, :reserved2,
+	    :html, :use_outlines)
+	swfio Struct::RefID_IO.new
+	swfio Struct::UShort_IO.new(:font_height)
+	swfio Struct::RGBA_IO.new
+	swfio Struct::UShort_IO.new(:max_length)
+	...
+	swfio Struct::String_IO.new(:variable_name)
+	swfio Struct::String_IO.new(:initial_text)
+	...
+    end</pre><br>
+<pre style="margin: 0em;">Others will define a number of new special-purpose methods on the class
+being created:</pre><br>
+<pre style="margin: 0em;">    module JPEGOperations
+	# Various method definitons here
+    end</pre><br>
+<pre style="margin: 0em;">    class JPEGSegments_IO &lt; List_IO
+	...
+	def setup_data_class(data_class)
+	    super
+	    data_class.instance_eval { include JPEGOperations }
+	end
+	...
+    end</pre><br>
+<pre style="margin: 0em;">I hope that this isn't too confusing. I don't think it's exactly the
+clearest and easiest way anybody's ever come up with to do this sort of
+thing, myself, which is one of the reasons I'm tending away from Ruby
+these days.</pre><br>
+<pre style="margin: 0em;">cjs
+--
+Curt Sampson       &lt;cjs@??&gt;        +81 90 7737 2974</pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00139.html">Re: [tlug] Using tar to archive files</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00141.html">Re: [tlug] (OT) Reverse DNS resolution blues- ISP recommendations?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00057.html">Re: [tlug] ruby and python in Japan</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00019.html">[tlug] Goodness of Ruby over Python (or not)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00140"><strong>Date</strong></a></li>
+<li><a href="threads.html#00140"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

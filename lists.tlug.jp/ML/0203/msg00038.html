@@ -1,0 +1,190 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] CD Writers -->
+<!--X-From-R13: Eghneg Zhccrfph <f&#45;yhccrfphNhpuvpntb.rqh> -->
+<!--X-Date: Mon, 4 Mar 2002 03:14:47 +0900 (JST) -->
+<!--X-Message-Id: 1015179279.1720.7.camel@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: 200203030414.g234Ewt24741@example.com -->
+<!--X-Reference: 000901c1c251$b289cf40$14cb48d4@example.com -->
+<!--X-Reference: 200203031114.g23BEBt26251@example.com -->
+<!--X-Reference: 200203031414.g23EEjt27055@example.com -->
+<!--X-Reference: 001101c1c279$9bda7060$01cb48d4@example.com -->
+<!--X-Derived: pgp00000.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00037.html">Date Prev</a>][<a href="msg00039.html">Date Next</a>][<a href="msg00033.html">Thread Prev</a>][<a href="msg00049.html">Thread Next</a>][<a href="maillist.html#00038">Date Index</a>][<a href="threads.html#00038">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] CD Writers</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] CD Writers</strong></li>
+<li><strong>From</strong>: <strong>Stuart Luppescu &lt;<A HREF="mailto:s-luppescu@DOMAIN.HIDDEN">s-luppescu@example.com</A>&gt;</strong></li>
+<li>Date: 03 Mar 2002 12:14:38 -0600</li>
+<li>Content-type: multipart/signed; micalg=pgp-sha1; protocol=&quot;application/pgp-signature&quot;;boundary=&quot;=-ZE75xQAMkezlyPc5g454&quot;</li>
+<li>In-reply-to: &lt;<a href="msg00033.html">001101c1c279$9bda7060$01cb48d4@example.com</a>&gt;</li>
+<li>References: &lt;<a href="msg00022.html">200203030414.g234Ewt24741@example.com</a>&gt;&lt;<a href="msg00027.html">000901c1c251$b289cf40$14cb48d4@example.com</a>&gt;&lt;<a href="msg00028.html">200203031114.g23BEBt26251@example.com</a>&gt;&lt;<a href="msg00032.html">200203031414.g23EEjt27055@example.com</a>&gt; &lt;<a href="msg00033.html">001101c1c279$9bda7060$01cb48d4@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On 日, 2002-03-03 at 00:06, Josh Glover wrote:
+&gt; ----- Original Message -----
+&gt; From: Eric O. Flores &lt;goripi@example.com&gt;
+&gt; Subject: Re: [tlug] CD Writers
+&gt; 
+&gt; 
+&gt; &gt; The device file name representing the CD-Writer has to be passed to the
+&gt; &gt; driver in the Linux kernel.  Right! for the lilo.conf we add
+&gt; hdb=ide-scsi.
+&gt; &gt; if the driver is statically compiled into my kernel, which I really don't
+&gt; &gt; know! According to the "CD-Writing How To" this is the most common setup.
+&gt; 
+&gt; Yup. To the best of my knowledge, SCSI emulation can only be compiled into
+&gt; the kernel. There is no option to modularise it.
+
+No, you can modularize it. Here are all (I think) the lines from
+/usr/src/linux/.config you need to burn CDs:
+CONFIG_BLK_DEV_LOOP=m
+CONFIG_IDE=y
+CONFIG_BLK_DEV_IDE=y
+CONFIG_BLK_DEV_IDEDISK=y
+CONFIG_IDEDISK_MULTI_MODE=y
+CONFIG_BLK_DEV_IDECD=m
+CONFIG_BLK_DEV_IDESCSI=m
+CONFIG_SCSI=m
+CONFIG_BLK_DEV_SD=m
+CONFIG_SD_EXTRA_DEVS=40
+CONFIG_BLK_DEV_SR=m
+CONFIG_SR_EXTRA_DEVS=2
+CONFIG_CHR_DEV_SG=m
+CONFIG_ISO9660_FS=y
+CONFIG_JOLIET=y
+
+I'm using cdrecord (which contains mkisofs, and a bunch of other stuff),
+cdlabelgen, and gcombust, a front end for the first two. It works fine
+as root, but I can't get it to run as a regular user. I get this kind of
+messages:
+/usr/bin/cdrecord: Operation not permitted. WARNING: Cannot do
+mlockall(2).
+/usr/bin/cdrecord: WARNING: This causes a high risk for buffer
+underruns.
+/usr/bin/cdrecord: Operation not permitted. WARNING: Cannot set
+RR-scheduler
+/usr/bin/cdrecord: Permission denied. WARNING: Cannot set priority using
+setpriority().
+/usr/bin/cdrecord: WARNING: This causes a high risk for buffer
+underruns.
+scsidev: '0,1,0'
+scsibus: 0 target: 1 lun: 0
+Linux sg driver version: 3.1.20
+
+I've set the console.perms so I own the devices, so I know that's not
+the problem. Anyone have any ideas?
+-- 
+Stuart Luppescu       -=- s-luppescu@example.com
+University of Chicago -=- CCSR 
+才文と智奈美の父    -=- Kernel 2.4.14-xfs              
+"You have been in Afghanistan, I perceive."   -- Sir Arthur
+ Conan Doyle, "A Study in Scarlet" 
+ 
+</pre><p><strong>Attachment:
+<a href="pgp00000.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> This is a digitally signed message part</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00049" href="msg00049.html">Re: [tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> A.Sajjad Zaidi</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00022" href="msg00022.html">[tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> Eric O. Flores</li></ul></li>
+<li><strong><a name="00027" href="msg00027.html">Re: [tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00028" href="msg00028.html">Re: [tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> Eric O. Flores</li></ul></li>
+<li><strong><a name="00032" href="msg00032.html">Re: [tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> Eric O. Flores</li></ul></li>
+<li><strong><a name="00033" href="msg00033.html">Re: [tlug] CD Writers</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00037.html">Re: [tlug] networking</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00039.html">Re: [tlug] networking</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00033.html">Re: [tlug] CD Writers</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00049.html">Re: [tlug] CD Writers</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00038"><strong>Date</strong></a></li>
+<li><a href="threads.html#00038"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

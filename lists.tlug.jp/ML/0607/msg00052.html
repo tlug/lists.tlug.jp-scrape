@@ -1,0 +1,211 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] More on CentOS and Japanese input -->
+<!--X-From-R13: Epbgg Dboovaf <fpbggebNalp.ee.pbz> -->
+<!--X-Date: Wed, 05 Jul 2006 08:26:08 +0900 -->
+<!--X-Message-Id: 20060704232605.GA66394@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00051.html">Date Prev</a>][<a href="msg00053.html">Date Next</a>][<a href="msg00043.html">Thread Prev</a>][<a href="msg00054.html">Thread Next</a>][<a href="maillist.html#00052">Date Index</a>][<a href="threads.html#00052">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] More on CentOS and Japanese input</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 4 Jul 2006 19:26:05 -0400</li>
+<li><strong>From</strong>: <strong>Scott Robbins &lt;<a href="mailto:scottro@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20More%20on%20CentOS%20and%20Japanese%20input">scottro@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] More on CentOS and Japanese input</strong></li>
+<li>User-agent: mutt-ng/devel-r804 (FreeBSD)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Ok, as it was a slow holiday type day, I installed CentOS. 
+
+During installation, I chose to have Japanese support--I also installed
+the various softeware development packages to be able to compile things.
+
+This is what I found.
+
+With kinput2 -canna, I could input Japanese in a uxterm, openoffice and
+Evolution. 
+
+XMODIFIERS=&quot;@example.com=kinput2&quot;
+LC_CTYPE=ja_JP.utf8
+
+Note the lack of caps--doing locale -a | grep ja_JP showed me that this
+is how CentOS does it, so it should be ut8, not UTF-8 or UTF8.  
+
+Using en_US.utf8 enabled me to input Japanese in a uxterm but not in
+openoffice--I didn't bother with evolution. 
+
+With fluxbox, in such a situation, I add a script to call the
+application with the proper variables, for example
+
+XMODIFIERS=&quot;@example.com=kinput2&quot; LC_CTYPE=ja_JP.utf8 ${1+&quot;$@&quot;} &amp;
+
+Then, I save the script as lang.sh and I would put in my fluxbox menu
+for OpenOffice to call it with that shell.  In CentOS, the command (for
+the writer) is oowriter, so there's probably a way to add that to the
+menu, or else to simply open a terminal and do it.  
+
+The scim anthy combo isn't available through CentOS repositories--I
+don't know if they can use Fedora or not, and wasn't excited enough
+about CentOS to start googling or looking through the docs. With the
+developer tools installed, anthy, scim and scim-anthy all installed
+without problem. 
+
+I then killed cannaserver, set it, with ntsysv to not run on bootup, and
+added the requisite lines to .bash_profile, as detailed in my howto.
+
+problem.
+
+However, when I tried to launch it with scim -d, it froze.
+
+When I tried with scim -f socket -c socket -d it started, but I saw no
+configuration options. 
+
+So, I changed .bash_profile, for XMODIFIERS to be kinput2, used ntsysv
+to allow canna to start at boot, and removed the GTK_IM_MODULE and
+QT_IM_MODULE. 
+I replaced scim -d with 
+
+kinput2 -canna &amp;
+
+So, for the moment, I'm going to add a recommendation to my page that
+CentOS users stick with kinput2-canna. 
+
+Jim, if you have read this far, this ties in with your advice--you
+suggested sticking with the default tools.  
+
+As for openoffice, one definitely has to be sure that they've gone to
+options=&gt;tools=&gt;languages and enabled Japanese. 
+
+Leaving the LANG variable alone and having, in my .bash_profile,
+LC_CTYPE=ja_JP.utf8, I was able to, with shift+space, input Japanese in
+uxterm, openoffice and evolution.   (And, gnome-terminal for that
+matter.)
+
+
+
+
+
+
+- -- 
+
+Scott Robbins
+
+PGP keyID EB3467D6
+( 1B48 077D 66F6 9DB0 FDC2 A409 FA54 EB34 67D6 )
+gpg --keyserver pgp.mit.edu --recv-keys EB3467D6
+
+Buffy: Mom, dead people are talking to you. Do the math!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (FreeBSD)
+
+iD8DBQFEqvkN+lTVdes0Z9YRAtKPAJ9kmSYAVrosG5ZaY+e5SW7WcmeYWACfUq9w
+3DXElcu1dytt7IQzRufPBrc=
+=gC4s
+-----END PGP SIGNATURE-----
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00054" href="msg00054.html">Re: [tlug] SCIM/Anthy on CentOS</a></strong>
+<ul><li><em>From:</em> Jim</li></ul></li>
+<li><strong><a name="00055" href="msg00055.html">Re: [tlug] More on CentOS and Japanese input</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00051.html">[tlug] Which X Driver for VIA Chipset Micro ATX?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00053.html">Re: [tlug] Reading kanji file name from Mac OS X</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00043.html">Re: [tlug] Reading kanji file name from Mac OS X, without using Win XP</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00054.html">Re: [tlug] SCIM/Anthy on CentOS</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00052"><strong>Date</strong></a></li>
+<li><a href="threads.html#00052"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

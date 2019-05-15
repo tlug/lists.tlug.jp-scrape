@@ -1,0 +1,177 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] Repairing a Possible Attack -->
+<!--X-From-R13: Bngevpx Preavre <cngNFLb@S.ADU> -->
+<!--X-Date: Mon, 21 Dec 2009 13:42:38 +0900 -->
+<!--X-Message-Id: 20091221044234.GA21903@OZoNE.TZoNE.ORG -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4B2EAF3D.20000@gmail.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00115.html">Date Prev</a>][<a href="msg00117.html">Date Next</a>][<a href="msg00140.html">Thread Prev</a>][<a href="msg00127.html">Thread Next</a>][<a href="maillist.html#00116">Date Index</a>][<a href="threads.html#00116">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Repairing a Possible Attack</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sun, 20 Dec 2009 23:42:34 -0500</li>
+<li><strong>From</strong>: <strong>Patrick Bernier &lt;<a href="mailto:pat@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Repairing%20a%20Possible%20Attack">pat@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Repairing a Possible Attack</strong></li>
+<li>References: &lt;<a href="mailto:4B2EAF3D.20000@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Repairing%20a%20Possible%20Attack">4B2EAF3D.20000@example.com</a>&gt;</li>
+<li>User-agent: Mutt/1.5.18 (2008-05-17)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Quoting CL:
+&gt; Between 23:30 last evening and 06:30 this morning, over 150Gb of disk 
+&gt; space on my desktop PC -- running Kubuntu 9.10 -- has disappeared 
+&gt; leaving me zero disk space.  I suspect Something Bad (tm).
+
+Before you panic, do keep in mind that there is a possibility of some other
+kind of problem suddenly eating your disk space. And an /unsuccessful/
+attack might have filled your logs, too.
+
+I would suggest first trying to find /what/ is using all that disk space.
+
+&gt; Before nuking the entire installation and doing an NSA wipe of the HDD 
+&gt; is there some easier way of identifying the problem and eliminating only 
+&gt; the bad parts and patching?  Like listing all files that have been 
+&gt; written since a certain time / date; listing by size, listing what 
+&gt; system changes have occurred?  etc?
+
+You can use &quot;find&quot; to look for recently created/modified files, e.g.:
+
+	find / -mtime -1
+
+...will give you a list of all files modified in the last 24 hours. Change -1
+to -2 for 48 hours, etc.
+
+Likewise, you can use -size to check for big files:
+
+	find / -size +1G
+
+...will give you a list of all files greater than 1GiB.
+
+If it's not a single big file but a bunch of small files you're hunting,
+you can find the biggest directories (in terms of data contained, not
+number of files) on your system easily:
+
+	du -Sk / | sort -n | tail
+
+All these commands can take quite a while to run, of course ;-&gt;
+
+If you don't find anything, maybe some kind of rootkit is preventing you
+from seeing the files. Rebooting with a clean OS (e.g. install/rescue CD)
+would likely help. If indeed your system was compromised, at that point
+you'll want to reinstall anyway, but it can be a learning experience to try
+to figure out /what/ happened. Just make sure you keep it disconnected from
+the network while you play with it, and keep your data drives disconnected
+as well. Again, inspecting from a known-clean OS is safer!
+
+-- 
+()  Patrick (L.) Bernier &lt;pat@example.com&gt;
+()  <a  rel="nofollow" href="http://www.TZoNE.ORG/~pat/">http://www.TZoNE.ORG/~pat/</a>
+()  GPG B070 BBB6 188D EB1E 353A 90E4 96FF D8EB 1ADC BE03
+()  &quot;Words have meaning, and names have power.&quot; -- Lorien
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00127" href="msg00127.html">Re: [tlug] Repairing a Possible Attack</a></strong>
+<ul><li><em>From:</em> Francois Cartegnie</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00113" href="msg00113.html">[tlug] Repairing a Possible Attack</a></strong>
+<ul><li><em>From:</em> CL</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00115.html">Re: [tlug] Repairing a Possible Attack</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00117.html">Re: [tlug] MS vs Google</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00140.html">Re: [tlug] Repairing a Possible Attack - FIXED</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00127.html">Re: [tlug] Repairing a Possible Attack</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00116"><strong>Date</strong></a></li>
+<li><a href="threads.html#00116"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: RE: Firewall setting -->
+<!--X-From: Scott Stone <SStone@example.com> -->
+<!--X-Date: Mon, 30 Apr 2001 13:42:11 &#45;0700 -->
+<!--X-Message-Id: 21DEAE09F017D111969700A0C98407520572A354@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00004.html">Date Prev</A>][<A HREF="msg00006.html">Date Next</A>][<A HREF="msg00016.html">Thread Prev</A>][<A HREF="msg00017.html">Thread Next</A>][<A HREF="maillist.html#00005">Date Index</A>][<A HREF="threads.html#00005">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>RE: Firewall setting</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>"'<A HREF="mailto:tlug@example.com">tlug@example.com</A>'" &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>RE: Firewall setting</strong></LI>
+<LI><strong>From</strong>: <strong>Scott Stone &lt;<A HREF="mailto:SStone@example.com">SStone@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 30 Apr 2001 13:42:11 -0700</LI>
+<LI>Content-Type: text/plain</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;QS8_0C.A.3FG.15c76@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+this firewall looks kind of insecure to me.  Why would you set the default
+policies on all three chains to ACCEPT?!  that seems like bad practice..
+then specifically denying things... eek.
+
+Usually a firewall will deny all/all by default, and then you tell it
+specifically what you want to ALLOW.  Although with ipchains being more of a
+packet filter than a firewall, maybe some concessions need to be made.
+
+HOWEVER - all of you doing Linux-as-a-firewall should really go over to the
+2.4 kernel and use iptables.  That gives you a real "stateful" firewall, and
+iptables even has an almost-identical-to-ipchains commandline syntax.  Plus
+iptables can do neat stuff like static NAT, which ipchains cannot do, to my
+knowledge.
+
+&gt; -----Original Message-----
+&gt; From:	Jonathan Q [SMTP:jq@example.com]
+&gt; Sent:	Monday, April 30, 2001 1:24 PM
+&gt; To:	tlug@example.com
+&gt; Subject:	Re: Firewall setting
+&gt; 
+&gt; P.S.  This is my /etc/sysconfig/ipchains:
+&gt; 
+&gt; # Firewall configuration written by lokkit
+&gt; # Manual customization of this file is not recommended.
+&gt; # Note: ifup-post will punch the current nameservers through the
+&gt; #       firewall; such entries will *not* be listed here.
+&gt; :input ACCEPT
+&gt; :forward ACCEPT
+&gt; :output ACCEPT
+&gt; -A input -s 0/0 -d 0/0 25 -p tcp -y -j ACCEPT
+&gt; -A input -s 0/0 -d 0/0 22 -p tcp -y -j ACCEPT
+&gt; -A input -s 0/0 -d 0/0 -i lo -j ACCEPT
+&gt; -A input -p tcp -s 0/0 -d 0/0 0:1023 -y -j REJECT
+&gt; -A input -p tcp -s 0/0 -d 0/0 2049 -y -j REJECT
+&gt; -A input -p udp -s 0/0 -d 0/0 0:1023 -j REJECT
+&gt; -A input -p udp -s 0/0 -d 0/0 2049 -j REJECT
+&gt; -A input -p tcp -s 0/0 -d 0/0 6000:6009 -y -j REJECT
+&gt; -A input -p tcp -s 0/0 -d 0/0 7100 -y -j REJECT
+&gt; 
+&gt; The first rule allows tcp port 25 (smtp)
+&gt; The second allows tcp port 22 (ssh)
+&gt; The third probably allows everything on loopback (just a guess,
+&gt; I haven't read the docs myself).
+&gt; 4 rejects everything &lt;1023 tcp
+&gt; 5 rejects 2049 tcp
+&gt; 6 rejects everything &lt;1023 udp
+&gt; 7 rejects 2049 udp
+&gt; 8 rejects 6000-6009 tcp (X uses these ports)
+&gt; 9 rejects 7100 tcp (don't know what that is offhand).
+&gt; 
+&gt; This is the medium security firewalling in Red
+&gt; Hat 7.1, plus my customizations to allow 25 and 22.
+&gt; 
+&gt; These rules operate on a first-match-exits principal,
+&gt; so if an ssh connection comes in, all rules after 
+&gt; the second one will not be processed.  If an http
+&gt; connection comes in, it will get as far as rule 4, 
+&gt; which will match it as a reject (80 tcp).  
+&gt; 
+&gt; Ordering is important; if the rules allowing 22 and 25
+&gt; were positioned after rule 4, 22 and 25 would still
+&gt; be filtered because the rejectino of 0-10323 tcp would
+&gt; come first, 22 and 25 would match, and rule processing
+&gt; would exit.
+&gt; 
+&gt; So if you write your own, the quick and dirty is to put
+&gt; your accepts first.  If you anticpate most of your
+&gt; traffic to be port 80 tcp (http), put that one ahead of
+&gt; port 22.  You should be able to just copy the rule
+&gt; allowing 22 or 25 in the ruleset above and change the 
+&gt; port to 80 if you want to allow http connections to your
+&gt; box.  But do read the docs anyway, and don't believe anything
+&gt; I've said here until you've verified it :-)
+&gt; 
+&gt; Jonathan
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30- 
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00004.html">Re: Firewall setting</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00006.html">Something odd in 2.4.3-ac9</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00016.html">Re: Firewall setting</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00017.html">Re: Firewall setting</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00005"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00005"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

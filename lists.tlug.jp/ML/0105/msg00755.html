@@ -1,0 +1,166 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Very odd 'bash' problem in RH7.1 &#45; What!?!! -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Tue, 29 May 2001 14:05:57 +0900 -->
+<!--X-Message-Id: 20010529140557.I5613@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.33.0105291253510.2048&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00754.html">Date Prev</A>][<A HREF="msg00756.html">Date Next</A>][<A HREF="msg00754.html">Thread Prev</A>][<A HREF="msg00756.html">Thread Next</A>][<A HREF="maillist.html#00755">Date Index</A>][<A HREF="threads.html#00755">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Very odd 'bash' problem in RH7.1 - What!?!!</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Very odd 'bash' problem in RH7.1 - What!?!!</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 29 May 2001 14:05:57 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00754.html">Pine.LNX.4.33.0105291253510.2048-100000@example.com</A>&gt;; from denismcm@example.com on Tue, May 29, 2001 at 12:55:35PM +0900</LI>
+<LI>References: &lt;<A HREF="msg00754.html">Pine.LNX.4.33.0105291253510.2048-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;dCxir.A.QMB.P3yE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.5i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+On Tue, May 29, 2001 at 12:55:35PM +0900, Dennis McMurchy wrote:
+&gt;   Interesting, eh?  I should add here before I forget again, that the
+&gt; only two files that have shown this behaviour (so far) are old
+&gt; executables that I added myself to a fresh "Everything" installation of
+&gt; RedHat 7.1 (I would have assumed that this had all the appropriate
+&gt; older libraries that I might need, but it apparently doesn't include
+&gt; the 'ld-linux.so.1' that 'pppcosts' probably needs).
+&gt; 
+&gt;   Now, I could try recompiling these things, but, surely, this new fact
+&gt; that ldd, for example, reports that these files don't exist suggests that
+&gt; the problem lies elsewhere, perhaps where Thomas O'Dowd suggests.  Also,
+&gt; I just checked another old executable I've added in, and there seems to
+&gt; be no problem running it, or getting e.g. ldd to see it:
+
+I would try recompiling. Since it doesn't work for tcsh it is not a 
+shell specific problem, but rather looks like a missing ld-linux.so.1
+library as someone else pointed out. 
+
+&gt; &gt; Another trick I would try is running strace on your current shell
+&gt; &gt; process from another terminal. ie $ strace -p &lt;PID_OF_OTHER_SHELL&gt;
+&gt; &gt; then try the command and see if you can see what might be failing...
+&gt; &gt; you might want to use the -f option if it manages to fork and exec
+&gt; &gt; successfully hitting on the problem in the sub shell.
+&gt; 
+&gt;   I'm afraid that I couldn't understand the last two lines here, but
+&gt; I did manage to try the 'strace -p &lt;PID_OF_OTHER_SHELL&gt;' that you
+&gt; suggested (took a couple of tries to realize that I couldn't capture
+&gt; the output without 2&gt;&amp;1 redirection).  This means nothing to me, but
+&gt; here's the output for a run of the following command:
+&gt; 
+&gt; fork()                                  = 2103
+&gt; setpgid(2103, 2103)                     = 0
+&gt; rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+&gt; --- SIGCHLD (Child exited) ---
+&gt; wait4(-1, [WIFEXITED(s) &amp;&amp; WEXITSTATUS(s) == 127], WNOHANG|WUNTRACED, NULL) = 2103
+
+Bash forked which means it found your command. The child would then have done
+a exec and hit some problem as the child then exited, hence the signchld and
+the call to wait in the parent (bash). If you had used the command
+$ strace -f -p &lt;PID&gt;
+then it would have also shown you what the child was doing. It probably
+will show it failing to load the ld-linux.so.1 library if you try it. This
+will look like an "open(....)" with a minus int returned instead of 
+a positive int. Not all open failures matter, as it will search the library
+path as it goes, but you'll see it give up.
+
+Tom.
+-- 
+Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00754" HREF="msg00754.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+<UL><LI><EM>From:</EM> Dennis McMurchy &lt;denismcm@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00754.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00756.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00754.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00756.html">Re: Very odd 'bash' problem in RH7.1 - What!?!!</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00755"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00755"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

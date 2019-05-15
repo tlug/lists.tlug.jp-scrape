@@ -1,0 +1,190 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: [tlug] vmware, linux, snapshots -->
+<!--X-From-R13: Dbzrb Furevnhyg <ebzrb.gurevnhygNznvar.rqh> -->
+<!--X-Date: Tue, 17 May 2011 12:09:45 +0900 -->
+<!--X-Message-Id: BANLkTi=RoZt86ok2W6J8m6xRAXxmuT3efw@mail.gmail.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4DD0AE7D.2090406@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00052.html">Date Prev</a>][<a href="msg00054.html">Date Next</a>][<a href="msg00056.html">Thread Prev</a>][<a href="msg00057.html">Thread Next</a>][<a href="maillist.html#00053">Date Index</a>][<a href="threads.html#00053">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] vmware, linux, snapshots</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Mon, 16 May 2011 22:06:32 -0400</li>
+<li><strong>From</strong>: <strong>Romeo Theriault &lt;<a href="mailto:romeo.theriault@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20vmware%2C%20linux%2C%20snapshots">romeo.theriault@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] vmware, linux, snapshots</strong></li>
+<li>References: &lt;<a href="mailto:4DD0AE7D.2090406@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20vmware%2C%20linux%2C%20snapshots">4DD0AE7D.2090406@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Mon, May 16, 2011 at 00:56, Darren Cook &lt;darren@example.com&gt; wrote:
+&gt;
+&gt; One of my clients is using vmware to run quite a few virtual servers,
+&gt; mostly windows.
+
+Which version of vmware are they running? ESX, esxi, vsphere? They all
+have differing capabilities.
+
+&gt; They apparently don't have the more expensive license
+&gt; that allows &quot;hot snapshots&quot; (which would allow moving a virtual server
+&gt; from say one physical machine to another in a matter of minutes).
+
+I *think* you might be mixing up two different features here. The
+vmware ability to &quot;move&quot; one virtual server to another live is called
+&quot;VMotion&quot;. This feature does require the enterprise license. But the
+ability to take vmware snapshots of the VM's is included in the free
+vmware product, esxi.
+
+&gt; Instead they can take a snapshot once a week, and it is quite a slow
+&gt; process. But, apparently, they cannot do even this for linux.
+
+We take vmware snapshots of our linux VM's all the time, not sure why
+they wouldn't be able to do this. Taking the snapshot itself doesn't
+take long, just a few moments, but if you let the VM run with the
+snapshot for a while (a week) then it can take a while to remove the
+old snapshot. Because vmware stores the data changes after the
+snapshot in a log file that then need to be merged back into the main
+vmdk when you go to remove the snapshot.
+
+&gt;
+&gt; For this particular linux server they are setting up, there will be the
+&gt; actual server, and then another server with the same spec that won't be
+&gt; used, it just exists to take over if the first one goes down.
+
+Is this bare metal vmware hypervisor or are they running linux as the
+primary OS on the machine which then runs vmware software which hosts
+the VM's?
+
+Depending on where and what their datastore sits on they may be able
+to get creative and take SAN/NAS based snapshots of the VM's, taking
+vmware out of the picture entirely. I'm assuming they're using some
+sort of shared storage if they have two machines that are setup in a
+failover mechanism. What does the shared storage machine run? Can they
+take snapshots their and then mount the snapshot on another machine
+which would then back up the VM's?
+
+&gt;
+&gt; Are there any good vmware options here? Or is running rsync regularly,
+&gt; to copy from main to backup server, the best choice?
+&gt;
+&gt; Darren
+&gt;
+&gt; --
+&gt; Darren Cook, Software Researcher/Developer
+&gt;
+&gt; <a  rel="nofollow" href="http://dcook.org/work/">http://dcook.org/work/</a> (About me and my work)
+&gt; <a  rel="nofollow" href="http://dcook.org/blogs.html">http://dcook.org/blogs.html</a> (My blogs and articles)
+&gt;
+&gt; --
+&gt; To unsubscribe from this mailing list,
+&gt; please see the instructions at <a  rel="nofollow" href="http://lists.tlug.jp/list.html">http://lists.tlug.jp/list.html</a>
+&gt;
+&gt; The TLUG mailing list is hosted by the award-winning Internet provider
+&gt; ASAHI Net.
+&gt; Visit ASAHI Net's English-language Web page: <a  rel="nofollow" href="http://asahi-net.jp/en/">http://asahi-net.jp/en/</a>
+
+
+
+--
+Romeo Theriault
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00049" href="msg00049.html">[tlug] vmware, linux, snapshots</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00052.html">[tlug] Wireless router recomendations</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00054.html">Re: [tlug] Wireless router recomendations</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00056.html">Re: [tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00057.html">Re: [tlug] vmware, linux, snapshots</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00053"><strong>Date</strong></a></li>
+<li><a href="threads.html#00053"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

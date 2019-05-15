@@ -1,0 +1,204 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: Re: [tlug] Re: "Password on localhost" [C&#38;C, y'r welcome, Josh] -->
+<!--X-From-R13: "Egrcura X. Fheaohyy" <fgrcuraNkrznpf.bet> -->
+<!--X-Date: Sat, 08 Mar 2008 12:43:10 +0900 -->
+<!--X-Message-Id: 874pbhg9fz.fsf@uwakimon.sk.tsukuba.ac.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 4fefd6340803062016q3e34cf59jccbd4b8bb6906e50@mail.gmail.com -->
+<!--X-Reference: d8fcc0800803062231k1e60d7afv867ee756b27cfcab@mail.gmail.com -->
+<!--X-Reference: 47D17DA1.6030201@imaginatorium.org -->
+<!--X-Reference: 20080307204531.GA18183@mail.scottro.net -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00094.html">Date Prev</a>][<a href="msg00096.html">Date Next</a>][<a href="msg00089.html">Thread Prev</a>][<a href="msg00156.html">Thread Next</a>][<a href="maillist.html#00095">Date Index</a>][<a href="threads.html#00095">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Re: &quot;Password on localhost&quot; [C&amp;C, y'r welcome, Josh]</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Sat, 08 Mar 2008 12:51:12 +0900</li>
+<li><strong>From</strong>: <strong>&quot;Stephen J. Turnbull&quot; &lt;<a href="mailto:stephen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Re:%20%22Password%20on%20localhost%22%20%5BC%26C%2C%20y%27r%20welcome%2C%20Josh%5D">stephen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Re: &quot;Password on localhost&quot; [C&amp;C, y'r welcome, Josh]</strong></li>
+<li>References: &lt;<a href="msg00073.html">4fefd6340803062016q3e34cf59jccbd4b8bb6906e50@mail.gmail.com</a>&gt;	&lt;<a href="msg00076.html">d8fcc0800803062231k1e60d7afv867ee756b27cfcab@mail.gmail.com</a>&gt;	&lt;<a href="msg00088.html">47D17DA1.6030201@imaginatorium.org</a>&gt;	&lt;<a href="msg00089.html">20080307204531.GA18183@mail.scottro.net</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>Scott Robbins writes:
+
+ &gt; localhost means the computer you are physically in front of, and
+ &gt; using at the moment.
+
+Right.  The reason is a little complex.  As the OP is probably aware,
+the Internet does not transmit data continuously like the telephone or
+television, but instead cuts it into packets, and then ships each
+packet independently.
+
+So when you send a message (eg, to request a web page) to another
+system, first the OS bundles it into a packet.  Then it puts it in a
+&quot;buffer&quot;, which is just a place (region of memory) to hold the packet
+data until the system is ready to send it.  When it's time to send,
+the system takes it from the buffer, outputs it to a network
+interface, which sends it &quot;over-the-wire&quot; to be received by another
+system's interface.  There it is input to a buffer where it waits
+until the program (in the example, web server) to handle it is ready.
+
+Now, it turns out to be very useful to have a *loopback* interface.
+In this case, there is no wire, and in fact not even a hardware
+interface: you just move the packet from the send buffer to the
+receive buffer on the same machine!  Since there is no other machine
+involved, the loopback interface can have the same address on every
+machine without confusion, and that address is 127.0.01.  It is
+conventional to give that address the name &quot;localhost&quot;, again without
+confusion.  (There's no confusion for precisely the same reason that
+&quot;I&quot; is unambiguous to the person who says it.)
+
+What this means is that any program that can be used across the
+Internet can also be used on the same host *in exactly the same way*,
+even without a network card!  This is useful for all kinds of testing,
+obviously, but also for many other purposes.  Eg, &quot;pydoc&quot; is a program
+that displays documentation for the Python programming language in an
+ordinary web browser.  You can run it on a LAN, or across the Internet
+even, but it's just as useful on a disconnected host.
+
+Not only is true that on the Internet you can't know that the other
+end of the connection is a dog -- you may not even know that that dog
+is you, too!
+
+[There's more, Joshbert, so don't pick up yer mug 'o Java quite yet.]
+
+ &gt; localhost is the name that the operating system gives the machine that
+ &gt; is running the system.
+
+Actually, that's a little imprecise.  First, it's not the &quot;machine&quot;,
+it's a network interface.  Second, it can be anything you like, or
+nothing at all.  Conventionally it is &quot;localhost&quot;, and you'll find it
+in scripts and the like.  So it's convenient to follow convention.
+
+ &gt; So, if you look at your /etc/hosts file you'll see something like
+ &gt; 127.0.0.1
+
+You'll see exactly that, and these possibly something like ::1 which
+is the same thing in the IPv6 domain.  These are defined in the
+Internet RFCs.
+
+ &gt; and the name you gave your machine
+
+If your machine is on the Internet (and that name is know on the
+Internet), you probably shouldn't see that associated with the
+loopback address.  The reason is that it is generally a good idea to
+have a 1-1 correspondence between IP addresses and A names.
+
+ &gt; Most have us have been at that, I don't understand anything stage once
+ &gt; in awhile. 
+
+Yeah.  Even after 20 years in this community, I can still read posts
+by Stallman and his acolytes and realize that at least one end of the
+channel (possibly both) has no clue about anything!  Just happened
+again today....
+
+[OK, *now* you can indulge your caffeine jones, Josh!]
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00073" href="msg00073.html">[tlug] Re: &quot;Password on localhost&quot;</a></strong>
+<ul><li><em>From:</em> Gernot Hassenpflug</li></ul></li>
+<li><strong><a name="00076" href="msg00076.html">Re: [tlug] Re: &quot;Password on localhost&quot;</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+<li><strong><a name="00088" href="msg00088.html">Re: [tlug] Re: &quot;Password on localhost&quot;</a></strong>
+<ul><li><em>From:</em> Brian Chandler</li></ul></li>
+<li><strong><a name="00089" href="msg00089.html">Re: [tlug] Re: &quot;Password on localhost&quot;</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00094.html">Re: [tlug] Freely distributable Japanese capable utf8 font?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00096.html">Re: [tlug] Freely distributable Japanese capable utf8 font?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00089.html">Re: [tlug] Re: &quot;Password on localhost&quot;</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00156.html">Re: [tlug] Re: &quot;Password on localhost&quot;</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00095"><strong>Date</strong></a></li>
+<li><a href="threads.html#00095"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

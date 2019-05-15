@@ -1,0 +1,176 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: [tlug] iptables: can't get logging to work -->
+<!--X-From-R13: Xrna&#45;Quevfgvna Wzornhyg <wpNzrtn&#45;ohpxf.pb.wc> -->
+<!--X-Date: Fri, 14 Feb 2003 13:10:30 +0900 -->
+<!--X-Message-Id: 3E4C6C36.5010400@example.com&#45;bucks.co.jp -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00222.html">Date Prev</a>][<a href="msg00224.html">Date Next</a>][<a href="msg00220.html">Thread Prev</a>][<a href="msg00224.html">Thread Next</a>][<a href="maillist.html#00223">Date Index</a>][<a href="threads.html#00223">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] iptables: can't get logging to work</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Fri, 14 Feb 2003 13:10:30 +0900</li>
+<li><strong>From</strong>: <strong>Jean-Christian Imbeault &lt;<A HREF="mailto:jc@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20iptables%3A%20can%27t%20get%20logging%20to%20work">jc@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] iptables: can't get logging to work</strong></li>
+<li>User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.0.2) Gecko/20021120 Netscape/7.01</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+I've written my first set of iptable rules but they're still buggy =) I 
+keep locking myself out. So I'm trying to enable logging to see why I 
+can't SSH to my box but I can't seem to get logging to work.
+
+I have set the default policy to DROP and added only ACCEPT rules, so 
+nothing gets DROPPED or REJECTED before making to the last (logging) 
+rule. The last rule should LOG anything that didn't match ... but I 
+can't find any iptables entries in /var/log/messages ...
+
+My rules are:
+
+IPT=&quot;/usr/local/sbin/iptables&quot;
+IP=&quot;x.x.x.x&quot;
+JC=&quot;x.x.x.x&quot;
+
+for i in filter
+do
+   $IPT -t $i -F
+   $IPT -t $i -X
+done
+
+$IPT --policy INPUT   DROP
+$IPT --policy OUTPUT  DROP
+$IPT --policy FORWARD DROP
+
+$IPT -A INPUT  -i lo -j ACCEPT
+$IPT -A OUTPUT -o lo -j ACCEPT
+$IPT -A INPUT -p icmp -j ACCEPT
+$IPT -A OUTPUT -m state --state ESTABLISHED,RELATED    -j ACCEPT
+$IPT -A INPUT -p TCP -s 0/0 -i eth0 -d $IP --dport 80  -j ACCEPT
+$IPT -A INPUT -p TCP -s 0/0 -i eth0 -d $IP --dport 443 -j ACCEPT
+$IPT -A INPUT -p TCP -s $JC -i eth0 -d $IP --dport 22  -j ACCEPT
+$IPT -A INPUT -p tcp --dport 25 --syn -m limit --limit 1/s --limit-burst 
+10 -j ACCEPT
+$IPT -A INPUT -p tcp --dport 25 -j ACCEPT
+$IPT -A INPUT -p tcp --dport 53 -j ACCEPT
+$IPT -A INPUT -p udp --dport 53 -j ACCEPT
+$IPT -A INPUT -p tcp --syn -m limit --limit 5/minute -j LOG --log-level 
+info --log-prefix &quot;Firewalled packet:&quot;
+
+My /etc/syslog.conf has this entry to send all info messages to 
+/var/log/messages:
+
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+Yet even when I telnet to my machine I don't see any iptables related 
+messages ...
+
+What did I miss to get logging enabled? (and if anyone can spot why I 
+can't SSH to my box from my PC (JC) please let me know ;)
+
+Thanks,
+
+Jc
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00224" href="msg00224.html">Re: [tlug] iptables: can't get logging to work</a></strong>
+<ul><li><em>From:</em> Josh Glover</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00222.html">Re: [tlug-admin] Re: [tlug] guys password protect the archives</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00224.html">Re: [tlug] iptables: can't get logging to work</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00220.html">Re: [tlug] iptables: problem with REJECT</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00224.html">Re: [tlug] iptables: can't get logging to work</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00223"><strong>Date</strong></a></li>
+<li><a href="threads.html#00223"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

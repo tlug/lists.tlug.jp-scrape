@@ -1,0 +1,222 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: XIM, kinput2 & Tk -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date: Fri, 13 Apr 2001 17:16:20 +0900 -->
+<!--X-Message-Id: 15062.46548.167101.360658@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 200104110836.RAA23274@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00130.html">Date Prev</A>][<A HREF="msg00132.html">Date Next</A>][<A HREF="msg00103.html">Thread Prev</A>][<A HREF="msg00110.html">Thread Next</A>][<A HREF="maillist.html#00131">Date Index</A>][<A HREF="threads.html#00131">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: XIM, kinput2 &amp; Tk</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:jwb@example.com">jwb@example.com</A> (Jim Breen)</strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: XIM, kinput2 &amp; Tk</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 13 Apr 2001 17:16:20 +0900</LI>
+<LI>Cc: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00101.html">200104110836.RAA23274@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00101.html">200104110836.RAA23274@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;QPm4v.A.1AC.ocr16@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Caveat: everything below is consistent with my experience, the
+O'Reilly manuals (X11R5), the X Consortium Xlib and Xt manuals
+(X11R6.3), and the XIM standard (X11R6.3) IIRC ;-).  But I haven't
+read either Xlib or X server code, and it's been quite a while since
+I've looked at kinput2 code.
+
+&gt;&gt;&gt;&gt;&gt; "Jim" == Jim Breen &lt;jwb@example.com&gt; writes:
+
+    Jim&gt; From this I conclude that the initiation sequence is detected
+    Jim&gt; by kterm, and it whistles up kinput2.
+
+Yes.  I believe this is the "illicit intimate knowledge" that Chris
+mentioned a while ago.  XEmacs doesn't have any such resource AFAIK,
+but XIM works fine.  If you start up kinput2 in +xim mode (ie, without
+XIM, thank you very much X11), XEmacs doesn't work mith kinput2 at
+all.  kterm will, though, using the kinput protocol.
+
+    Jim&gt; When kinput2 receives a request, it pops up a window and
+    Jim&gt; starts conversion process." No mention whatsoever that traps
+    Jim&gt; the sequence itself.
+
+Right.  _Xlib_ does the trapping, not kinput2.  But it does it for
+every single keystroke.
+
+    Jim&gt; However, the man page for XOpenIM says:
+
+    Jim&gt; 	"The XOpenIM function opens an input method, matching
+    Jim&gt; the current locale and modifiers specification."
+
+    Jim&gt; This seems to contradict what Chris said, unless "locale" is
+    Jim&gt; loose and includes the values in LANG.
+
+Locale is not very well-defined in the POSIX standard (or anywhere
+else), and app writers insist on adding interpretations which fall
+outside of even the loose POSIX definition.
+
+    Jim&gt; Another question. Having multiple languages in LANG is
+    Jim&gt; presumably OK?  I currently have it set to "en_US ja_JP", and
+    Jim&gt; RH seems to behave with it.
+
+No, I have no idea what that means.  There is a GNU extension
+environment variable, LANGUAGES, which gives a series of fallbacks for
+gettext() and friends.  But POSIX locale is unique to a given process
+at any instant of time and there are no fallbacks once it is set
+(implicitly to C or via setlocale()).
+
+    &gt;&gt;&gt; From: Christopher SEKIYA &lt;wileyc@example.com&gt;
+
+    &gt;&gt;&gt; Wrong sequence.  It goes like this (for XIM, which I'm really
+    &gt;&gt;&gt; growing to hate):
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt; * application creates a callback via XOpenIM()
+    &gt;&gt;&gt; * Xserver receives a key sequence indicating a request for
+    &gt;&gt;&gt; input method intervention
+
+Well, Chris might know more about implementation details, I haven't
+read the relevant server or Xlib code.  But as I understand the XIM
+protocol standard, the callback created via XOpenIM() (actually,
+XOpenIC(), see below) "pipes" _all_ keystrokes to the input manager
+(eg, kinput2).  Thus, neither the app nor the X server needs to know
+what the "initiate" sequence is.  I know for sure that it is possible
+to get kinput2 to wake up on sequences that kterm doesn't know about
+(or maybe it's the other way around, kterm may get no joy using the
+sequence it knows about although kinput2 is alive and kicking---but
+waiting for a different one---don't bother, Chris, we already know
+what you think of these protocols :).
+
+In the kinput protocol (non-XIM), no keystrokes are passed to kinput2
+until the "initiate" sequence is entered.  That's why kterm needs to
+know what the initiate sequence is.  I believe it ignores it for XIM,
+but I haven't looked inside kterm for a while.
+
+    Jim&gt; Where are these keystrokes defined?
+
+Solely by the XIM input manager, eg, kinput2.  An app like XEmacs
+might want to know about them, so that you can avoid binding other
+functions to those keystrokes or issue a warning (I've always detested
+the C-o binding that Canna and Wnn use, I use open-line quite a bit;
+there is not such a problem with kinput2, but there _could_ be).
+
+So for XIM you should be able to customize all apps that use kinput2
+with
+
+	  kinput2 -xrm "*conversionStartKeys: Alt&lt;key&gt;Kanji"
+
+(assuming kinput2 understands the standard Xt options).  I don't think
+there is any way to have different settings for different clients.
+(Well, there is, but it's too disgusting to mention in front of Chris.)
+
+    &gt;&gt;&gt; (yes, that's a bit of a simplification -- Steve will set me
+    &gt;&gt;&gt; straight if it's too simple)
+
+No, it's too complex AFAIK.  Omit the part about the server waiting
+for an "initiate" sequence.  I think you're thinking about the
+XOpenIC() call, which I believe has to be passed through the X server
+(the logical candidate for coordinating console, app, and XIM input
+manager since it needs to talk to all three anyway).  But that normally
+is done early by the app (XEmacs for example does it every time an
+emacs frame is created), not on demand.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00101" HREF="msg00101.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+<UL><LI><EM>From:</EM> jwb@example.com (Jim Breen)</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00130.html">Re: April 13th Nomikai!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00132.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00103.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00110.html">Re: XIM, kinput2 &amp; Tk</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00131"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00131"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

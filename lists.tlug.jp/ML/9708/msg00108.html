@@ -1,0 +1,232 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: kaffe 0.9.1 -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date:  Sat, 23 Aug 1997 00:44:01 GMT -->
+<!--X-Message-Id: Pine.HPP.3.95.970823094144.9794A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96.970822113132.23615w&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00107.html">Date Prev</A>][<A HREF="msg00109.html">Date Next</A>][<A HREF="msg00103.html">Thread Prev</A>][<A HREF="msg00090.html">Thread Next</A>][<A HREF="maillist.html#00108">Date Index</A>][<A HREF="threads.html#00108">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: kaffe 0.9.1</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: kaffe 0.9.1</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 23 Aug 1997 09:43:55 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00101.html">Pine.LNX.3.96.970822113132.23615w-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+--------------------------------------------------------
+tlug note from Craig Oda &lt;craig@example.com&gt;
+--------------------------------------------------------
+Hi,
+I got kaffe to compile with a patch I found on the mailing list.
+It is included below.  Compilation and install go fine with no
+errors or warnings.  However, it core dumps on me whenever I
+execute it.  If anyone gets it running, please let me know.  
+I gotta run to eat breakfast now.
+
+Regards,
+Craig
+
+
+
+---  ----           cut below this line ---------------------
+
+Index: kaffe/kaffe/kaffevm/Makefile.in
+diff -c kaffe/kaffe/kaffevm/Makefile.in:1.1.1.1.2.1.2.2.2.1 kaffe/kaffe/kaffevm/Makefile.in:1.1.1.1.2.1.2.2.2.1.2.1
+*** kaffe/kaffe/kaffevm/Makefile.in:1.1.1.1.2.1.2.2.2.1 Thu Jun 12 14:11:46 1997
+--- kaffe/kaffe/kaffevm/Makefile.in     Sun Jun 29 14:15:28 1997
+***************
+*** 90,96 ****
+                rm -f $(LIB) $(LLIB) $(OBJECT) lib.exp
+
+  distclean:    clean
+!               rm -f md.c jit.def icode.h
+                rm -f thread-native.h locks-native.h
+                rm -f Makefile
+
+--- 90,96 ----
+                rm -f $(LIB) $(LLIB) $(OBJECT) lib.exp
+
+  distclean:    clean
+!               rm -f md.c jit.def icode.h trampoline.c
+                rm -f thread-native.h locks-native.h
+                rm -f Makefile
+
+Index: kaffe/kaffe/kaffevm/intrp/machine.c
+diff -c kaffe/kaffe/kaffevm/intrp/machine.c:1.1.1.1.2.1.4.2 kaffe/kaffe/kaffevm/intrp/machine.c:1.1.1.1.2.1.4.2.2.1
+*** kaffe/kaffe/kaffevm/intrp/machine.c:1.1.1.1.2.1.4.2 Thu Jun 26 16:25:07 1997
+--- kaffe/kaffe/kaffevm/intrp/machine.c Sun Jun 29 14:15:30 1997
+***************
+*** 74,79 ****
+--- 74,80 ----
+        Hjava_lang_Object* mobj;
+        vmException mjbuf;
+        accessFlags methaccflags;
++       char* str;
+
+        /* If these can be kept in registers then things will go much
+         * better.
+***************
+*** 138,144 ****
+                mjbuf.prev = TCTX(currentThread)-&gt;exceptPtr;
+                TCTX(currentThread)-&gt;exceptPtr = &amp;mjbuf;
+        }
+!       if (meth-&gt;exception_table_len &gt; 0 || (methaccflags &amp; ACC_SYNCHRONISED)) {
+                if (setjmp(mjbuf.jbuf) != 0) {
+                        assert(TCTX(currentThread)-&gt;exceptPtr == &amp;mjbuf);
+                        npc = mjbuf.pc;
+--- 139,145 ----
+                mjbuf.prev = TCTX(currentThread)-&gt;exceptPtr;
+                TCTX(currentThread)-&gt;exceptPtr = &amp;mjbuf;
+        }
+!       if (meth-&gt;exception_table != 0 || (methaccflags &amp; ACC_SYNCHRONISED)) {
+                if (setjmp(mjbuf.jbuf) != 0) {
+                        assert(TCTX(currentThread)-&gt;exceptPtr == &amp;mjbuf);
+                        npc = mjbuf.pc;
+***************
+*** 149,155 ****
+        }
+
+        /* Calculate number of arguments */
+!       idx = meth-&gt;ins + (methaccflags &amp; ACC_STATIC ? 0 : 1);
+
+  DBG(  printf("Call to method %s.%s%s.\n", meth-&gt;class-&gt;name-&gt;data, meth-&gt;name-&gt;data, meth-&gt;signature-&gt;data); fflush(stdout); )
+
+--- 150,157 ----
+        }
+
+        /* Calculate number of arguments */
+!       str = meth-&gt;signature-&gt;data;
+!       idx = sizeofSig(&amp;str, false) + (methaccflags &amp; ACC_STATIC ? 0 : 1);
+
+  DBG(  printf("Call to method %s.%s%s.\n", meth-&gt;class-&gt;name-&gt;data, meth-&gt;name-&gt;data, meth-&gt;signature-&gt;data); fflush(stdout); )
+
+***************
+*** 175,185 ****
+
+        restart:
+        wide = 0;
+!       code = (bytecode*)meth-&gt;code;
+
+        /* Finally we get to actually execute the machine */
+        for (;;) {
+!               assert(npc &lt; meth-&gt;codelen);
+                pc = npc;
+                mjbuf.pc = pc;
+                npc = pc + insnLen[code[pc]];
+--- 177,187 ----
+
+        restart:
+        wide = 0;
+!       code = (bytecode*)meth-&gt;c.bcode.code;
+
+        /* Finally we get to actually execute the machine */
+        for (;;) {
+!               assert(npc &lt; meth-&gt;c.bcode.codelen);
+                pc = npc;
+                mjbuf.pc = pc;
+                npc = pc + insnLen[code[pc]];
+
+
+
+
+Next TLUG meeting is Saturday October 11, 1997
+-----------------------------------------------------------------
+a word from the sponsor will appear below
+TWICS - Japan's First Public-Access Internet System.
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00101" HREF="msg00101.html">Re: tlug: kaffe 0.9.1</A></STRONG>
+<UL><LI><EM>From:</EM> Christopher Wiles &lt;wileyc@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00107.html">Re: tlug: Java and Japanese e-mail</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00109.html">Re: tlug: Python woes</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00103.html">Re: tlug: kaffe 0.9.1</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00090.html">tlug: SPAM - not just us...</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00108"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00108"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

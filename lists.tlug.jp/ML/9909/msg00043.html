@@ -1,0 +1,330 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Debugging a PLIP connection -->
+<!--X-From: Matt Gushee <mgushee@example.com> -->
+<!--X-Date:  Sun, 5 Sep 1999 00:47:25 +0900 -->
+<!--X-Message-Id: 14289.16365.760890.198080@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00042.html">Date Prev</A>][<A HREF="msg00044.html">Date Next</A>][<A HREF="msg00040.html">Thread Prev</A>][<A HREF="msg00044.html">Thread Next</A>][<A HREF="maillist.html#00043">Date Index</A>][<A HREF="threads.html#00043">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Debugging a PLIP connection</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong>TLUG &lt;<A HREF="mailto:tlug@example.com">tlug@example.com</A>&gt;</strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Debugging a PLIP connection</strong></LI>
+<LI><strong>From</strong>: <strong>Matt Gushee &lt;<A HREF="mailto:mgushee@example.com">mgushee@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 4 Sep 1999 11:51:09 -0400 (EDT)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=iso-2022-jp</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+皆さん、元気でしょうか？
+
+Greetings from the piney rock-bound coast of Maine. Well ... all I can 
+see out my window is a brick school building. But I'm sure there are
+still pine trees and rocks around somewhere :-)
+
+I've been having trouble setting up a PLIP connection (needed to
+transfer hundreds of Megs of cool custom-built software from my old
+notebook to my new desktop box). I floated this on the local LUG
+mailing list a few weeks ago, but nobody seemed to have a good idea
+what to do about it. Since there seem to be more genuine experts on
+TLUG (no, I'm not just trying to butter you up), I thought I'd try you 
+folks.
+
+------------------------------------------------------------------
+** This message is not for the faint of heart **
+
+Well. I've been trying to set up a PLIP connection between my two
+Linux boxes. I struggled for a while, got it to work 2 or 3 times, now 
+it doesn't work anymore. So I have 2 questions:
+
+1) Can you suggest any programs or techniques to help figger out
+what's going on? Especially something that would give me very verbose
+messages about the signals being sent and received would be helpful.
+2) Can you make any sense out of the info below?
+
+TIA for your helpful tips!
+
+Matt Gushee
+
+
+******************************************************
+The PLIP Mystery
+
+Machine #1 (hostname: 'lobstah' AKA 'bigbug')
+=============================================
+IBM PC 750: Intel Pentium 133, PCI bus, 1 parallel port
+CMOS settings for port: IO=0x3bc, IRQ=7, Enhanced bi-directional mode
+Plug 'n' Pray enabled
+
+Linux distro: RedHat 5.2 w/ stock 2.0.36 kernel, glibc 2.0.7
+** Dual-booting w/ Windows NT 4.0
+
+- [matt@example.com matt]$ hostname
+- lobstah
+- [matt@example.com matt]$ cat /etc/hosts
+- 127.0.0.1	localhost	lobstah
+- 192.168.1.10	bigbug
+- 192.168.1.11	littlebug
+
+[BTW, I've been told I really should have a domain name for my local
+host -- but /etc/hosts wasn't any different when I had PLIP working,
+so I don't think that can be the cause -- at least not the sole cause]
+
+
+Machine #2 (hostname: 'crawdad' AKA 'littlebug')
+================================================
+Toshiba Satellite Pro 420 CDS (notebook): Intel Pentium 100, ISA bus,
+	1 parallel port
+CMOS settings for port: IO=0x378, IRQ=7, ECP mode (what is ECP?)
+PnP enabled, I guess
+
+Linux distro: RedHat 5.1, custom 2.0.34 kernel (see 'Anomalies'),
+      glibc 2.0.7
+
+- [matt@example.com matt]$ hostname
+- crawdad
+- [matt@example.com matt]$ cat /etc/hosts
+- 127.0.0.1	localhost	crawdad
+- 192.168.1.11	littlebug
+- 192.168.1.10	bigbug
+
+Anomalies:
+----------
+* Kernel is customized, mainly for sound &amp; APM support. To wit:
+
+       CONFIG_APM=y
+       # CONFIG_APM_IGNORE_USER_SUSPEND is not set
+       CONFIG_APM_DO_ENABLE=y
+       CONFIG_APM_CPU_IDLE=y
+       # CONFIG_APM_DISPLAY_BLANK is not set
+       CONFIG_APM_POWER_OFF=y
+       # CONFIG_APM_IGNORE_MULTIPLE_SUSPEND is not set
+
+I've known various weird things to happen related to APM. E.g., sound
+doesn't work after an APM suspend, and sometimes the text-mode display 
+is messed up.
+
+* Some months ago I replaced the original 800 MB hard disk with a
+3rd-party 3.2 Gig disk. However, I couldn't find a hard drive
+specifically intended for this machine (none such exist, AFAICT). When 
+I first installed the new hard drive, I ran the BIOS testing utility,
+or whatever it's called ... anyway, the hard drive FAILED the test
+(that's all the info I got -- guess it's not a very good test
+program). But it works fine under Linux, with no special
+configuration, and has never shown any weird behavior in 6-7 months of 
+daily use. Still, I wonder: could the big HD somehow make the BIOS go
+psycho and mess up other parts of the system?
+
+
+PLIP Connection
+===============
+(Some sample output. This is just after cold-booting both machines and 
+logging in as root)
+
+Starting on the desktop machine:
+&gt; [root@example.com /root]# rmmod lp
+&gt; rmmod: module lp not loaded
+&gt; [root@example.com /root]# insmod plip io=0x3bc
+
+To which the kernel responds:
+&gt; Aug 15 22:48:04 localhost kernel: NET3 PLIP version 2.2 gniibe@example.com
+&gt; Aug 15 22:48:04 localhost kernel: plip0: Parallel port at 0x3bc, using assigned IRQ 5.
+
+Note that this is different from the BIOS settings! I *think* that the 
+times I got it to work, I forced the PLIP interface to IRQ 7 ... but
+I'm not really sure.
+
+Moving right along:
+&gt; [root@example.com /root]# route add -net 192.168.0.0 netmask 255.255.0.0 dev plip0
+&gt; [root@example.com /root]# killall -HUP inetd
+
+Switching over to the notebook:
+&gt; [root@example.com /root]# rmmod opl3 sb
+&gt; [root@example.com /root]# rmmod uart401
+&gt; [root@example.com /root]# rmmod sound
+&gt; [root@example.com /root]# rmmod lp
+&gt; rmmod: module lp not loaded
+&gt; [root@example.com /root]# insmod plip
+&gt; [root@example.com /root]# route add -net 192.168.0.0 netmask 255.255.0.0 dev plip1
+&gt; [root@example.com /root]# killall -HUP inetd
+
+And back to the desktop:
+&gt; [root@example.com /root]# ifconfig plip0 io_addr 0x3bc
+&gt; [root@example.com /root]# ifconfig plip0 bigbug pointopoint littlebug up
+&gt; [root@example.com /root]# route
+&gt; Kernel IP routing table
+&gt; Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+&gt; 192.168.0.0     *               255.255.0.0     U     0      0        0 plip0
+&gt; 127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+&gt; [root@example.com /root]# ifconfig
+&gt; lo        Link encap:Local Loopback  
+&gt;           inet addr:127.0.0.1  Bcast:127.255.255.255  Mask:255.0.0.0
+&gt;           UP BROADCAST LOOPBACK RUNNING  MTU:3584  Metric:1
+&gt;           RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+&gt;           TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+&gt;           collisions:0 
+
+&gt; plip0     Link encap:Ethernet  HWaddr FC:FC:C0:A8:01:0A  
+&gt;           inet addr:192.168.1.10  P-t-P:192.168.1.11  Mask:255.255.255.0
+&gt;           UP POINTOPOINT RUNNING NOARP  MTU:1500  Metric:1
+&gt;           RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+&gt;           TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+&gt;           collisions:0 
+&gt;           Interrupt:5 Base address:0x3bc 
+
+Notebook again:
+&gt; [root@example.com /root]# ifconfig plip1 littlebug pointopoint bigbug up
+&gt; [root@example.com /root]# route
+&gt; Kernel IP routing table
+&gt; Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+&gt; 192.168.0.0     *               255.255.0.0     U     0      0        0 plip1
+&gt; 127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+&gt; [root@example.com /root]# ifconfig
+&gt; lo        Link encap:Local Loopback  
+&gt;           inet addr:127.0.0.1  Bcast:127.255.255.255  Mask:255.0.0.0
+&gt;           UP BROADCAST LOOPBACK RUNNING  MTU:3584  Metric:1
+&gt;           RX packets:0 errors:0 dropped:0 overruns:0
+&gt;           TX packets:0 errors:0 dropped:0 overruns:0
+
+&gt; plip1     Link encap:Ethernet  HWaddr FC:FC:C0:A8:01:0B
+&gt;           inet addr:192.168.1.11  P-t-P:192.168.1.10  Mask:255.255.255.0
+&gt;           UP POINTOPOINT RUNNING NOARP  MTU:1500  Metric:1
+&gt;           RX packets:0 errors:0 dropped:0 overruns:0
+&gt;           TX packets:0 errors:0 dropped:0 overruns:0
+&gt;           Interrupt:7 Base address:0x378 
+
+Looks okay, I guess. Let's try some pinging.
+
+&gt; [root@example.com /root]# ping 192.168.1.11
+&gt; PING 192.168.1.11 (192.168.1.11): 56 data bytes
+
+&gt; --- 192.168.1.11 ping statistics ---
+&gt; 3 packets transmitted, 0 packets received, 100% packet loss
+
+Oops.
+
+&gt; [root@example.com /root]# ping 192.168.1.10
+&gt; PING 192.168.1.10 (192.168.1.10): 56 data bytes
+
+&gt; --- 192.168.1.10 ping statistics ---
+&gt; 7 packets transmitted, 0 packets received, 100% packet loss
+
+Arrggh!
+Hmm. It may be significant that when I ping *from the notebook*, the
+following message appears (once for each ping, I guess) *on the
+desktop*:
+
+transmit timeout: (1, 87)
+
+... or something quite like that. If the solution depends on it, I
+could reproduce the exact message with a little effort.
+
+One other funny thing I noticed: yesterday I tried loading and
+unloading the plip module on the notebook several times, and according
+to the kernel messages, first it set up a plip1 interface, then plip0,
+then plip1 again. What's up with that?? More APM weirdness? As best I
+can remember, I loaded the module at the same IO address each time.
+
+Well, I hope you enjoyed reading this more than I enjoyed writing
+it. Please let me know if y'all have any insight.
+
+Matt Gushee
+Portland, Maine, USA
+-------------------------------------------------------------------
+Next Nomikai: September 17 (Fri), 19:30 Tengu TokyoEkiMae 03-3275-3691
+Next Technical Meeting: October 9 (Sat), 13:00     place: Temple Univ.
+-------------------------------------------------------------------
+more info: <A HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00044" HREF="msg00044.html">Re: tlug: Debugging a PLIP connection</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Q &lt;jq@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">Re: tlug: Debugging a PLIP connection</A></STRONG>
+<UL><LI><EM>From:</EM> "Petersen Jens-Ulrik (NRC/Tokyo)" &lt;jens-ulrik.petersen@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00042.html">Re: tlug: Mutt and domain lookup when sending mail - help!</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00044.html">Re: tlug: Debugging a PLIP connection</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00040.html">tlug: Big Brother in TOOS</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00044.html">Re: tlug: Debugging a PLIP connection</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00043"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00043"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

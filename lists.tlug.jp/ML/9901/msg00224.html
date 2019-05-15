@@ -1,0 +1,224 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: Acrobat reader and libXt -->
+<!--X-From: "Andrew S. Howell" <andy@example.com> -->
+<!--X-Date:  Mon, 18 Jan 1999 13:01:02 +0900 -->
+<!--X-Message-Id: 19990117220313Q.andy@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.3.96LJ1.1b7.990117010900.563I&#45;100000@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00223.html">Date Prev</A>][<A HREF="msg00225.html">Date Next</A>][<A HREF="msg00210.html">Thread Prev</A>][<A HREF="msg00225.html">Thread Next</A>][<A HREF="maillist.html#00224">Date Index</A>][<A HREF="threads.html#00224">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: Acrobat reader and libXt</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A>, <A HREF="mailto:jq@example.com">jq@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: Acrobat reader and libXt</strong></LI>
+<LI><strong>From</strong>: <strong>"Andrew S. Howell" &lt;<A HREF="mailto:andy@example.com">andy@example.com</A>&gt;</strong></LI>
+<LI>Date: Sun, 17 Jan 1999 22:03:13 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: Text/Plain; charset=us-ascii</LI>
+<LI>In-Reply-To: Your message of "Sun, 17 Jan 1999 01:11:40 +0900 (JST)"&lt;<A HREF="msg00205.html">Pine.LNX.3.96LJ1.1b7.990117010900.563I-100000@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00205.html">Pine.LNX.3.96LJ1.1b7.990117010900.563I-100000@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Jonathan" == Jonathan Byrne &lt;jq@example.com&gt; writes:
+
+    Jonathan&gt; I just installed Acrobat reaader for Linux 3.01, and
+    Jonathan&gt; when I run it, it says "can't load libary 'libXt.s0.6'
+    Jonathan&gt; and dies.  Can somebody clue me in as to what libXt.so.6
+    Jonathan&gt; is, where it should be, and if it's normal for that to
+    Jonathan&gt; not be in TurboLinux (3.0-J)?
+
+    Jonathan&gt; Oh, and what to do about getting libXt.so.6, too :-)
+
+I'm not sure what is going on here. I came across thing trying to run
+xdvi. It was trying to run /usr/bin/mf, which was giving the same
+complaint:
+
+strace -f -F -o out /usr/bin/mf
+/usr/bin/mf: can't load library 'libXt.so.6'
+
+Looking at "out"
+
+794   execve("/usr/bin/mf", ["/usr/bin/mf"], [/* 26 vars */]) = 0
+794   mmap(0, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
+-1, 0) = 0x40006000
+794   mprotect(0x40000000, 19984, PROT_READ|PROT_WRITE|PROT_EXEC) = 0
+794   mprotect(0x8048000, 189146, PROT_READ|PROT_WRITE|PROT_EXEC) = 0
+794   stat("/etc/ld.so.cache", {st_mode=0, st_size=0, ...}) = 0
+794   open("/etc/ld.so.cache", O_RDONLY) = 4
+794   mmap(0, 15194, PROT_READ, MAP_SHARED, 4, 0) = 0x40007000
+794   close(4)                          = 0
+794   stat("/etc/ld.so.preload", 0xbffffb88) = -1 ENOENT (No such file
+or directory)
+794   open("/usr/lib/libXt.so.6", O_RDONLY) = -1 ENOENT (No such file
+or directory)
+794   open("/lib/libXt.so.6", O_RDONLY) = -1 ENOENT (No such file or
+directory)
+794   write(2, "/usr/bin/mf: can\'t load library"..., 45) = 45
+794   _exit(16)                         = ?
+
+The strange thing is that ldd says that it can find libXt.so.6 just
+fine. 
+
+ldd /usr/bin/mf
+        libXt.so.6 =&gt; /usr/X11R6/lib/libXt.so.6 (0x40006000)
+        libSM.so.6 =&gt; /usr/X11R6/lib/libSM.so.6 (0x4004e000)
+        libICE.so.6 =&gt; /usr/X11R6/lib/libICE.so.6 (0x40057000)
+        libXext.so.6 =&gt; /usr/X11R6/lib/libXext.so.6 (0x4006f000)
+        libX11.so.6 =&gt; /usr/X11R6/lib/libX11.so.6 (0x4007b000)
+        libkpathsea.so =&gt; /usr/lib/libkpathsea.so (0x40120000)
+        libm.so.5 =&gt; /lib/libm.so.5 (0x40131000)
+        libc.so.5 =&gt; /lib/libc.so.5 (0x4013a000)
+        libc.so.6 =&gt; /lib/libc.so.6 (0x40211000)
+        /lib/ld-linux.so.1 =&gt; /lib/ld-linux.so.2 (0x00000000)
+
+Is this just another ugly face of mixed libc 5 &amp; 6?
+
+I thought that maybe mf was suid for some reason, causing it to not
+look in the normal places for libs??? That is not the case:
+
+-rwxr-xr-x   1 root     root       191756 Jun  4  1998 /usr/bin/mf
+
+ls -l /usr/X11R6/lib/libXt.so.6*
+lrwxrwxrwx   1 root     root           12 Sep 29 04:36
+	/usr/X11R6/lib/libXt.so.6 -&gt; libXt.so.6.0
+-rwxr-xr-x   1 root     root       338173 Nov 10 11:15
+	/usr/X11R6/lib/libXt.so.6.0
+
+Nothing to prevent the lib from being read. I couldn't find any docs
+on what /etc/ld.so.preload is supposed to have in it. I tried,
+foolishly, to put just /usr/X11R6/lib in it. Big mistake. Then I could
+not run _anything_. 
+
+	rm /etc/ld.so.preload
+	segv
+
+Oh oh.
+	vi /etc/ld.so.preload
+	segv
+
+Ahh, bash builtins!
+
+	echo "" &gt; /etc/ld.so.preload
+
+That took care of that problem. Adding /usr/X11R6/lib/libXt.so.6.0
+turned out to be the right syntax, but it still did not take care of
+the problem. 
+
+I then thought that maybe /etc/ld.so.cache was messed up. ldconfig -v
+shows that it looks OK, and:
+
+ldconfig -p|grep libXt.so
+        libXt.so.6 (ELF-libc6) =&gt; /usr/X11R6/lib/libXt.so.6
+        libXt.so.6 (DLL) =&gt; /usr/i486-linuxaout/lib/libXt.so.6
+        libXt.so.3 (DLL) =&gt; /usr/i486-linuxaout/lib/libXt.so.3
+        libXt.so (ELF-libc6) =&gt; /usr/X11R6/lib/libXt.so
+
+Still confused,
+
+	Andy
+
+-------------------------------------------------------------------
+Next Technical Meeting: February 13 (Sat), 12:30 place: Temple Univ.
+** presentation: XEmacs, by Steven Baur and Martin Buchholz
+Next Nomikai: March 19 (Fri), 19:30   Tengu TokyoEkiMae 03-3275-3691
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://tlug.linux.or.jp">http://tlug.linux.or.jp</A>                     Sponsor: PHT
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00225" HREF="msg00225.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> Chris Sekiya &lt;chris@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00226" HREF="msg00226.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00205" HREF="msg00205.html">tlug: Acrobat reader and libXt</A></STRONG>
+<UL><LI><EM>From:</EM> Jonathan Byrne &lt;jq@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00223.html">tlug: WNC - ONC clone?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00225.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00210.html">tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00225.html">Re: tlug: Acrobat reader and libXt</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00224"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00224"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!-- MHonArc v2.6.18 -->
+<!--X-Subject: Re: [tlug] Find symlinks, or what should be symlinks... -->
+<!--X-From-R13: Xraf Ayvire Xbua <yvfgfN2vba.qr> -->
+<!--X-Date: Tue, 22 Apr 2014 19:13:49 +0900 -->
+<!--X-Message-Id: 20140422095131.GB5504@camelia.2ion.de -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 5356243D.5090405@dcook.org -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00043.html">Date Prev</a>][<a href="msg00045.html">Date Next</a>][<a href="msg00043.html">Thread Prev</a>][<a href="msg00047.html">Thread Next</a>][<a href="maillist.html#00044">Date Index</a>][<a href="threads.html#00044">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Find symlinks, or what should be symlinks...</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 22 Apr 2014 18:51:31 +0900</li>
+<li><strong>From</strong>: <strong>Jens Oliver John &lt;<a href="mailto:lists@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Find%20symlinks%2C%20or%20what%20should%20be%20symlinks...">lists@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Find symlinks, or what should be symlinks...</strong></li>
+<li>References: &lt;<a href="msg00041.html">5356243D.5090405@dcook.org</a>&gt;</li>
+<li>User-agent: Mutt/1.5.23 (2014-03-12)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Tue, Apr 22, 2014 at 05:11:41PM +0900, Darren Cook wrote:
+&gt; In setting up my new notebook, I copied over the big Projects directory
+&gt; tree. My first try (using rsync, via a NAS disk) had problems
+&gt; (everything had the 'x' permission set, and symlinks didn't get copied).
+&gt; 
+&gt; So, I set up sshd, and &quot;scp -rp&quot;-ed the directory tree. It took a while
+&gt; longer than expected, and I realized it must have followed all the
+&gt; symlinks into a &quot;data&quot; directory tree, and copied them as files. Not
+&gt; major, I thought, there are just a few, I can move it around afterwards
+&gt; (and it saves having to copy the data directory...).
+&gt; 
+&gt; But, poking around, I realize there were lots of symlinks. E.g. a
+&gt; directory containing library files:
+&gt;    xxx.1.2.3.so
+&gt;    xxx.so
+&gt; 
+&gt; These are now both 2MB files, instead of one being a link to the other.
+&gt; 
+&gt; How would you fix this?
+&gt; 
+&gt; I could delete and start again, using rsync, with it set to keep
+&gt; symlinks within the same disk).
+&gt; 
+&gt; ...Would rsync, to the existing tree, replace xxx.so above with a
+&gt; symlink, automatically? If so, not starting again and instead just
+&gt; running rsync, might be perfect?
+&gt; 
+&gt; Or I could run some clever bash script (??) to find all symlinks on the
+&gt; old machine. Then I have a list of what I need to fix manually.
+&gt; 
+&gt; Or I started wondering if there is a tool to hunt for duplicate files
+&gt; and sub-directories in a directory tree? That might give me an optimum
+&gt; list of what should be symlinked, and at least I'd then know the size of
+&gt; the problem.
+&gt; 
+&gt; Darren
+&gt; 
+
+To partially update the tree on your new machine, that is to only re-write the
+symlinks, the following might work: select the symlinks on the old machine using
+find, pass that list to rsync and let it copy them over to the new box via ssh:
+
+  find $source -type l -print0 | rsync -l0R --files-from=- user@newbox:$destination
+
+  find  -type l         -&gt; find symlinks below $source
+        -print0         -&gt; use \0 to separate filenames instead of newlines, print them
+  rsync -l              -&gt; copy symlinks as symlinks
+        -0              -&gt; process \0 separated input
+        -R              -&gt; use relative paths. From find we get ./foo/bar,
+                           which would normally be put into $destination/bar,
+                           but this way we get $destination/foo/bar
+        --files-from=-  -&gt; read file names from stdin
+
+I hope this helps somehow (and is correct).
+
+Best regards
+Jens.
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00041" href="msg00041.html">[tlug] Find symlinks, or what should be symlinks...</a></strong>
+<ul><li><em>From:</em> Darren Cook</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00043.html">Re: [tlug] Find symlinks, or what should be symlinks...</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00045.html">Re: [tlug] Find symlinks, or what should be symlinks...</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00043.html">Re: [tlug] Find symlinks, or what should be symlinks...</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00047.html">[tlug] Latex for translation</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00044"><strong>Date</strong></a></li>
+<li><a href="threads.html#00044"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="/list.html"> Mailing List </a></td>
+<td align=center><a href="http://tlug.jp/linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="http://tlug.jp/members.html">TLUG Members</a></td>
+<td align=center><a href="http://tlug.jp//linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

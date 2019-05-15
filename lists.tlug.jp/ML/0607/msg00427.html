@@ -1,0 +1,206 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] measureI_Vplus.c: release early, release often (was Re: just a quick note... more to come later :)) -->
+<!--X-From-R13: Xvz <wrc200404Npbyhzohf.ee.pbz> -->
+<!--X-Date: Fri, 28 Jul 2006 00:59:54 +0900 -->
+<!--X-Message-Id: 20060727115951.20b7c6b3.jep200404@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20060726125907.GH5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Reference: 20060727081940.GM5111@example.com&#45;61.karlov.mff.cuni.cz -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00426.html">Date Prev</a>][<a href="msg00428.html">Date Next</a>][<a href="msg00426.html">Thread Prev</a>][<a href="msg00428.html">Thread Next</a>][<a href="maillist.html#00427">Date Index</a>][<a href="threads.html#00427">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] measureI_Vplus.c: release early, release often (was Re: just a quick note... more to come later :))</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Jul 2006 11:59:51 -0400</li>
+<li><strong>From</strong>: <strong>Jim &lt;<a href="mailto:jep200404@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureI_Vplus.c:%20release%20early%2C%20release%20often%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">jep200404@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] measureI_Vplus.c: release early, release often (was Re: just a quick note... more to come later :))</strong></li>
+<li>References: &lt;<a href="mailto:20060726125907.GH5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureI_Vplus.c:%20release%20early%2C%20release%20often%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">20060726125907.GH5111@example.com</a>&gt;	&lt;<a href="mailto:20060727081940.GM5111@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20measureI_Vplus.c:%20release%20early%2C%20release%20often%20%28was%20Re:%20just%20a%20quick%20note...%20more%20to%20come%20later%20:%29%29">20060727081940.GM5111@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>On Thu, 27 Jul 2006 10:19:40 +0200 Michal Hajek &lt;hajek1@example.com&gt; wrote:
+
+&gt; measureI_Vplus()
+
+measureI_Vplus.c
+
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;string.h&gt;
+#include &lt;getopt.h&gt;
+#include &lt;gpib/ib.h&gt;
+#include &lt;sys/timeb.h&gt;
+#include &quot;lojza.h&quot;
+
+#define MAX_KEITHLEY_REPLY_LEN (16) /* ^^^ this probably belongs in keithley.h *
+/
+
+/* ibwrtstr is a wrapper for ibwrt to avoid need counting chars in strings
+*  (and the inevitable bugs therefrom) */
+/* ^^^ this should likely go in keithley.c */
+
+int ibwrtstr(int ud,const void *data)
+{
+   return ibwrt(ud,data,(long)strlen((char *)data);
+}
+
+void measureI_Vplus(double *current_plus, double *voltage_plus)
+{
+   double voltage_as_measured_on_normal; /* ^^^ what kind? voltage? temperature?
+ */
+
+   char buffer[MAX_KEITHLEY_REPLY_LEN+1];
+
+   ibwrtstr(K706Ud,&quot;C37C38X&quot;); /* configure K706 plus direction */
+   ibwrtstr(K706Ud,&quot;C32X&quot;);
+
+   /* MERENI NORMALU */
+
+   ibwrtstr(K706Ud,&quot;C9X&quot;);
+   ibwrtstr(K2182Ud,&quot;*trg&quot;);
+   ibwrtstr(K2182Ud,&quot;DATA:FRESh?&quot;); /* measure normal voltage plus */
+   ibrd(K2182Ud,buffer,MAX_KEITHLEY_REPLY_LEN); /* _voltage_ as measured on norm
+al */
+   buffer[ibcnt]='\0';
+   voltage_as_measured_on_normal = atof(buffer);
+   *current_plus = voltage_as_measured_on_normal/NORMAL;
+
+   ibwrtstr(K706Ud,&quot;N9X&quot;); /* change channel to measure sample in furnace */
+   ibwrtstr(K706Ud,&quot;C1X&quot;);
+
+   /* MERENI VZORKU */
+
+   ibwrtstr(K2182Ud,&quot;*trg&quot;);
+   ibwrtstr(K2182Ud,&quot;:SENSE:DATA:FRESh?&quot;);
+   ibrd(K2182Ud,buffer,MAX_KEITHLEY_REPLY_LEN);
+   buffer[ibcnt]='\0';
+   *voltage_plus = atof(buffer);
+
+   ibwrtstr(K706Ud,&quot;N1N32N37N38X&quot;);
+}
+
+The biggest bug fixed (again) was when ibcnt==16:
+
+   char result_V_plus[16];
+   result_normal_plus[ibcnt]='\0';
+   char result_normal_plus[16];
+   result_V_plus[ibcnt]='\0';
+
+I expect that you have this kind of bug repeated throughout your code.
+It's left to you to find and fix the others.
+no need for separate buffers.
+choose meaningful variable names. &quot;result&quot; is a bad name.
+voltage_as_measured_on_normal is better, but still bad.
+It's up to you to choose a good name.
+Good variables names are important.
+The &quot;NORMAL&quot; name is also lacking in information.
+How about NORMALIZATION_FACTOR?
+Why x/NORMAL? why not x*NORMAL?
+(Use whichever is easiest for your brain to understand.
+Don't worry about speed.)
+What are the units of NORMAL? (How does NORMAL convert volts to current?)
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00380" href="msg00380.html">[tlug] issues with format of double (or IEEE754)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+<li><strong><a name="00411" href="msg00411.html">[tlug] just a quick note... more to come later :)</a></strong>
+<ul><li><em>From:</em> Michal Hajek</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00426.html">[tlug] measureTemp_cold.c Release early, release often (was Re:  just a quick note... more to come later)</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00428.html">[tlug] lojza.h: release early, release often . . . . . . . . (was Re: just a quick note... more to come later :))</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00426.html">[tlug] measureTemp_cold.c Release early, release often (was Re:  just a quick note... more to come later)</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00428.html">[tlug] lojza.h: release early, release often . . . . . . . . (was Re: just a quick note... more to come later :))</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00427"><strong>Date</strong></a></li>
+<li><a href="threads.html#00427"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

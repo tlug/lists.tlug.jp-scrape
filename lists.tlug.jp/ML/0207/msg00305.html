@@ -1,0 +1,246 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] DNS servers down? -->
+<!--X-From-R13: Xbanguna Plear <olearwNtby.pbz> -->
+<!--X-Date: Thu, 11 Jul 2002 18:57:00 +0900 (JST) -->
+<!--X-Message-Id: 20020711185745.D15601@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: F102sOU88rfSIwoKiex0000e74b@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00304.html">Date Prev</a>][<a href="msg00306.html">Date Next</a>][<a href="msg00303.html">Thread Prev</a>][<a href="msg00302.html">Thread Next</a>][<a href="maillist.html#00305">Date Index</a>][<a href="threads.html#00305">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] DNS servers down?</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 11 Jul 2002 18:57:45 +0900</li>
+<li><strong>From</strong>: <strong>Jonathan Byrne &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20DNS%20servers%20down%3F">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] DNS servers down?</strong></li>
+<li>References: &lt;<a href="msg00300.html">F102sOU88rfSIwoKiex0000e74b@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Jean-Christian Imbeault (jean_christian@example.com) wrote:
+
+&gt; &gt;Let's look at what av-navi's (sounds like a pr0n site :-)
+&gt; &gt;authoritative name servers have to say:
+&gt; 
+&gt; It is a &quot;retail&quot; site. 
+
+Retail pr0n? :-)
+
+&gt; isn't very friendly or competent it seems. But then again they are very 
+&gt; cheap.
+
+Beggars can't be choosers :-)
+
+&gt; &gt;dig @example.com www.av-navi.co.jp
+&gt; 
+&gt; Which hat did you pull those numbers out of?
+
+You can get them two ways.  One way is from whois:
+
+whois -h whois.nic.ad.jp av-navi.co.jp/e
+
+[whois.nic.ad.jp]
+
+Domain Information:
+p. [Name Server]                ns.gps.co.jp
+p. [Name Server]                rent.gps.co.jp
+
+Lots of info snipped, the relevant part is that those are the
+authoritative name servers for av-navi.co.jp.
+
+rent.gps.co.jp: 202.229.69.4
+ns.gps.co.jp:   202.229.69.6
+
+Or with dig:
+
+dig www.av-navi.co.jp
+
+; &lt;&lt;&gt;&gt; DiG 9.2.0 &lt;&lt;&gt;&gt; www.av-navi.co.jp
+;; global options:  printcmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 26181
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 2
+
+;; QUESTION SECTION:
+;www.av-navi.co.jp.		IN	A
+
+;; ANSWER SECTION:
+www.av-navi.co.jp.	37853	IN	A	202.229.69.8
+
+;; AUTHORITY SECTION:
+av-navi.co.jp.		2997	IN	NS	ns.gps.co.jp.
+av-navi.co.jp.		2997	IN	NS	rent.gps.co.jp.
+
+;; ADDITIONAL SECTION:
+ns.gps.co.jp.		81053	IN	A	202.229.69.6
+rent.gps.co.jp.		81053	IN	A	202.229.69.4
+
+The authority section lists the name servers, the additional 
+section lists the IP addresses of same.
+
+
+From your other post:
+
+ISDN:
+-----
+
+$cat /etc/resolv.conf
+
+domain gps.co.jp
+nameserver 192.168.200.1
+nameserver 202.229.69.6
+search gps.co.jp
+
+DHCP is giving you that, or did you set it up yourself?
+
+That should always work, b/c 202.229.69.6 has the correct information
+for av-navi.co.jp.
+
+
+ADSL:
+-----
+
+$cat /etc/resolv.conf
+
+nameserver 192.168.254.254
+search localdomain
+
+Seems that for DSL I am using the DSL router as a nameserver ... don't know
+if that is good or bad though.
+
+It'll work.  If the DSL router is down, it doesn't matter if you can
+resolve anything on the outside or not :-)
+
+Interestingly, let's look at 202.229.69.4 now:
+
+dig @example.com www.av-navi.co.jp
+
+; &lt;&lt;&gt;&gt; DiG 9.2.0 &lt;&lt;&gt;&gt; @example.com www.av-navi.co.jp
+;; global options:  printcmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: SERVFAIL, id: 37009
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;www.av-navi.co.jp.		IN	A
+
+;; Query time: 558 msec
+;; SERVER: 202.229.69.4#53(202.229.69.4)
+;; WHEN: Thu Jul 11 18:52:04 2002
+;; MSG SIZE  rcvd: 35
+
+It has rejoined the living but is not being helpful.
+
+Best guess, since you say the problem disappeared: both of their 
+name servers were either down/offline or were serving up
+bad/no information.  They fixed 69.6 but 69.4 is still 
+having issues.
+
+Might I recommend a better hosting service to your friend? :-)
+
+J
+
+
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00300" href="msg00300.html">Re: [tlug] DNS servers down?</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00304.html">Re: [tlug] DNS servers down?</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00306.html">Re: [tlug] DNS servers down?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00303.html">Re: [tlug] DNS servers down?</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00302.html">Re: [tlug] DNS servers down?</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00305"><strong>Date</strong></a></li>
+<li><a href="threads.html#00305"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

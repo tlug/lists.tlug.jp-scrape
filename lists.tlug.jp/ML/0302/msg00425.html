@@ -1,0 +1,212 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] c++ compile prolem -->
+<!--X-From-R13: Xnxr [beevfba <wnxr_zbeevfbaNlnubb.pbz> -->
+<!--X-Date: Thu, 27 Feb 2003 17:49:27 &#45;0800 (PST) -->
+<!--X-Message-Id: 20030228014927.29441.qmail@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 3E5F31E1.5070500@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00423.html">Date Prev</a>][<a href="msg00426.html">Date Next</a>][<a href="msg00424.html">Thread Prev</a>][<a href="msg00426.html">Thread Next</a>][<a href="maillist.html#00425">Date Index</a>][<a href="threads.html#00425">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] c++ compile prolem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 27 Feb 2003 17:49:27 -0800 (PST)</li>
+<li><strong>From</strong>: <strong>Jake Morrison &lt;<A HREF="mailto:jake_morrison@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20c%2B%2B%20compile%20prolem">jake_morrison@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] c++ compile prolem</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+Brett,
+
+I had a look at freya. It seems that the package hasn't been
+updated since 2000. 
+
+I suspect that the problem is with the definition of mmap. 
+BSD traditionally used caddr_t as the return type, but
+POSIX uses void *. I guess that FreeBSD is now using the POSIX
+behavior by default. You may be able to use some command line
+defines to switch it into some compatibility mode. I am not sure
+what that would be, though, as I don't have a FreeBSD install 
+handy. Or you could try changing the type of mappaddr to 
+void * in XMap.h. 
+
+I tried to compile on my Linux box with GCC 3.2.2, and it 
+failed on some funky C++ written in 1997. As the package
+doesn't seem to be maintained, I would hesitate to use it.
+
+Jake
+
+
+
+
+
+--- Brett Robson &lt;b-robson@example.com&gt; wrote:
+&gt; 
+&gt; Sorry to ask such a basic question, but short of learning c++ 
+&gt; there's not much I can do.
+&gt; 
+&gt; I need to install some c++ programmes and I've hit a compile error.
+&gt; 
+&gt; ----------------------------------------------------
+&gt; XMap.cc: In method `XMap::XMap(int)':
+&gt; XMap.cc:32: ANSI C++ forbids implicit conversion from `void *' in 
+&gt; assignment
+&gt; *** Error code 1
+&gt; 
+&gt; Stop in /web/standard/www.pacifica.co.jp/temporary/freya-0.92.4/src.
+&gt; ----------------------------------------------------
+&gt; 
+&gt; Using:
+&gt; gcc version 2.95.3 20010315 (release) [FreeBSD]
+&gt; 
+&gt; This is code section below, the error line, line 32, is 
+&gt; higlighted with ***  I assume off_t is standard type, it's not 
+&gt; defined in the source anywhere. I've fiddled with compile options 
+&gt; to no avail.
+&gt; 
+&gt; Thanks,
+&gt; Brett
+&gt; 
+&gt; ----------------------------------------------------
+&gt; XMap::XMap(int filedesc)
+&gt;      : fd(filedesc)
+&gt; {
+&gt;      struct stat st;
+&gt;      fstat(fd, &amp;st);
+&gt;      mapsize = st.st_size;
+&gt;      entryNum = mapsize / ENTRYSIZE - 1;
+&gt;      mapaddr = mmap(NULL,        // start address (hint)
+&gt;                     mapsize,     // size
+&gt;                     PROT_READ,   // protection
+&gt;                     MAP_SHARED,  // flags
+&gt;                     fd,          // file descriptor
+&gt; ***                (off_t)0 );         // file offset
+&gt;      if((caddr_t)(-1) == mapaddr)
+&gt;          PRINTERRMSG(&quot;mmap() failed.&quot;);
+&gt;      maxoffset = getbase(entryNum); // 
+&gt; \xbe\xef\xa4\xcb\xc5\xf9\xa4\xb7\xa4\xa4
+&gt; 
+&gt;      scores = new int[TYPENUM + 1];
+&gt;      short int *p = (short int *)((char *)mapaddr +
+&gt;                                   ENTRYSIZE * entryNum + 
+&gt; sizeof(pos_t));
+&gt;      scores[0] = 1;
+&gt;      for(int i = 0; i &lt; TYPENUM; i++)
+&gt;          scores[i+1] = p[i];
+&gt; }
+&gt; ----------------------------------------------------
+&gt; 
+&gt; 
+&gt; **********************************************************
+&gt; TLUG server is hosted by Open Source Development Lab Japan
+&gt; <A  HREF="http://www.osdl.jp/">http://www.osdl.jp/</A>
+&gt; **********************************************************
+&gt; 
+&gt; ==========================================================
+&gt; To unsubscribe from this mailing list, 
+&gt; please see instructions at &lt;<A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>&gt;
+&gt; ==========================================================
+&gt; 
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00424" href="msg00424.html">[tlug] c++ compile prolem</a></strong>
+<ul><li><em>From:</em> Brett Robson</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00423.html">Re: [tlug] More on non-operational USB mouse in Debian 3.0r1</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00426.html">Re: [tlug] c++ compile prolem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00424.html">[tlug] c++ compile prolem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00426.html">Re: [tlug] c++ compile prolem</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00425"><strong>Date</strong></a></li>
+<li><a href="threads.html#00425"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

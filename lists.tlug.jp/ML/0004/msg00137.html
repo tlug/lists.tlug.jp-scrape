@@ -1,0 +1,191 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Making big ones out of little ones [was: tlug: Debian install...] -->
+<!--X-From: Selva Nair <selva@example.com&#45;net.co.jp> -->
+<!--X-Date:  Fri, 21 Apr 2000 14:28:47 +0900 -->
+<!--X-Message-Id: Pine.LNX.3.95.1000421134250.9250B&#45;100000@example.com&#45;selva.trc&#45;net.co.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: 20000421024956.863954052@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00136.html">Date Prev</A>][<A HREF="msg00138.html">Date Next</A>][<A HREF="msg00135.html">Thread Prev</A>][<A HREF="msg00138.html">Thread Next</A>][<A HREF="maillist.html#00137">Date Index</A>][<A HREF="threads.html#00137">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Making big ones out of little ones [was: tlug: Debian install...]</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Making big ones out of little ones [was: tlug: Debian install...]</strong></LI>
+<LI><strong>From</strong>: <strong>Selva Nair &lt;<A HREF="mailto:selva@example.com">selva@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 21 Apr 2000 14:28:15 +0900 (JST)</LI>
+<LI>cc: <A HREF="mailto:ulrike@example.com">ulrike@example.com</A></LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00135.html">20000421024956.863954052@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: owner-tlug</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+
+On Fri, 21 Apr 2000 ulrike@example.com wrote:
+
+&gt;  &gt; Dont think any step is missing in Stephen's example.
+&gt;  
+&gt;  I guess still have problems with simulating this with my biological, rather 
+&gt;  limited CPU. 
+&gt;  
+&gt;  &gt; &gt;  &lt;stephen&gt;
+&gt;  &gt; &gt;  
+&gt;  &gt; &gt;  Eg, I'm looking at a 1GB partition
+&gt;  &gt; &gt;  mounted on /usr, and that's just not going to cut it if Debian keeps
+&gt;  &gt; &gt;  adding packages at the current rate.  So I can add 33% free space to
+&gt;  &gt; &gt;  that partition by creating a 500MB partition somewhere (say
+&gt;  &gt; &gt;  /dev/sdb1), formatting it, mounting it to /tmp/share, copying
+&gt;  &gt; &gt;  /usr/share recursively to /tmp/share, then adding
+&gt;  &gt; &gt;  
+&gt;  &gt; &gt;  /dev/sdb1 /usr/share ext2 defaults 0 2
+&gt;  &gt; &gt;  
+&gt;  &gt; &gt;  to /etc/fstab, and doing `diff -rq /usr/share /tmp/share &gt;
+&gt;  &gt; &gt;  /tmp/just-for-grins' to make sure everything's OK before doing rm -rf
+&gt;  &gt; &gt;  /usr/share; mkdir /usr/share; umount /tmp/share; mount /usr/share.
+&gt;  &gt; &gt;  
+&gt;  &gt; &gt;  &lt;/stephen&gt;
+&gt;  
+&gt;  I thought after this  /usr/share is empty but mounted and /tmp/share is not 
+&gt;  available anymore including its data, but this is probably not the case, I am 
+
+Better think in terms of physical disk partitions than those directory
+names /usr/share and /tmp/share. You have all the data that appeared
+below /usr/share moved to /dev/sdb1 which is presently not mounted. Now
+mount it on /usr/share and you get the data on /dev/sdb1 accessible
+below /usr/share as you originally had, but physically the data has
+moved to a new partition i.e. /dev/sdb1. The example assumes that
+/usr/share was initially a subdirectory within the partition mounted on
+/usr and the idea is to move it to a new partition and mount that at
+/usr/share so that the directory tree will be unaltered.
+
+&gt;  confused ... So by mounting empty /usr/share everything under /tmp/share is 
+&gt;  magically moved to /usr/share, since it is physically on /dev/sdb1? Or is this 
+
+I think there you have got it right, though there is little magic 
+in it ;)
+
+&gt;  the point after which I should move /tmp/share to /usr/share? But 
+&gt;  since /tmp/share is umounted, how will it be found? Or should I 
+&gt;  move  /tmp/share to /usr/share after having deleted the old /usr/share, instead 
+&gt;  of mkdir /usr/share? No, I guess somehow /tmp/share gets renamed by 
+&gt;  mounting /usr/share, is that correct?
+
+Again, try changing the terminology a bit -- you dont mount /usr/share,
+you mount something (in our case /dev/sdb1) *on* /usr/share. (Some
+people may prefer to say mount *under* /usr/share )
+
+&gt;  
+&gt;  I will now test what yout wrote about swapping with a little adjustment 
+&gt;  since /var is full and there is still plenty of room on /usr ... if anything 
+
+Finally dont end up with a tiny partition for /usr -- keep atleast 1MB
+for /usr, unless you install only selected packages. What do you have on
+/var to fill it up ?
+
+
+Selva
+
+
+&gt;  goes wrong I just install everything from the beginning and mount it correctly 
+&gt;  from the start. But it's all very interesting .... taihen benkyoni narimashita.
+&gt;  
+&gt;  Arigatou, Uli
+
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: April 20 (Thu) Linux Conference 2000 Spring Ed.
+Next Technical Meeting: May 13 (Sat) 13:30 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00135" HREF="msg00135.html">Re: Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+<UL><LI><EM>From:</EM> ulrike@example.com</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00136.html">[simon.p.cozens@example.com: Re: tlug: Impromptu Sysadmin Meet]</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00138.html">Re: Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00135.html">Re: Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00138.html">Re: Making big ones out of little ones [was: tlug: Debian install...]</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00137"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00137"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

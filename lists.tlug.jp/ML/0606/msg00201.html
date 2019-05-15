@@ -1,0 +1,151 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: [tlug] mysterious disappearing boot filesystem -->
+<!--X-From-R13: Epbgg HnaRhfra <Epbgg_HnaRhfraNvasbflf.pbz> -->
+<!--X-Date: Thu, 22 Jun 2006 14:25:59 +0900 -->
+<!--X-Message-Id: 1150954290.2689.340.camel@example.com -->
+<!--X-Content-Type: multipart/alternative -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00200.html">Date Prev</a>][<a href="msg00202.html">Date Next</a>][<a href="msg00206.html">Thread Prev</a>][<a href="msg00251.html">Thread Next</a>][<a href="maillist.html#00201">Date Index</a>][<a href="threads.html#00201">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] mysterious disappearing boot filesystem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Thu, 22 Jun 2006 14:31:30 +0900</li>
+<li><strong>From</strong>: <strong>Scott VanDusen &lt;<a href="mailto:Scott_VanDusen@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20mysterious%20disappearing%20boot%20filesystem">Scott_VanDusen@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] mysterious disappearing boot filesystem</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+
+
+
+
+Hi everyone,<BR>
+<BR>
+The thread on temperature control was helpful, thanks for your input everyone. Instead of continuing on that same topic I thought it would be best to start a new thread as I've run into some strange phenomena.<BR>
+<BR>
+First of all, I downloaded Knoppix 5.0 lSO to test the CPU temperature under stress, and the results seem good so far. The dual core Opteron processor didn't get over 48C under load, so it appears this Zalmann liquid cooling reservoir will be OK. By the way I just have to mention how very impressed I am with Knoppix. I hadn't used Knoppix for a few years and was really blown away at what it can do now- it recognized everything on the system including an obscure RME audio card, KDE came up without issue, gimp and kaffeine were there... really it's remarkable what they can fit on a single CD these days. Right now at work I'm using Knoppix to restore some files from a user's crashed XP system. Linux saving windows. Imagine that.<BR>
+<BR>
+As far as RAID partitioning and filesystems are concerned, my previous server (that ended up melting down) had a functional raid 1 mirror of everything, including boot sector but this new server has 4 SATA ports so I'm going to use them all: 3 SATA drives for raid 5, and one spare SATA for hot swap. Initially I had planned on putting the boot sector onto a 2Gb compact flash card, but it turns out the BIOS doesn't allow me to boot from USB devices after all, and the CF card is via USB multidrive. I could probably track down an IDE to CF cable adapter in Akihabara and do it that way, but for the time being I decided to put the /boot partition on a standard IDE drive /dev/hda1 and the rest of the OS on the software raid 5 array.<BR>
+<BR>
+I have installed Centos4.2 but there is some weird behavior occurring after it boots up, so I thought I would ask for some advice. <BR>
+<BR>
+Here's what I did during install:<BR>
+<BR>
+1) created /boot on /dev/hda1 <BR>
+2) created 4G swap partition at end of hda<BR>
+3) created a raid 5 array out of 3 SATA drives /dev/sda /dev/sdb and /dev/sdc which turned into /dev/md0<BR>
+4) created a single physical volume out of the entire /dev/md0, a volume group /dev/VolGroupRaid5, and logical volumes for remaining filesystems including /var, /home, /tmp,&nbsp; /opt and /.<BR>
+<BR>
+After setting this up, I rebooted into rescue mode using Knoppix, did mdadm --misc --detail /dev/md0 and the raid 5 array was shown to be active and state clean with UUU for the 3SATAs. Then I chrooted to /mnt/sysimage to confirm system files had been installed OK. After that I rebooted from default /dev/hda1. Grub booted stage 1.5 etc fine, but for some reason after boot sequence was completed and I had logged in, the /boot filesystem disappeared. <BR>
+<BR>
+So now, even with KDE up and everything working, the /boot partition is gone, and trying to mount it fails giving error: device already mounted or /dev/hda1 busy. Same error occurs when trying to umount /dev/hda1. fdisk recognizes the partition table on /dev/hda, but for some reason the operating system can't get to it- ls -la of /boot comes up empty. Also, the swap space on&nbsp; /dev/hda2 cannot be accessed, and smart monitoring fails startup as well.<BR>
+<BR>
+I've spent a few days trying different things and googling info, but so far no luck. Any thoughts on why this might be happening?<BR>
+<BR>
+Scott VanDusen
+
+
+
+<table><tr><td bgcolor=#ffffff><font color=#000000>**************** CAUTION - Disclaimer *****************<br>
+This e-mail contains PRIVILEGED AND CONFIDENTIAL INFORMATION intended solely for the use of the addressee(s). If you are not the intended recipient, please notify the sender by e-mail and delete the original message. Further, you are not to copy, disclose, or distribute this e-mail or its contents to any other person and any such actions are unlawful. This e-mail may contain viruses. Infosys has taken every reasonable precaution to minimize this risk, but is not liable for any damage you may sustain as a result of any virus in this e-mail. You should carry out your own virus checks before opening the e-mail or attachment. Infosys reserves the right to monitor and review the content of all messages sent to or from this e-mail address. Messages sent to or from this e-mail address may be stored on the Infosys e-mail system.<br>
+***INFOSYS******** End of Disclaimer ********INFOSYS***<br>
+</font></td></tr></table>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00251" href="msg00251.html">Re: [tlug] mysterious disappearing boot filesystem (update)</a></strong>
+<ul><li><em>From:</em> Scott VanDusen</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00200.html">Re: [tlug] Power Consumption Cost</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00202.html">Re: [tlug] Upgrading to PHP5 on Fedora</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00206.html">Re: [tlug] CentOS &amp; RHEL (was Re:  Fedora is fun to play with,	but	poor for servers that face the web (was Upgrading to PHP5	onFedora))</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00251.html">Re: [tlug] mysterious disappearing boot filesystem (update)</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00201"><strong>Date</strong></a></li>
+<li><a href="threads.html#00201"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

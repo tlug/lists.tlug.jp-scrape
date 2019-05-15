@@ -1,0 +1,186 @@
+<!-- MHonArc v2.6.10 -->
+<!--X-Subject: [tlug] Character encoding on web host's MySQL server -->
+<!--X-From-R13: Rnir [ U <qnirNnegvpynff.bet> -->
+<!--X-Date: Tue, 11 Dec 2007 16:13:12 +0900 -->
+<!--X-Message-Id: 475E3498.6050209@articlass.org -->
+<!--X-Content-Type: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00043.html">Date Prev</a>][<a href="msg00045.html">Date Next</a>][<a href="msg00075.html">Thread Prev</a>][<a href="msg00045.html">Thread Next</a>][<a href="maillist.html#00044">Date Index</a>][<a href="threads.html#00044">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>[tlug] Character encoding on web host's MySQL server</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 11 Dec 2007 15:56:24 +0900</li>
+<li><strong>From</strong>: <strong>Dave M G &lt;<a href="mailto:dave@DOMAIN.HIDDEN?SUBJECT=Re:%20%5Btlug%5D%20Character%20encoding%20on%20web%20host%27s%20MySQL%20server">dave@example.com</a>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>[tlug] Character encoding on web host's MySQL server</strong></li>
+<li>User-agent: Thunderbird 2.0.0.6 (X11/20071022)</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre style="margin: 0em;">TLUG,</pre><br>
+<pre style="margin: 0em;">One of the web hosting services I use has PHP 5.2.5 and MySQL 4.1.16.</pre><br>
+<tt>I should mention before continuing that the site is for a group I help 
+out with, and the issue of changing hosting services is beyond my 
+control. So I've got to work with what I've got for now.</tt><br>
+<br>
+<tt>Naturally, I want to make a site that displays Japanese text, and my 
+preferred encoding is utf-8. And the web hosting service seems to have 
+utf-8 supported... mostly.</tt><br>
+<br>
+<tt>I just uploaded a new version of the web site, with all new and much 
+improved PHP code, and despite all indications that I have set 
+everything to use utf-8, the Japanese characters are coming up as all 
+question marks.</tt><br>
+<br>
+<tt>It is not surprising that I am seeing this problem now, because my 
+previous web site version made do with storing Japanese as binary data, 
+because it was originally built for a MySQL 3.2 system where utf-8 
+support was not very good. Now I want to get everything using more 
+current, sensible, and uniform use of utf-8.</tt><br>
+<br>
+<tt>Looking in the phpMyAdmin interface for my webhost, I can see that some, 
+but not all, of MySQL's system variables are set to use utf-8 for 
+encoding and collation:</tt><br>
+<br>
+<pre style="margin: 0em;">character set client        utf8
+(Global value)            latin1
+character set connection     utf8
+(Global value)            latin1
+character set database        latin1
+character set results        utf8
+(Global value)            latin1
+character set server        latin1
+character set system        utf8
+character sets dir        /usr/share/mysql/charsets/
+collation connection        utf8_unicode_ci
+(Global value)            latin1_swedish_ci
+collation database        latin1_swedish_ci
+collation server        latin1_swedish_ci</pre><br>
+<tt>On my home machine, where Japanese stored in MySQL works fine, I seem to 
+have ensured that everything is set to use utf-8 by adding the following 
+lines into my.cnf, under [mysqld]:</tt><br>
+<br>
+<pre style="margin: 0em;"># utf8
+init-connect='SET NAMES utf8'
+character-set-server=utf8
+collation-server=utf8_general_ci
+skip-character-set-client-handshake</pre><br>
+<pre style="margin: 0em;">But, on this particular web host, I don't have access to modify my.cnf.</pre><br>
+<pre style="margin: 0em;">So... my questions:</pre><br>
+<tt>On my home machine, *all* of the above listed variables are set to use 
+utf-8. But, in order to get proper utf-8 functionality, do I need to 
+worry about all of them, or are some more critical than others?</tt><br>
+<br>
+<tt>I have emailed the web host support with most of the information here, 
+requesting that utf-8 support be made more complete. However, in 
+anticipation of the possibility that they can't comply because changing 
+settings would adversely affect other clients, can I somehow modify my 
+local environment enough to ensure proper functionality? If so, how?</tt><br>
+<br>
+<pre style="margin: 0em;">Thank you for any advice.</pre><br>
+<pre style="margin: 0em;">--
+Dave M G
+<a  href="http://www.tlug.jp/wiki/User:Dave_M_G">http://www.tlug.jp/wiki/User:Dave_M_G</a></pre><br>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00045" href="msg00045.html">Re: [tlug] Character encoding on web host's MySQL server</a></strong>
+<ul><li><em>From:</em> Keith Bawden</li></ul></li>
+<li><strong><a name="00046" href="msg00046.html">Re: [tlug] Character encoding on web host's MySQL server</a></strong>
+<ul><li><em>From:</em> Shawn</li></ul></li>
+<li><strong><a name="00048" href="msg00048.html">Re: [tlug] Character encoding on web host's MySQL server</a></strong>
+<ul><li><em>From:</em> Godwin Stewart</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00043.html">[tlug] Call for presenters - January 12th technical meeting</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00045.html">Re: [tlug] Character encoding on web host's MySQL server</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00075.html">[tlug] Re: Call for presenters - January 12th technical meeting</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00045.html">Re: [tlug] Character encoding on web host's MySQL server</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00044"><strong>Date</strong></a></li>
+<li><a href="threads.html#00044"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

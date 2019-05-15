@@ -1,0 +1,218 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: tlug: gcc question -->
+<!--X-From: "Stephen J. Turnbull" <turnbull@example.com> -->
+<!--X-Date:  Tue, 18 Jan 2000 14:21:31 +0900 -->
+<!--X-Message-Id: 14467.63547.386201.289028@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: Pine.LNX.4.10.10001121547550.26141&#45;100000@example.com -->
+<!--X-Reference-Id: 387DB3D3.15948545@example.com -->
+<!--X-Reference-Id: 14461.53588.914038.845367@example.com -->
+<!--X-Reference-Id: 387DDEE5.91F624DE@example.com -->
+<!--X-Reference-Id: 14466.46047.822694.666971@example.com -->
+<!--X-Reference-Id: 3883BD82.C28E3890@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00070.html">Date Prev</A>][<A HREF="msg00072.html">Date Next</A>][<A HREF="msg00069.html">Thread Prev</A>][<A HREF="msg00093.html">Thread Next</A>][<A HREF="maillist.html#00071">Date Index</A>][<A HREF="threads.html#00071">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: tlug: gcc question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: tlug: gcc question</strong></LI>
+<LI><strong>From</strong>: <strong>"Stephen J. Turnbull" &lt;<A HREF="mailto:turnbull@example.com">turnbull@example.com</A>&gt;</strong></LI>
+<LI>Date: Tue, 18 Jan 2000 14:20:59 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00069.html">3883BD82.C28E3890@example.com</A>&gt;</LI>
+<LI>References: &lt;<A HREF="msg00043.html">Pine.LNX.4.10.10001121547550.26141-100000@example.com</A>&gt;&lt;<A HREF="msg00048.html">387DB3D3.15948545@example.com</A>&gt;&lt;<A HREF="msg00049.html">14461.53588.914038.845367@example.com</A>&gt;&lt;<A HREF="msg00050.html">387DDEE5.91F624DE@example.com</A>&gt;&lt;<A HREF="msg00066.html">14466.46047.822694.666971@example.com</A>&gt;&lt;<A HREF="msg00069.html">3883BD82.C28E3890@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+&gt;&gt;&gt;&gt;&gt; "Fredric" == Fredric Fredricson &lt;fredric.fredriksson@example.com&gt; writes:
+
+    Fredric&gt; "Stephen J. Turnbull" wrote:
+
+    &gt;&gt; No, because GNU malloc (some version of which is used in all
+    &gt;&gt; Linux systems AFAIK) breaks up the memory it gets from sbrk()
+    &gt;&gt; into reasonably-sized pieces.  In old GNU malloc, you only get
+    &gt;&gt; all the raw memory as returned by sbrk if you are allocating
+    &gt;&gt; more memory than the malloc BLOCKSIZE, which is 2048 bytes on
+    &gt;&gt; 32 bit systems.  I don't know what Doug Lea malloc does,
+    &gt;&gt; though.
+
+    Fredric&gt; Eh... I dont't quite follow you here. It's probably me...
+
+My point was simply that malloc is designed to allocate memory in
+multiples of the pagesize if I understand the code correctly.  As long
+as you use only malloc (and don't call sbrk directly) you cannot tell
+that sbrk is there.  Apparently the malloc blocksize is too small (2k
+vs. sbrk's 4k, the docs don't say for sbrk---I thought sbrk was in 1k
+pages, but the test program clearly shows 4k), in which case you would
+be able to tell (if you could figure out where malloc's pool
+supposedly ends).
+
+    Fredric&gt; Malloc use sbrk(2) (or brk(2)) to ask the kernel for more
+    Fredric&gt; memory when it needs it (there are btw probably also
+    Fredric&gt; other ways than sbrk(2) to do this).
+
+The man page doesn't say so, but there may be a POSIX way to get
+memory (brk and sbrk are not POSIX).
+
+    Fredric&gt; Consider the following c program:
+
+It works for me too, although I don't know how offhand to determine
+whether malloc is requesting integral multiples of the pagesize from
+sbrk.
+
+However, I do not get all the way to the end of the segment; in my
+case, the stdout buffer doesn't get flushed before the SEGV occurs.
+What version of glibc do you have?  (Mine is glibc 2.1.2, Debian
+package revision 10.)
+
+    Fredric&gt; There may be more than one way to interpret the result
+    Fredric&gt; above but my interpretation is that the process can have
+    Fredric&gt; more memory assigned to it than sbrk(2) reports.
+
+Strictly speaking, sbrk doesn't report how much memory you have, just
+whether you can use as much memory as you requested or not.
+
+But you are correct that sbrk requests 4kB at a crack, so that a
+malloc block of 2kB will only fill half the page and you can
+(presumably, I don't know how to test this offhand since malloc
+doesn't tell you where it is relative to sbrk's pointers) write beyond
+what malloc reports.
+
+    Fredric&gt; The existence of this package also suggests that it is
+    Fredric&gt; not standard malloc procedure to do so.
+
+No, it's not; this would be a very inefficient thing to do.
+
+    Fredric&gt; When I use my S.u.s.e. 6.3 Linux to compile and examine
+    Fredric&gt; the heap it sure looks like there are some data between
+    Fredric&gt; the allocated memory chunks that probably is part of the
+    Fredric&gt; malloc data structures. Looks like 5 bytes if data. Maybe
+    Fredric&gt; this data is redundant.
+
+I could be wrong; I didn't read the code carefully, but it looked to
+me like all the accounting information for the old GNU malloc was kept
+in a separate data structure.  The new Doug Lea malloc used in recent
+glibc may use a variant on the classic "link pointer plus flag bits"
+strategy, which keeps that information inside the (system) allocated
+block.
+
+
+-- 
+University of Tsukuba                Tennodai 1-1-1 Tsukuba 305-8573 JAPAN
+Institute of Policy and Planning Sciences       Tel/fax: +81 (298) 53-5091
+_________________  _________________  _________________  _________________
+What are those straight lines for?  "XEmacs rules."
+-------------------------------------------------------------------
+Next Technical Meeting: January 14 (Fri) 19:00
+* Topic: "glibc - current status and future developments"
+* Guest Speaker: Ulrich Drepper (Cygnus Solutions)
+* Place: Oracle Japan HQ 12F Seminar Room (New Otani Garden Court)
+-------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00093" HREF="msg00093.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;fredric.fredriksson@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00043" HREF="msg00043.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Scott M. Stone" &lt;sstone@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00048" HREF="msg00048.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;Fredric.Fredriksson@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00049" HREF="msg00049.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00050" HREF="msg00050.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;Fredric.Fredriksson@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00066" HREF="msg00066.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00069" HREF="msg00069.html">Re: tlug: gcc question</A></STRONG>
+<UL><LI><EM>From:</EM> Fredric Fredricson &lt;fredric.fredriksson@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00070.html">tlug: Exodus/GOL wants you</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00072.html">tlug: Ulrich recommends....</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00069.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00093.html">Re: tlug: gcc question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00071"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00071"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

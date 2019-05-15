@@ -1,0 +1,163 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] IP masquerading problem -->
+<!--X-From-R13: Ubqjva Egrjneg <tfgrjnegNftzf&#45;prager.pbz> -->
+<!--X-Date: Fri, 5 Apr 2002 22:07:24 +0900 (JST) -->
+<!--X-Message-Id: 20020405150619.25027f8b.gstewart@example.com&#45;centre.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 000901c1dbbb$46594f70$1500a8c0@example.com -->
+<!--X-Reference: 000001c1dd11$3c055710$1500a8c0@example.com -->
+<!--X-Reference: 3CAD3350.5040608@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="TLUG webmaster">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00101.html">Date Prev</a>][<a href="msg00103.html">Date Next</a>][<a href="msg00100.html">Thread Prev</a>][<a href="msg00103.html">Thread Next</a>][<a href="maillist.html#00102">Date Index</a>][<a href="threads.html#00102">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] IP masquerading problem</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><strong>To</strong>: <strong><A HREF="mailto:tlug@DOMAIN.HIDDEN">tlug@example.com</A></strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] IP masquerading problem</strong></li>
+<li><strong>From</strong>: <strong>Godwin Stewart &lt;<A HREF="mailto:gstewart@DOMAIN.HIDDEN">gstewart@example.com</A>&gt;</strong></li>
+<li>Date: Fri, 5 Apr 2002 15:06:19 +0200</li>
+<li>Content-transfer-encoding: 7bit</li>
+<li>Content-type: text/plain; charset=US-ASCII</li>
+<li>In-reply-to: &lt;<a href="msg00100.html">3CAD3350.5040608@example.com</a>&gt;</li>
+<li>Organization: Nope, none here, it's a mess ;o)</li>
+<li>References: &lt;<a href="msg00057.html">000901c1dbbb$46594f70$1500a8c0@example.com</a>&gt;&lt;<a href="msg00072.html">000001c1dd11$3c055710$1500a8c0@example.com</a>&gt;&lt;<a href="msg00100.html">3CAD3350.5040608@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Thu, 04 Apr 2002 21:17:04 -0800, Ray Mancy &lt;0721265801@example.com&gt;
+wrote to tlug@example.com:
+
+&gt; #!/bin/sh
+&gt; IPTABLES=/usr/local/sbin/iptables
+&gt; EXTIF=&quot;eth1&quot;
+&gt; INTIF=&quot;eth0&quot;
+&gt; $IPTABLES -P FORWARD DROP
+&gt; $IPTABLES -t nat -A POSTROUTING -o $EXTIF -s 192.168.1.3 -j MASQUERADE
+&gt; $IPTABLES -A INPUT -i $EXTIF -m state  --state NEW,INVALID -j DROP
+&gt; $IPTABLES -A FORWARD -i $EXTIF -m state --state NEW,INVALID -j DROP
+
+You're dropping everything going through the FORWARD chain of the filter
+table. Your default destination is &quot;DROP&quot; and on top of that you're DROPping
+stuff coming from the outside which is new. You should explicitly allow
+everything else you want FORWARDed, like:
+
+$IPTABLES -A FORWARD -i $EXTIF -p tcp --sport 80 -j ACCEPT
+$IPTABLES -A FORWARD -o $EXTIF -p tcp --dport 80 -j ACCEPT
+
+...if you want to allow http traffic through the box, or
+
+$IPTABLES -A FORWARD -i $EXTIF -p udp --sport 53 -j ACCEPT
+$IPTABLES -A FORWARD -i $EXTIF -p tcp --sport 53 -j ACCEPT
+$IPTABLES -A FORWARD -o $EXTIF -p udp --dport 53 -j ACCEPT
+$IPTABLES -A FORWARD -o $EXTIF -p tcp --dport 53 -j ACCEPT
+
+...if you want to allow other boxes to do DNS.
+
+Same rules apply to ports 25 for smtp, 110 for pop3, 443 for https, 22 for
+ssh etc...
+
+
+-- 
+ ____________________________________________
+| G. Stewart   --   gstewart@example.com |
+| Port de Pontille, FR-37500 CHINON, FRANCE. |
+ ____________________________________________
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00103" href="msg00103.html">Re: [tlug] IP masquerading problem</a></strong>
+<ul><li><em>From:</em> Ray Mancy</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00057" href="msg00057.html">[tlug] partiton</a></strong>
+<ul><li><em>From:</em> hatsuhiro</li></ul></li>
+<li><strong><a name="00072" href="msg00072.html">Re: [tlug] partiton</a></strong>
+<ul><li><em>From:</em> hatsuhiro</li></ul></li>
+<li><strong><a name="00100" href="msg00100.html">[tlug] IP masquerading problem</a></strong>
+<ul><li><em>From:</em> Ray Mancy</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00101.html">Re: [tlug] Generating documentation from comments from source code</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00103.html">Re: [tlug] IP masquerading problem</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00100.html">[tlug] IP masquerading problem</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00103.html">Re: [tlug] IP masquerading problem</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00102"><strong>Date</strong></a></li>
+<li><a href="threads.html#00102"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

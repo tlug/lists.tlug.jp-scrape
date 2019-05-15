@@ -1,0 +1,231 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: Raffle and T&#45;Shirt -->
+<!--X-From: Craig Oda <craig@example.com> -->
+<!--X-Date: Fri, 12 Dec 1997 02:00:16 &#45;0500 (EST) -->
+<!--X-Message-Id: Pine.HPP.3.95.971212154652.4424A&#45;100000@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00117.html">Date Prev</A>][<A HREF="msg00119.html">Date Next</A>][<A HREF="msg00209.html">Thread Prev</A>][<A HREF="msg00123.html">Thread Next</A>][<A HREF="maillist.html#00118">Date Index</A>][<A HREF="threads.html#00118">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: Raffle and T-Shirt</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: Raffle and T-Shirt</strong></LI>
+<LI><strong>From</strong>: <strong>Craig Oda &lt;<A HREF="mailto:craig@example.com">craig@example.com</A>&gt;</strong></LI>
+<LI>Date: Fri, 12 Dec 1997 16:00:09 +0900 (JST)</LI>
+<LI>Content-Type: TEXT/PLAIN; charset=US-ASCII</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+
+Hi,
+Jim Schweizer (TLUG Webmaster) contributed a raffle program
+in Perl.  The program is included below for people to judge
+the randomness and test it out.  I figure that even if we
+used a beer mug, it is not that random since some pieces
+don't get mixed up as much.  If there is a problem with
+the randomness, send me a personal e-mail at
+craig@example.com  
+
+I do not plan to issue tickets.  Instead, I will input 
+the names in an ASCII file line by line.  The cost is 500 yen
+per line.  In theory, each line has an even chance of
+being generated.  
+
+The first person drawn will get the first pick of what they
+want from the prizes.  The second person will get second
+pick.  This will continue until all prizes are exhausted.
+Everyone at the meeting will get a penguin sticker, regardless
+of whether you buy a ticket or not.  
+
+All money will be donated to TLUG.  I'll try to bring in
+the bank book so people can verify the last balance, I think
+it was 5,000 yen or something.  Sorry, I don't have it with
+me right now or I would get a current listing from machine.
+
+I would like to solicit opinions to see if TLUG should sell
+more than one ticket (line in ASCII file) per person.  My
+opinion is that this is okay, since all the money is being
+donated to TLUG.  However, I'm interested in other opinions.
+
+
+T-Shirt
+-------
+
+If anyone can draw, please bring a drawing of a TLUG single
+color T-Shirt design entry.   We don't have any official
+entries right now.  We do have one on a napkin that changes
+the TLUGer into a computer system and makes the person's head
+the monitor.
+
+
+------------ Raffle Program ------------------
+
+
+#!/usr/bin/perl -w 
+use strict
+srand( time() ^ ($$ + ($$ &lt;&lt; 15)) );
+
+# The list file should contain the name of each ticket buyer.
+# There can be as many different raffles as you want - just
+# write a new list for each one or reuse a list.
+# The format of the list file is one name per line.
+
+print "\nWhat is the name of your list file? ";
+chomp($ticket = &lt;STDIN&gt;);
+
+# Get the ticket buyers from the file.
+open(FILE,"$ticket") || die "Can't find the file you typed!\n\n";
+@example.com = &lt;FILE&gt;;
+close(FILE);
+
+print "\nLet's get started.\n\n";
+
+# Find out what the prize is.
+print "What prize do you want to give away? ";
+chomp ($prize = &lt;STDIN&gt;);
+
+print "\nIf you wish to pick a name use 'yes' or 'y'.\n\n";
+
+@example.com = ("Shall we pick a name? ",
+            "Let's get a winner? ",
+            "Pick a $prize winner? ",
+            "Grab a name from the hat? ",);
+
+while () {
+# get a prompt
+$prompt = rand(@example.com);
+print "$prompts[$prompt]";
+chomp ($more = &lt;STDIN&gt;);
+if ($more =~ m/\byes\b|\by\b/){ 
+
+        # get a winner from @example.com 
+        $win = rand(@example.com);
+        chomp ($win);
+
+        # print the random winner 
+        print "\nGive a $prize to $cooldudes[$win]\n";
+
+        # take the winner out of the array
+        splice(@example.com, $win, 1);
+
+        # check to see if any cool dudes remain
+        if (@example.com &gt;0){
+                # see how many are left
+                $numdudes = (@example.com); 
+                print "There are still $numdudes of you waiting.\n\n"; 
+                }
+        else{
+                # or wrap it up
+                print "\aThat's all folks.\n\n";
+                exit
+                }
+        }
+else{
+# not a 'yes' or 'y' input so we're leaving
+die "\a\nThanks for playing.
+Too bad:
+@example.com
+didn't get a $prize.\n\n";
+        }
+}
+
+---------------------------------------------------------------
+TLUG Meeting Dec. 13, 12:30 at Tokyo station Yaesu Chuo ticket gate
+13:30 Starbuck's coffee.  13:45 HSBC | info: joem@example.com
+At least 3 functional Sparc IPC machines will be raffled out
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00123" HREF="msg00123.html">RE: tlug: Raffle and T-Shirt</A></STRONG>
+<UL><LI><EM>From:</EM> Jim Schweizer &lt;schweiz@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00117.html">tlug: Re: AOL (IM) for Linux</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00119.html">PDF [was RE: tlug: X Windows client]</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00209.html">RE: tlug: X Windows client</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00123.html">RE: tlug: Raffle and T-Shirt</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00118"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00118"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] sed or perl script help please . . . -->
+<!--X-From-R13: Pehab Dnbhyg <oeNenbhyg.pbz> -->
+<!--X-Date: Mon, 5 Aug 2002 20:54:42 +0900 (JST) -->
+<!--X-Message-Id: 1028548576.10085.1.camel@example.com -->
+<!--X-Content-Type: multipart/signed -->
+<!--X-Reference: F132q9IcVux1Zcn8TtE000005b5@example.com -->
+<!--X-Derived: pgp00003.pgp -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00035.html">Date Prev</a>][<a href="msg00037.html">Date Next</a>][<a href="msg00035.html">Thread Prev</a>][<a href="msg00038.html">Thread Next</a>][<a href="maillist.html#00036">Date Index</a>][<a href="threads.html#00036">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] sed or perl script help please . . .</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: 05 Aug 2002 20:56:16 +0900</li>
+<li><strong>From</strong>: <strong>Bruno Raoult &lt;<A HREF="mailto:br@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20sed%20or%20perl%20script%20help%20please%20.%20.%20.">br@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] sed or perl script help please . . .</strong></li>
+<li>References: &lt;<a href="msg00035.html">F132q9IcVux1Zcn8TtE000005b5@example.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+You can use awk:
+
+BEGIN { current = 1;
+        text=&quot;&quot;;
+}
+$1 == current {
+        if (current &gt; 1)
+                print text;
+        text = $0;
+        current++;
+        next;
+}
+{
+        text = text $0;
+}
+END {
+        if (text != &quot;&quot;)
+                print text;
+}
+
+
+You will also probably need to add a space (something like:
+	text = text &quot; &quot; $0;
+It depends on what you need.
+
+br.
+
+
+On Mon, 2002-08-05 at 19:34, Jean-Christian Imbeault wrote:
+&gt; I have a large text file that unfortunately got line-wrapped or something in 
+&gt; the transfer and I would like to &quot;undo&quot; the line wrapping ..
+&gt; 
+&gt; Luckily each line was numbered in the original file so it should make my 
+&gt; task easier but
+&gt; I've been trying for the last hour to come up with a sed script to concat 
+&gt; the lines together but can't seem to get it quite right.
+&gt; 
+&gt; I have a file that contains lines like this:
+&gt; 
+&gt; 1 some
+&gt; text with
+&gt; C/R's
+&gt; in annoying places
+&gt; 2 more text
+&gt; with CRs
+&gt; 3 text text text
+&gt; 4 text text
+&gt; 
+&gt; I'd like to concat the lines that don't have leading numbers in to one long 
+&gt; line like this:
+&gt; 
+&gt; 
+&gt; 1 sometext with C/R's in annoying places
+&gt; 2 more text with CRs
+&gt; 3 text text text
+&gt; 4 text text
+&gt; 
+&gt; Can someone suggest a sed (or perl if it is better suited to this) script to 
+&gt; concat the lines?
+&gt; 
+&gt; Thanks!
+&gt; 
+&gt; Jc
+&gt; 
+&gt; _________________________________________________________________
+&gt; Chat with friends online, try MSN Messenger: <A  HREF="http://messenger.msn.com">http://messenger.msn.com</A>
+&gt; 
+&gt; 
+&gt; *************************************************
+&gt; TLUG server is hosted by Global Online Japan
+&gt; <A  HREF="http://home.gol.com/index_e.html">http://home.gol.com/index_e.html</A>
+&gt; *************************************************
+&gt; 
+&gt; =================================================
+&gt; To unsubscribe from this mailing list, 
+&gt; please see instructions at
+&gt; <A  HREF="http://www.tlug.jp/list.html">http://www.tlug.jp/list.html</A>
+&gt; =================================================
+&gt; 
+-- 
+Two witches watched two watches.
+Which witch watched which watch?
+
+</pre>
+<p><strong>Attachment:
+<a href="pgp00003.pgp" ><tt>signature.asc</tt></a></strong><br>
+<em>Description:</em> This is a digitally signed message part</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00035" href="msg00035.html">[tlug] sed or perl script help please . . .</a></strong>
+<ul><li><em>From:</em> Jean-Christian Imbeault</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00035.html">[tlug] sed or perl script help please . . .</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00037.html">[tlug] Tokyo internships?</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00035.html">[tlug] sed or perl script help please . . .</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00038.html">Re: [tlug] sed or perl script help please . . .</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00036"><strong>Date</strong></a></li>
+<li><a href="threads.html#00036"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

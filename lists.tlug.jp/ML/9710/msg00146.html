@@ -1,0 +1,187 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: clearing Netscape's cache -->
+<!--X-From: Jim Schweizer <schweiz@example.com> -->
+<!--X-Date: Sat, 25 Oct 1997 10:16:13 &#45;0400 (EDT) -->
+<!--X-Message-Id: XFMail.971025232928.schweiz@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00145.html">Date Prev</A>][<A HREF="msg00147.html">Date Next</A>][<A HREF="msg00159.html">Thread Prev</A>][<A HREF="msg00147.html">Thread Next</A>][<A HREF="maillist.html#00146">Date Index</A>][<A HREF="threads.html#00146">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: clearing Netscape's cache</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: clearing Netscape's cache</strong></LI>
+<LI><strong>From</strong>: <strong>Jim Schweizer &lt;<A HREF="mailto:schweiz@example.com">schweiz@example.com</A>&gt;</strong></LI>
+<LI>Date: Sat, 25 Oct 1997 22:57:03 +0900 (JST)</LI>
+<LI>Content-Transfer-Encoding: 8bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Organization: JPS Solutions</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Hi all,
+
+I got an interesting csh tip about how to clear Netscape's cache on logout but
+couldn't get it to work for me. So, I tried a bash solution which works, but
+isn't really there yet.
+
+Here's the original tip:
+
+------------------- CUT HERE ------------------------------
+#!/bin/csh
+
+if !( `ps -eu $USER | grep netscape | grep -v grep | sed -e 's/^  *//' -e 's/
+.*//'` ) then
+        echo
+        echo "Clearing Netscape cache..."
+        \rm -rf ~/.netscape/cache/*
+endif
+
+echo
+echo "Exiting..."
+
+------------------- CUT HERE ------------------------------
+
+as I said, it didn't work for me. I came up with:
+
+schweiz:~/bin$ cat rmcache 
+
+----Jim's hack-------------------------------
+#!/bin/sh
+if 
+ps -aux  | grep $USER/hdd/netscape/netscape 
+then
+echo "Shut down netscape 3.0 first."
+elif
+ps -aux  | grep $USER/hdd/nav403/netscape 
+then
+echo "Shut down netscape 4.03 first."
+else
+echo
+echo "Clearing Netscape cache..."
+rm -rf ~/.netscape/cache/*
+rm -rf ~/.netscape/archive/*
+echo
+echo "running df"
+echo
+df
+echo
+fi
+-------end Jim's hack------------------------
+
+The problems I'm having are:
+
+1. I run multiple versions of netscape - 2.02, 3.0 and 4.03
+and
+2. caching is in ~/.netscape/cache and ~/.netscape/archive
+
+The above script works, but it's not elegant. How do I use ps to find out which
+versions of netscape are running (and by which user) without using a path? If I
+try:
+
+ps -aux | grep $USER*netscape
+
+it, of course, dies since ps returns *netscape and exits. I'm not worried about
+the logout part .... but, as always, I'm curious....
+
+Jim S.
+
+
+Next TLUG meeting is Saturday Dec. 13, 1997  (possibly Nov. 13?)
+---------------------------------------------------------------
+a word from the sponsor:
+TWICS - Japan's First Public-Access Internet System
+www.twics.com  info@example.com  Tel:03-3351-5977  Fax:03-3353-6096
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00147" HREF="msg00147.html">Re: tlug: clearing Netscape's cache</A></STRONG>
+<UL><LI><EM>From:</EM> Jason Molenda &lt;crash@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00148" HREF="msg00148.html">Re: tlug: clearing Netscape's cache</A></STRONG>
+<UL><LI><EM>From:</EM> Felix Morley Finch &lt;felix@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00145.html">tlug: problems with jserver and mule</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00147.html">Re: tlug: clearing Netscape's cache</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00159.html">RE: tlug: problems with jserver and mule</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00147.html">Re: tlug: clearing Netscape's cache</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00146"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00146"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

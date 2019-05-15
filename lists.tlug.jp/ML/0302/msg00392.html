@@ -1,0 +1,201 @@
+<!-- MHonArc v2.5.2 -->
+<!--X-Subject: Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO -->
+<!--X-From-R13: "Xbanguna Plear" <ogrnzNtby.pbz> -->
+<!--X-Date: Tue, 25 Feb 2003 17:37:09 +0700 -->
+<!--X-Message-Id: E18ncST&#45;000193&#45;00@example.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 20030225044543.GA8866@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Tittsler - listmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<P>
+<TABLE BGCOLOR="#FFFF66" BORDER=1 COLS=1 WIDTH="90%" CLASS=navbar>
+<TR>
+<TD>&nbsp;&nbsp;
+<FONT FACE="Verdana, Lucida Sans, Arial, Helvetica, Geneva, sans-serif"><SMALL>
+<A HREF="../../index.html" TITLE="Tokyo Linux Users Group Page">
+<STRONG>tlug.jp</STRONG></A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../../list.html" TITLE="Mailing List Page">Mailing List</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+<A HREF="../index.html" TITLE="tlug Archive Page">tlug archive</A> 
+<IMG SRC="../../images/arrow_yellow.gif" WIDTH=13 HEIGHT=9 ALIGN=bottom ALT="-&gt;">
+tlug Mailing List Archive
+</SMALL></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00385.html">Date Prev</a>][<a href="msg00387.html">Date Next</a>][<a href="msg00391.html">Thread Prev</a>][<a href="msg00393.html">Thread Next</a>][<a href="maillist.html#00392">Date Index</a>][<a href="threads.html#00392">Thread Index</a>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li>Date: Tue, 25 Feb 2003 17:37:09 +0700</li>
+<li><strong>From</strong>: <strong>&quot;Jonathan Q&quot; &lt;<A HREF="mailto:jq@DOMAIN.HIDDEN?SUBJECT=Re%3A%20%5Btlug%5D%20Sorry%20to%20Hijack%20a%20thread%20but%20whats%20wrong%20with%20LILO">jq@example.com</A>&gt;</strong></li>
+<li><strong>Subject</strong>: <strong>Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</strong></li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+
+
+On 2/25/2003, &quot;Martin Baehr&quot; &lt;mbaehr@example.com&gt; wrote:
+
+
+&gt;but it still can't run animations or even games, can it? ;-)
+
+Off the top of my head, I don't know, but more to the point: anyone who
+thinks having a boot loader run games or animations is a good thing, please
+raise your hand now so we can have the bouncers escort you out.
+
+&gt;<A  HREF="http://www.gamers.org/~quinet/lilo/index.html">http://www.gamers.org/~quinet/lilo/index.html</A>
+&gt;(site seems to be down atm.)
+
+Yeah, they're probably using LILO and it got hosed ;-)
+
+Also, a &quot;me too&quot; on what Matt said about GRUB and LILO, and a reply to
+David's comment about recovering in LILO vs. recovering in GRUB: I can sort
+of understand about the recovery thing, because the last time I had to
+recover, I *was* running LILO.  Oh, wait.  That's another reason to be
+using GRUB :-)  Seriously, though, I have never had to recover using GRUB,
+and if I did, I wouldn't need to resort to a boot floppy a la LILO, because
+GRUB has its own command shell that I described in my earlier post.
+
+Another good reason is that adding another OS to GRUB doesn't require any
+pain or even re-writing your boot sector (which is where LILO recovery
+often comes into the picture). You just edit its menu file.
+
+For example, let's say I have one OS bootable by GRUB:
+
+default=0
+timeout=20
+title Woody 3.0r1
+	root (hd0,0)
+	kernel /boot/vmlinuz-2.4.18-bf2.4 ro root=/dev/hda1 hdc=ide-scsi
+	
+The above (for those not conversant with grub) says to boot OS 0 (the first
+one) by default, and boot after 20 seconds of waiting at the GRUB display
+screen.  The root is the first disk in the system, and the line after that
+is obvious.
+
+Now, to add another OS, all I do is edit the file with my text editor of
+choice:
+
+title Hurd
+     root   (hd1,0)
+     kernel /boot/gnumach.gz root=hd0s1
+     module /boot/serverboot.gz
+
+This tells it to boot Hurd from the second disk.  After adding this to the
+list, I don't have to do anything else; the next time I reboot, I will have
+to OS choices in the GRUB menu.  Zero chance of borkage.  GRUB will happily
+boot Linux, *BSD, Hurd, OS/2, any flavor of Windows, anything you care to
+put on your machine, and all of them are as simple as making an entry like
+the above in the menu file.
+
+People can use whatever bootloader meets their needs - that's part of the
+beauty and freedom of Free software - but I can say two things for certain
+about GRUB:
+
+- Except for David, I don't (AFAIK) know anyone who has tried GRUB and gone
+back to LILO;
+
+- As Matt noted, GRUB is definitely more advanced and flexible than LILO.
+
+
+Manually installing GRUB requires a careful read of the info page and
+learning a few things, but it's worth it b/c you'll never see boot sector
+borkage again.  Using a distro that installs GRUB by default means not even
+having to do that learning.  You just need to learn enough to edit the grub
+menu file, and that's easier than lilo.conf.
+
+Jonathan
+
+</pre>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00393" href="msg00393.html">Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</a></strong>
+<ul><li><em>From:</em> Martin Baehr</li></ul></li>
+<li><strong><a name="00394" href="msg00394.html">Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</a></strong>
+<ul><li><em>From:</em> Scott Robbins</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00391" href="msg00391.html">Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</a></strong>
+<ul><li><em>From:</em> Martin Baehr</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00385.html">[tlug] special characters</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00387.html">Re: [tlug] special characters</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00391.html">Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00393.html">Re: [tlug] Sorry to Hijack a thread but whats wrong with LILO</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#00392"><strong>Date</strong></a></li>
+<li><a href="threads.html#00392"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

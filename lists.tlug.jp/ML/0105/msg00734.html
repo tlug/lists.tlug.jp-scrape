@@ -1,0 +1,205 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Re: Apache question -->
+<!--X-From: "Thomas O'Dowd" <tom@example.com> -->
+<!--X-Date: Mon, 28 May 2001 17:52:29 +0900 -->
+<!--X-Message-Id: 20010528175229.W5613@example.com -->
+<!--X-ContentType: text/plain -->
+<!--X-Reference-Id: F230Glrn8LOLP9r70j000003bc8@example.com -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00733.html">Date Prev</A>][<A HREF="msg00735.html">Date Next</A>][<A HREF="msg00730.html">Thread Prev</A>][<A HREF="msg00737.html">Thread Next</A>][<A HREF="maillist.html#00734">Date Index</A>][<A HREF="threads.html#00734">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Re: Apache question</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>Re: Apache question</strong></LI>
+<LI><strong>From</strong>: <strong>"Thomas O'Dowd" &lt;<A HREF="mailto:tom@example.com">tom@example.com</A>&gt;</strong></LI>
+<LI>Date: Mon, 28 May 2001 17:52:29 +0900</LI>
+<LI>Content-Disposition: inline</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>In-Reply-To: &lt;<A HREF="msg00730.html">F230Glrn8LOLP9r70j000003bc8@example.com</A>&gt;; from jean_christian@example.com on Mon, May 28, 2001 at 07:44:58AM -0000</LI>
+<LI>References: &lt;<A HREF="msg00730.html">F230Glrn8LOLP9r70j000003bc8@example.com</A>&gt;</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Resent-From: tlug@example.com</LI>
+<LI>Resent-Message-ID: &lt;lmwvuD.A.6N.iFhE7@example.com&gt;</LI>
+<LI>Resent-Sender: tlug-request@example.com</LI>
+<LI>User-Agent: Mutt/1.2.5i</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I think that the best way to rotate apache logs is by configuring
+apache to use the rotatelogs program via httpd.conf. Basically
+apache writes to the rotatelogs program and the rotatelogs program
+then writes to the files. In the httpd.conf file where you tell
+rotatelogs to run, you specify the location of the logfile and 
+a number of seconds after which to rotate. When the time to rotate
+comes, the rotatelogs program closes the logfile, renames it and 
+opens a new log file. Apache never knows the difference. You don't
+have to worry about who/what is connected to your webserver. See the
+man page of rotatelogs for setup.
+
+I pretty much use this and it works great. I wrote my own version
+of rotatelogs though which integrates better with scripts I run
+around it, ie stores logs in a different directory, uses different
+names and sets up symlinks to point to latest logs. It also works
+with signals rather than times, cause I wanted more control over
+rotating logs than a number of seconds which was specified when
+apache was started. It's been running under pretty heavy traffic
+since early this year. If anyone wants it give me a shout.
+
+Incidently, anyone else running webalizer to generate logfile reports?
+It cored on me last week after being slashdotted. There was a small 
+bug in the mangle agents code. If anyone else wants the fix for 2.01,
+let me know. BTW, What do other people use?
+
+PS. rotatelogs is a c program included in the apache source. You can
+probably find it with locate. RH also has a logrotate program which
+deals with system logfiles (including RH apache). This is different
+then the rotatelogs program I mention above.
+
+PPS. apachectl is the apache control start/stop/configcheck/reload/etc
+script. Not sure where RH puts it by default. Just use locate to find it.
+The default sysv start script is more than likely using it to start/stop
+apache.
+
+PPPS. I also recommend building/installing apache yourself rather than
+the default RH rpms.
+
+Tom.
+
+On Mon, May 28, 2001 at 07:44:58AM -0000, Jean-Christian Imbeault wrote:
+&gt; &gt;It's not particularly serious, it just means that the processes
+&gt; &gt;didn't die right away.
+&gt; 
+&gt; Could this possibly lead to the creation of a zombie httpd that could keep a 
+&gt; connection open and busy?
+&gt; 
+&gt; &gt;You might want to write your own log rotation script
+&gt; &gt;for Apache which uses signal SIGUSR1 instead of SIGHUP.
+&gt; 
+&gt; I'll susbstituthe the HUP signals for SIGUSR1 in the logrotate script.
+&gt; 
+&gt; &gt;A lot of the work is handled by the "apachectl" script
+&gt; &gt;which comes with Apache.
+&gt; 
+&gt; Couldn't find a file called apachectl on my system ...
+&gt; 
+&gt; &gt;Keep in mind that as long as you have child processes alive
+&gt; &gt;the log file will still be written to, even if it is renamed.
+&gt; &gt;So the log rotation script will have to wait for a while before
+&gt; &gt;doing, e.g. compression.
+&gt; 
+&gt; If the log rotation script *did* rename the file before the child died, 
+&gt; would this cause the creation of the zombie children?
+&gt; 
+&gt; &gt;Ahh, the joys of being a webmaster :-)
+&gt; 
+&gt; Tell me about it! Worst is I am *not* a web master by training ... just a 
+&gt; simple programmer ... woe is me ...
+&gt; 
+&gt; Jc
+&gt; _________________________________________________________________________
+&gt; Get Your Private, Free E-mail from MSN Hotmail at <A TARGET="_top" HREF="http://www.hotmail.com">http://www.hotmail.com</A>.
+&gt; 
+&gt; -----------------------------------------------------------------------
+&gt; Next Technical Meeting:  Sat, May 12 13:30- 
+&gt; Next Nomikai Meeting:    Fri, June (TBA) 19:30- Tengu Tokyo Eki Mae
+&gt; -----------------------------------------------------------------------
+&gt; more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>           Sponsor: Global Online Japan
+&gt; 
+
+-- 
+Thomas O'Dowd. - Nooping - <A TARGET="_top" HREF="http://nooper.com">http://nooper.com</A>
+tom@example.com - Testing - <A TARGET="_top" HREF="http://nooper.co.jp/labs">http://nooper.co.jp/labs</A>
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00737" HREF="msg00737.html">Re: Apache question</A></STRONG>
+<UL><LI><EM>From:</EM> Jake Morrison &lt;jake_morrison@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<UL><LI><STRONG>References</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00730" HREF="msg00730.html">Re: Apache question</A></STRONG>
+<UL><LI><EM>From:</EM> "Jean-Christian Imbeault" &lt;jean_christian@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00733.html">Re: Apache rotate log config option is where?</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00735.html">Re: Linux drivers for Fujitsu TFT monitors</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00730.html">Re: Apache question</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00737.html">Re: Apache question</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00734"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00734"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>

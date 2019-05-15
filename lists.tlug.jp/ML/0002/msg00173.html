@@ -1,0 +1,177 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: tlug: HTTP headers q -->
+<!--X-From: "Frank Bennett (=?iso&#45;2022&#45;jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" <bennett@example.com&#45;u.ac.jp> -->
+<!--X-Date:  Thu, 17 Feb 2000 13:41:32 +0900 -->
+<!--X-Message-Id: 20000217133805.A15316@example.com&#45;u.ac.jp -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>TLUG Mailing List</title>
+  <meta http-equiv="Content-type" content="text/html">
+  <meta name="Author" content="Jim Schweizer - webmaster TLUG">
+  <meta http-equiv="keywords" content="Tokyo Linux Users Group mailing list archive.">
+</head>
+ 
+<body bgcolor="#FFFFFF" text="#000000" BACKGROUND="../back3grnd.gif">
+<BLOCKQUOTE>
+<CENTER><IMG SRC="../tlug_logo.gif"><BR>Mailing List Archive</CENTER>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<P>
+<font color="blue">
+Support open source code!
+</font>
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00172.html">Date Prev</A>][<A HREF="msg00174.html">Date Next</A>][<A HREF="msg00174.html">Thread Prev</A>][<A HREF="msg00175.html">Thread Next</A>][<A HREF="maillist.html#00173">Date Index</A>][<A HREF="threads.html#00173">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>tlug: HTTP headers q</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><strong>To</strong>: <strong><A HREF="mailto:tlug@example.com">tlug@example.com</A></strong></LI>
+<LI><strong>Subject</strong>: <strong>tlug: HTTP headers q</strong></LI>
+<LI><strong>From</strong>: <strong>"Frank Bennett (=?iso-2022-jp?B?GyRCJVUlaSVzJS8kWSVNJUMlSBsoQg==?= )" &lt;<A HREF="mailto:bennett@example.com">bennett@example.com</A>&gt;</strong></LI>
+<LI>Date: Thu, 17 Feb 2000 13:38:05 +0900</LI>
+<LI>Content-Transfer-Encoding: 7bit</LI>
+<LI>Content-Type: text/plain; charset=us-ascii</LI>
+<LI>Reply-To: <A HREF="mailto:tlug@example.com">tlug@example.com</A></LI>
+<LI>Sender: <A HREF="mailto:owner-tlug@example.com">owner-tlug@example.com</A></LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+I am having trouble with HTTP headers again.  What I should do (as I think
+I said in my last mail on this topic) is to go back to school.  Can anyone
+point me at the standard reference on practical management of Apache with
+CGI scripts?
+
+The trouble I'm having arises from not knowing which agent is responsible
+for what.  I have a CGI script that initially just spewed from &lt;HTML&gt;.  It
+now outputs a Content-type:  header a Pragma: (for no-cache) and
+(conditionally) a Set-Cookie:.  This seemed to solve Lynx's complaints
+about the script. 
+
+Now I've decided to try to speed things up by running the script as a
+FastCGI server.  The server works load OK to the interpreter (Tcl), and
+Apache brings up a process manager that launches the resident copy of the
+script into memory. 
+
+So far so good.  The script will even run in response to a call from a
+browser, from the top-level, okay. But every button (each of which should
+trigger another instance of the script, tweaked by options fed through in
+QUERY_STRING) causes the script to crash.  The server log says that no
+header bytes were received from the script.
+
+Looking at my still-untidy stuff around the headers, I found that AHA! 
+The header stuff was only being generated for the initial connection;
+after that, a cookie in the browser would be detected, and all of the
+header output would be avoided.  Something like: 
+
+    if {[lsearch -exact [cgi_cookie_list] clientid]==-1} {
+      puts "Content-type: content=\"text/html\"; charset=\"EUC-JP\""
+      puts "Pragma: content=\"no-cache\""
+      puts "Set-Cookie: clientid=$clientid"
+    }
+
+I also notice that I had no empty line between these "headers"  and the
+start of &lt;HTML&gt;.  Oops. 
+
+When I "fixed" things so that Content-type: and the Pragma: both output
+always, and added the empty line, I got what looks like *Apache's*
+Content-type: header (text/plain) as part of the text of the document when
+it is rendered.  What's Apache putting its finger into the works for?
+
+I'm really just thrashing around with this at the moment.  What I want to
+do is fix the Content-type: header in the CGI and persuade Apache to just
+trust me and pass my headers through to the client verbatim.  I think that
+the FastCGI interface may be failing because I am not generating correct
+headers, but Apache won't leave well enough alone when I do.  Grrr.
+
+If anyone has read this far without their eyes glazing over ...  any
+suggestions?  Including (especially) texts I should read to better learn
+my way around Apache and CGI programming. 
+
+This project seemed so delightfully simple when I first dreamed it up ...
+:-(
+
+Cheers,
+Frank
+
+--------------------------------------------------------------------
+Next Nomikai Meeting: February 18 (Fri) 19:00 Tengu TokyoEkiMae
+Next Technical Meeting:  March 11 (Sat) 13:00 Temple University Japan
+* Topic: TBD
+--------------------------------------------------------------------
+more info: <A TARGET="_top" HREF="http://www.tlug.gr.jp">http://www.tlug.gr.jp</A>        Sponsor: Global Online Japan
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00175" HREF="msg00175.html">tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> "Stephen J. Turnbull" &lt;turnbull@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00177" HREF="msg00177.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> Darren Cook &lt;darren@example.com&gt;</LI></UL></LI>
+<LI><STRONG><A NAME="00179" HREF="msg00179.html">Re: tlug: HTTP headers q</A></STRONG>
+<UL><LI><EM>From:</EM> Adrian Havill &lt;havill@example.com&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00172.html">RE:tlug: 2/18 Nomikai Attendance</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00174.html">tlug: wc for Japanese / fetchmail</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00174.html">tlug: wc for Japanese / fetchmail</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00175.html">tlug: HTTP headers q</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00173"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00173"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<strong>
+<a href="../index.html">Home</a> |
+<a href="maillist.html">Main Index</a> |
+<a href="threads.html">Thread Index</a>
+</strong>
+<!--X-User-Footer-End-->
+ 
+<P>
+<CENTER>
+ <table border=2 width=75%><tr><td align=center>
+<a href="../../index.html"> Home Page</a></td>
+<td align=center><a href="../../list.html"> Mailing List </a></td>
+<td align=center><a href="../../linuxinjapan.html"> Linux and Japan </a></td>
+<td align=center><a href="../../members.html">TLUG Members</a></td>
+<td align=center><a href="../../linuxlinks.html">Links</a></td>
+</tr></TABLE>
+<P>
+</CENTER>
+</BLOCKQUOTE>
+</body>
+</html>
