@@ -12,3 +12,10 @@ cause it to be silent for long periods of time. Any command-line
 parameters you pass to Scrape will be passed on to `wget` between the
 options and the site name, so you can pass `-nv` to restore the
 default verbose mode, `-q` to make output completely silent, and so on.
+
+### Bugs and Issues
+
+Files such as `lists.tlug.jp/ML.1` appear which are exact copies of
+`lists.tlug.jp/ML/index.html`. This may be related to `/` and
+`/index.html` serving the same thing, though `wget` does understand
+this (see the `--default-page` option).
