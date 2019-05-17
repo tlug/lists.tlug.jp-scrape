@@ -12,6 +12,12 @@ Site Content
 
 All content fetched from the site is under `lists.tlug.jp/`.
 
+- `ML/`: `tlug` main tlug mailing list generated archives.
+- `ML.1` etc.: Spurious files from a bug; see below.
+- `MLlingo`: `tlug-lingo` list generated archives.
+- `images/`, `*.html`, etc.: Static informational pages.
+- `robots.txt`
+
 ### Content Not Fetched
 
 The following parts of the site are not fetched. (These are listed in
