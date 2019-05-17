@@ -41,8 +41,10 @@ default verbose mode, `-q` to make output completely silent, and so on.
 
 ### Bugs and Issues
 
-Files such as `lists.tlug.jp/ML.1` appear which are exact copies of
-`lists.tlug.jp/ML/index.html`. This may be related to `/` and
-`/index.html` serving the same thing, though `wget` does understand
-this (see the `--default-page` option).
+Files not on the actual site like `lists.tlug.jp/ML.1` are created by
+wget; they are exact copies of `lists.tlug.jp/ML/index.html`. This may
+be related to `/` and `/index.html` serving the same thing, though
+`wget` does understand this (see the `--default-page` option).
 
+These are currently removed by the `Scrape` script when it exits,
+whether or not `wget` completed successfully.

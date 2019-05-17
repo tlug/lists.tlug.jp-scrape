@@ -9,4 +9,10 @@ wget --version >/dev/null || {
 }
 
 cd "$basedir"
+
+#   The ML.0, ML.1, etc. files are copies of ML/index.html, perhaps
+#   generated due to a bug. Always remove these before exit. This
+#   preserves the error code of the command just before the exit.
+trap 'rm -f "$basedir"/lists.tlug.jp/ML.[0-9]' 0
+
 wget --no-verbose --mirror "$@" https://lists.tlug.jp/
