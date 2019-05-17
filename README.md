@@ -7,6 +7,19 @@ scraped content, which is updated on an ad-hoc basis by whoever feels
 like doing it.
 
 
+Repo Contents
+-------------
+
+- `README.md`: This file.
+- `lists.tlug.jp/`: Scraped copy of all files on <http://lists.tlug.jp>.
+- `Scrape`: Scrapes the site and updates `lists.tlug.jp/`.
+- `Size`: Show disk space usage and number of files under `lists.tlug.jp/`.
+- `netlify.toml`: Configuration for serving `lists.tlug.jp/` as a
+  static site on [Netlify](https://netlify.com).
+- `tmp/`: Ignored, so never committed. Useful for storing work files
+  you do not want accidentally to commit.
+
+
 Site Content
 ------------
 
