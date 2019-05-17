@@ -26,7 +26,27 @@ them.)
 
 - `/MLadm/`: Archives of private mailing lists; requires HTTP authentication.
 - `/mailman/`: Mailman user interface.
-- `/cgi-bin/`: Not sure what's in here, but we probably don't want to poke it.
+- `/cgi-bin/`
+
+
+Missing Functionality
+---------------------
+
+When served as a static site, the following functionality is missing
+as compared to the legacy `lists.tlug.jp`.
+
+- `tlug-admin` list archives. This is easy to add if we're willing to
+  make some compromises about the password protection. See above and
+  below for more information on this.
+- List archive search of `tlug-admin` pages. (Not configured for the
+  other lists, for some reason.) This called `/cgi-bin/htsearch`.
+  Probably should be removed; we already have Google custom search on
+  the top page. Could probably be replaced by external Google, Duck
+  Duck Go, etc. search.
+- List management functionality: `/mailman/*`. Does not, at a quick
+  glance, appear to use any scripts under `/cgi-bin`, but the server
+  config file should be checked.
+- `/cgi-bin/*`: Other stuff we don't know about?
 
 
 Site Scraping
