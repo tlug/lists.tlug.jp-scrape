@@ -7,6 +7,20 @@ basedir=$(cd "$(dirname "$0")" && pwd -P)
 #   to restore wget's original behaviour of logging to stderr.
 logfile="log/scrape.$(date +%y%m%d-%H%M%S)"
 
+head_commit_author_timestamp() {
+    #   Print author timestamp of current HEAD. We use the author
+    #   rather than the commit timestamp because commits may be
+    #   amended just to rebase or change the message, without fetching
+    #   new files from the site as of that new commit timestamp.
+    git cat-file -p HEAD | grep '^author ' | head -1 \
+        | sed -e 's/ [^ ]*$//' -e 's/.* //'
+}
+
+set_timestamp() {
+    local ts="$1"; shift
+    find "$@" -type f -print0 | xargs -0 touch -d "@$ts"
+}
+
 ####################################################################
 #   Main
 
@@ -23,12 +37,23 @@ mkdir -p "$(dirname "$logfile")"
 #   preserves the error code of the command just before the exit.
 trap 'rm -f "$basedir"/lists.tlug.jp/ML.[0-9]' 0
 
-#   XXX -N (check file timestamps) will not fetch updated files, since
-#   after a checkout all the files' timestamps will be updated to
-#   "now." This shouldn't be a problem for the messages themselves,
-#   since they should never change, but the index files are updated
-#   when new messages are added.
+#   wget's -N option checks the file's timestamp against the server's.
+#   This causes a problem on a fresh checkout because the timestamps
+#   of all the files will be the current time, even if they are not
+#   actually the most recent version as of that time.
 #
+#   We work around this by setting the timestamp of all files under
+#   lists.tlug.jp/ to the author timestamp of the current HEAD commit.
+#   This is not terribly efficient, but given that wget can take close
+#   to an hour to check the entire site even if it downloads nothing,
+#   this adds an insignificant amount of time to the process. (It's
+#   only a couple of seconds on a fast machine.)
+#
+#   This will break if someone pushes a commit with an incorrect
+#   future author time.
+#
+set_timestamp $(head_commit_author_timestamp) lists.tlug.jp/
+
 wget --no-verbose -o "$logfile" \
     $(: '--mirror options: recursive, infinite levels, timestamp checks') \
     -r -l inf -N \
