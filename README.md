@@ -27,9 +27,19 @@ All content fetched from the site is under `lists.tlug.jp/`.
 
 - `/ML/`: `tlug` main tlug mailing list generated archives.
 - `/ML.1` etc.: Spurious files from a bug; see below.
+- `/MLadm/`: `tlug-admin` list generated archives; see below.
 - `/MLlingo/`: `tlug-lingo` list generated archives.
 - `/images/`, `*.html`, etc.: Static informational pages.
 - `/robots.txt`
+
+The `tlug-admin` list archives under `/MLadm/` require HTTP basic
+authentication using a name and password given in an image on the
+website. The `Scrape` script has this name/password equally well (or
+perhaps better) obfuscated and passes the deobfuscated version to
+`wget` so it can download this directory. However, to avoid GitHub or
+Netlify serving those files on the web without password protection, we
+have added that directory to the `.gitignore` file and do not commit it.
+(If we do decide to commit it, also see the Netlify discussion below.)
 
 ### Content Not Fetched
 
@@ -37,7 +47,6 @@ The following parts of the site are not fetched. (These are listed in
 `robots.txt` so we don't need to do anything special to avoid fetching
 them.)
 
-- `/MLadm/`: Archives of private mailing lists; requires HTTP authentication.
 - `/mailman/`: Mailman user interface.
 - `/cgi-bin/`
 
@@ -100,6 +109,11 @@ The repo update and no-op "build" itself is s very fast, but the
 post-processing during the build takes about six minutes. After that
 the changed files are uploaded to the CDN, which should be almost
 instant when an already-deployed site is being updated.
+
+The TLUG Netlify account is a free plan and thus cannot
+password-protect the `/MLadm/` subdirectory. Should we start
+committing it, we need to decide what to do about this. If it
+should not be served, perhaps we could issue redirects?
 
 ### Netlify Initial Deployment
 

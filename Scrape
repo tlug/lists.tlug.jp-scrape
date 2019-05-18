@@ -7,6 +7,13 @@ basedir=$(cd "$(dirname "$0")" && pwd -P)
 #   to restore wget's original behaviour of logging to stderr.
 logfile="log/scrape.$(date +%y%m%d-%H%M%S)"
 
+#   Obfuscated name/pw required for MLadm. See README for details.
+login_name=zram
+login_pw=gxinobky
+
+####################################################################
+#   Functions
+
 head_commit_author_timestamp() {
     #   Print author timestamp of current HEAD. We use the author
     #   rather than the commit timestamp because commits may be
@@ -20,6 +27,10 @@ set_timestamp() {
     local ts="$1"; shift
     find "$@" -type f -print0 | xargs -0 touch -d "@$ts"
 }
+
+#   Not rot13, but same idea.
+obfuscate() { echo "$@" | tr '[a-z]' '[g-za-f]'; }
+unfuscate() { echo "$@" | tr '[g-za-f]' '[a-z]'; }
 
 ####################################################################
 #   Main
@@ -54,7 +65,18 @@ trap 'rm -f "$basedir"/lists.tlug.jp/ML.[0-9]' 0
 #
 set_timestamp $(head_commit_author_timestamp) lists.tlug.jp/
 
+#   Wget honours robots.txt for its own user agent (or perhaps `*`)
+#   regardless of what we set with the --user-agent option, so we have
+#   no way to ask it to use the "User-agent: htdig" section of the
+#   robots.txt (which allows /MLadm/) rather than the "User-agent: *"
+#   section (which disallows /MLadm/).
+#
+#   We work around this by ignoring robots.txt and manually excluding
+#   the /cgi-bin/ and /mailman/ paths that robots.txt also disallows.
+#
 wget --no-verbose -o "$logfile" --backups=0 \
+    -e robots=off -X /cgi-bin/,/mailman/ \
     $(: '--mirror options: recursive, infinite levels, timestamp checks') \
     -r -l inf -N \
+    --user "$(unfuscate $login_name)" --password "$(unfuscate $login_pw)" \
     "$@" https://lists.tlug.jp/
