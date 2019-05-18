@@ -3,12 +3,20 @@ set -e -o pipefail
 
 basedir=$(cd "$(dirname "$0")" && pwd -P)
 
+#   We log to a file by default, but you can pass `-o /dev/stderr`
+#   to restore wget's original behaviour of logging to stderr.
+logfile="log/scrape.$(date +%y%m%d-%H%M%S)"
+
+####################################################################
+#   Main
+
 wget --version >/dev/null || {
     echo 1>&2 "$(basename "$0"):" "'wget' not installed?"
     exit 50    # wget uses error codes up to 10 or so
 }
 
 cd "$basedir"
+mkdir -p "$(dirname "$logfile")"
 
 #   The ML.0, ML.1, etc. files are copies of ML/index.html, perhaps
 #   generated due to a bug. Always remove these before exit. This
@@ -21,7 +29,7 @@ trap 'rm -f "$basedir"/lists.tlug.jp/ML.[0-9]' 0
 #   since they should never change, but the index files are updated
 #   when new messages are added.
 #
-wget --no-verbose \
+wget --no-verbose -o "$logfile" \
     $(: '--mirror options: recursive, infinite levels, timestamp checks') \
     -r -l inf -N \
     "$@" https://lists.tlug.jp/

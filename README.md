@@ -65,12 +65,19 @@ as compared to the legacy `lists.tlug.jp`.
 Site Scraping
 -------------
 
+Any command-line parameters you pass to Scrape will be passed on to
+`wget` between the options and the site name. This lets you override
+the default `wget` options used by `Scrape` and add additional ones.
+
+Scrape has `wget` log to a file (with a timestamp in the name) under
+`log/`, thus the script should normally produce no output and can be
+safely run in the background. If you want to restore the standard
+`wget` behaviour of logging to standard error, use `-o /dev/stderr`.
+
 Scrape runs wget in `--no-verbose` mode by default, which means it
-will not print messages for each page accessed, only errors. This can
-cause it to be silent for long periods of time. Any command-line
-parameters you pass to Scrape will be passed on to `wget` between the
-options and the site name, so you can pass `-nv` to restore the
-default verbose mode, `-q` to make output completely silent, and so on.
+will not log messages for each page accessed, only errors. Use `-nv`
+to restore the default verbose mode, or `-q` to do no logging at all.
+(The log file will still be created, however.)
 
 ### Bugs and Issues
 
