@@ -75,7 +75,7 @@ safely run in the background. If you want to restore the standard
 `wget` behaviour of logging to standard error, use `-o /dev/stderr`.
 
 Scrape runs wget in `--no-verbose` mode by default, which means it
-will not log messages for each page accessed, only errors. Use `-nv`
+will not log messages for each page accessed, only errors. Use `-v`
 to restore the default verbose mode, or `-q` to do no logging at all.
 (The log file will still be created, however.)
 
