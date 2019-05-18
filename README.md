@@ -96,8 +96,10 @@ Netlify Deployment
 The [`lists-tlug-jp`] site in the [TLUG Netlify account][netlify] is
 configured to serve the `master` branch of this repo.
 
-The download and no-op "build" is very fast, so the only time it
-should take to deploy is the time to upload changed files.
+The repo update and no-op "build" itself is s very fast, but the
+post-processing during the build takes about six minutes. After that
+the changed files are uploaded to the CDN, which should be almost
+instant when an already-deployed site is being updated.
 
 ### Netlify Initial Deployment
 
