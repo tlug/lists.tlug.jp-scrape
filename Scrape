@@ -15,4 +15,13 @@ cd "$basedir"
 #   preserves the error code of the command just before the exit.
 trap 'rm -f "$basedir"/lists.tlug.jp/ML.[0-9]' 0
 
-wget --no-verbose --mirror "$@" https://lists.tlug.jp/
+#   XXX -N (check file timestamps) will not fetch updated files, since
+#   after a checkout all the files' timestamps will be updated to
+#   "now." This shouldn't be a problem for the messages themselves,
+#   since they should never change, but the index files are updated
+#   when new messages are added.
+#
+wget --no-verbose \
+    $(: '--mirror options: recursive, infinite levels, timestamp checks') \
+    -r -l inf -N \
+    "$@" https://lists.tlug.jp/
